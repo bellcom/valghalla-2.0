@@ -1,0 +1,149 @@
+<?php
+// valhalla_field_absentee_ballot
+
+function valhalla_field_absentee_ballot_field_info() {
+  return array(
+    'absentee_ballot' => array(
+      'label' => t('Volunteer map'),
+      'description' => t('Combins RSVP, seat and Volunteers for absentee ballot.'),
+      'default_widget' => 'absentee_ballot_standard',
+      'default_formatter' => 'absentee_ballot_default',
+    ),
+  );
+}
+
+
+function valhalla_field_absentee_ballot_field_schema() {
+  $columns = array(
+    'rsvp' => array(
+      'description' => 'RSVP status.',
+      'type' => 'int',
+      'unsigned' => TRUE,
+      'not null' => FALSE,
+      'default' => NULL,
+    ),
+    'volunteer' => array(
+      'description' => 'Volunteer',
+      'type' => 'int',
+      'unsigned' => TRUE,
+      'not null' => FALSE,
+      'default' => NULL,
+    ),
+    'post' => array(
+      'description' => 'Wich post to fulfill',
+      'type' => 'varchar',
+      'length' => 12,
+      'not null' => FALSE,
+      'default' => NULL
+    ),
+  );
+
+  return array(
+    'columns' => $columns,
+    // TODO Add indexes.
+  );
+}
+
+
+function valhalla_field_absentee_ballot_field_widget_info() {
+  $widgets = array();
+  $widgets['absentee_ballot_standard'] = array(
+    'label' => t('Absentee ballot'),
+    'field types' => array('absentee_ballot'),
+    'settings' => array()
+  );
+
+  return $widgets;
+}
+
+
+function valhalla_field_absentee_ballot_field_widget_form(&$form, &$form_state, $field, $instance, $langcode, $items, $delta, $element) {
+  $settings = $instance['widget']['settings'];
+  $element += array(
+    '#delta' => $delta,
+  );
+
+  if ($instance['widget']['type'] == 'absentee_ballot_standard') {
+
+    $rsvp_value = isset($items[$delta]['rsvp']) ? $items[$delta]['rsvp'] : '';
+    $post_value = isset($items[$delta]['post']) ? $items[$delta]['post'] : '';
+    $volunteer_value = isset($items[$delta]['volunteer']) ? $items[$delta]['volunteer'] : '';
+
+    $element['rsvp'] = array(
+      '#type' => 'select',
+      '#title' => t('RSVP status'),
+      '#options' => array(
+        0 => t('Select'),
+        1 => t('Yes'),
+        2 => t('Nej, ikke denne gang'),
+        3 => t('Nej, få mig venligst af listen') // TODO: skal opdatere hovednoden...
+      ),
+      '#default_value' => $rsvp_value
+    );
+
+    $volunteers = array(0 => t('Select'));
+    foreach (entity_load('node', FALSE, array('type' => 'volunteers')) as $item) {
+      $volunteers[$item->nid] = $item->title;
+    }
+
+    $element['volunteer'] = array(
+      '#type' => 'select',
+      '#title' => t('Vælg en frivillig til posten'),
+      '#options' => $volunteers,
+      '#default_value' => $volunteer_value,
+    );
+
+    $element['post'] = array(
+      '#type' => 'select',
+      '#title' => t('Vælg post type'),
+      '#options' => array(
+        '' => t('Select'),
+        'VA' => t('VA'),
+        'TI' => t('TI'),
+      ),
+      '#default_value' => $post_value
+    );
+  }
+
+  return $element;
+}
+
+function valhalla_field_absentee_ballot_field_formatter_info() {
+  return array(
+    'absentee_ballot_default' => array(
+      'label' => t('Default'),
+      'field types' => array('absentee_ballot'),
+    ),
+  );
+}
+
+
+function valhalla_field_absentee_ballot_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
+  global $language;
+
+  switch ($display['type']) {
+    case 'absentee_ballot_default':
+      module_load_include('inc', 'valhalla_volunteers', 'valhalla_volunteers');
+
+      foreach ($items as $delta => $item) {
+        $element[$delta]['#markup'] = ' · Post ' . ($delta + 1) . ' - ' . $item['post'] . ': ';
+        if (empty($item['volunteer'])) {
+           $element[$delta]['#markup'] .= t('Mangler tildeling af frivillig.') . '';
+        }
+        else {
+          $node = node_load($item['volunteer']);
+          // hack into the users rsvp field - only used to please the helper function
+          $node->field_rsvp[$language->language][0]['value'] = $item['rsvp'];
+          $element[$delta]['#markup'] .= _valhalla_helper_wrap_name($node, 'span');
+        }
+      }
+      break;
+  }
+
+  return $element;
+}
+
+
+function valhalla_field_absentee_ballot_field_is_empty($item, $field) {
+  return empty($item['post']);
+}

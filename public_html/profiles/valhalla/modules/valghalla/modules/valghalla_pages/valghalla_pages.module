@@ -1,0 +1,30 @@
+<?php
+/**
+ * Implements hook_menu()
+ */
+function valghalla_pages_menu(){
+  $items['valghalla/administration/valg'] = array(
+    'title' => 'Valg oversigt',
+    'page callback' => 'valghalla_pages_admin_valghalla',
+    'access arguments' => array('administer valhalla'),
+    'file' => 'valghalla_pages.admin.inc',
+    'type' => MENU_NORMAL_ITEM,
+  );
+  $items['status'] = array(
+    'title' => 'Status',
+    'page callback' => 'valghalla_pages_status',
+    'access callback' => 'user_is_logged_in',
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+  return $items;
+}
+
+function valghalla_pages_status(){
+  $block = module_invoke('valhalla_blocks', 'block_view', 'party_status');
+  $page = '<div class="col-md-6">' . render($block['content']) . '</div>';
+
+  $block = module_invoke('valhalla_blocks', 'block_view', 'party_constituency_status');
+  $page .= '<div class="col-md-6">' . render($block['content']) . '</div>';
+  return $page;
+}

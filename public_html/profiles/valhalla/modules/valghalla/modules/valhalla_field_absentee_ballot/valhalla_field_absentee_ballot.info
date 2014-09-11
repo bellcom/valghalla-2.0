@@ -1,0 +1,5 @@
+; $Id$
+name = Field absentee ballot
+description = Custom field for combining RSVP, seat and Volunteers for absentee ballot.
+package = Valghalla
+core = 7.x

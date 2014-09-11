@@ -1,0 +1,42 @@
+<?php
+
+/**
+ * @file
+ * Install/Schema, and uninstall functions for valghalla_election.module
+ */
+
+/**
+ * Implements hook_uninstall().
+ */
+function valghalla_election_uninstall() {
+
+  if (db_table_exists('field_election_roles_diaet')) {
+    db_query('DROP TABLE {field_election_roles_diaet}');
+  }
+}
+
+/**
+ * Implements hook_schema().
+ */
+function valghalla_election_schema() {
+  $schema['field_election_roles_diaet'] = array(
+    'description' => 'Table for storing the individual role diaet of each election.',
+    'fields' => array(
+      'nid'  => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Primary Key: the node identifier for an election item.',
+      ),
+      'role_diaet_value' => array(
+        'type' => 'text',
+        'not null' => TRUE,
+        'size' => 'medium',
+        'description' => 'Diaet value for each role',
+      ),
+    ),
+    'primary key' => array('nid'),
+  );
+  return $schema;
+}
+

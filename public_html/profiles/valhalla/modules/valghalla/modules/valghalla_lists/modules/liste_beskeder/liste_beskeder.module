@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Liste Beskeder feature.
+ */
+
+include_once 'liste_beskeder.features.inc';

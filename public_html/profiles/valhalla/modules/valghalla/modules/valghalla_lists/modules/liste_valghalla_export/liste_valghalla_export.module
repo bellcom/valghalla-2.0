@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Liste valghalla export feature.
+ */
+
+include_once 'liste_valghalla_export.features.inc';

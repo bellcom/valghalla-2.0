@@ -1,0 +1,4 @@
+name=Valghalla Volunteer Validator service: Validate age
+description=Validate volunteers age
+core=7.x
+package = Valghalla

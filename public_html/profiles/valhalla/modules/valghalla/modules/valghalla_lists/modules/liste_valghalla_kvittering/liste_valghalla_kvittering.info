@@ -1,0 +1,7 @@
+name = Liste valghalla kvittering
+core = 7.x
+package = Valghalla - Lister
+version = 7.x-1.0
+project = liste_valghalla_kvittering
+features[features_api][] = api:2
+

@@ -1,0 +1,7 @@
+.volunteer-station-list-extra-wrapper {
+  border: 5px solid red;
+  width: 75%;
+}
+#volunteer-station-list dd.list-extra {
+  width: inherit;
+}

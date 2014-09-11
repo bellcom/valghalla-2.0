@@ -1,0 +1,8 @@
+; $Id$
+name = valhalla blocks
+description = holds different forms loaded through blocks
+package = Valghalla
+core = 7.x
+
+dependencies[] = "valghalla_volunteers"
+dependencies[] = "odin"

@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Liste Frivillige uden email feature.
+ */
+
+include_once 'liste_frivillige_uden_email.features.inc';

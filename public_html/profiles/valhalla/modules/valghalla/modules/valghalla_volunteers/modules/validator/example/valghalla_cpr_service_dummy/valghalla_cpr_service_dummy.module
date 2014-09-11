@@ -1,0 +1,106 @@
+<?php
+/**
+ * Dummy, example module, implementing a CPR validator plugin.
+ *
+ * @author Thomas Thune Hansen <tth@bellcom.dk>
+ * @copyright 2012 OS2 - Offentligt Digitaliseringsfællesskab.
+ * See README.md at https://github.com/os2web/valghalla_mail
+ */
+
+/**
+ * Implements hook_menu()
+ */
+function valghalla_cpr_service_dummy_menu(){
+  $items['admin/valghalla/validator/dummy_settings'] = array(
+    'title' => t('Indstillinger for Dummy service'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('valghalla_cpr_service_dummy_settings'),
+    'access arguments' => array('administer valhalla'),
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_MODULE_PLUGIN()
+ *     -      hook_valghalla_cpr_validator_cpr_service()
+ *
+ * Tells the valghalla_cpr_validator module which services are implementet
+ * as well as where the plugin can be configured.
+ */
+function valghalla_cpr_service_dummy_valghalla_volunteer_validator_cpr_service(){
+  return array(
+    'dummy' => array(
+      // Label for the plugin, shown in CPR validator settings.
+      'label' => 'Dummy',
+      // Short description for the plugin, shown in CPR validator settings.
+      'description' => t('Kun for eksempel og test'),
+      // If the plugin implements CPR validation, the callback must be
+      // specified here.
+      'validate_cpr' => 'valghalla_cpr_service_dummy_validate_cpr',
+      // Same as above, but just for fetching the address for the
+      // volunteer.
+      'get_address' => 'valghalla_cpr_service_dummy_get_address',
+      // Url for plugin configuration.
+      'config' => 'admin/valghalla/cpr_validator/dummy_settings',
+    )
+  );
+}
+
+/**
+ * Page callback for settings
+ */
+function valghalla_cpr_service_dummy_settings(){
+  $form['dummy_settings'] = array(
+    '#type' => 'item',
+    '#title' => 'Put some settings here',
+  );
+
+  return system_settings_form($form);
+}
+
+/**
+ * Validate cpr callback
+ *
+ * @param
+ *  String - PSN (cpr) ([0-9]{6}\-[0-9]{4})
+ *
+ * @return
+ *  Array
+ *  (
+ *    [status] => TRUE/FALSE
+ *    [text] => Descriptive text shown when CPR doesn't validate
+ *  )
+ */
+function valghalla_cpr_service_dummy_validate_cpr($cpr){
+  //
+  // Here you can do all sorts of validation.
+  //
+  return array(
+    'status' => FALSE,
+    'text' => 'Det er ikke et dansk CPR-nummer',
+  );
+}
+
+/**
+ * Fetch address for the specified CPR
+ *
+ * @param
+ *  String - PSN (cpr) ([0-9]{6}\-[0-9]{4})
+ *
+ * @return
+ *  Array
+ *  (
+ *    [status] => TRUE/FALSE
+ *    [address] => Roadname 10
+ *    [zipcode] => 1212
+ *    [text] => Descriptive text if something goes wrong
+ *  )
+ */
+function valghalla_cpr_service_dummy_get_address($cpr){
+  return array(
+    'status' => TRUE,
+    'address' => 'Vejnavn 10',
+    'zipcode' => '4430'
+  );
+}

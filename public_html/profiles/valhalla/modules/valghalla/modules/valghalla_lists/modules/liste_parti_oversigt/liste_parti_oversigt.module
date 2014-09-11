@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Liste parti oversigt feature.
+ */
+
+include_once 'liste_parti_oversigt.features.inc';

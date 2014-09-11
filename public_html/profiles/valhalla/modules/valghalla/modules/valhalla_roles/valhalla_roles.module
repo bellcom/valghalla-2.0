@@ -1,0 +1,37 @@
+<?php
+function valhalla_roles_node_insert($node){
+  switch ($node->type=='roles') {
+    case 'roles':
+        {
+   if (!field_info_field('field_role_n'.$node->nid)) {
+     // Create the field base.
+    $field = array(
+      'field_name' => 'field_role_n'.$node->nid,
+      'type' => 'volunteers_roles_field',
+    );
+   field_create_field($field);
+    // Create the field instance on the bundle.
+    $instance = array(
+      'field_name' => 'field_role_n'.$node->nid,
+      'entity_type' => 'field_collection_item',
+      'label' => 'Role',
+      'bundle' => 'field_volunteers_pr_party_1',
+      // If you don't set the "required" property then the field wont be required by default.
+      'required' => TRUE,
+      'widget' => array(
+        'type' => 'custom_type',
+      ),
+    );
+    field_create_instance($instance);
+  }
+    }
+}
+}
+function valhalla_roles_node_delete($node){
+  switch ($node->type=='roles') {
+    case 'roles':
+        {
+            field_delete_field('field_role_n'.$node->nid);
+    }
+}
+}

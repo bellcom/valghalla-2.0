@@ -1,0 +1,438 @@
+<?php
+
+/**
+ * Implements hook_menu()
+ */
+function valghalla_signup_menu(){
+  $items = array();
+
+  $items['valghalla/administration/signup'] = array(
+    'title' => 'Ekstern tilmelding',
+    'description' => '',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('valghalla_signup_administration_form'),
+    'access arguments' => array('administer valghalla'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+  $items['valghalla/signup'] = array(
+    'title' => variable_get('valghalla_signup_page_title', 'Tilmelding som valgtilforordnet'),
+    'description' => '',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('valghalla_signup_signup_form'),
+    'access callback' => TRUE,
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+  $items['valghalla/signup/test'] = array(
+    'title' => 'Ekstern registreringsform',
+    'description' => '',
+    'page callback' => 'valghalla_signup_signup_test',
+    'access callback' => TRUE,
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_valghalla_allowed_uris_alter()
+ */
+function valghalla_signup_valghalla_allowed_uris_alter(&$allowed_uris) {
+  $allowed_uris[] = '/valghalla/signup';
+  $allowed_uris[] = '/system/ajax*';
+}
+
+function valghalla_signup_signup_test() {
+  return '<iframe src="http://kran:49113/valghalla/signup/702" style="height: 400px; border: none;">...</iframe> ';
+}
+
+/**
+ * Form callback for administration page.
+ */
+function valghalla_signup_administration_form() {
+  $form['valghalla_signup_enable'] = array(
+    '#title' => t('Aktiver ekstern tilmelding'),
+    '#type' => 'checkbox',
+    '#default_value' => variable_get('valghalla_signup_enable', FALSE),
+  );
+
+  $form['valghalla_signup_page_title'] = array(
+    '#title' => t('Titel på tilmeldingside'),
+    '#descripton' => t('Drupals cache skal slettes efter opdatering'),
+    '#type' => 'textfield',
+    '#default_value' => variable_get('valghalla_signup_page_title', 'Tilmelding som valgtilforordnet'),
+  );
+
+  $elections = node_load_multiple(array(), array('type' => 'election'));
+
+  $election_options[0] = t('Vælg');
+
+  foreach ($elections as $node) {
+    $election_options[$node->nid] = $node->title;
+  }
+
+  $form['valghalla_signup_max_qty'] = array(
+    '#title' => t('Antal frivillige'),
+    '#type' => 'textfield',
+    '#element_validate' => array('element_validate_integer_positive'),
+    '#default_value' => variable_get('valghalla_signup_max_qty', 3),
+  );
+
+  $form['valghalla_signup_election_nid'] = array(
+    '#title' => t('Valg'),
+    '#type' => 'select',
+    '#default_value' => variable_get('valghalla_signup_election_nid', FALSE),
+    '#options' => $election_options,
+  );
+
+  $form['valghalla_signup_role_nid'] = array(
+    '#title' => t('Rolle'),
+    '#type' => 'select',
+    '#options' => _valghalla_helper_get_roles(),
+    '#default_value' => variable_get('valghalla_signup_role_nid', FALSE),
+  );
+
+  $form['valghalla_signup_party_tid'] = array(
+    '#title' => t('Parti'),
+    '#type' => 'select',
+    '#options' => _valghalla_helper_get_parties(),
+    '#default_value' => variable_get('valghalla_signup_party_tid', FALSE),
+  );
+
+  $form['valghalla_signup_signup_message'] = array(
+    '#type' => 'textarea',
+    '#title' => 'Besked på tilmeldingsside',
+    '#default_value' => variable_get('valghalla_signup_signup_message', ''),
+  );
+
+  $form['valghalla_signup_submit_message'] = array(
+    '#type' => 'textarea',
+    '#title' => 'Besked ved endt tilmelding',
+    '#default_value' => variable_get('valghalla_signup_submit_message', ''),
+  );
+
+  $form['valghalla_signup_closed_message'] = array(
+    '#type' => 'textarea',
+    '#title' => 'Besked ved lukket tilmelding',
+    '#default_value' => variable_get('valghalla_signup_closed_message', ''),
+  );
+
+  $mail_options = valghalla_mail_get_mails();
+
+  $form['valghalla_signup_mail_nid'] = array(
+    '#title' => 'Mail skabelon',
+    '#descripton' => 'Skabelon for bekræftelse af tilmelding',
+    '#type' => 'select',
+    '#options' => $mail_options,
+    '#default_value' => variable_get('valghalla_signup_mail_nid', FALSE),
+  );
+
+  $form['valghalla_signup_description'] = array(
+    '#type' => 'item',
+  );
+
+  return system_settings_form($form);
+}
+
+/**
+ * Implements hook_theme().
+ */
+function valghalla_signup_theme() {
+  return array(
+    'signup_page' => array(
+      'template' => 'signup_page'
+    ),
+  );
+}
+
+function valghalla_signup_signup_page() {
+  global $base_url;
+  $variables = array();
+  $variables['signup_form'] = drupal_render(drupal_get_form('valghalla_signup_signup_form'));
+
+  return theme('signup_page', $variables);
+}
+
+/**
+ *
+ */
+function valghalla_signup_signup_form($form, &$form_state) {
+  $election_nid = variable_get('valghalla_signup_election_nid', FALSE);
+  $election_node = node_load($election_nid);
+
+  $expired = TRUE;
+  if ($field_election_date = field_get_items('node', $election_node, 'field_date')) {
+    $election_timestamp = strtotime($field_election_date[0]['value']);
+    if (time() < $election_timestamp) {
+      $expired = FALSE;
+    }
+  }
+
+  if (!variable_get('valghalla_signup_enable', FALSE) || $expired) {
+    $form['message']['#markup'] = nl2br(variable_get('valghalla_signup_closed_message', '')) . '<br>';
+    return $form;
+  }
+
+  // Show message if the volunteers are saved.
+  if ($form_state['submitted']) {
+    $form['message']['#markup'] = nl2br(variable_get('valghalla_signup_submit_message', ''));
+    return $form;
+  }
+
+  $qty = isset($form_state['values']['qty']) ? $form_state['values']['qty'] : FALSE;
+
+  $form['message']['#markup'] = nl2br(variable_get('valghalla_signup_signup_message', '')) . '<br>';
+  if ($role_node = node_load(variable_get('valghalla_signup_role_nid', FALSE))) {
+    if ($description_field = field_get_items('node', $role_node, 'field_description')) {
+      $form['message']['#markup'] .= '<p>' . $description_field[0]['value'] . '</p>';
+    }
+  }
+
+  $form['message']['#markup'] .= '<hr>';
+
+  $max_qty = variable_get('valghalla_signup_max_qty', 3);
+
+  $qty_options[0] = 'Vælg antal';
+  for($i = 1; $i <= $max_qty; $i++) {
+    $qty_options[$i] = $i;
+  }
+
+  $form['qty'] = array(
+    '#title' => 'Antal frivillige',
+    '#type' => 'select',
+    '#disabled' => $qty,
+    '#default_value' => $qty,
+    '#options' => $qty_options,
+    '#attributes' => array('onChange' => 'document.getElementById("valghalla-signup-signup-form").submit();')
+  );
+
+  if ($qty) {
+    $form['reset'] = array(
+      '#type' => 'button',
+      '#value' => 'Nulstil',
+      '#attributes' => array('onClick' => 'location.reload();')
+    );
+
+    $role_nid = variable_get('valghalla_signup_role_nid', FALSE);
+    if ($pollingstations = valghalla_signup_get_avaiable_polling_stations($election_nid, $qty, $role_nid)) {
+
+      $form['pollingstation_nid'] = array(
+        '#type' => 'select',
+        '#title' => 'Valgsted',
+        '#options' => $pollingstations,
+      );
+
+      $form['volunteers']['#tree'] = TRUE;
+      for ($i = 1; $i <= $qty; $i++) {
+        $form['volunteers'][$i] = array(
+          '#type' => 'fieldset',
+          '#title' => 'Frivillig nr. ' . $i,
+          '#tree' => TRUE,
+        );
+        $form['volunteers'][$i]['name'] = array(
+          '#title' => 'Navn',
+          '#type' => 'textfield',
+          '#required' => TRUE,
+        );
+
+        $form['volunteers'][$i]['birthdate'] = array(
+          '#title' => 'Fødselsdato',
+          '#type' => 'date',
+          '#required' => TRUE,
+        );
+
+        $form['volunteers'][$i]['road'] = array(
+          '#title' => 'Vejnavn',
+          '#type' => 'textfield',
+          '#required' => TRUE,
+        );
+
+        $form['volunteers'][$i]['road_no'] = array(
+          '#required' => TRUE,
+          '#title' => 'Husnummer',
+          '#type' => 'textfield',
+        );
+
+        $form['volunteers'][$i]['floor'] = array(
+          '#title' => 'Etage',
+          '#type' => 'textfield',
+        );
+
+        $form['volunteers'][$i]['door'] = array(
+          '#title' => 'Dør/side',
+          '#type' => 'textfield',
+        );
+
+        $form['volunteers'][$i]['zipcode'] = array(
+          '#required' => TRUE,
+          '#title' => 'Postnummer',
+          '#type' => 'textfield',
+        );
+
+        $form['volunteers'][$i]['city'] = array(
+          '#title' => 'By',
+          '#type' => 'textfield',
+          '#required' => TRUE,
+        );
+
+        $form['volunteers'][$i]['email'] = array(
+          '#title' => 'E-mail',
+          '#type' => 'textfield',
+          '#required' => TRUE,
+        );
+
+        $form['volunteers'][$i]['phone'] = array(
+          '#required' => TRUE,
+          '#title' => 'Telefon',
+          '#type' => 'textfield',
+        );
+      }
+
+      $form['submit'] = array(
+        '#type' => 'submit',
+        '#value' => 'Send',
+      );
+    }
+    else {
+      $form['no_results']['#markup'] = '<div class="no-results">Der findes ingen valgsteder med det antal ledige pladser</div>';
+
+    }
+  }
+
+  return $form;
+}
+
+/**
+ * Validation for signup form
+ */
+function valghalla_signup_signup_form_validate($form, &$form_state) {
+  if (isset($form_state['values']['volunteers'])) {
+    foreach($form_state['values']['volunteers'] as $id => $volunteer) {
+      if(!valid_email_address($volunteer['email'])) {
+        form_set_error($id.'][email]', 'Ikke gyldig emailadresse');
+      }
+      if (strlen((int)$volunteer['phone']) < 8) {
+        form_set_error('volunteers][' . $id . '][phone', 'Ikke gyldigt telefonnummer');
+      }
+      if (strlen((int)$volunteer['zipcode']) < 4) {
+        form_set_error('volunteers][' . $id . '][zipcode', 'Ikke gyldigt postnummer');
+      }
+      if (strlen((int)$volunteer['road_no']) < 1 || $volunteer['road_no'] == 0) {
+        form_set_error('volunteers][' . $id . '][road_no', 'Ikke gyldigt husnummer');
+      }
+      // We could validate all addresses using a geoservice...
+    }
+  }
+}
+
+/**
+ * Submit handler for signup form
+ */
+function valghalla_signup_signup_form_submit($form, &$form_state) {
+  // Check that the seats are not taken, before we add the volunteers.
+  $qty = $form_state['values']['qty'];
+  $role_nid = variable_get('valghalla_signup_role_nid', FALSE);
+  $election_nid = variable_get('valghalla_signup_election_nid', FALSE);
+
+  $polling_station_nids = valghalla_signup_get_avaiable_polling_stations($election_nid, $qty, $role_nid);
+
+  $polling_station_nid = $form_state['values']['pollingstation_nid'];
+  foreach ($polling_station_nids as $constituency) {
+    if ($ok = isset($pollingstations[$polling_station_nid])){
+      break;
+    }
+    if ($ok = isset($constituency[$polling_station_nid])) {
+      break;
+    }
+  }
+
+  if ($ok) {
+    foreach($form_state['values']['volunteers'] as $id => $volunteer) {
+      drupal_set_message('add volunteer: ' . $volunteer['name']);
+      valghalla_signup_add_volunteer($volunteer, $polling_station_nid);
+    }
+    $form_state['submitted'] = TRUE;
+  }
+  else {
+    drupal_set_message('Pladserne er desværre blevet optaget. Vælg evt. et andet valgsted.', 'warning');
+  }
+
+  $form_state['rebuild'] = TRUE;
+}
+
+function valghalla_signup_add_volunteer($volunteer, $polling_station_nid) {
+  $volunteer_node = new stdClass();
+  $volunteer_node->type = 'volunteers';
+  $volunteer_node->language = LANGUAGE_NONE;
+  node_object_prepare($volunteer_node);
+  $volunteer_node->status = 1;
+
+  $volunteer_node->title = $volunteer['name'];
+
+  $cpr = str_pad($volunteer['birthdate']['day'], 2, 0, STR_PAD_LEFT)
+         . str_pad($volunteer['birthdate']['month'], 2, 0, STR_PAD_LEFT)
+         . substr($volunteer['birthdate']['year'], -2);
+
+  $volunteer_party_tid = variable_get('valghalla_signup_party_tid', FALSE);
+
+  $volunteer_node->field_cpr_number[LANGUAGE_NONE][]['value'] = $cpr;
+  $volunteer_node->field_address_road[LANGUAGE_NONE][]['value'] = $volunteer['road'];
+  $volunteer_node->field_address_road_no[LANGUAGE_NONE][]['value'] = $volunteer['road_no'];
+  $volunteer_node->field_address_floor[LANGUAGE_NONE][]['value'] = $volunteer['floor'];
+  $volunteer_node->field_address_door[LANGUAGE_NONE][]['value'] = $volunteer['door'];
+  $volunteer_node->field_address_zipcode[LANGUAGE_NONE][]['value'] = $volunteer['zipcode'];
+  $volunteer_node->field_address_city[LANGUAGE_NONE][]['value'] = $volunteer['city'];
+  $volunteer_node->field_email[LANGUAGE_NONE][]['email'] = $volunteer['email'];
+  $volunteer_node->field_phone[LANGUAGE_NONE][]['value'] = $volunteer['phone'];
+  $volunteer_node->field_party[LANGUAGE_NONE][]['tid'] = $volunteer_party_tid;
+
+  $volunteer_node->field_external_signup[LANGUAGE_NONE][]['value'] = 1;
+
+  node_save($volunteer_node);
+
+  $role_nid = variable_get('valghalla_signup_role_nid', FALSE);
+  $election_nid = variable_get('valghalla_signup_election_nid', FALSE);
+  $party_tid = odin_party_tid_for_next_free_seat($election_nid, $polling_station_nid, $role_nid);
+
+  if($volunteer_node->nid && $polling_station_nid && $role_nid && $party_tid && $election_nid) {
+    valghalla_volunteers_add_volunteer_to_post($volunteer_node->nid, $polling_station_nid, $role_nid, $party_tid, $election_nid, 1);
+  }
+  else {
+    // If the post cannot be added, we have no need for the volunteer.
+    node_delete($volunteer_node->nid);
+  }
+}
+
+/**
+ * Helper, get a list of polling stations with enough free spots
+ */
+function valghalla_signup_get_avaiable_polling_stations($election_nid, $qty, $role_nid) {
+  $election_node = node_load($election_nid);
+
+  $roles[$role_nid] = $role_nid;
+
+  // Generate options list, with polling stations with enough free seats
+  $polling_stations_field = field_get_items('node', $election_node, 'field_polling_stations');
+
+  foreach ($polling_stations_field as $data) {
+    $polling_station_nids[$data['target_id']] = $data['target_id'];
+  }
+
+  $options = array();
+  foreach (node_load_multiple($polling_station_nids) as $polling_station) {
+    $count = odin_get_volunteers_count($election_node->nid, array($polling_station->nid), $roles);
+
+    if (($count['total_count']['assigned'] - $count['total_count']['total']) >= $qty) {
+      if( $constituency_field = field_get_items('node', $polling_station, 'field_constituency')) {
+        $constituency = node_load($constituency_field[0]['nid']);
+        $options[$constituency->title][$polling_station->nid] = $polling_station->title;
+      }
+      else {
+        $options[$polling_station->nid] = $polling_station->title;
+      }
+    }
+  }
+
+  return $options;
+}

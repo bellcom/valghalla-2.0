@@ -1,0 +1,4 @@
+name = Valghalla Pages
+description = Pages for valghalla, admin and frontend
+core = 7.x
+package = Valghalla

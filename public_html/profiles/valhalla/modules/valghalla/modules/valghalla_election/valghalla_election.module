@@ -1,0 +1,178 @@
+<?php
+
+include_once('valghalla_election.features.inc');
+/**
+ * Valhalla eleciton module
+ *
+ * @file
+ *  valghalla_election.module
+ */
+
+/**
+ * implements hook_menu()
+ */
+function valghalla_election_menu(){
+  $items = array();
+
+  $items['valghalla/election'] = array(
+    'page callback' => 'valghalla_election_set_election',
+    'access callback' => true,
+  );
+
+  return $items;
+}
+
+function valghalla_election_set_election($action, $election_nid = false){
+  if(!$election_nid){
+    drupal_goto('<front>');
+    return;
+  }
+
+  $election_node = node_load($election_nid);
+  switch ($action) {
+    case 'stop':
+      $election_node->field_election_status = array();
+      break;
+    case 'start':
+      $election_node->field_election_status[$election_node->language][0]['value'] = 1;
+      break;
+  }
+  node_save($election_node);
+
+  drupal_goto($_SERVER['HTTP_REFERER']);
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function valghalla_election_form_alter(&$form, &$form_state, $form_id) {
+  $destination = current_path();
+  if (isset($form['type']) && isset($form['#node']) && $form_id == 'election_node_form') {
+    $roles = valghalla_election_get_roles();
+    // form fieldset
+    $description = "Roller diæter";
+    if (empty($roles)) {
+      $description .= " <a href='/node/add/roles?destination=$destination'>Opret roller</a>";
+    }
+    $form['role_and_diaet'] = array(
+      '#type' => 'fieldset',
+      '#title' => 'Diæt',
+      '#weight' => 1,
+      '#description' => $description,
+    );
+
+    foreach ($roles as $key =>$role) {
+
+      if (isset($form['#node']->nid)) {
+        // get value form table field_election_roles_diaet.
+        if (db_table_exists('field_election_roles_diaet')) {
+          $result = db_query("SELECT * FROM {field_election_roles_diaet} r WHERE r.nid = " .$form['#node']->nid ."")
+                    ->fetchObject();
+          if(!is_null($result)) {
+            $data = unserialize($result->role_diaet_value);
+          }
+
+        }
+        $form['role_and_diaet']['role_diaet'.$role->nid] = array(
+          '#type' => 'textfield',
+          '#title' => $role->title,
+          '#required' => TRUE,
+          '#default_value' => isset($data[$role->nid]) ? $data[$role->nid] : '',
+        );
+      }
+      else {
+        $form['role_and_diaet']['role_diaet'.$role->nid] = array(
+          '#type' => 'textfield',
+          '#title' => $role->title,
+          '#required' => TRUE,
+          '#default_value' => '',
+        );
+      }
+    }
+    $form['actions']['submit']['#submit'][] = 'valghalla_election_form_submit';
+  }
+}
+
+/**
+ * Submit handler for extra fields for diet.
+ */
+function valghalla_election_form_submit($form, &$form_state) {
+  $nid = $form_state['node']->nid;
+  $roles = valghalla_election_get_roles();
+  $data =  array();
+  foreach ($roles as $role) {
+    $data[$role->nid] = $form_state['values']['role_diaet'.$role->nid];
+  }
+  $result = db_query("SELECT * FROM {field_election_roles_diaet} r WHERE r.nid = " . $nid . "")
+                    ->fetchField();
+  // Update existed row.
+  if ($result) {
+    db_update('field_election_roles_diaet')
+      ->fields(array(
+        'role_diaet_value' => serialize($data),
+        ))
+      ->condition('nid', $nid, '=')
+      ->execute();
+  }
+  // Insert new row
+  else {
+    db_insert('field_election_roles_diaet')
+      ->fields(array(
+        'nid' => $nid,
+        'role_diaet_value' => serialize($data),
+        ))
+       ->execute();
+  }
+}
+
+function valghalla_election_get_roles() {
+  $query = new EntityFieldQuery();
+  $entities = $query->entityCondition('entity_type', 'node')
+        ->entityCondition('bundle', 'roles')
+        ->propertyCondition('status', 1)
+        ->execute();
+  if (!empty($entities)) {
+    return $nodes = node_load_multiple(array_keys($entities['node']));
+  }
+  return array();
+}
+
+/**
+ * Implements hook_node_delete().
+ */
+function valghalla_election_node_delete($node) {
+  if ($node->type == 'election') {
+    // Delete the election diaet.
+    db_delete('field_election_roles_diaet')
+        ->condition('nid', $node->nid)
+        ->execute();
+  }
+}
+
+/**
+ * Updating, create a new table. {field_election_roles_diaet}.
+ * @see also valghalla_election_schema().
+ */
+function valghalla_election_update_7100() {
+  if (!db_table_exists('field_election_roles_diaet')) {
+    $schema['field_election_roles_diaet'] = array(
+      'description' => 'Table for storing the individual role diaet of each election.',
+      'fields' => array(
+        'nid'  => array(
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+          'description' => 'Primary Key: the node identifier for an election item.',
+        ),
+        'role_diaet_value' => array(
+          'type' => 'text',
+          'not null' => TRUE,
+          'size' => 'medium',
+          'description' => 'Diaet value for each role',
+        ),
+      ),
+      'primary key' => array('nid'),
+    );
+    db_create_table('field_election_roles_diaet', $schema['field_election_roles_diaet']);
+  }
+}

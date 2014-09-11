@@ -1,0 +1,71 @@
+<?php
+/**
+ * Implements hook_menu()
+ */
+function valghalla_lists_menu(){
+  $items = array();
+
+  $items['valghalla_lists'] = array(
+    'title' => 'Lister',
+    'file path' => drupal_get_path('module', 'system'),
+    'file' => 'system.admin.inc',
+    'page callback' => 'system_admin_menu_block_page',
+    'access callback' => array('user_is_logged_in'),
+  );
+
+  // Views data export doesnt allow you to create menu items,
+  // so we make a couple here, that just redirects the user
+  // to the export paths
+  $items['valghalla_lists/exportxls'] = array(
+    'title' => 'Eksporter valgdeltagere som XLS',
+    'type' => MENU_NORMAL_ITEM,
+    'page callback' => 'drupal_goto',
+    'page arguments' => array('valghalla_lists/export_xls'),
+    'access arguments' => array('valghalla export volunteers list'),
+  );
+
+  $items['valghalla_lists/exportcsv'] = array(
+    'title' => 'Eksporter valgdeltagere som CSV',
+    'type' => MENU_NORMAL_ITEM,
+    'page callback' => 'drupal_goto',
+    'page arguments' => array('valghalla_lists/export_csv'),
+    'access arguments' => array('valghalla export volunteers list'),
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_permission()
+ */
+function valghalla_lists_permission(){
+  return array(
+    'valghalla view messages list' => array(
+      'title'=> t('Se "Beskeder" liste'),
+    ),
+    'valghalla view no-reply list' => array(
+      'title'=> t('Se "Deltagere der endnu ikke har svaret" liste'),
+    ),
+    'valghalla view party-overview list' => array(
+      'title'=> t('Se "Parti oversigt" liste'),
+    ),
+    'valghalla view no-email list' => array(
+      'title'=> t('Se "Deltagere uden e-mail adresse" liste'),
+    ),
+    'valghalla view parties-volunteers list' => array(
+      'title'=> t('Se "Alle partiets deltagere" liste'),
+    ),
+    'valghalla export volunteers list' => array(
+      'title'=> t('Exporter deltagere'),
+    ),
+    'valghalla view kvittering list' => array(
+      'title'=> t('Se "Kvittering for diaeter" liste'),
+    ),
+    'valghalla view pollingstation list' => array(
+      'title'=> t('Se "Valgstyrere og tilforordnede" liste'),
+    ),
+    'valghalla-list view all parties' => array(
+      'title'=> t('Se Alle pariter'),
+    ),
+  );
+}

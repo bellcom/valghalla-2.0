@@ -1,0 +1,248 @@
+<?php
+/*
+ * file liste_valghalla_kvitttering module
+ * @author Yani Xu <yx@bellcom.dk>
+ */
+
+/**
+ * Implements hook_menu().
+ */
+function liste_valghalla_kvittering_menu() {
+  $items = array();
+  $items['valghalla_lists/kvittering'] =  array(
+          'title' => t('Kvitteringslister'),
+          'page callback' => 'liste_valghalla_kvittering_listpage',
+          'access callback' => 'user_access',
+          'access arguments' => array("valghalla view kvittering list"),
+          'type' => MENU_NORMAL_ITEM,
+    );
+  $items['valghalla_lists/kvittering/%'] =  array(
+          'title' => t('Kvitteringslister'),
+          'page callback' => 'liste_valghalla_kvittering_listpage_station',
+          'page arguments' => array(2),
+          'access callback' => 'user_access',
+          'access arguments' => array('valghalla view kvittering list'),
+          'type' => MENU_CALLBACK,
+    );
+  return $items;
+}
+
+/**
+ * Implements hook_theme().
+ */
+function liste_valghalla_kvittering_theme($existing, $type, $theme, $path) {
+  $items = array();
+  $items['liste_valghalla_kvittering'] = array(
+      'variables' => array('lists' => NULL),
+      'template' => 'liste_valghalla_kvittering'
+  );
+  $items['liste_valghalla_kvittering_station'] = array(
+      'variables' => array('volunteer_lists' => NULL),
+      'template' => 'liste_valghalla_kvittering_station'
+  );
+  return $items;
+}
+
+/**
+ * Display a list of all polling stations group by constituency
+ */
+function liste_valghalla_kvittering_listpage() {
+  global $user;
+  $user = user_load($user->uid);
+  $user_restrict_stations = array();
+
+  if ($user_polling_stations_list = field_get_items('user', $user, 'field_polling_station')) {
+    foreach ($user_polling_stations_list as $key => $nids) {
+      $user_restrict_stations[$nids['nid']] = $nids['nid'];
+    }
+  }
+
+  $lists = array();
+
+  if(isset($_SESSION['election_nid'])){
+    $default_election = $_SESSION['election_nid'];
+  } else {
+    return theme('liste_valghalla_kvittering', array(
+          'lists' => $lists,
+          'user_restrict_stations' => $user_restrict_stations,
+    ));
+  }
+
+  $stations = array();
+  // Election is NOT empty
+  if(isset($default_election) && $default_election != 0) {
+    $election = node_load($default_election);
+    if($station_nids = field_get_items('node', $election, 'field_polling_stations')) {
+      foreach ($station_nids as $station) {
+        $stations[] = $station['target_id'];
+      }
+    }
+    // Load all polling stations
+    foreach (node_load_multiple($stations) as $polling_station) {
+      $polling_station_nid = $polling_station->nid;
+      if (!empty($user_restrict_stations) && !array_key_exists($polling_station_nid,$user_restrict_stations)) {
+        continue;
+      }
+      $constituency_field = field_get_items('node', $polling_station, 'field_constituency');
+      foreach ($constituency_field as $constituency) {
+        $lists[$constituency['nid']][$polling_station_nid] = $polling_station_nid;
+      }
+    }
+    $lists = _liste_valghalla_generate_list_array($lists);
+  }
+  return theme('liste_valghalla_kvittering', array(
+          'lists' => $lists,
+          'user_restrict_stations' =>$user_restrict_stations,
+  ));
+}
+
+function _liste_valghalla_generate_list_array($lists) {
+  if(!is_array($lists)) {
+    return array();
+  }
+
+  foreach ($lists as $constituency_nid => $station_nids) {
+    $constituency = node_load($constituency_nid);
+
+    foreach ($station_nids as $nid => $station) {
+      $node = node_load($nid);
+      $lists_node[$constituency_nid][$nid] = array('title' => $node->title);
+      // Sorting polling station
+      aasort($lists_node[$constituency_nid],"title");
+      $lists[$constituency_nid] = array(
+              'c_title' => $constituency->title,
+              'nodes'=> $lists_node[$constituency_nid]);
+    }
+  }
+  // Sorting constituency
+  aasort($lists,"c_title");
+
+  return $lists;
+}
+
+/**
+ * Display the list of volunteers in all polling stations
+ *
+ */
+function liste_valghalla_kvittering_listpage_station($station_id) {
+  global $user, $language;
+  $user = user_load($user->uid);
+  $user_restrict_parties = "";
+
+  if ($user_party = field_get_items('user', $user, 'field_party')) {
+    $user_restrict_parties = $user_party[0]['tid'];
+  }
+
+  $user_party_permission = user_access('valghalla-list view all parties');
+  $volunteer_list = array();
+
+  if(isset($_SESSION['election_nid'])){
+    $default_election = $_SESSION['election_nid'];
+  } else {
+    return theme('liste_valghalla_kvittering_station', array(
+          'lists' => $volunteer_list,
+    ));
+  }
+
+  if (empty($station_id)) {
+    return theme('liste_valghalla_kvittering_station', array(
+          'lists' => $volunteer_list,
+    ));
+  }
+
+  $polling_station = node_load($station_id);
+  if ($constituency_id = field_get_items('node', $polling_station, 'field_constituency')) {
+    $constituency_id = $constituency_id[0]['nid'];
+    $constituency = node_load($constituency_id);
+  }
+
+  drupal_set_title("");
+
+  $volunteer_query = new EntityFieldQuery();
+
+  $volunteer_query->entityCondition('entity_type', 'field_collection_item')
+      ->entityCondition('bundle', 'field_electioninfo')
+      ->fieldCondition('field_election', 'target_id', $default_election)
+      ->fieldCondition('field_vlnt_station', 'target_id', $station_id);
+  $result = $volunteer_query->execute();
+  $result = array_shift($result);
+
+  $election_result = db_query("SELECT * FROM {field_election_roles_diaet} r WHERE r.nid = " .$default_election ."")
+                    ->fetchObject();
+  if(!empty($election_result)) {
+    $data = unserialize($election_result->role_diaet_value);
+  }
+
+  if ($result) {
+    foreach ($result as $key => $item){
+      $fc_item = entity_load_single('field_collection_item', $key);
+      $node = $fc_item->hostEntity();
+
+      if ($role_node = field_get_items('field_collection_item', $fc_item, 'field_post_role')) {
+        $role_node =  $role_node[0]['target_id'];
+        $role_node = node_load($role_node);
+        if ($role_hours = field_get_items('node', $role_node, 'field_role_hours')) {
+          $role_hours = $role_hours[0]['value'];
+        }
+      }
+
+      if($diaet = field_get_items('field_collection_item', $fc_item, 'field_diaet')) {
+        $diaet = $diaet[0]['value'];
+      }
+
+      if ($party_node = field_get_items('node',$node,'field_party')) {
+        $party_node_tid = $party_node[0]['tid'];
+        $party_node =  taxonomy_term_load($party_node_tid);
+      }
+      else {
+        $party_node_tid = "";
+      }
+
+      if ($km = field_get_items('field_collection_item', $fc_item, 'field_driver_km')) {
+        $km = $km[0]['value'];
+      }
+
+      if ($hours = field_get_items('field_collection_item', $fc_item, 'field_role_hours')) {
+        $hours = $hours[0]['value'];
+      }
+
+      if (!$user_party_permission && $user_restrict_parties !== $party_node_tid) {
+        continue;
+      }
+      $volunteer_list[$node->nid] = array(
+          'polling_station' => $polling_station->title,
+          'polling_station_nid' => $station_id,
+          'fc_id' => $key,
+          'nid' => $node->nid,
+          'name' => $node->title,
+          'party' => isset($party_node->name) ? $party_node->name : "",
+          'role' => ($role_node->title) ? $role_node->title : "",
+          'km' => ($km) ? $km : '',
+          'hours' => ($hours) ? $hours : (isset($role_hours) ? $role_hours : ""),
+          'diaet' => ($diaet) ? $diaet : (isset($data[$role_node->nid]) ? $data[$role_node->nid] : ""),
+      );
+    }
+    // sorting volunteers
+    aasort($volunteer_list, "name");
+  }
+  return theme('liste_valghalla_kvittering_station', array(
+            'volunteer_lists' => $volunteer_list,
+            'polling_station' => array($station_id => $polling_station->title)
+          ));
+}
+
+function aasort (&$array, $key) {
+    $sorter = array();
+    $ret = array();
+    reset($array);
+
+    foreach ($array as $ii => $va) {
+        $sorter[$ii] = $va[$key];
+    }
+    asort($sorter);
+
+    foreach ($sorter as $ii => $va) {
+        $ret[$ii] = $array[$ii];
+    }
+    $array = $ret;
+}

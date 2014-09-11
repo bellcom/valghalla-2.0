@@ -1,0 +1,179 @@
+<?php
+/**
+ * Implements hook_menu()
+ */
+function valghalla_menu(){
+  $items = array();
+
+  $items['admin/valghalla'] = array(
+    'title' => 'Valghalla',
+    'page callback' => 'system_admin_menu_block_page',
+    'file path' => drupal_get_path('module', 'system'),
+    'file' => 'system.admin.inc',
+    'access callback' => array('user_is_logged_in'),
+  );
+
+  $items['valghalla/administration'] = array(
+    'title' => 'Administration',
+    'page callback' => 'system_admin_menu_block_page',
+    'file path' => drupal_get_path('module', 'system'),
+    'file' => 'system.admin.inc',
+    'access callback' => array('user_is_logged_in'),
+  );
+  return $items;
+}
+
+/**
+ * Implements hook_init()
+ */
+function valghalla_init(){
+  // Redirect user to login, if not already logged in;
+  global $user;
+  $allowed_uris = array(
+    '/cron.php*',
+    '/xmlrpc.php',
+    '/sites/default/files/styles*',
+    '/user/login*',
+    '/user/reset*',
+    '/user/password*',
+    '/volunteers/rsvp*',
+  );
+
+  drupal_alter('valghalla_allowed_uris', $allowed_uris);
+
+  if ($user->uid == 0 && !drupal_match_path(request_uri(), implode("\n", $allowed_uris)) && !drupal_is_cli()) {
+    drupal_goto('user/login', array('query' => array('destination' => current_path())));
+  }
+}
+
+/**
+ * Implements hook_block_info()
+ */
+function valghalla_block_info() {
+  return array(
+    'election_party_switcher' => array(
+      'info' => t('Skift valg og parti'),
+      'cache' => DRUPAL_NO_CACHE
+    ),
+  );
+}
+
+/**
+ * Implements hook_block_view()
+ */
+function valghalla_block_view($delta = '') {
+  switch($delta){
+    // Election switcher is just a normal block with a form.
+  case 'election_party_switcher':
+    if(user_is_logged_in()){
+      $election_form = drupal_get_form('valghalla_change_election_party_form');
+      return array("content" => drupal_render($election_form));
+      break;
+    }
+  }
+}
+
+/**
+ * Election switcher form
+ *
+ * Let the user change election and party watch.
+ */
+function valghalla_change_election_party_form(){
+  global $user;
+
+  // Election form options and default value
+  $elections = node_load_multiple(array(), array('type' => 'election'));
+
+  $election_options[0] = t('Vælg valg');
+
+  foreach ($elections as $node) {
+    $election_options[$node->nid] = $node->title;
+  }
+
+  $default_election = 0;
+
+  if(isset($_SESSION['election_nid'])){
+    $default_election = $_SESSION['election_nid'];
+  }
+
+  // Party form options and default value
+  $default_party = 0;
+
+  if($party_field = field_get_items('user', user_load($user->uid), 'field_party')){
+    $default_party = $party_field[0]['tid'];
+  }
+
+  $parties_vocab = taxonomy_vocabulary_machine_name_load('partier');
+  $parties = taxonomy_term_load_multiple(array(), array('vid' => $parties_vocab->vid));
+
+  foreach ($parties as $party_tid => $party_taxonomy){
+    $party_options[$party_tid] = $party_taxonomy->name;
+  }
+
+  $party_options[0] = 'Alle';
+
+  if(user_access('valghalla change party')){
+    $form['party'] = array(
+      '#type' => 'select',
+      '#options' => $party_options,
+      '#default_value' => $default_party,
+    );
+  }
+  else {
+    $form['party'] = array(
+      '#type' => 'item',
+      '#markup' => 'Parti: <b>' . $party_options[$default_party] . '</b>',
+    );
+
+  }
+
+  $form['election'] = array(
+    '#type' => 'select',
+    '#options' => $election_options,
+    '#default_value' => $default_election,
+  );
+
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Vælg'),
+  );
+
+  return $form;
+}
+
+/**
+ * Election switcher form submit
+ *
+ * Set election nid in $_SESSION. And update user party tid.
+ */
+function valghalla_change_election_party_form_submit(&$form, $form_state){
+  // Set election to watch
+  $_SESSION['election_nid'] = $form_state['values']['election'];
+
+  // Set party
+  global $user;
+
+  $edit = array(
+    'uid' => $user->uid
+  );
+
+  $tid = $form_state['values']['party'];
+  if ($tid == 0) {
+    $edit['field_party'] = array();
+  } else {
+    $edit['field_party'][LANGUAGE_NONE][0]['tid'] = $tid;
+  }
+
+  user_save($user, $edit);
+}
+
+/**
+ * Implements hook_permission()
+ */
+function valghalla_permission(){
+  return array(
+    'valghalla change party' => array(
+      'title'=> t('Tilladelse til at skifte parti'),
+    ),
+  );
+}

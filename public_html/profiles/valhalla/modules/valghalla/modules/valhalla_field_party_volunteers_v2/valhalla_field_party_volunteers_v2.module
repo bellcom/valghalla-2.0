@@ -1,0 +1,132 @@
+<?php
+// valhalla_field_party_volunteers
+
+
+function valhalla_field_party_volunteers_v2_field_info() {
+  return array(
+    'party_volunteers_field_v2' => array(
+      'label' => t('Number of volunteers pr party'),
+      'description' => t('Combines the party to the number of required volunteers for a specific polling station.'),
+      'default_widget' => 'party_volunteers_standard_v2',
+      'default_formatter' => 'party_volunteers_default_v2',
+    ),
+  );
+}
+
+
+function valhalla_field_party_volunteers_v2_field_schema() {
+  $columns = array(
+    'party' => array(
+      'description' => 'Party reference.',
+      'type' => 'int',
+      'unsigned' => TRUE,
+      'not null' => TRUE,
+      'default' => 0,
+    ),
+    'number_va' => array(
+      'description' => 'Number of controlers',
+      'type' => 'int',
+      'unsigned' => TRUE,
+      'not null' => TRUE,
+      'default' => 0,
+    ),
+    'number_ti' => array(
+      'description' => 'Number of scrutineers',
+      'type' => 'int',
+      'unsigned' => TRUE,
+      'not null' => TRUE,
+      'default' => 0,
+    ),
+  );
+
+  return array(
+    'columns' => $columns,
+    // TODO Add indexes.
+  );
+}
+
+
+function valhalla_field_party_volunteers_v2_field_widget_info() {
+  $widgets = array();
+
+  $widgets['party_volunteers_standard_v2'] = array(
+    'label' => t('Volunteers to Party'),
+    'field types' => array('party_volunteers_field_v2'),
+    'settings' => array(
+      'available_parties' => array(),
+    )
+  );
+
+  return $widgets;
+}
+
+
+function valhalla_field_party_volunteers_v2_field_widget_form(&$form, &$form_state, $field, $instance, $langcode, $items, $delta, $element) {
+  $settings = $instance['widget']['settings'];
+
+  $party_value = isset($items[$delta]['party']) ? $items[$delta]['party'] : '';
+  $number_va_value = isset($items[$delta]['number_va']) ? $items[$delta]['number_va'] : '0';
+  $number_ti_value = isset($items[$delta]['number_ti']) ? $items[$delta]['number_ti'] : '0';
+
+  if ($instance['widget']['type'] == 'party_volunteers_standard_v2') {
+
+    $options = array(0 => t('Select Party'));
+    foreach (taxonomy_get_tree(1) as $item) {
+      $options[$item->tid] = $item->name;
+    }
+
+    $element['party'] = array(
+      '#type' => 'select',
+      '#title' => t('Party'),
+      '#options' => $options,
+      '#default_value' => $party_value,
+    );
+
+    $element['number_va'] = array(
+      '#type' => 'textfield',
+      '#title' => t('VA'),
+      '#size' => 5,
+      '#default_value' => $number_va_value,
+    );
+
+    $element['number_ti'] = array(
+      '#type' => 'textfield',
+      '#title' => t('TI'),
+      '#size' => 5,
+      '#default_value' => $number_ti_value,
+    );
+  }
+  
+  return $element;
+}
+
+
+function valhalla_field_party_volunteers_v2_field_formatter_info() {
+  return array(
+    'party_volunteers_default_v2' => array(
+      'label' => t('Default'),
+      'field types' => array('party_volunteers_field_v2'),
+    ),
+  );
+}
+
+
+function valhalla_field_party_volunteers_v2_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
+  $element = array();
+
+  switch ($display['type']) {
+    case 'party_volunteers_default_v2':
+      foreach ($items as $delta => $item) {
+        $term = taxonomy_term_load($item['party']);
+      $element[$delta]['#markup'] = '<p>' . $term->name  . ': VA ' . $item['number_va'] . ' / TI ' . $item['number_ti'] . '</p>';
+      }
+      break;
+  }
+
+  return $element;
+}
+
+
+function valhalla_field_party_volunteers_v2_field_is_empty($item, $field) {
+  return empty($item['party']);
+}

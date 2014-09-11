@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Liste m. CPR nummer feature.
+ */
+
+include_once 'liste_m_cpr_nummer.features.inc';

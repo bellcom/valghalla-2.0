@@ -1,0 +1,51 @@
+<?php
+/**
+ * @file
+ * Code for the Valghalla User Tools feature.
+ */
+
+include_once 'valghalla_user_tools.features.inc';
+
+/**
+ * Implements hook_form_alter()
+ */
+function valghalla_user_tools_form_views_exposed_form_alter(&$form, &$form_state, $form_id){
+  // If the exposed form has a CPR field, hide it, if the user doesnt have the proper
+  // permissions.
+  if(isset($form['field_cpr_number_value']) && !user_access('see all psn numbers')){
+    unset($form['field_cpr_number_value']);
+    unset($form['#info']['filter-field_cpr_number_value']);
+  }
+}
+
+/**
+ * Implements hook_views_pre_render()
+ */
+function valghalla_user_tools_views_pre_render(&$view){
+  if($view->name == 'indholdsfiltre' && $view->current_display == 'page' && !user_access('see all psn numbers')){
+    // Replace the last 4 digits of the PSN with stars
+    foreach($view->result as &$result){
+      $value = $result->field_field_cpr_number[0]['rendered']['#markup'];
+      list($birthday, $secret) = explode('-', $value);
+      $result->field_field_cpr_number[0]['rendered']['#markup'] = $birthday . '-****';
+    }
+  }
+}
+
+/**
+ * Implements hook_views_pre_view()
+ */
+function valghalla_user_tools_views_pre_view(&$view, &$display_id, &$args) {
+  // Load user and fetch party id
+  global $user;
+  $user_account = user_load($user->uid);
+  $user_party = 'all';
+
+  // Hide volunteers not in current users party
+  if($party_field = field_get_items('user', $user_account, 'field_party')){
+    $user_party = $party_field[0]['tid'];
+  }
+  if($view->name == 'indholdsfiltre' && $view->current_display == 'page'){
+    $args[] = $user_party;
+  }
+}

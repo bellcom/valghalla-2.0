@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Valghalla polling station feature.
+ */
+
+include_once 'valghalla_polling_station.features.inc';

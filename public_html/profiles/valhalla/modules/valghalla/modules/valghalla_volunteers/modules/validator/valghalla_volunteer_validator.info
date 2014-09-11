@@ -1,0 +1,4 @@
+name = Valghalla Volunteer validator
+description = Volunteer validation
+core = 7.x
+package = Valghalla

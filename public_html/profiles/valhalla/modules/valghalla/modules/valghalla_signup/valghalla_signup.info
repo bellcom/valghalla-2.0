@@ -1,0 +1,5 @@
+name = Valhalla SignUp
+description = Enables volunteers to sign up from external sites
+core = 7.x
+package = Valghalla
+dependencies[] = "odin"

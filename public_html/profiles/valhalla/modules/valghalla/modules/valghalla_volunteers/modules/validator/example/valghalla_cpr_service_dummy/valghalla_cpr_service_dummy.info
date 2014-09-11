@@ -1,0 +1,4 @@
+name=Valghalla CPR Validator service: dummy
+description=provides CPR service dummy
+core=7.x
+package = Valghalla
