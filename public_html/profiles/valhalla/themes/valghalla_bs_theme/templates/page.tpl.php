@@ -94,47 +94,32 @@
       </button>
     </div>
 
-    <?php if (!empty($primary_nav) || !empty($secondary_nav) || !empty($page['navigation'])): ?>
-      <div class="navbar-collapse collapse">
-        <ul class="nav navbar-nav">
-          <?php if($valghalla_deltagere): ?>
-            <li class="dropdown">
-              <?php print $valghalla_deltagere; ?>
-            </li>
-          <?php endif; ?>
-          <?php if($valghalla_lists): ?>
-            <li class="dropdown">
-              <?php print $valghalla_lists; ?>
-            </li>
-          <?php endif; ?>
-          <?php if($valghalla_administration): ?>
-            <li class="dropdown">
-              <?php print $valghalla_administration; ?>
-            </li>
-          <?php endif; ?>
-          <?php if($admin_valghalla): ?>
-            <li class="dropdown">
-              <?php print $admin_valghalla; ?>
-            </li>
-          <?php endif; ?>
-        </ul>
-        <?php $block = module_invoke('valghalla', 'block_view', 'election_party_switcher'); ?>
-        <?php print render($block['content']); ?>
-
-        <nav role="navigation">
-          <?php if (!empty($primary_nav)): ?>
-            <?php print render($primary_nav); ?>
-          <?php endif; ?>
-          <?php if (!empty($secondary_nav)): ?>
-            <?php print render($secondary_nav); ?>
-          <?php endif; ?>
-          <?php if (!empty($page['navigation'])): ?>
-            <?php print render($page['navigation']); ?>
-          <?php endif; ?>
-        </nav>
-      </div>
-    <?php endif; ?>
-  </div>
+    <div class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <?php if($valghalla_deltagere): ?>
+          <li class="dropdown">
+            <?php print $valghalla_deltagere; ?>
+          </li>
+        <?php endif; ?>
+        <?php if($valghalla_lists): ?>
+          <li class="dropdown">
+            <?php print $valghalla_lists; ?>
+          </li>
+        <?php endif; ?>
+        <?php if($valghalla_administration): ?>
+          <li class="dropdown">
+            <?php print $valghalla_administration; ?>
+          </li>
+        <?php endif; ?>
+        <?php if($admin_valghalla): ?>
+          <li class="dropdown">
+            <?php print $admin_valghalla; ?>
+          </li>
+        <?php endif; ?>
+      </ul>
+      <?php $block = module_invoke('valghalla', 'block_view', 'election_party_switcher'); ?>
+      <?php print render($block['content']); ?>
+    </div>
 </header>
 
 <div class="main-container container">
