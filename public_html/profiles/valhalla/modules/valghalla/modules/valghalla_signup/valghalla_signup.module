@@ -24,14 +24,6 @@ function valghalla_signup_menu(){
     'type' => MENU_NORMAL_ITEM,
   );
 
-  $items['valghalla/signup/test'] = array(
-    'title' => 'Ekstern registreringsform',
-    'description' => '',
-    'page callback' => 'valghalla_signup_signup_test',
-    'access callback' => TRUE,
-    'type' => MENU_NORMAL_ITEM,
-  );
-
   return $items;
 }
 
@@ -41,10 +33,6 @@ function valghalla_signup_menu(){
 function valghalla_signup_valghalla_allowed_uris_alter(&$allowed_uris) {
   $allowed_uris[] = '/valghalla/signup';
   $allowed_uris[] = '/system/ajax*';
-}
-
-function valghalla_signup_signup_test() {
-  return '<iframe src="http://kran:49113/valghalla/signup/702" style="height: 400px; border: none;">...</iframe> ';
 }
 
 /**
@@ -204,14 +192,19 @@ function valghalla_signup_signup_form($form, &$form_state) {
     '#disabled' => $qty,
     '#default_value' => $qty,
     '#options' => $qty_options,
-    '#attributes' => array('onChange' => 'document.getElementById("valghalla-signup-signup-form").submit();')
+    '#attributes' => array('onChange' => 'document.getElementById("valghalla-signup-signup-form").submit();'),
   );
 
   if ($qty) {
+    $form['qty']['#prefix'] = '<div class="row"><div class="col-md-11">';
+    $form['qty']['#suffix'] = '</div>';
+
     $form['reset'] = array(
       '#type' => 'button',
       '#value' => 'Nulstil',
-      '#attributes' => array('onClick' => 'location.reload();')
+      '#attributes' => array('onClick' => 'location.reload();'),
+      '#prefix' => '<div class="col-md-1 form-reset">',
+      '#suffix' => '</div></div>',
     );
 
     $role_nid = variable_get('valghalla_signup_role_nid', FALSE);
@@ -246,46 +239,67 @@ function valghalla_signup_signup_form($form, &$form_state) {
           '#title' => 'Vejnavn',
           '#type' => 'textfield',
           '#required' => TRUE,
+          '#prefix' => '<div class="row"><div class="col-md-6">',
+          '#suffix' => '</div>',
         );
 
         $form['volunteers'][$i]['road_no'] = array(
           '#required' => TRUE,
           '#title' => 'Husnummer',
           '#type' => 'textfield',
+          '#prefix' => '<div class="col-md-2">',
+          '#suffix' => '</div>',
         );
 
         $form['volunteers'][$i]['floor'] = array(
           '#title' => 'Etage',
           '#type' => 'textfield',
+          '#prefix' => '<div class="col-md-2">',
+          '#suffix' => '</div>',
         );
 
         $form['volunteers'][$i]['door'] = array(
           '#title' => 'Dør/side',
           '#type' => 'textfield',
+          '#prefix' => '<div class="col-md-2">',
+          '#suffix' => '</div></div>',
         );
 
         $form['volunteers'][$i]['zipcode'] = array(
           '#required' => TRUE,
           '#title' => 'Postnummer',
           '#type' => 'textfield',
+          '#prefix' => '<div class="row"><div class="col-md-6">',
+          '#suffix' => '</div>',
         );
 
         $form['volunteers'][$i]['city'] = array(
           '#title' => 'By',
           '#type' => 'textfield',
           '#required' => TRUE,
+          '#prefix' => '<div class="col-md-6">',
+          '#suffix' => '</div></div>',
         );
 
         $form['volunteers'][$i]['email'] = array(
+          '#required' => TRUE,
           '#title' => 'E-mail',
           '#type' => 'textfield',
-          '#required' => TRUE,
+          '#prefix' => '<div class="row"><div class="col-md-6">',
+          '#suffix' => '</div>',
         );
 
         $form['volunteers'][$i]['phone'] = array(
           '#required' => TRUE,
           '#title' => 'Telefon',
           '#type' => 'textfield',
+          '#prefix' => '<div class="col-md-6">',
+          '#suffix' => '</div></div>',
+        );
+
+        $form['volunteers'][$i]['message'] = array(
+          '#title' => 'Evt. besked',
+          '#type' => 'textarea',
         );
       }
 
@@ -420,17 +434,30 @@ function valghalla_signup_get_avaiable_polling_stations($election_nid, $qty, $ro
   }
 
   $options = array();
+  $constituencies = array();
+  $polling_stations = array();
   foreach (node_load_multiple($polling_station_nids) as $polling_station) {
     $count = odin_get_volunteers_count($election_node->nid, array($polling_station->nid), $roles);
 
     if (($count['total_count']['assigned'] - $count['total_count']['total']) >= $qty) {
       if( $constituency_field = field_get_items('node', $polling_station, 'field_constituency')) {
+        // We save the data in 2 arrays, and don't populate options yes, as we have to sort the options
+        // according to the title of the constituencies.
         $constituency = node_load($constituency_field[0]['nid']);
-        $options[$constituency->title][$polling_station->nid] = $polling_station->title;
+        $constituencies[$constituency->nid] = $constituency->title;
+        $polling_stations[$constituency->nid][$polling_station->nid] = $polling_station->title;
       }
       else {
         $options[$polling_station->nid] = $polling_station->title;
       }
+    }
+  }
+
+  if ($constituencies && $polling_stations) {
+    natsort($constituencies);
+
+    foreach ($constituencies as $constituency_nid => $constituency_title) {
+      $options[$constituency_title] = $polling_stations[$constituency_nid];
     }
   }
 
