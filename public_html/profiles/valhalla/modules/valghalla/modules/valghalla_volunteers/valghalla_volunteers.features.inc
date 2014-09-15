@@ -12,7 +12,7 @@ function valghalla_volunteers_node_info() {
     'roles' => array(
       'name' => t('Roles of volunteers'),
       'base' => 'node_content',
-      'description' => '',
+      'description' => t('Roles of volunteers'),
       'has_title' => '1',
       'title_label' => t('Role'),
       'help' => '',

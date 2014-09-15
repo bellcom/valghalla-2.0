@@ -36,19 +36,23 @@ function valghalla_signup_list_page($form, &$form_state) {
   $rows =  valghalla_signup_list_volunteers_rows($volunteer_nids);
 
   $header = array('Navn', 'CPR Nummer', 'E-mail', 'Tilmeldingdato', 'Valideret', t('Edit') );
+  $form['#attributes'] = array('class' => 'form-inline');
 
   $form['name'] = array(
     '#type' => 'textfield',
+    '#size' => 32,
     '#title' => t('Name'),
   );
 
   $form['cpr'] = array(
     '#type' => 'textfield',
+    '#size' => 10,
     '#title' => t('CPR nummer'),
   );
 
   $form['email'] = array(
     '#type' => 'textfield',
+    '#size' => 32,
     '#title' => t('Email'),
   );
 
@@ -66,6 +70,8 @@ function valghalla_signup_list_page($form, &$form_state) {
   $form['submit'] = array(
     '#type' => 'submit',
     '#value' => 'Udfør',
+    '#prefix' => '<div class="form-reset form-item form-group">',
+    '#suffix' => '</div>',
   );
 
   $form['results'] = array(
@@ -95,7 +101,9 @@ function valghalla_signup_list_get_volunteer_nids($params) {
         ->fieldCondition('field_cpr_valid_date', 'value', 'NULL', '!=');
     $not_result = $not_query->execute();
 
-    $query->entityCondition('entity_id', array_keys($not_result['node']), 'NOT IN');
+    if (isset($not_result['node'])) {
+      $query->entityCondition('entity_id', array_keys($not_result['node']), 'NOT IN');
+    }
   }
 
   if ($params['name']) {
@@ -109,7 +117,6 @@ function valghalla_signup_list_get_volunteer_nids($params) {
   if ($params['email']) {
     $query->fieldCondition('field_email', 'email', '%' . $params['email'] . '%', 'LIKE');
   }
-
 
   $result = $query->execute();
 

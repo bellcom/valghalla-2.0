@@ -233,6 +233,8 @@ function valghalla_signup_signup_form($form, &$form_state) {
           '#title' => 'Fødselsdato',
           '#type' => 'date',
           '#required' => TRUE,
+          '#date_format' => 'd-m-Y',
+          '#pre_render' => array('_valghalla_signup_birthdate_pre_render'),
         );
 
         $form['volunteers'][$i]['road'] = array(
@@ -297,7 +299,7 @@ function valghalla_signup_signup_form($form, &$form_state) {
           '#suffix' => '</div></div>',
         );
 
-        $form['volunteers'][$i]['message'] = array(
+        $form['volunteers'][$i]['comment'] = array(
           '#title' => 'Evt. besked',
           '#type' => 'textarea',
         );
@@ -318,6 +320,22 @@ function valghalla_signup_signup_form($form, &$form_state) {
 }
 
 /**
+ * Pre render function setting birthday default value empty
+ */
+function _valghalla_signup_birthdate_pre_render($element) {
+  $element['day']['#value'] = '';
+  array_unshift($element['day']['#options'], '');
+
+  $element['month']['#value'] = '';
+  array_unshift($element['month']['#options'], '');
+
+  $element['year']['#value'] = '';
+  array_unshift($element['year']['#options'], '');
+
+  return $element;
+}
+
+/**
  * Validation for signup form
  */
 function valghalla_signup_signup_form_validate($form, &$form_state) {
@@ -326,10 +344,10 @@ function valghalla_signup_signup_form_validate($form, &$form_state) {
       if(!valid_email_address($volunteer['email'])) {
         form_set_error($id.'][email]', 'Ikke gyldig emailadresse');
       }
-      if (strlen((int)$volunteer['phone']) < 8) {
+      if (strlen((int)$volunteer['phone']) != 8) {
         form_set_error('volunteers][' . $id . '][phone', 'Ikke gyldigt telefonnummer');
       }
-      if (strlen((int)$volunteer['zipcode']) < 4) {
+      if (strlen((int)$volunteer['zipcode']) != 4) {
         form_set_error('volunteers][' . $id . '][zipcode', 'Ikke gyldigt postnummer');
       }
       if (strlen((int)$volunteer['road_no']) < 1 || $volunteer['road_no'] == 0) {
@@ -375,6 +393,9 @@ function valghalla_signup_signup_form_submit($form, &$form_state) {
   $form_state['rebuild'] = TRUE;
 }
 
+/**
+ * Create node for volunteer, add to polling station
+ */
 function valghalla_signup_add_volunteer($volunteer, $polling_station_nid) {
   $volunteer_node = new stdClass();
   $volunteer_node->type = 'volunteers';
@@ -400,6 +421,7 @@ function valghalla_signup_add_volunteer($volunteer, $polling_station_nid) {
   $volunteer_node->field_email[LANGUAGE_NONE][]['email'] = $volunteer['email'];
   $volunteer_node->field_phone[LANGUAGE_NONE][]['value'] = $volunteer['phone'];
   $volunteer_node->field_party[LANGUAGE_NONE][]['tid'] = $volunteer_party_tid;
+  $volunteer_node->field_rsvp_comment[LANGUAGE_NONE][]['value'] = $volunteer['comment'];
 
   $volunteer_node->field_external_signup[LANGUAGE_NONE][]['value'] = 1;
 
