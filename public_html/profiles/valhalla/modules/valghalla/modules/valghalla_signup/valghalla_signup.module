@@ -323,14 +323,14 @@ function valghalla_signup_signup_form($form, &$form_state) {
  * Pre render function setting birthday default value empty
  */
 function _valghalla_signup_birthdate_pre_render($element) {
-  $element['day']['#value'] = '';
-  array_unshift($element['day']['#options'], '');
+  $element['day']['#value'] = ' ';
+  array_unshift($element['day']['#options'], ' ');
 
-  $element['month']['#value'] = '';
-  array_unshift($element['month']['#options'], '');
+  $element['month']['#value'] = ' ';
+  array_unshift($element['month']['#options'], ' ');
 
-  $element['year']['#value'] = '';
-  array_unshift($element['year']['#options'], '');
+  $element['year']['#value'] = ' ';
+  array_unshift($element['year']['#options'], ' ');
 
   return $element;
 }
@@ -381,7 +381,6 @@ function valghalla_signup_signup_form_submit($form, &$form_state) {
 
   if ($ok) {
     foreach($form_state['values']['volunteers'] as $id => $volunteer) {
-      drupal_set_message('add volunteer: ' . $volunteer['name']);
       valghalla_signup_add_volunteer($volunteer, $polling_station_nid);
     }
     $form_state['submitted'] = TRUE;
