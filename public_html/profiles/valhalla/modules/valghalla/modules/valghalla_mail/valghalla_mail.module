@@ -214,6 +214,7 @@ function valghalla_mail_ajax_view($mail_nid, $fc_id, $election_nid = FALSE) {
 function valghalla_mail_get_mail_types(){
   return array(
     'invitation' => t('Invitation'),
+    'confirmed' => t('Bekræftet (tak for din tilmeldelse)'),
     'reminder' => t('Påmindelse'),
     'rsvp_yes' => t('RSVP Ja'),
     'rsvp_no' => t('RSVP Nej'),

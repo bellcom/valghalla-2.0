@@ -658,6 +658,9 @@ function valghalla_volunteers_add_volunteer_to_post($volunteer_nid, $pollingstat
   if(variable_get('valghalla_mail_send_invitation_on_add', TRUE) && !$confirmed){
     valghalla_volunteers_notify_volunteer($election_nid, $role_nid, $fc, 'invitation');
   }
+  else if ($confirmed) {
+    valghalla_volunteers_notify_volunteer($election_nid, $role_nid, $fc, 'confirmed');
+  }
 
   return array('fcid' => $fc->item_id, 'html' => _valghalla_helper_wrap_name($volunteer_node, "p", $fc->item_id));
 }

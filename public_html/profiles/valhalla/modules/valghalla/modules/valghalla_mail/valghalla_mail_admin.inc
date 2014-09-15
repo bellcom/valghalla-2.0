@@ -50,9 +50,8 @@ function valghalla_mail_admin_valghalla_mails($form, $form_state, $election_nid 
 
   $form['valghalla_volunteers_mail']['mails'] = array(
     '#type' => 'fieldset',
-    '#tree' => TRUE,
     '#title' => t('Standard E-Mail skabeloner'),
-    '#description' => '<a href="/node/add/email?destination=/valhalla/administration/mails"><span class="glyphicon glyphicon-plus"></span>Tilføj ny</a>',
+    '#description' => '<a href="/node/add/email?destination=/valghalla/administration/mails"><span class="glyphicon glyphicon-plus"></span> Tilføj ny</a>',
   );
 
   $mail_options = valghalla_mail_get_mails();
@@ -60,14 +59,14 @@ function valghalla_mail_admin_valghalla_mails($form, $form_state, $election_nid 
   // Generate form for selecting general mails.
   foreach($mail_types as $mail_type => $mail_type_title){
     $description = t('Vælg E-mail skabelon for ') . $mail_type_title;
-    $mail_nid = variable_get('valghalla_mail_' . $election_nid . '_' . $mail_type, FALSE);
+    $variable_name = 'valghalla_mail_' . $election_nid . '_' . $mail_type;
+    $mail_nid = variable_get($variable_name, FALSE);
 
     if($mail_nid){
-      $description .= ' <a class="form-submit" href="/node/' . $mail_nid . '/edit?destination=/admin/valhalla/mails">'.t('edit').'</a>';
+      $description .= ' <a class="form-submit" href="/node/' . $mail_nid . '/edit?destination=/admin/valghalla/mails">'.t('edit').'</a>';
     }
-    elseif (node_type_load('email')) {
-    }
-    $form['valghalla_volunteers_mail']['mails']['valghalla_mail_' . $election_nid . '_' . $mail_type] = array(
+
+    $form['valghalla_volunteers_mail']['mails'][$variable_name] = array(
       '#title' => $mail_type_title,
       '#type' => 'select',
       '#options' => $mail_options,
