@@ -76,14 +76,14 @@ function vvv_validate_age_validate($volunteer, $message) {
         }
 
         // If there are more than one date, use the "lowest"
-        if ($tmp_date < $date) {
+        if ($tmp_date && ($tmp_date < $date)) {
           $date = $tmp_date;
         }
       }
     }
-    else {
-      $date = new DateTime('now');
-    }
+  }
+  if (!$date) {
+    $date = new DateTime('now');
   }
 
   // Birthdate
