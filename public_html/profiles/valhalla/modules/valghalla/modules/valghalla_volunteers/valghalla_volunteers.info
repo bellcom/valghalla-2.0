@@ -83,7 +83,6 @@ features[field_instance][] = node-volunteers-field_cpr_valid_date
 features[field_instance][] = node-volunteers-field_diaet
 features[field_instance][] = node-volunteers-field_electioninfo
 features[field_instance][] = node-volunteers-field_email
-features[field_instance][] = node-volunteers-field_external_signup
 features[field_instance][] = node-volunteers-field_label
 features[field_instance][] = node-volunteers-field_meeting_time
 features[field_instance][] = node-volunteers-field_party
