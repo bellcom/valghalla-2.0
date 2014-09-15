@@ -6677,6 +6677,12 @@ fieldset[disabled] #valghalla-change-election-party-form button:active,
 fieldset[disabled] #valghalla-change-election-party-form button.active {
   background-color: #449d44;
 }
+#valghalla-change-election-party-form .form-item-election {
+  width: 200px;
+}
+#valghalla-change-election-party-form .form-item-party {
+  width: 80px;
+}
 /**
  * Status on frontpage
  */
