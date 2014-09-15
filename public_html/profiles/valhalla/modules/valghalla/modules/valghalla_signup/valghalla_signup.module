@@ -196,14 +196,14 @@ function valghalla_signup_signup_form($form, &$form_state) {
   );
 
   if ($qty) {
-    $form['qty']['#prefix'] = '<div class="row"><div class="col-md-10">';
+    $form['qty']['#prefix'] = '<div class="row"><div class="col-md-11">';
     $form['qty']['#suffix'] = '</div>';
 
     $form['reset'] = array(
       '#type' => 'button',
       '#value' => 'Nulstil',
       '#attributes' => array('onClick' => 'location.reload();'),
-      '#prefix' => '<div class="col-md-2 form-reset">',
+      '#prefix' => '<div class="col-md-1 form-reset">',
       '#suffix' => '</div></div>',
     );
 
