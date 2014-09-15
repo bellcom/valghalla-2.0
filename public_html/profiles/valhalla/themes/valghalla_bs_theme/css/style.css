@@ -7203,6 +7203,9 @@ fieldset[disabled] .paging_two_button a.active {
 .form-reset {
   padding-top: 21px;
 }
+[id*=-birthdate] .form-group {
+  width: 110px;
+}
 .btn-default {
   color: #ffffff;
   background-image: -webkit-gradient(linear, left 0%, left 100%, from(#00679a), to(#0089cd));

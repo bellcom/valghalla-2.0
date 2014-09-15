@@ -330,7 +330,7 @@ function _valghalla_signup_birthdate_pre_render($element) {
   array_unshift($element['month']['#options'], ' ');
 
   $element['year']['#value'] = ' ';
-  array_unshift($element['year']['#options'], ' ');
+  array_unshift($element['year']['#options'], '');
 
   return $element;
 }
