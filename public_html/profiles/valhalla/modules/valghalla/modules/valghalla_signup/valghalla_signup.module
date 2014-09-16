@@ -217,7 +217,7 @@ function valghalla_signup_signup_form($form, &$form_state) {
     $form['reset'] = array(
       '#type' => 'button',
       '#value' => 'Nulstil',
-      '#attributes' => array('onClick' => 'location.reload();'),
+      '#attributes' => array('onClick' => 'window.location = window.location.href;'),
       '#prefix' => '<div class="col-md-1 form-reset">',
       '#suffix' => '</div></div>',
     );
