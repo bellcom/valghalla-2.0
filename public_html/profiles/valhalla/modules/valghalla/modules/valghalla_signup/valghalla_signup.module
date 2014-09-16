@@ -106,17 +106,10 @@ function valghalla_signup_administration_form() {
     '#default_value' => variable_get('valghalla_signup_closed_message', ''),
   );
 
-  $mail_options = valghalla_mail_get_mails();
-
-  $form['valghalla_signup_mail_nid'] = array(
-    '#title' => 'Mail skabelon',
-    '#descripton' => 'Skabelon for bekræftelse af tilmelding',
-    '#type' => 'select',
-    '#options' => $mail_options,
-    '#default_value' => variable_get('valghalla_signup_mail_nid', FALSE),
-  );
-
+  global $base_url;
+  $url = $base_url . '/valghalla/signup';
   $form['valghalla_signup_description'] = array(
+    '#markup' => 'Når ekstern tilmelding er aktiveret kan tilmeldingsformularen ses på: '. l($url, $url),
     '#type' => 'item',
   );
 

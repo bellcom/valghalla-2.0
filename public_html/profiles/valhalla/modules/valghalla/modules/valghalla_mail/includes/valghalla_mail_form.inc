@@ -35,26 +35,27 @@ function valghalla_mail_sendmail_form($form, &$form_state, $nid) {
   drupal_add_css(drupal_get_path('module', 'valghalla_mail') . '/css/valghalla_mail.css');
   drupal_add_js(drupal_get_path('module', 'valghalla_mail') . '/js/valghalla_mail.js', 'file');
 
-  if (!isset($form_state['stage']))
+  if (!isset($form_state['stage'])) {
     $form_state['stage'] = 'get_recipients';
+  }
+
   module_load_include('inc', 'node', 'node.pages');
 
   $form = array();
   $form = valghalla_mail_sendmail_get_header($form, $form_state);
 
   switch ($form_state['stage']) {
-
     case 'get_recipients':
       return valghalla_mail_sendmail_get_recipients_form($form, $form_state, $nid);
-     break;
+      break;
 
     case 'send_confirm':
       return valghalla_mail_sendmail_send_confirm_form($form, $form_state);
-     break;
+      break;
 
     default:
       return valghalla_mail_sendmail_get_recipients_form($form, $form_state, $nid);
-     break;
+      break;
   }
 
   return $form;
@@ -94,7 +95,7 @@ function valghalla_mail_sendmail_get_recipients_form($form, &$form_state, $nid) 
   module_load_include('inc', 'valghalla_mail');
 
   // Get parties from Term objects.
-  $taxonomy=taxonomy_vocabulary_machine_name_load('partier');
+  $taxonomy = taxonomy_vocabulary_machine_name_load('partier');
 
   foreach (taxonomy_get_tree($taxonomy->vid) as $tid => $term) {
     $parties[$term->tid] = $term->name;
@@ -126,6 +127,7 @@ function valghalla_mail_sendmail_get_recipients_form($form, &$form_state, $nid) 
     else $description = ' <a class="form-submit" href="/admin/valhalla/sendmail">Add</a>';
   }
   else $description = ' <a class="form-submit" href="/admin/valhalla/sendmail">Add</a>';
+
   $form['mail_content']['valghalla_mail_email_node_ID'] = array(
     '#title' => "Mail indhold",
     '#type' => 'select',
@@ -366,7 +368,7 @@ function valghalla_mail_form_email_node_form_alter(&$form, &$form_state, $form_i
 
   $form['title']['#description'] = 'E-mailens interne navn i Valghalla, dette er ikke emnefeltet.';
 
-  if ($url == "admin/valghalla/sendmail") {
+  if ($url == "valghalla/administration/sendmail") {
     $form_state['valghalla_sendmail'] = TRUE;
 
     $emails = db_select('node', 'n')
@@ -374,6 +376,9 @@ function valghalla_mail_form_email_node_form_alter(&$form, &$form_state, $form_i
           ->fields('n', array('nid', 'title'))
           ->condition('n.type', 'email')
           ->execute()->fetchAllKeyed();
+
+    $form['header'] = valghalla_mail_sendmail_get_header();
+    $form['header']['#weight'] = -100;
 
     $form['resend'] = array(
       '#type' => 'select',
@@ -407,7 +412,7 @@ function valghalla_mail_form_email_node_form_alter(&$form, &$form_state, $form_i
 function valghalla_mail_resend_ajax($form, $form_state){
   ctools_include('ajax');
   ctools_add_js('ajax-responder');
-  $commands[] = ctools_ajax_command_redirect('admin/valghalla/sendto/'.$form_state['values']['resend']);
+  $commands[] = ctools_ajax_command_redirect('valghalla/administration/sendto/'.$form_state['values']['resend']);
   print ajax_render($commands);
   exit;
 }

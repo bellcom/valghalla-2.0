@@ -689,15 +689,21 @@ function valghalla_volunteers_remove_volunteer_from_post($fcid){
 }
 
 /**
- *
+ * Notify volunteer of post change
  */
 function valghalla_volunteers_notify_volunteer($election_nid, $role_nid, $fc, $type){
-  $mail = valghalla_mail_get_mail($election_nid, $role_nid, $type);
-  $tokens = _valghalla_helper_get_token_values($fc);
-  $params = array_merge(array('tokens' => $tokens), $mail);
-  $to = $tokens['!email'];
-  $from = variable_get('site_mail', 'admin@example.com');
-  drupal_mail('valghalla_mail', 'mail', $to, $language, $params, $from, TRUE);
+  $election_node = node_load($election_nid);
+  $field_status = field_get_items('node', $election_node, 'field_election_status');
+  $active = $field_status ? $field_status[0]['value'] : FALSE;
+
+  if ($active) {
+    $mail = valghalla_mail_get_mail($election_nid, $role_nid, $type);
+    $tokens = _valghalla_helper_get_token_values($fc);
+    $params = array_merge(array('tokens' => $tokens), $mail);
+    $to = $tokens['!email'];
+    $from = variable_get('site_mail', 'admin@example.com');
+    drupal_mail('valghalla_mail', 'mail', $to, $language, $params, $from, TRUE);
+  }
 }
 
 /**

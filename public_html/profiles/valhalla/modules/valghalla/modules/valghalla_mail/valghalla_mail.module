@@ -60,7 +60,7 @@ function valghalla_mail_menu() {
       'type' => MENU_NORMAL_ITEM,
       'weight' => -4,
   );
- 
+
   $items['valghalla/administration/sendmail'] = array(
       'title' => 'Send mails til frivillige',
       'description' => 'Her kan der udsendes mails til alle, eller udvalgte segmenter, af de frivillige.',

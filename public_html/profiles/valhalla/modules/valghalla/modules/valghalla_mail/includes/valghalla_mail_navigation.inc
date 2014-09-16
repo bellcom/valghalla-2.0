@@ -18,11 +18,9 @@ function valghalla_mail_sendmail_get_header($form, &$form_state) {
     'send_confirm' => 3,
   );
 
+  $current_step = 1;
   if (isset($form_stages[$form_state['stage']])) {
    $current_step = $form_stages[$form_state['stage']];
-  }
-  else {
-   $current_step = 1;
   }
 
   $stages = array(
@@ -31,14 +29,16 @@ function valghalla_mail_sendmail_get_header($form, &$form_state) {
     3 => array('data' => '3. Send mail'),
   );
 
-  $stages[$current_step]['class'] = array('active');
+  $stages[$current_step]['data'] = '<b>' . $stages[$current_step]['data'] . '</b>';
 
   $stages_list = theme('item_list', array('items' => $stages));
 
   $form['header'] = array(
     '#type' => 'fieldset',
-    '#title' => '',
-    '#value' => $stages_list,
+    '#title' => 'Send mail til frivillige.',
+  );
+  $form['header']['steps'] = array(
+    '#markup' => $stages_list,
   );
 
   return $form;

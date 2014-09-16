@@ -170,7 +170,7 @@ function _valghalla_helper_validate_polling_post($polling_station_id, $role_id, 
   }
   // Check if one of the free posts has the correct role id.
   foreach($free_posts as $post){
-    if($role_array[$post['title']] == $role_id){
+    if($role_array[strtolower($post['role_title'])] == $role_id){
       return TRUE;
     }
   }
@@ -288,22 +288,13 @@ function _valghalla_helter_parse_csv_import($file_object, $party_forced = FALSE)
  * returns a keyed array of roles
  */
 function _valghalla_helper_get_roles() {
-  $data = array();
-  foreach (entity_load('node', FALSE, array('type' => 'roles')) as $item) {
-    $data[$item->nid] = $item->title;
-  }
-
-  return $data;
+  trigger_error('Function ' . __FUNCTION__ . ' is deprecated, use odin_get_roles instead', E_USER_DEPRECATED);
+  return odin_get_roles();
 }
 
 function _valghalla_helper_get_parties() {
-  $parties = array();
-  $vocabulary = taxonomy_vocabulary_machine_name_load('partier');
-  foreach (taxonomy_get_tree($vocabulary->vid) as $term) {
-    $parties[$term->tid] = $term->name;
-  }
-
-  return $parties;
+  trigger_error('Function ' . __FUNCTION__ . ' is deprecated, use odin_get_parties instead', E_USER_DEPRECATED);
+  return odin_get_parties();
 }
 
 /**

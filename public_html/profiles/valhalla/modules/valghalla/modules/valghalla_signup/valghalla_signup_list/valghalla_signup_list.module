@@ -22,7 +22,7 @@ function valghalla_signup_list_menu(){
  */
 function valghalla_signup_list_permission(){
   return array(
-    'valghalla view view external signup list' => array(
+    'valghalla view external signup list' => array(
       'title'=> t('Se "Eksterne tilmeldinger" liste'),
     ),
  );
