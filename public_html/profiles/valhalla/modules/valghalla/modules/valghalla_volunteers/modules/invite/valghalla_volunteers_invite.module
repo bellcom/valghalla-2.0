@@ -1,0 +1,132 @@
+<?php
+/**
+ * Implements hook_menu()
+ *
+ * @author Thomas Thune Hansen <tth@bellcom.dk>
+ */
+function valghalla_volunteers_invite_menu() {
+  $items = array();
+
+  $items['valghalla/deltagere/invite'] = array(
+      'title' => 'Inviter tidligere deltagere',
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array('valghalla_volunteers_invite_select'),
+      'access arguments' => array('administer valhalla'),
+      'type' => MENU_NORMAL_ITEM,
+      'weight' => 10,
+  );
+
+  return $items;
+}
+
+function valghalla_volunteers_invite_select($form, &$form_state) {
+  $form['#attributes'] = array('class' => 'form-inline');
+  $form['header'] = array(
+    '#type' => 'fieldset',
+    '#title' => 'Vælg deltagere',
+  );
+
+  $form['header']['description'] = array(
+    '#markup' => 'Her kan du vælge hvilke af dine tidligere deltagere du vil invitere til det aktive valg.',
+  );
+
+  $form['role'] = array(
+    '#title' => 'Rolle',
+    '#type' => 'select',
+    '#options' => odin_get_roles(),
+    '#required' => TRUE,
+  );
+
+  $form['parties'] = array(
+    '#title' => 'Partier',
+    '#type' => 'select',
+    '#options' => odin_get_parties(),
+    '#multiple' => TRUE,
+    '#required' => TRUE,
+  );
+
+  $form['election'] = array(
+    '#title' => 'Valg',
+    '#type' => 'select',
+    '#options' => odin_get_elections(),
+  );
+
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => 'Forsæt',
+  );
+
+  return $form;
+}
+
+function valghalla_volunteers_invite_select_submit(&$form, &$form_state) {
+  $role_nid = $form_state['values']['role'];
+  $parties = $form_state['values']['parties'];
+  $old_election_nid = $form_state['values']['election'];
+  $election_nid = $_SESSION['election_nid'];
+
+  $fc_query = new EntityFieldQuery();
+
+  $fc_query->entityCondition('entity_type', 'field_collection_item')
+    ->entityCondition('bundle', 'field_electioninfo')
+    ->fieldCondition('field_post_party', 'target_id', $parties, 'IN')
+    ->fieldCondition('field_election', 'target_id', $old_election_nid)
+    ->fieldCondition('field_post_role', 'target_id', $role_nid);
+
+  $result = $fc_query->execute();
+
+  if (isset($result['field_collection_item'])) {
+    $fc_ids = array_keys($result['field_collection_item']);
+
+    $query = new EntityFieldQuery();
+    $query->entityCondition('entity_type', 'node')
+          ->entityCondition('bundle', 'volunteers')
+          ->fieldCondition('field_electioninfo', 'value', $fc_ids, 'IN')
+          ->fieldCondition('field_party', 'tid', $parties, 'IN');
+
+    $party_result = $query->execute();
+    $party_volunteers = array();
+
+    if (isset($party_result['node'])) {
+      $party_volunteers = array_keys($party_result['node']);
+    }
+  }
+
+  $polling_stations = odin_get_polling_stations($election_nid);
+
+  $count = 0;
+  foreach($party_volunteers as $volunteer_nid) {
+    $volunteer = node_load($volunteer_nid);
+
+    $party_field = field_get_items('node', $volunteer, 'field_party');
+    $party_tid = $party_field ? $party_field[0]['tid'] : 0;
+
+    $electioninfo_field = field_get_items('node', $volunteer, 'field_electioninfo');
+    $electioninfo = $electioninfo_field ? $electioninfo_field : array();
+
+    foreach ($electioninfo as $delta) {
+      $polling_station_nid = 0;
+      $fcid = $delta['value'];
+      if ($fc = entity_load_single('field_collection_item', $fcid)) {
+        $election_field = field_get_items('field_collection_item', $fc, 'field_election');
+        if ($election_field[0]['target_id'] == $old_election_nid) {
+          $polling_station_field = field_get_items('field_collection_item', $fc, 'field_vlnt_station');
+          $polling_station_nid = $polling_station_field ? $polling_station_field[0]['target_id'] : 0;
+        }
+        else {
+          continue;
+        }
+      }
+    }
+
+    if ($polling_station_nid && $role_nid && $party_tid) {
+      error_log('hest');
+
+      if (!odin_volunteer_has_post_on_election($volunteer_nid, $election_nid) && _valghalla_helper_validate_polling_post($polling_station_nid, $role_nid, $party_tid)) {
+        valghalla_volunteers_add_volunteer_to_post($volunteer_nid, $polling_station_nid, $role_nid, $party_tid, $election_nid);
+      }
+    }
+  }
+
+  drupal_set_message($count);
+}
