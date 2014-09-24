@@ -1,12 +1,15 @@
 <?php
 /**
+ * @file
+ * Valghalla volunteers validate, validate age module.
+ *
  * @author Thomas Thune Hansen <tth@bellcom.dk>
  * @copyright 2012 OS2 - Offentligt Digitaliseringsfællesskab.
  * See README.md at https://github.com/os2web/valghalla_mail
  */
 
 /**
- * Implements hook_menu()
+ * Implements hook_menu().
  */
 function vvv_validate_age_menu() {
   $items['admin/valghalla/validator/validate_age'] = array(
@@ -21,8 +24,7 @@ function vvv_validate_age_menu() {
 }
 
 /**
- * Implements hook_valghalla_vol_validator_validate()
- *
+ * Implements hook_valghalla_vol_validator_validate().
  */
 function vvv_validate_age_valghalla_volunteer_validator_validate() {
   return array(
@@ -30,13 +32,13 @@ function vvv_validate_age_valghalla_volunteer_validator_validate() {
       'label' => 'Valider alder',
       'description' => t('Valider den frivilliges alder'),
       'validate' => 'vvv_validate_age_validate',
-      'config' => 'admin/valghalla/vvv/validate_age',
-    )
+      'config' => 'admin/valghalla/validator/validate_age',
+    ),
   );
 }
 
 /**
- * Page callback for settings
+ * Page callback for settings.
  */
 function vvv_validate_age_settings() {
   $form['vvv_validate_age_on_election'] = array(
@@ -57,12 +59,12 @@ function vvv_validate_age_settings() {
 }
 
 /**
- * Validation on age
+ * Validation on age.
  */
 function vvv_validate_age_validate($volunteer, $message) {
   $date = &drupal_static(__FUNCTION__);
   if (!isset($date)) {
-    // Get date to validate volunteer against
+    // Get date to validate volunteer against.
     if (variable_get('vvv_validate_age_on_election', TRUE)) {
       $election_nids = odin_get_future_elections();
 
@@ -70,12 +72,12 @@ function vvv_validate_age_validate($volunteer, $message) {
         $date_field = field_get_items('node', $election_node, 'field_date');
         $tmp_date = $date_field ? new DateTime($date_field[0]['value']) : '';
 
-        // Use the date
+        // Use the date.
         if (!isset($date)) {
           $date = $tmp_date;
         }
 
-        // If there are more than one date, use the "lowest"
+        // If there are more than one date, use the "lowest".
         if ($tmp_date && ($tmp_date < $date)) {
           $date = $tmp_date;
         }
@@ -86,7 +88,7 @@ function vvv_validate_age_validate($volunteer, $message) {
     $date = new DateTime('now');
   }
 
-  // Birthdate
+  // Birthdate.
   $cpr_field = field_get_items('node', $volunteer, 'field_cpr_number');
   $cpr = $cpr_field ? $cpr_field[0]['value'] : '';
 
@@ -94,19 +96,19 @@ function vvv_validate_age_validate($volunteer, $message) {
   $mm = substr($cpr, 2, 2);
   $yy = substr($cpr, 4, 2);
 
-  // md - "magic digit"
+  // Find md - "magic digit".
   $md = substr($cpr, 7, 1);
 
   $century = _vvv_validate_age_get_century($yy, $md);
 
   try {
-    $birthdate = new DateTime($century.$yy . '-' . $mm . '-' . $dd);
+    $birthdate = new DateTime($century . $yy . '-' . $mm . '-' . $dd);
   }
   catch (Exception $e) {
     return array(
-        'valid' => FALSE,
-        'text' => 'Den frivillige har ikke en gyldig fødselsdato',
-      );
+      'valid' => FALSE,
+      'text' => 'Den frivillige har ikke en gyldig fødselsdato',
+    );
   }
 
   $diff = $date->diff($birthdate);
@@ -125,14 +127,14 @@ function vvv_validate_age_validate($volunteer, $message) {
 }
 
 /**
- * Helper function, to find the correct century
+ * Helper function, to find the correct century.
  */
 function _vvv_validate_age_get_century($yy, $md) {
   // See http://da.wikipedia.org/wiki/CPR-nummer#Under_eller_over_100_.C3.A5r
   if ($md <= 3) {
     return 19;
   }
-  else if ($md === 4) {
+  elseif ($md === 4) {
     if ($yy <= 36) {
       return 20;
     }
@@ -140,7 +142,7 @@ function _vvv_validate_age_get_century($yy, $md) {
       return 19;
     }
   }
-  else if ($md >= 5 && $md <= 8) {
+  elseif ($md >= 5 && $md <= 8) {
     if ($yy <= 57) {
       return 20;
     }
@@ -148,7 +150,7 @@ function _vvv_validate_age_get_century($yy, $md) {
       return 19;
     }
   }
-  else if ($md === 9) {
+  elseif ($md === 9) {
     if ($yy <= 36) {
       return 20;
     }

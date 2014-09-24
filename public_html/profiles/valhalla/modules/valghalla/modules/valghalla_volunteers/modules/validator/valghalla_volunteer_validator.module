@@ -39,62 +39,88 @@ function valghalla_volunteer_validator_ctools_plugin_type(){
 }
 
 /**
- * Implements hook_node_validate()
+ * Implements hook_node_validate().
  */
-function valghalla_volunteer_validator_node_validate($node, $form, &$form_state){
-  if($node->type != 'volunteers'){
+function valghalla_volunteer_validator_node_validate($node, $form, &$form_state) {
+  if ($node->type != 'volunteers') {
     return;
   }
 
-  if($form_state['clicked_button']['#parents'][0] == 'delete'){
+  if ($form_state['clicked_button']['#parents'][0] == 'delete') {
     return;
   }
 
   $cpr_field = reset($form_state['values']['field_cpr_number']);
   $cpr = $cpr_field[0]['value'];
 
-  // Check formatting
-  if(!valghalla_volunteer_validator_validate_format($cpr)){
+  // Check formatting.
+  if (!valghalla_volunteer_validator_validate_format($cpr)) {
     form_set_error('field_cpr_number', t('Det angivne CPR-nummer er ikke korrekt formatteret (f.eks. 123456-8910).'));
   }
 
-  // Check duplicates
-  if($nid = valghalla_volunteer_validator_check_duplicates($cpr)){
-    if($nid !== $node->nid){
+  // Check for duplicates.
+  if ($nid = valghalla_volunteer_validator_check_duplicates($cpr)) {
+    if ($nid !== $node->nid) {
       form_set_error('field_cpr_number', t('Der er allerede oprettet en deltager med det angivne CPR-nummer'));
     }
   }
 
-  // Query service
+  // Query service.
   if (variable_get('valghalla_volunteer_validator_enable', FALSE)) {
     // To reduce calls to the service, we fetch the address right away, if
-    // address querying is enabled
+    // address querying is enabled.
     if (variable_get('valghalla_volunteer_validator_get_address', FALSE)) {
       $message = valghalla_volunteer_validator_query_service('get_address', $cpr);
 
       if ($message['status']) {
         $language = $form['language']['#value'];
 
-        form_set_value(array('#parents' => array('field_address_road', $language, 0, 'value')), $message['road'], $form_state);
-        form_set_value(array('#parents' => array('field_address_road_no', $language, 0, 'value')), $message['road_no'], $form_state);
-        form_set_value(array('#parents' => array('field_address_floor', $language, 0, 'value')), $message['floor'], $form_state);
-        form_set_value(array('#parents' => array('field_address_door', $language, 0, 'value')), $message['door'], $form_state);
-        form_set_value(array('#parents' => array('field_address_zipcode', $language, 0, 'value')), $message['zipcode'], $form_state);
-        form_set_value(array('#parents' => array('field_address_city', $language, 0, 'value')), $message['city'], $form_state);
-        form_set_value(array('#parents' => array('field_address_coname', $language, 0, 'value')), $message['coname'], $form_state);
+        form_set_value(array(
+          '#parents' => array('field_address_road', $language, 0, 'value')), $message['road'], $form_state
+        );
+        form_set_value(array(
+          '#parents' => array('field_address_road_no', $language, 0, 'value')), $message['road_no'], $form_state
+        );
+        form_set_value(array(
+          '#parents' => array('field_address_floor', $language, 0, 'value')), $message['floor'], $form_state
+        );
+        form_set_value(array(
+          '#parents' => array('field_address_door', $language, 0, 'value')), $message['door'], $form_state
+        );
+        form_set_value(array(
+          '#parents' => array('field_address_zipcode', $language, 0, 'value')), $message['zipcode'], $form_state
+        );
+        form_set_value(array(
+          '#parents' => array('field_address_city', $language, 0, 'value')), $message['city'], $form_state
+        );
+        form_set_value(array(
+          '#parents' => array('field_address_coname', $language, 0, 'value')), $message['coname'], $form_state
+        );
       }
-
-    } else {
+    }
+    else {
       $message = valghalla_volunteer_validator_query_service('validate_cpr', $cpr);
     }
     if (!$message['status']) {
-      form_set_error('field_cpr_number', t('Det angivne CPR-nummer kan ikke valideres: ') . $message['text'] );
+      form_set_error('field_cpr_number', t('Det angivne CPR-nummer kan ikke valideres:') . ' ' . $message['text']);
+    }
+
+    $validate_result = valghalla_volunteer_validator_validate($node, $message);
+    $invalid_text = '';
+
+    foreach ($validate_result as $result) {
+      if (!$result['valid']) {
+        $invalid_text .= $result['text'] . '<br />';
+      }
+    }
+    if ($invalid_text) {
+      form_set_error('field_cpr_number', t('Den frivillige kan ikke valideres:') . ' ' . $result['text']);
     }
   }
 }
 
 /**
- * Implements hook_form_FORM_ID_alter()
+ * Implements hook_form_FORM_ID_alter().
  *
  * Disable address fields, and let user know that the values
  * will be fetched from the CPR service.
@@ -122,19 +148,22 @@ function valghalla_volunteer_validator_validate_format($cpr){
  *
  * If it is we send back the nid for the volunteer.
  */
-function valghalla_volunteer_validator_check_duplicates($cpr){
-  if($volunteer = _valghalla_helper_get_volunteer_by_cpr($cpr)){
+function valghalla_volunteer_validator_check_duplicates($cpr) {
+  if ($volunteer = _valghalla_helper_get_volunteer_by_cpr($cpr)) {
     return $volunteer->nid;
   }
   return FALSE;
 }
 
-function valghalla_volunteer_validator_query_service($action, $cpr){
+/**
+ * Query cpr service
+ */
+function valghalla_volunteer_validator_query_service($action, $cpr) {
   ctools_include('plugins');
   if ($service = variable_get('valghalla_volunteer_validator_cpr_service', FALSE)) {
     $plugin = ctools_get_plugins('valghalla_volunteer_validator', 'cpr_service', $service);
 
-    if(isset($plugin[$action]) && function_exists($plugin[$action])){
+    if (isset($plugin[$action]) && function_exists($plugin[$action])) {
       $message = call_user_func($plugin[$action], $cpr);
     }
     else {
@@ -145,6 +174,9 @@ function valghalla_volunteer_validator_query_service($action, $cpr){
   return array('status' => TRUE);
 }
 
+/**
+ * Validate volunteer, using enabled plugins.
+ */
 function valghalla_volunteer_validator_validate(&$volunteer, $cpr_message) {
   ctools_include('plugins');
   $plugins = ctools_get_plugins('valghalla_volunteer_validator', 'validate');

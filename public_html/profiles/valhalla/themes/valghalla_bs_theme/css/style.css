@@ -270,12 +270,12 @@ textarea {
   line-height: inherit;
 }
 a {
-  color: #589000;
+  color: #428bca;
   text-decoration: none;
 }
 a:hover,
 a:focus {
-  color: #294400;
+  color: #2a6496;
   text-decoration: underline;
 }
 a:focus {
@@ -2137,7 +2137,7 @@ fieldset[disabled] .btn-info.active {
   border-color: #46b8da;
 }
 .btn-link {
-  color: #589000;
+  color: #428bca;
   font-weight: normal;
   cursor: pointer;
   border-radius: 0;
@@ -2159,7 +2159,7 @@ fieldset[disabled] .btn-link {
 }
 .btn-link:hover,
 .btn-link:focus {
-  color: #294400;
+  color: #2a6496;
   text-decoration: underline;
   background-color: transparent;
 }
@@ -3395,13 +3395,13 @@ textarea.input-group-sm > .input-group-btn > .btn {
 .nav .open > a:hover,
 .nav .open > a:focus {
   background-color: #eeeeee;
-  border-color: #589000;
+  border-color: #428bca;
 }
 .nav .open > a .caret,
 .nav .open > a:hover .caret,
 .nav .open > a:focus .caret {
-  border-top-color: #294400;
-  border-bottom-color: #294400;
+  border-top-color: #2a6496;
+  border-bottom-color: #2a6496;
 }
 .nav .nav-divider {
   height: 1px;
@@ -3562,12 +3562,12 @@ textarea.input-group-sm > .input-group-btn > .btn {
   display: block;
 }
 .nav .caret {
-  border-top-color: #589000;
-  border-bottom-color: #589000;
+  border-top-color: #428bca;
+  border-bottom-color: #428bca;
 }
 .nav a:hover .caret {
-  border-top-color: #294400;
-  border-bottom-color: #294400;
+  border-top-color: #2a6496;
+  border-bottom-color: #2a6496;
 }
 .nav-tabs .dropdown-menu {
   margin-top: -1px;
@@ -4358,7 +4358,7 @@ a.badge:focus {
 }
 a.list-group-item.active > .badge,
 .nav-pills > .active > a > .badge {
-  color: #589000;
+  color: #428bca;
   background-color: #ffffff;
 }
 .nav-pills > li > a > .badge {
@@ -4420,7 +4420,7 @@ a.list-group-item.active > .badge,
 a.thumbnail:hover,
 a.thumbnail:focus,
 a.thumbnail.active {
-  border-color: #589000;
+  border-color: #428bca;
 }
 .thumbnail .caption {
   padding: 9px;
@@ -7532,13 +7532,8 @@ fieldset[disabled] .btn-inverse:active,
 fieldset[disabled] .btn-inverse.active {
   background-color: #2e2f2f;
 }
-a {
-  color: #333333;
-  text-decoration: none;
-}
 a:hover {
-  text-decoration: none;
-  color: #294400;
+  color: #2a6496;
 }
 .bottom-padding {
   padding-bottom: 30px;

@@ -113,44 +113,44 @@ function valghalla_user_tools_views_default_views() {
     ),
   );
   $handler->display->display_options['style_options']['sticky'] = TRUE;
-  /* Felt: Indhold: Titel */
+  /* Field: Content: Title */
   $handler->display->display_options['fields']['title']['id'] = 'title';
   $handler->display->display_options['fields']['title']['table'] = 'node';
   $handler->display->display_options['fields']['title']['field'] = 'title';
   $handler->display->display_options['fields']['title']['label'] = '';
   $handler->display->display_options['fields']['title']['alter']['word_boundary'] = FALSE;
   $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
-  /* Felt: Indhold: CPR Number */
+  /* Field: Content: CPR Number */
   $handler->display->display_options['fields']['field_cpr_number']['id'] = 'field_cpr_number';
   $handler->display->display_options['fields']['field_cpr_number']['table'] = 'field_data_field_cpr_number';
   $handler->display->display_options['fields']['field_cpr_number']['field'] = 'field_cpr_number';
-  /* Felt: Indhold: Opdateringsdato */
+  /* Field: Content: Updated date */
   $handler->display->display_options['fields']['changed']['id'] = 'changed';
   $handler->display->display_options['fields']['changed']['table'] = 'node';
   $handler->display->display_options['fields']['changed']['field'] = 'changed';
   $handler->display->display_options['fields']['changed']['date_format'] = 'custom';
   $handler->display->display_options['fields']['changed']['custom_date_format'] = 'd.m.y';
-  /* Felt: Indhold: Udgivet */
+  /* Field: Content: Published */
   $handler->display->display_options['fields']['status']['id'] = 'status';
   $handler->display->display_options['fields']['status']['table'] = 'node';
   $handler->display->display_options['fields']['status']['field'] = 'status';
   $handler->display->display_options['fields']['status']['not'] = 0;
-  /* Felt: Indhold: Redigér-link */
+  /* Field: Content: Edit link */
   $handler->display->display_options['fields']['edit_node']['id'] = 'edit_node';
   $handler->display->display_options['fields']['edit_node']['table'] = 'views_entity_node';
   $handler->display->display_options['fields']['edit_node']['field'] = 'edit_node';
   $handler->display->display_options['fields']['edit_node']['label'] = 'Redigér';
-  /* Felt: Felt: Parti */
+  /* Field: Field: Parti */
   $handler->display->display_options['fields']['field_party']['id'] = 'field_party';
   $handler->display->display_options['fields']['field_party']['table'] = 'field_data_field_party';
   $handler->display->display_options['fields']['field_party']['field'] = 'field_party';
   $handler->display->display_options['fields']['field_party']['type'] = 'taxonomy_term_reference_plain';
-  /* Sorteringskriterie: Indhold: Oprettelsesdato */
+  /* Sort criterion: Content: Post date */
   $handler->display->display_options['sorts']['created']['id'] = 'created';
   $handler->display->display_options['sorts']['created']['table'] = 'node';
   $handler->display->display_options['sorts']['created']['field'] = 'created';
   $handler->display->display_options['sorts']['created']['order'] = 'DESC';
-  /* Kontekstuelt filter: Felt: Parti (field_party) */
+  /* Contextual filter: Field: Parti (field_party) */
   $handler->display->display_options['arguments']['field_party_tid']['id'] = 'field_party_tid';
   $handler->display->display_options['arguments']['field_party_tid']['table'] = 'field_data_field_party';
   $handler->display->display_options['arguments']['field_party_tid']['field'] = 'field_party_tid';
@@ -159,7 +159,7 @@ function valghalla_user_tools_views_default_views() {
   $handler->display->display_options['arguments']['field_party_tid']['summary']['number_of_records'] = '0';
   $handler->display->display_options['arguments']['field_party_tid']['summary']['format'] = 'default_summary';
   $handler->display->display_options['arguments']['field_party_tid']['summary_options']['items_per_page'] = '25';
-  /* Filterkriterie: Indhold: Titel */
+  /* Filter criterion: Content: Title */
   $handler->display->display_options['filters']['title']['id'] = 'title';
   $handler->display->display_options['filters']['title']['table'] = 'node';
   $handler->display->display_options['filters']['title']['field'] = 'title';
@@ -177,7 +177,7 @@ function valghalla_user_tools_views_default_views() {
     4 => 0,
     8 => 0,
   );
-  /* Filterkriterie: Indhold: Type */
+  /* Filter criterion: Content: Type */
   $handler->display->display_options['filters']['type']['id'] = 'type';
   $handler->display->display_options['filters']['type']['table'] = 'node';
   $handler->display->display_options['filters']['type']['field'] = 'type';
@@ -195,7 +195,7 @@ function valghalla_user_tools_views_default_views() {
     3 => 0,
     4 => 0,
   );
-  /* Filterkriterie: Felt: Parti (field_party) */
+  /* Filter criterion: Field: Parti (field_party) */
   $handler->display->display_options['filters']['field_party_tid']['id'] = 'field_party_tid';
   $handler->display->display_options['filters']['field_party_tid']['table'] = 'field_data_field_party';
   $handler->display->display_options['filters']['field_party_tid']['field'] = 'field_party_tid';
@@ -214,7 +214,7 @@ function valghalla_user_tools_views_default_views() {
   $handler->display->display_options['filters']['field_party_tid']['reduce_duplicates'] = TRUE;
   $handler->display->display_options['filters']['field_party_tid']['type'] = 'select';
   $handler->display->display_options['filters']['field_party_tid']['vocabulary'] = 'partier';
-  /* Filterkriterie: Indhold: CPR Number (field_cpr_number) */
+  /* Filter criterion: Content: CPR Number (field_cpr_number) */
   $handler->display->display_options['filters']['field_cpr_number_value']['id'] = 'field_cpr_number_value';
   $handler->display->display_options['filters']['field_cpr_number_value']['table'] = 'field_data_field_cpr_number';
   $handler->display->display_options['filters']['field_cpr_number_value']['field'] = 'field_cpr_number_value';
@@ -257,14 +257,15 @@ function valghalla_user_tools_views_default_views() {
     t('næste ›'),
     t('sidste »'),
     t('CPR Number'),
-    t('Opdateringsdato'),
-    t('Udgivet'),
+    t('Updated date'),
+    t('Published'),
     t('Redigér'),
     t('Parti'),
     t('Alle'),
     t('Navn'),
     t('Type'),
     t('Page'),
+    t('more'),
   );
   $export['indholdsfiltre'] = $view;
 

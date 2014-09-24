@@ -24,6 +24,16 @@ function valghalla_menu(){
 }
 
 /**
+ * Implements hook_theme().
+ */
+function valghalla_custom_theme() {
+  // Stay in default theme for valghalla admin pages.
+  if (arg(0) == 'admin' && arg(1) == 'valghalla') {
+    return variable_get('theme_default');
+  }
+}
+
+/**
  * Implements hook_init()
  */
 function valghalla_init(){
@@ -142,15 +152,15 @@ function valghalla_change_election_party_form(){
 }
 
 /**
- * Election switcher form submit
+ * Election switcher form submit.
  *
  * Set election nid in $_SESSION. And update user party tid.
  */
-function valghalla_change_election_party_form_submit(&$form, $form_state){
-  // Set election to watch
+function valghalla_change_election_party_form_submit(&$form, $form_state) {
+  // Set election to watch.
   $_SESSION['election_nid'] = $form_state['values']['election'];
 
-  // Set party
+  // Set party.
   global $user;
 
   $edit = array(
@@ -160,7 +170,8 @@ function valghalla_change_election_party_form_submit(&$form, $form_state){
   $tid = $form_state['values']['party'];
   if ($tid == 0) {
     $edit['field_party'] = array();
-  } else {
+  } 
+  else {
     $edit['field_party'][LANGUAGE_NONE][0]['tid'] = $tid;
   }
 
@@ -168,9 +179,9 @@ function valghalla_change_election_party_form_submit(&$form, $form_state){
 }
 
 /**
- * Implements hook_permission()
+ * Implements hook_permission().
  */
-function valghalla_permission(){
+function valghalla_permission() {
   return array(
     'valghalla change party' => array(
       'title'=> t('Tilladelse til at skifte parti'),
