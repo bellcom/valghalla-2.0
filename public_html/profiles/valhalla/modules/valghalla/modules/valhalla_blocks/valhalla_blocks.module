@@ -1,5 +1,6 @@
 <?php
 /**
+ * @file
  * Valhalla blocks module
  *
  * @author Thomas Thune Hansen <tth@bellcom.dk>
@@ -15,49 +16,48 @@
  */
 
 /**
- * hook_block_info implementation
+ * Implements hook_block_info().
  */
 function valhalla_blocks_block_info() {
   return array(
     'party_status' => array(
       'info' => t('Parti status'),
-      'cache' => DRUPAL_NO_CACHE
+      'cache' => DRUPAL_NO_CACHE,
     ),
     'party_constituency_status' => array(
       'info' => t('Valgkredsstatus'),
-      'cache' => DRUPAL_NO_CACHE
+      'cache' => DRUPAL_NO_CACHE,
     ),
   );
 }
 
 /**
- * implements hook_menu()
+ * Implements hook_menu().
  */
-function valhalla_blocks_menu(){
+function valhalla_blocks_menu() {
   $items['valhalla_blocks/ajax/view'] = array(
     'page callback' => 'valhalla_block_ajax_view',
-    'access callback' => 'user_is_logged_in'
+    'access callback' => 'user_is_logged_in',
   );
 
   return $items;
 }
 
 /**
- * hook_block_view implementation
+ * Implements hook_block_view().
  */
 function valhalla_blocks_block_view($delta = '') {
-  switch($delta){
+  switch ($delta) {
     // The other blocks are fetched with AJAX. this is just simple markup to
     // fill.
     case 'party_status':
     case 'party_constituency_status':
       drupal_add_js(drupal_get_path('module', 'valhalla_blocks') . '/js/valhalla_blocks.js', 'file');
       return array("content" => '<div class="spinner-loading" id="valhalla_block-' . $delta . '" ></div><script>valhalla_blocks.loadOverview("' . $delta . '");</script>');
-      break;
   }
 }
 /**
- * AJAX block view
+ * AJAX block view.
  *
  * Renders markup for the AJAX'ed blocks.
  */
@@ -68,7 +68,7 @@ function valhalla_block_ajax_view($delta = '') {
   $user_entity = user_load($user->uid);
   $user_party_id = empty($user_entity->field_party[LANGUAGE_NONE][0]['tid']) ? FALSE : $user_entity->field_party[LANGUAGE_NONE][0]['tid'];
 
-  // Get polling stations user is allowed to see
+  // Get polling stations user is allowed to see.
   $restrict_polling_stations = array();
   if (!empty ($user_entity->field_polling_station[LANGUAGE_NONE])) {
     foreach ($user_entity->field_polling_station[LANGUAGE_NONE] as $station) {
@@ -93,16 +93,16 @@ function valhalla_block_ajax_view($delta = '') {
   }
 
   if (empty($polling_station_nids)) {
-    print 'Der er ingen valsteder på dette valg' ;
+    print 'Der er ingen valsteder på dette valg';
     return;
   }
 
-  //We also need the roles.
+  // We also need the roles.
   $roles = _valghalla_helper_get_roles();
 
   switch ($delta) {
     //
-    // Party status (Overall)
+    // Party status (Overall).
     //
     case 'party_status':
       $count = odin_get_volunteers_count($_SESSION['election_nid'],
@@ -114,7 +114,7 @@ function valhalla_block_ajax_view($delta = '') {
       break;
 
     //
-    // Polling station status
+    // Polling station status.
     //
     case 'party_constituency_status':
       $constituency_nids = array();
@@ -122,9 +122,9 @@ function valhalla_block_ajax_view($delta = '') {
       // We need info on the polling station nodes (constituency)
       // So we just load them all.
       foreach (node_load_multiple($polling_station_nids) as $polling_station) {
-        // If the array of restricting stations is not empty we only let the user see the
-        // polling stations in this array
-        if(!empty($restrict_polling_stations) &&
+        // If the array of restricting stations is not empty we only let the
+        // user see the polling stations in this array.
+        if (!empty($restrict_polling_stations) &&
            !in_array($polling_station->nid, $restrict_polling_stations)) {
           continue;
         }
@@ -148,9 +148,9 @@ function valhalla_block_ajax_view($delta = '') {
 }
 
 /**
- * Generate overview markup
+ * Generate overview markup.
  */
-function _valhalla_blocks_generate_overview_markup($count){
+function _valhalla_blocks_generate_overview_markup($count) {
   $label = _valhalla_blocks_get_label($count['total_count']);
   $markup = '
         <table class="table">
@@ -168,17 +168,17 @@ function _valhalla_blocks_generate_overview_markup($count){
           </tr>
           <tr>
             <td>Bekræftede</td>
-            <td class="column-count">' . $count['total_count']['rsvp_ok']. '</td>
+            <td class="column-count">' . $count['total_count']['rsvp_ok'] . '</td>
             <td></td>
           </tr>
           <tr>
             <td>Afviste</td>
-            <td class="column-count">' . $count['total_count']['rsvp_no']. '</td>
+            <td class="column-count">' . $count['total_count']['rsvp_no'] . '</td>
             <td></td>
           </tr>
           <tr>
             <td>Afventer svar</td>
-            <td class="column-count">' .( $count['total_count']['total'] - ($count['total_count']['rsvp_ok'] + $count['total_count']['rsvp_no'] )). '</td>
+            <td class="column-count">' . ($count['total_count']['total'] - ($count['total_count']['rsvp_ok'] + $count['total_count']['rsvp_no'])) . '</td>
             <td></td>
           </tr>
 
@@ -199,8 +199,8 @@ function _valhalla_blocks_generate_overview_markup($count){
     $label = _valhalla_blocks_get_label($role_count);
     $markup .= '
         <tr>
-          <td class="column-first">'. $roles[$role_nid].'</td>
-          <td class="column-count '. $label .'">'. $role_count['total']
+          <td class="column-first">' . $roles[$role_nid] . '</td>
+          <td class="column-count ' . $label . '">' . $role_count['total']
           . '/' . $role_count['assigned'] . '</td>
           <td class="column-count">' .
           ($role_count['assigned'] - $role_count['total']) . '</td>
@@ -213,15 +213,22 @@ function _valhalla_blocks_generate_overview_markup($count){
 }
 
 /**
- * Generates table markup for constituency
+ * Generates table markup for constituency.
  */
-function _valhalla_blocks_generate_constituency_markup($constituency_nids, $polling_station_count){
+function _valhalla_blocks_generate_constituency_markup($constituency_nids, $polling_station_count) {
   $roles = _valghalla_helper_get_roles();
+
+  $constituencies = array();
 
   foreach ($constituency_nids as $constituency_nid => $polling_station_nids) {
     $constituency_node = node_load($constituency_nid);
 
-    $markup .= '<table class="table"><thead><tr><th>' . $constituency_node->title . '</th>';
+  }
+
+  ksort($constituencies);
+
+  foreach ($constituencies as $constituency_title => $polling_station_nids) {
+    $markup .= '<table class="table"><thead><tr><th>' . $constituency_title . '</th>';
     foreach ($roles as $role_nid => $role_title) {
       $markup .= '<th class="column-label">' . $role_title . '</th>';
     }
@@ -232,15 +239,15 @@ function _valhalla_blocks_generate_constituency_markup($constituency_nids, $poll
                                                                 $polling_station_count);
     $constituency_total = array();
 
-    // Count constituency totals
+    // Count constituency totals.
     foreach ($polling_station_count as $polling_station_nid => $data) {
-      if(in_array($polling_station_nid, $polling_station_nids)){
+      if (in_array($polling_station_nid, $polling_station_nids)) {
         $constituency_total['total_count']['assigned'] += $data['total_count']['assigned'];
         $constituency_total['total_count']['total'] += $data['total_count']['total'];
         $constituency_total['total_count']['rsvp_ok'] += $data['total_count']['rsvp_ok'];
         $constituency_total['total_count']['rsvp_no'] += $data['total_count']['rsvp_no'];
 
-        foreach ($data['role_count'] as $role_nid =>  $role_count) {
+        foreach ($data['role_count'] as $role_nid => $role_count) {
           $constituency_total['role_count'][$role_nid]['assigned'] += $role_count['assigned'];
           $constituency_total['role_count'][$role_nid]['total'] += $role_count['total'];
           $constituency_total['role_count'][$role_nid]['rsvp_ok'] += $role_count['rsvp_ok'];
@@ -251,7 +258,7 @@ function _valhalla_blocks_generate_constituency_markup($constituency_nids, $poll
 
     $markup .= '<tr><td class="total">I alt</td>';
 
-    // Generate bottom totals row
+    // Generate bottom totals row.
     foreach ($roles as $role_nid => $role_title) {
       $label = _valhalla_blocks_get_label($constituency_total['role_count'][$role_nid]);
 
@@ -270,43 +277,46 @@ function _valhalla_blocks_generate_constituency_markup($constituency_nids, $poll
 }
 
 /**
- * Generates row markup for overview page
+ * Generates row markup for overview page.
  */
-function _valhalla_blocks_generate_polling_station_markup($polling_station_nids, $polling_station_count){
+function _valhalla_blocks_generate_polling_station_markup($polling_station_nids, $polling_station_count) {
   $markup = '';
 
   foreach ($polling_station_nids as $polling_station_nid) {
     $polling_station_node = node_load($polling_station_nid);
 
-    $markup .= '<tr><td class="column-first"><a href="/volunteers/station/' . $polling_station_nid .'">';
+    $markup .= '<tr><td class="column-first"><a href="/volunteers/station/' . $polling_station_nid . '">';
     $markup .= $polling_station_node->title . '</a></td>';
 
     foreach ($polling_station_count[$polling_station_nid]['role_count'] as $role_nid => $role_count) {
 
       $label = _valhalla_blocks_get_label($role_count);
 
-      $markup .= '<td class="column-count ' . $label . '">'  .    $role_count['total'] . '/'. $role_count['assigned'] . '</td>';
+      $markup .= '<td class="column-count ' . $label . '">'  .    $role_count['total'] . '/' . $role_count['assigned'] . '</td>';
     }
 
     $label = _valhalla_blocks_get_label($polling_station_count[$polling_station_nid]['total_count']);
 
     $markup .= '<td class="column-count ' . $label . '">'  .  $polling_station_count[$polling_station_nid]['total_count']['total'];
-    $markup .= '/'. $polling_station_count[$polling_station_nid]['total_count']['assigned'] . '</td>';
+    $markup .= '/' . $polling_station_count[$polling_station_nid]['total_count']['assigned'] . '</td>';
 
     $markup .= '</tr>';
   }
   return $markup;
 }
 
-function _valhalla_blocks_get_label($count){
+/**
+ * Helper, find status label.
+ */
+function _valhalla_blocks_get_label($count) {
   $label = '';
-  if($count['total'] == $count['assigned']){
+  if ($count['total'] == $count['assigned']) {
     $label = 'warning';
   }
-  if($count['rsvp_ok'] == $count['assigned']){
+  if ($count['rsvp_ok'] == $count['assigned']) {
     $label = 'success';
   }
-  if($count['rsvp_no']) {
+  if ($count['rsvp_no']) {
     $label = 'danger';
   }
   return $label;
