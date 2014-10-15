@@ -236,7 +236,7 @@ function valghalla_signup_signup_form($form, &$form_state) {
         '#type' => 'select',
         '#title' => 'Valgsted',
         '#options' => $pollingstations,
-        '#suffix' => '<small>Der vises kun valgsteder i listen med tilstrækkeligt ledige pladser.</small><hr>',
+        '#suffix' => 'Der vises kun valgsteder i listen med tilstrækkeligt ledige pladser.<hr>',
       );
 
       $form['volunteers']['#tree'] = TRUE;
