@@ -215,17 +215,17 @@ function valghalla_signup_signup_form($form, &$form_state) {
   );
 
   if ($locked) {
-    $form['qty']['#prefix'] = '<div class="row"><div class="col-md-5">';
+    $form['qty']['#prefix'] = '<div class="row"><div class="col-sm-5">';
     $form['qty']['#suffix'] = '</div>';
 
-    $form['role_nid']['#prefix'] = '<div class="col-md-6">';
+    $form['role_nid']['#prefix'] = '<div class="col-sm-6">';
     $form['role_nid']['#suffix'] = '</div>';
 
     $form['reset'] = array(
       '#type' => 'button',
       '#value' => 'Nulstil',
       '#attributes' => array('onClick' => 'window.location = window.location.href;'),
-      '#prefix' => '<div class="col-md-1 form-reset">',
+      '#prefix' => '<div class="col-sm-1 form-reset">',
       '#suffix' => '</div></div>',
     );
 
