@@ -264,7 +264,7 @@ function valghalla_signup_signup_form($form, &$form_state) {
           '#title' => 'Vejnavn',
           '#type' => 'textfield',
           '#required' => TRUE,
-          '#prefix' => '<div class="row"><div class="col-md-6">',
+          '#prefix' => '<div class="row"><div class="col-sm-6">',
           '#suffix' => '</div>',
         );
 
@@ -272,21 +272,21 @@ function valghalla_signup_signup_form($form, &$form_state) {
           '#required' => TRUE,
           '#title' => 'Husnummer',
           '#type' => 'textfield',
-          '#prefix' => '<div class="col-md-2">',
+          '#prefix' => '<div class="col-sm-2">',
           '#suffix' => '</div>',
         );
 
         $form['volunteers'][$i]['floor'] = array(
           '#title' => 'Etage',
           '#type' => 'textfield',
-          '#prefix' => '<div class="col-md-2">',
+          '#prefix' => '<div class="col-sm-2">',
           '#suffix' => '</div>',
         );
 
         $form['volunteers'][$i]['door'] = array(
           '#title' => 'Dør/side',
           '#type' => 'textfield',
-          '#prefix' => '<div class="col-md-2">',
+          '#prefix' => '<div class="col-sm-2">',
           '#suffix' => '</div></div>',
         );
 
@@ -294,7 +294,7 @@ function valghalla_signup_signup_form($form, &$form_state) {
           '#required' => TRUE,
           '#title' => 'Postnummer',
           '#type' => 'textfield',
-          '#prefix' => '<div class="row"><div class="col-md-6">',
+          '#prefix' => '<div class="row"><div class="col-sm-6">',
           '#suffix' => '</div>',
         );
 
@@ -302,7 +302,7 @@ function valghalla_signup_signup_form($form, &$form_state) {
           '#title' => 'By',
           '#type' => 'textfield',
           '#required' => TRUE,
-          '#prefix' => '<div class="col-md-6">',
+          '#prefix' => '<div class="col-sm-6">',
           '#suffix' => '</div></div>',
         );
 
@@ -310,7 +310,7 @@ function valghalla_signup_signup_form($form, &$form_state) {
           '#required' => TRUE,
           '#title' => 'E-mail',
           '#type' => 'textfield',
-          '#prefix' => '<div class="row"><div class="col-md-6">',
+          '#prefix' => '<div class="row"><div class="col-sm-6">',
           '#suffix' => '</div>',
         );
 
@@ -318,7 +318,7 @@ function valghalla_signup_signup_form($form, &$form_state) {
           '#required' => TRUE,
           '#title' => 'Telefon',
           '#type' => 'textfield',
-          '#prefix' => '<div class="col-md-6">',
+          '#prefix' => '<div class="col-sm-6">',
           '#suffix' => '</div></div>',
         );
 
