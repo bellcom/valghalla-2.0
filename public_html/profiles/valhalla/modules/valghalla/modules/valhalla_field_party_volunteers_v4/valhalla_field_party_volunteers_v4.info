@@ -1,6 +1,0 @@
-; $Id$
-name = Field party volunteers v4
-description = Custom field for combining parties, polling station and number of volunteers v2.
-package = Valghalla
-core = 7.x
-version = "7.x-1.1"

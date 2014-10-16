@@ -10,52 +10,6 @@
 function valghalla_polling_station_field_default_field_instances() {
   $field_instances = array();
 
-  // Exported field_instance: 'node-polling_station-body'
-  $field_instances['node-polling_station-body'] = array(
-    'bundle' => 'polling_station',
-    'default_value' => NULL,
-    'deleted' => 0,
-    'description' => '',
-    'display' => array(
-      'default' => array(
-        'label' => 'hidden',
-        'module' => 'text',
-        'settings' => array(),
-        'type' => 'text_default',
-        'weight' => 0,
-      ),
-      'teaser' => array(
-        'label' => 'hidden',
-        'module' => 'text',
-        'settings' => array(
-          'trim_length' => 600,
-        ),
-        'type' => 'text_summary_or_trimmed',
-        'weight' => 0,
-      ),
-    ),
-    'entity_type' => 'node',
-    'field_name' => 'body',
-    'label' => 'Beskrivelse',
-    'required' => 0,
-    'settings' => array(
-      'display_summary' => 1,
-      'text_processing' => 1,
-      'user_register_form' => FALSE,
-    ),
-    'widget' => array(
-      'active' => 1,
-      'module' => 'text',
-      'settings' => array(
-        'rows' => 20,
-        'summary_rows' => 5,
-      ),
-      'type' => 'text_textarea_with_summary',
-      'weight' => 4,
-    ),
-    'widget_type' => 'text_textarea_with_summary',
-  );
-
   // Exported field_instance: 'node-polling_station-field_address_city'
   $field_instances['node-polling_station-field_address_city'] = array(
     'bundle' => 'polling_station',
@@ -458,6 +412,45 @@ function valghalla_polling_station_field_default_field_instances() {
       ),
       'type' => 'options_onoff',
       'weight' => 8,
+    ),
+  );
+
+  // Exported field_instance: 'node-polling_station-field_role_weight'
+  $field_instances['node-polling_station-field_role_weight'] = array(
+    'bundle' => 'polling_station',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 18,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_role_weight',
+    'label' => 'Valgsted Rækkefølge',
+    'required' => FALSE,
+    'settings' => array(
+      'max' => '',
+      'min' => '',
+      'prefix' => '',
+      'suffix' => '',
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'module' => 'number',
+      'settings' => array(),
+      'type' => 'number',
+      'weight' => 21,
     ),
   );
 
@@ -884,7 +877,7 @@ function valghalla_polling_station_field_default_field_instances() {
     ),
     'entity_type' => 'node',
     'field_name' => 'field_volunteers_pr_party_1',
-    'label' => 'Frivillige pr. parti_v2',
+    'label' => 'Frivillige pr. parti',
     'required' => 0,
     'settings' => array(
       'user_register_form' => FALSE,
@@ -901,14 +894,13 @@ function valghalla_polling_station_field_default_field_instances() {
   // Translatables
   // Included for use with string extractors like potx.
   t('Andre kontaktoplysninger');
-  t('Beskrivelse');
   t('Bespisning 1');
   t('Bespisning 2');
   t('Borde');
   t('By');
   t('Digital valgliste');
   t('Dør / Side');
-  t('Frivillige pr. parti_v2');
+  t('Frivillige pr. parti');
   t('Kontaktperson for valgets afvilking på selve valgdagen(e).');
   t('Lokalekontakt');
   t('Nummer');
@@ -921,6 +913,7 @@ function valghalla_polling_station_field_default_field_instances() {
   t('Stemmebokse');
   t('Valgkontakt');
   t('Valgkreds');
+  t('Valgsted Rækkefølge');
   t('Vej');
 
   return $field_instances;

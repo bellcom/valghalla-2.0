@@ -19,7 +19,7 @@ function valghalla_polling_station_ctools_plugin_api($module = NULL, $api = NULL
 function valghalla_polling_station_node_info() {
   $items = array(
     'polling_station' => array(
-      'name' => t('Valgsted'),
+      'name' => t('valgsted'),
       'base' => 'node_content',
       'description' => '',
       'has_title' => '1',

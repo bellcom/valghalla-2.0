@@ -1,7 +1,6 @@
 <?php
 // valhalla_field_party_volunteers
 
-
 function valhalla_field_party_volunteers_v2_field_info() {
   return array(
     'party_volunteers_field_v2' => array(
@@ -12,7 +11,6 @@ function valhalla_field_party_volunteers_v2_field_info() {
     ),
   );
 }
-
 
 function valhalla_field_party_volunteers_v2_field_schema() {
   $columns = array(
@@ -45,7 +43,6 @@ function valhalla_field_party_volunteers_v2_field_schema() {
   );
 }
 
-
 function valhalla_field_party_volunteers_v2_field_widget_info() {
   $widgets = array();
 
@@ -54,12 +51,11 @@ function valhalla_field_party_volunteers_v2_field_widget_info() {
     'field types' => array('party_volunteers_field_v2'),
     'settings' => array(
       'available_parties' => array(),
-    )
+    ),
   );
 
   return $widgets;
 }
-
 
 function valhalla_field_party_volunteers_v2_field_widget_form(&$form, &$form_state, $field, $instance, $langcode, $items, $delta, $element) {
   $settings = $instance['widget']['settings'];

@@ -9,7 +9,7 @@
  */
 function valghalla_election_node_info() {
   $items = array(
-     'constituency' => array(
+    'constituency' => array(
       'name' => t('Valgstedskreds'),
       'base' => 'node_content',
       'description' => '',
@@ -22,7 +22,7 @@ function valghalla_election_node_info() {
       'base' => 'node_content',
       'description' => '',
       'has_title' => '1',
-      'title_label' => t('Valg'),
+      'title_label' => t('Titel på valg'),
       'help' => '',
     ),
   );

@@ -2,6 +2,16 @@
 // valhalla_field_party_volunteers
 module_load_all();
 
+/**
+ * Implements hook_form_alter().
+ */
+function valhalla_field_party_volunteers_v3_form_alter(&$form, &$form_state, $form_id) {
+  if ($form_id == 'polling_station_node_form') {
+    $lang = $form['field_volunteers_pr_party_1']['#language'];
+    $form['field_volunteers_pr_party_1'][$lang]['add_more']['#value'] = t('Tilføj endnu et parti');
+  }
+}
+
 function valhalla_field_party_volunteers_v3_field_info() {
   return array(
     'party_volunteers_field_v3' => array(
@@ -22,8 +32,6 @@ function valhalla_field_party_volunteers_v3_field_schema() {
       'not null' => TRUE,
       'default' => 0,
     ),
-    
-      
   );
 
   return array(

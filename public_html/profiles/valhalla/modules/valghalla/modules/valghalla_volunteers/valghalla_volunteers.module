@@ -865,12 +865,17 @@ function valghalla_volunteers_form_volunteers_node_form_alter(&$form, &$form_sta
 
   // Redid the add volunteer form
   // Thomas Thune Hansen <tth@bellcom.dk>
-  if(current_path() == 'valghalla/deltagere/tilfoej'){
+  if (current_path() == 'valghalla/deltagere/tilfoej') {
     $account = user_load($user->uid);
     $user_party_id = empty($account->field_party[LANGUAGE_NONE][0]['tid']) ? FALSE : $account->field_party[LANGUAGE_NONE][0]['tid'];
 
-    // Hide these field in this view
-    valghalla_volunteers_field_group_hide_field_groups($form, array('group_adress', 'group_rsvp', 'group_system'));
+    // Hide these field in this view.
+    valghalla_volunteers_field_group_hide_field_groups($form, array(
+      'group_adress',
+      'group_rsvp',
+      'group_system',
+    ));
+
     $field_ids = array(
       'field_diaet',
       'field_external_signup',
@@ -883,20 +888,19 @@ function valghalla_volunteers_form_volunteers_node_form_alter(&$form, &$form_sta
       $field_ids[] = 'field_party';
     }
 
-    foreach($field_ids as $field_id){
+    foreach ($field_ids as $field_id) {
       hide($form[$field_id]);
     }
-
 
     $form['additional_settings']['#prefix'] = '<div style="display:none;">';
     $form['additional_settings']['#suffix'] = '</div>';
 
     $form['roles_id'] = array(
-        '#type' => 'select',
-        '#title' => t('Rolle'),
-        '#options' => _valghalla_helper_get_roles(),
-        '#empty_option' => 'Select',
-        '#weight' => 10,
+      '#type' => 'select',
+      '#title' => t('Rolle'),
+      '#options' => _valghalla_helper_get_roles(),
+      '#empty_option' => 'Select',
+      '#weight' => 10,
     );
 
     $form_state['volunteer_add'] = TRUE;
@@ -904,22 +908,22 @@ function valghalla_volunteers_form_volunteers_node_form_alter(&$form, &$form_sta
 }
 
 /**
- * Implements hook_node_validate
+ * Implements hook_node_validate().
  */
-function valghalla_volunteers_node_validate($node, $form, &$form_state){
-  if($node->type == "volunteers"){
+function valghalla_volunteers_node_validate($node, $form, &$form_state) {
+  if ($node->type == "volunteers") {
     global $user;
 
-    // Set user party id
+    // Set user party id.
     $account = user_load($user->uid);
     $user_party_id = empty($account->field_party[LANGUAGE_NONE][0]['tid']) ? FALSE : $account->field_party[LANGUAGE_NONE][0]['tid'];
     $field_language = key($form_state['values']['field_party']);
-    if($user_party_id){
+    if ($user_party_id) {
       $form_state['values']['field_party'][$field_language][0]['tid'] = $user_party_id;
     }
-    // Convert the role chosen, to a label on the volunteer
+    // Convert the role chosen, to a label on the volunteer.
     $role_id = '';
-    if(isset($form['roles_id'])){
+    if (isset($form['roles_id'])) {
       $field_language = key($form_state['values']['field_cpr_number']);
 
       $role_id = $form_state['values']['roles_id'];

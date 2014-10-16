@@ -55,126 +55,6 @@ function valghalla_election_field_default_field_instances() {
     'widget_type' => 'text_textarea_with_summary',
   );
 
-  // Exported field_instance: 'node-constituency-field_ansvarlig'
-  $field_instances['node-constituency-field_ansvarlig'] = array(
-    'bundle' => 'constituency',
-    'default_value' => NULL,
-    'deleted' => 0,
-    'description' => '',
-    'display' => array(
-      'default' => array(
-        'label' => 'above',
-        'module' => 'taxonomy',
-        'settings' => array(),
-        'type' => 'taxonomy_term_reference_link',
-        'weight' => 1,
-      ),
-      'teaser' => array(
-        'label' => 'above',
-        'settings' => array(),
-        'type' => 'hidden',
-        'weight' => 0,
-      ),
-    ),
-    'entity_type' => 'node',
-    'field_name' => 'field_ansvarlig',
-    'label' => 'Ansvarlig',
-    'required' => 0,
-    'settings' => array(
-      'user_register_form' => FALSE,
-    ),
-    'widget' => array(
-      'active' => 1,
-      'module' => 'options',
-      'settings' => array(),
-      'type' => 'options_select',
-      'weight' => 2,
-    ),
-  );
-
-  // Exported field_instance: 'node-constituency-field_secretary'
-  $field_instances['node-constituency-field_secretary'] = array(
-    'bundle' => 'constituency',
-    'default_value' => NULL,
-    'deleted' => 0,
-    'description' => '',
-    'display' => array(
-      'default' => array(
-        'label' => 'above',
-        'module' => 'user_reference',
-        'settings' => array(),
-        'type' => 'user_reference_default',
-        'weight' => 5,
-      ),
-      'teaser' => array(
-        'label' => 'above',
-        'settings' => array(),
-        'type' => 'hidden',
-        'weight' => 0,
-      ),
-    ),
-    'entity_type' => 'node',
-    'field_name' => 'field_secretary',
-    'label' => 'Sekretær',
-    'required' => 0,
-    'settings' => array(
-      'user_register_form' => FALSE,
-    ),
-    'widget' => array(
-      'active' => 1,
-      'module' => 'options',
-      'settings' => array(),
-      'type' => 'options_select',
-      'weight' => 3,
-    ),
-  );
-
-  // Exported field_instance: 'node-election-body'
-  $field_instances['node-election-body'] = array(
-    'bundle' => 'election',
-    'default_value' => NULL,
-    'deleted' => 0,
-    'description' => '',
-    'display' => array(
-      'default' => array(
-        'label' => 'hidden',
-        'module' => 'text',
-        'settings' => array(),
-        'type' => 'text_default',
-        'weight' => 0,
-      ),
-      'teaser' => array(
-        'label' => 'hidden',
-        'module' => 'text',
-        'settings' => array(
-          'trim_length' => 600,
-        ),
-        'type' => 'text_summary_or_trimmed',
-        'weight' => 0,
-      ),
-    ),
-    'entity_type' => 'node',
-    'field_name' => 'body',
-    'label' => 'Beskrivelse',
-    'required' => 0,
-    'settings' => array(
-      'display_summary' => 1,
-      'text_processing' => 1,
-      'user_register_form' => FALSE,
-    ),
-    'widget' => array(
-      'active' => 1,
-      'module' => 'text',
-      'settings' => array(
-        'rows' => 20,
-        'summary_rows' => 5,
-      ),
-      'type' => 'text_textarea_with_summary',
-      'weight' => -4,
-    ),
-    'widget_type' => 'text_textarea_with_summary',
-  );
-
   // Exported field_instance: 'node-election-field_date'
   $field_instances['node-election-field_date'] = array(
     'bundle' => 'election',
@@ -571,8 +451,6 @@ function valghalla_election_field_default_field_instances() {
 
   // Translatables
   // Included for use with string extractors like potx.
-  t('Ansvarlig');
-  t('Beskrivelse');
   t('Body');
   t('Bogstav');
   t('Dato');
@@ -580,7 +458,6 @@ function valghalla_election_field_default_field_instances() {
   t('Fuldt partinavn');
   t('Logo');
   t('Partisekretær');
-  t('Sekretær');
   t('Sæt igang');
   t('Type');
   t('Valgsteder');

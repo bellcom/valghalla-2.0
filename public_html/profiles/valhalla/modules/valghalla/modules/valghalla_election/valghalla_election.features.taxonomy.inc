@@ -17,5 +17,13 @@ function valghalla_election_taxonomy_default_vocabularies() {
       'module' => 'taxonomy',
       'weight' => 0,
     ),
+    'valgtype' => array(
+      'name' => 'Valgtype',
+      'machine_name' => 'valgtype',
+      'description' => 'Er der tale om et kommunal, folketings eller regionsvalg',
+      'hierarchy' => 0,
+      'module' => 'taxonomy',
+      'weight' => -7,
+    ),
   );
 }

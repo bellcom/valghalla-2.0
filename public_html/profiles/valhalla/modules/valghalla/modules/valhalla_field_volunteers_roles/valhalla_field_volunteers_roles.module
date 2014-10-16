@@ -57,7 +57,7 @@ function valhalla_field_volunteers_roles_field_widget_form(&$form, &$form_state,
 
     if ($instance['widget']['type'] == 'volunteers_roles_standart') {
       $element = array(
-        '#prefix' => '<div class="container-inline"><table><tr><td style="width:170px;"><label>'.$node->title.$desc.' volunteers</label></td>', 
+        '#prefix' => '<div class="container-inline"><table><tr><td style="width:470px;"><label>'.$node->title.$desc.' volunteers</label></td>', 
         '#suffix' => '</tr></table>'
       );
  
