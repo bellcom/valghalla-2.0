@@ -59,6 +59,7 @@ dependencies[] = role_delegation
 dependencies[] = rules
 dependencies[] = search
 dependencies[] = shortcut
+dependencies[] = respondjs
 dependencies[] = taxonomy
 dependencies[] = token
 dependencies[] = toolbar

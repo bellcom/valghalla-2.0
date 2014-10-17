@@ -860,8 +860,8 @@ function valghalla_volunteers_form_volunteers_node_form_alter(&$form, &$form_sta
     $form['actions']['preview']['#access'] = FALSE;
   }
 
-  // only alter the form on edit and if the user is not an administrator
-  if (($form['#node_edit_form'] === TRUE) 
+  // Only alter the form on edit and if the user is not an administrator.
+  if (isset($form['#entity']->nid)
      && !user_access('administer valghalla')) {
 
     $hide_elements = array(
@@ -874,7 +874,7 @@ function valghalla_volunteers_form_volunteers_node_form_alter(&$form, &$form_sta
       'additional_settings',
       'field_address_bnummer',
       'field_rolle_id',
-      'field_meeting_time'
+      'field_meeting_time',
     );
 
     foreach ($hide_elements as $field_name) {
@@ -883,7 +883,7 @@ function valghalla_volunteers_form_volunteers_node_form_alter(&$form, &$form_sta
 
     valghalla_volunteers_field_group_hide_field_groups($form, array('group_adress', 'group_rsvp', 'group_system'));
 
-    if(!user_access('see all psn numbers')){
+    if (!user_access('see all psn numbers')) {
       $form['field_cpr_number']['#access'] = FALSE;
     }
     $form['field_electioninfo']['#access'] = FALSE;
@@ -904,7 +904,10 @@ function valghalla_volunteers_form_volunteers_node_form_alter(&$form, &$form_sta
 
     $field_ids = array(
       'field_diaet',
+      'field_meeting_time',
+      'field_address_bnummer',
       'field_external_signup',
+      'field_rolle_id',
       'field_label',
       'field_polling_station_post',
       'field_electioninfo',
@@ -930,7 +933,16 @@ function valghalla_volunteers_form_volunteers_node_form_alter(&$form, &$form_sta
     );
 
     $form_state['volunteer_add'] = TRUE;
+    $form['actions']['submit']['#submit'][] = 'valghalla_volunteers_node_form_submit'; // custom callback name
   }
+}
+
+/**
+ * Custom volunteers node submit callback.
+ */
+function valghalla_volunteers_node_form_submit($form, &$form_state) {
+  // Redirect to the add volunteer page.
+  $form_state['redirect'] = 'valghalla/deltagere/tilfoej';
 }
 
 /**
@@ -956,32 +968,6 @@ function valghalla_volunteers_node_validate($node, $form, &$form_state) {
 
       $roles_array = _valghalla_helper_get_roles();
       $form_state['values']['field_label'][$field_language][0]['value'] = strtolower($roles_array[$role_id]);
-    }
-
-    // Set polling station post right away
-    $polling_station = '';
-    $field_language = key($form_state['values']['field_polling_station']);
-    if(!empty($form_state['values']['field_polling_station'][$field_language][0]['nid'])){
-      $polling_station = $form_state['values']['field_polling_station'][$field_language][0]['nid'];
-    }
-    // If it is a new node, and all the relevant data for a polling station post is set.
-    // check if seat is empty, and if it is, add the volunteer to it
-    if(!$node->nid && $polling_station && $role_id && $user_party_id){
-      if(_valghalla_helper_validate_polling_post($polling_station, $role_id, $user_party_id)){
-        $station_role_id = $user_party_id . $role_id . $polling_station;
-
-        $field_language = key($form_state['values']['field_polling_station_post']);
-        $form_state['values']['field_polling_station_post'][$field_language][]['value'] = $station_role_id;
-        drupal_set_message(t('Deltageren er blevet tildelt en plads på valgte valgsted/parti/rolle'));
-      }
-      else {
-        drupal_set_message(t('Deltageren er ikke blevet tildelt en plads på et valgsted'), 'warning');
-      }
-    }
-
-    $field_language = key($form_state['values']['field_token']);
-    if(empty($form_state['values']['field_token'][$field_language][0]['value'])){
-      $form_state['values']['field_token'][$field_language][]['value'] = user_password(10);
     }
   }
 }
