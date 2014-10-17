@@ -36,7 +36,7 @@ function valghalla_mail_field_default_field_instances() {
     ),
     'entity_type' => 'node',
     'field_name' => 'body',
-    'label' => 'Body',
+    'label' => 'Indhold',
     'required' => 0,
     'settings' => array(
       'display_summary' => 0,
@@ -140,8 +140,8 @@ function valghalla_mail_field_default_field_instances() {
 
   // Translatables
   // Included for use with string extractors like potx.
-  t('Body');
   t('Emne');
+  t('Indhold');
   t('Vedhæftede filer');
 
   return $field_instances;

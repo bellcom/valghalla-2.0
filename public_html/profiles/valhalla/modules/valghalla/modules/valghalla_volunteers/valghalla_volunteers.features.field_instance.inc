@@ -659,7 +659,7 @@ function valghalla_volunteers_field_default_field_instances() {
     ),
     'entity_type' => 'node',
     'field_name' => 'field_address_city',
-    'label' => 'City',
+    'label' => 'By',
     'required' => 0,
     'settings' => array(
       'text_processing' => 0,
@@ -739,7 +739,7 @@ function valghalla_volunteers_field_default_field_instances() {
     ),
     'entity_type' => 'node',
     'field_name' => 'field_address_door',
-    'label' => 'Door / Side',
+    'label' => 'Dør / side',
     'required' => 0,
     'settings' => array(
       'text_processing' => 0,
@@ -779,7 +779,7 @@ function valghalla_volunteers_field_default_field_instances() {
     ),
     'entity_type' => 'node',
     'field_name' => 'field_address_floor',
-    'label' => 'Floor',
+    'label' => 'Sal',
     'required' => 0,
     'settings' => array(
       'text_processing' => 0,
@@ -819,7 +819,7 @@ function valghalla_volunteers_field_default_field_instances() {
     ),
     'entity_type' => 'node',
     'field_name' => 'field_address_road',
-    'label' => 'Address',
+    'label' => 'Adresse',
     'required' => 0,
     'settings' => array(
       'text_processing' => 0,
@@ -859,7 +859,7 @@ function valghalla_volunteers_field_default_field_instances() {
     ),
     'entity_type' => 'node',
     'field_name' => 'field_address_road_no',
-    'label' => 'House no.',
+    'label' => 'Hus nr.',
     'required' => 0,
     'settings' => array(
       'text_processing' => 0,
@@ -904,7 +904,7 @@ function valghalla_volunteers_field_default_field_instances() {
     ),
     'entity_type' => 'node',
     'field_name' => 'field_address_zipcode',
-    'label' => 'Zip code',
+    'label' => 'Postnr.',
     'required' => 0,
     'settings' => array(
       'max' => 9999,
@@ -1502,19 +1502,18 @@ function valghalla_volunteers_field_default_field_instances() {
 
   // Translatables
   // Included for use with string extractors like potx.
-  t('Address');
+  t('Adresse');
   t('BNummer');
+  t('By');
   t('CO Navn');
   t('CPR Number');
   t('CPR Valideret');
-  t('City');
   t('Description');
   t('Diæt');
-  t('Door / Side');
+  t('Dør / side');
   t('Ekstern tilmelding');
   t('Email');
-  t('Floor');
-  t('House no.');
+  t('Hus nr.');
   t('Invitation');
   t('Label');
   t('Mødetidspunkt');
@@ -1522,12 +1521,14 @@ function valghalla_volunteers_field_default_field_instances() {
   t('Parti plads');
   t('Polling Station');
   t('Polling Station post');
+  t('Postnr.');
   t('Påmindelse');
   t('RSVP - Aldrig');
   t('RSVP - Ja');
   t('RSVP - Nej');
   t('Role Rækkefølge');
   t('Rolle');
+  t('Sal');
   t('Skriv dit CPR nummer inkl bindestreg. F.eks. 123456-7890.');
   t('Status');
   t('Status besked');
@@ -1538,7 +1539,6 @@ function valghalla_volunteers_field_default_field_instances() {
   t('Valg');
   t('Valginfo');
   t('Valgsted');
-  t('Zip code');
   t('meeting_time');
   t('only for internal use');
   t('rolle_id');

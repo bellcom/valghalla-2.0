@@ -1,7 +1,9 @@
-name=Valghalla
-description=Valghalla base
-core=7.x
+name = Valghalla
+description = Valghalla base
+core = 7.x
+version = "7.x-1.2"
 package = Valghalla
+project = valghalla
 dependencies[] = addressfield
 dependencies[] = block
 dependencies[] = bulk_export

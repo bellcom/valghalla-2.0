@@ -357,6 +357,166 @@ function valghalla_polling_station_field_default_field_bases() {
     'type' => 'text',
   );
 
+  // Exported field_base: 'field_party_list'
+  $field_bases['field_party_list'] = array(
+    'active' => 1,
+    'cardinality' => 1,
+    'deleted' => 0,
+    'entity_types' => array(),
+    'field_name' => 'field_party_list',
+    'foreign keys' => array(),
+    'indexes' => array(),
+    'locked' => 0,
+    'module' => 'valhalla_field_party_volunteers_v3',
+    'settings' => array(),
+    'translatable' => 0,
+    'type' => 'party_volunteers_field_v3',
+  );
+
+  // Exported field_base: 'field_role_n2522'
+  $field_bases['field_role_n2522'] = array(
+    'active' => 1,
+    'cardinality' => 1,
+    'deleted' => 0,
+    'entity_types' => array(),
+    'field_name' => 'field_role_n2522',
+    'foreign keys' => array(),
+    'indexes' => array(),
+    'locked' => 0,
+    'module' => 'valhalla_field_volunteers_roles',
+    'settings' => array(),
+    'translatable' => 0,
+    'type' => 'volunteers_roles_field',
+  );
+
+  // Exported field_base: 'field_role_n2523'
+  $field_bases['field_role_n2523'] = array(
+    'active' => 1,
+    'cardinality' => 1,
+    'deleted' => 0,
+    'entity_types' => array(),
+    'field_name' => 'field_role_n2523',
+    'foreign keys' => array(),
+    'indexes' => array(),
+    'locked' => 0,
+    'module' => 'valhalla_field_volunteers_roles',
+    'settings' => array(),
+    'translatable' => 0,
+    'type' => 'volunteers_roles_field',
+  );
+
+  // Exported field_base: 'field_role_n2524'
+  $field_bases['field_role_n2524'] = array(
+    'active' => 1,
+    'cardinality' => 1,
+    'deleted' => 0,
+    'entity_types' => array(),
+    'field_name' => 'field_role_n2524',
+    'foreign keys' => array(),
+    'indexes' => array(),
+    'locked' => 0,
+    'module' => 'valhalla_field_volunteers_roles',
+    'settings' => array(),
+    'translatable' => 0,
+    'type' => 'volunteers_roles_field',
+  );
+
+  // Exported field_base: 'field_role_n2525'
+  $field_bases['field_role_n2525'] = array(
+    'active' => 1,
+    'cardinality' => 1,
+    'deleted' => 0,
+    'entity_types' => array(),
+    'field_name' => 'field_role_n2525',
+    'foreign keys' => array(),
+    'indexes' => array(),
+    'locked' => 0,
+    'module' => 'valhalla_field_volunteers_roles',
+    'settings' => array(),
+    'translatable' => 0,
+    'type' => 'volunteers_roles_field',
+  );
+
+  // Exported field_base: 'field_role_n2526'
+  $field_bases['field_role_n2526'] = array(
+    'active' => 1,
+    'cardinality' => 1,
+    'deleted' => 0,
+    'entity_types' => array(),
+    'field_name' => 'field_role_n2526',
+    'foreign keys' => array(),
+    'indexes' => array(),
+    'locked' => 0,
+    'module' => 'valhalla_field_volunteers_roles',
+    'settings' => array(),
+    'translatable' => 0,
+    'type' => 'volunteers_roles_field',
+  );
+
+  // Exported field_base: 'field_role_n2527'
+  $field_bases['field_role_n2527'] = array(
+    'active' => 1,
+    'cardinality' => 1,
+    'deleted' => 0,
+    'entity_types' => array(),
+    'field_name' => 'field_role_n2527',
+    'foreign keys' => array(),
+    'indexes' => array(),
+    'locked' => 0,
+    'module' => 'valhalla_field_volunteers_roles',
+    'settings' => array(),
+    'translatable' => 0,
+    'type' => 'volunteers_roles_field',
+  );
+
+  // Exported field_base: 'field_role_n2528'
+  $field_bases['field_role_n2528'] = array(
+    'active' => 1,
+    'cardinality' => 1,
+    'deleted' => 0,
+    'entity_types' => array(),
+    'field_name' => 'field_role_n2528',
+    'foreign keys' => array(),
+    'indexes' => array(),
+    'locked' => 0,
+    'module' => 'valhalla_field_volunteers_roles',
+    'settings' => array(),
+    'translatable' => 0,
+    'type' => 'volunteers_roles_field',
+  );
+
+  // Exported field_base: 'field_role_n2529'
+  $field_bases['field_role_n2529'] = array(
+    'active' => 1,
+    'cardinality' => 1,
+    'deleted' => 0,
+    'entity_types' => array(),
+    'field_name' => 'field_role_n2529',
+    'foreign keys' => array(),
+    'indexes' => array(),
+    'locked' => 0,
+    'module' => 'valhalla_field_volunteers_roles',
+    'settings' => array(),
+    'translatable' => 0,
+    'type' => 'volunteers_roles_field',
+  );
+
+  // Exported field_base: 'field_role_n2530'
+  $field_bases['field_role_n2530'] = array(
+    'active' => 1,
+    'cardinality' => 1,
+    'deleted' => 0,
+    'entity_types' => array(),
+    'field_name' => 'field_role_n2530',
+    'foreign keys' => array(),
+    'indexes' => array(),
+    'locked' => 0,
+    'module' => 'valhalla_field_volunteers_roles',
+    'settings' => array(),
+    'translatable' => 0,
+    'type' => 'volunteers_roles_field',
+  );
+
   // Exported field_base: 'field_venue_bespisning_1'
   $field_bases['field_venue_bespisning_1'] = array(
     'active' => 1,

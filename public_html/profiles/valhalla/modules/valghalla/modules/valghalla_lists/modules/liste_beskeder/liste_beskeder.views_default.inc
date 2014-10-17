@@ -126,7 +126,7 @@ function liste_beskeder_views_default_views() {
   $handler->display->display_options['fields']['title']['label'] = '';
   $handler->display->display_options['fields']['title']['alter']['word_boundary'] = FALSE;
   $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
-  /* Felt: Felt: Status */
+  /* Felt: Field collection item: Status */
   $handler->display->display_options['fields']['field_rsvp_1']['id'] = 'field_rsvp_1';
   $handler->display->display_options['fields']['field_rsvp_1']['table'] = 'field_data_field_rsvp';
   $handler->display->display_options['fields']['field_rsvp_1']['field'] = 'field_rsvp';
@@ -141,20 +141,13 @@ function liste_beskeder_views_default_views() {
   $handler->display->display_options['fields']['field_vlnt_station']['settings'] = array(
     'link' => 1,
   );
-  /* Felt: Felt: Status besked */
+  /* Felt: Field collection item: Status besked */
   $handler->display->display_options['fields']['field_rsvp_comment_1']['id'] = 'field_rsvp_comment_1';
   $handler->display->display_options['fields']['field_rsvp_comment_1']['table'] = 'field_data_field_rsvp_comment';
   $handler->display->display_options['fields']['field_rsvp_comment_1']['field'] = 'field_rsvp_comment';
   $handler->display->display_options['fields']['field_rsvp_comment_1']['relationship'] = 'field_electioninfo_value';
   $handler->display->display_options['fields']['field_rsvp_comment_1']['label'] = 'Besked';
   $handler->display->display_options['fields']['field_rsvp_comment_1']['element_label_colon'] = FALSE;
-  /* Felt: Indhold: Opdateret/kommenteret dato */
-  $handler->display->display_options['fields']['last_updated']['id'] = 'last_updated';
-  $handler->display->display_options['fields']['last_updated']['table'] = 'node_comment_statistics';
-  $handler->display->display_options['fields']['last_updated']['field'] = 'last_updated';
-  $handler->display->display_options['fields']['last_updated']['label'] = 'Opdateret';
-  $handler->display->display_options['fields']['last_updated']['hide_alter_empty'] = FALSE;
-  $handler->display->display_options['fields']['last_updated']['date_format'] = 'time ago';
   /* Felt: Felt: Parti */
   $handler->display->display_options['fields']['field_party']['id'] = 'field_party';
   $handler->display->display_options['fields']['field_party']['table'] = 'field_data_field_party';
@@ -191,7 +184,7 @@ function liste_beskeder_views_default_views() {
   $handler->display->display_options['filters']['type']['value'] = array(
     'volunteers' => 'volunteers',
   );
-  /* Filterkriterie: Felt: Status besked (field_rsvp_comment) */
+  /* Filterkriterie: Field collection item: Status besked (field_rsvp_comment) */
   $handler->display->display_options['filters']['field_rsvp_comment_value']['id'] = 'field_rsvp_comment_value';
   $handler->display->display_options['filters']['field_rsvp_comment_value']['table'] = 'field_data_field_rsvp_comment';
   $handler->display->display_options['filters']['field_rsvp_comment_value']['field'] = 'field_rsvp_comment_value';
@@ -201,6 +194,8 @@ function liste_beskeder_views_default_views() {
 
   /* Display: Beskeder */
   $handler = $view->new_display('page', 'Beskeder', 'page');
+  $handler->display->display_options['defaults']['title'] = FALSE;
+  $handler->display->display_options['title'] = 'Beskeder';
   $handler->display->display_options['defaults']['hide_admin_links'] = FALSE;
   $handler->display->display_options['defaults']['access'] = FALSE;
   $handler->display->display_options['access']['type'] = 'perm';
@@ -231,7 +226,7 @@ function liste_beskeder_views_default_views() {
   $handler->display->display_options['filters']['type']['value'] = array(
     'volunteers' => 'volunteers',
   );
-  /* Filterkriterie: Felt: Status (field_rsvp) */
+  /* Filterkriterie: Field collection item: Status (field_rsvp) */
   $handler->display->display_options['filters']['field_rsvp_value']['id'] = 'field_rsvp_value';
   $handler->display->display_options['filters']['field_rsvp_value']['table'] = 'field_data_field_rsvp';
   $handler->display->display_options['filters']['field_rsvp_value']['field'] = 'field_rsvp_value';
@@ -267,7 +262,6 @@ function liste_beskeder_views_default_views() {
     t('field collection item from field_electioninfo'),
     t('Status'),
     t('Besked'),
-    t('Opdateret'),
     t('Parti'),
     t('Alle'),
     t('Beskeder'),

@@ -18,7 +18,7 @@ function valghalla_volunteers_node_info() {
       'help' => '',
     ),
     'volunteers' => array(
-      'name' => t('Frivillige'),
+      'name' => t('Deltagere'),
       'base' => 'node_content',
       'description' => t('used to store information on volunteers in the system'),
       'has_title' => '1',
@@ -26,5 +26,6 @@ function valghalla_volunteers_node_info() {
       'help' => '',
     ),
   );
+  drupal_alter('node_info', $items);
   return $items;
 }

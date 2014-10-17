@@ -9,6 +9,7 @@ dependencies[] = features
 dependencies[] = file
 dependencies[] = list
 dependencies[] = mimemail
+dependencies[] = node
 dependencies[] = options
 dependencies[] = text
 dependencies[] = valghalla_polling_station

@@ -34,5 +34,6 @@ function valghalla_polling_station_node_info() {
       'help' => '',
     ),
   );
+  drupal_alter('node_info', $items);
   return $items;
 }

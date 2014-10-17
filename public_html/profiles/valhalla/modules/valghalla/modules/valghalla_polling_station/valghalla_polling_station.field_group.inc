@@ -184,7 +184,7 @@ function valghalla_polling_station_field_group_info() {
       'formatter' => 'closed',
       'instance_settings' => array(
         'description' => '',
-        'classes' => '',
+        'classes' => ' group-valgsteder field-group-htab',
         'required_fields' => 1,
         'id' => '',
       ),
@@ -216,7 +216,7 @@ function valghalla_polling_station_field_group_info() {
     'format_settings' => array(
       'formatter' => '',
       'instance_settings' => array(
-        'classes' => '',
+        'classes' => ' group-valgsted field-group-htabs',
       ),
     ),
   );

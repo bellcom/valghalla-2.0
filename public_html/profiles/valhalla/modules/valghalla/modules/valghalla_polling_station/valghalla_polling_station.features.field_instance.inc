@@ -10,6 +10,370 @@
 function valghalla_polling_station_field_default_field_instances() {
   $field_instances = array();
 
+  // Exported field_instance: 'field_collection_item-field_volunteers_pr_party_1-field_party_list'
+  $field_instances['field_collection_item-field_volunteers_pr_party_1-field_party_list'] = array(
+    'bundle' => 'field_volunteers_pr_party_1',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'inline',
+        'module' => 'valhalla_field_party_volunteers_v3',
+        'settings' => array(),
+        'type' => 'party_volunteers_default_v3',
+        'weight' => 4,
+      ),
+      'token' => array(
+        'label' => 'inline',
+        'module' => 'valhalla_field_party_volunteers_v3',
+        'settings' => array(),
+        'type' => 'party_volunteers_default_v3',
+        'weight' => 4,
+      ),
+    ),
+    'entity_type' => 'field_collection_item',
+    'field_name' => 'field_party_list',
+    'label' => 'Party',
+    'required' => 0,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 0,
+      'module' => 'valhalla_field_party_volunteers_v3',
+      'settings' => array(
+        'available_parties' => array(),
+      ),
+      'type' => 'party_volunteers_standard_v3',
+      'weight' => 0,
+    ),
+  );
+
+  // Exported field_instance: 'field_collection_item-field_volunteers_pr_party_1-field_role_n2522'
+  $field_instances['field_collection_item-field_volunteers_pr_party_1-field_role_n2522'] = array(
+    'bundle' => 'field_volunteers_pr_party_1',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'valhalla_field_volunteers_roles',
+        'settings' => array(),
+        'type' => 'volunteers_roles_default',
+        'weight' => 5,
+      ),
+      'token' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'field_collection_item',
+    'field_name' => 'field_role_n2522',
+    'label' => 'Role',
+    'required' => TRUE,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'module' => 'valhalla_field_volunteers_roles',
+      'settings' => array(),
+      'type' => 'volunteers_roles_standart',
+      'weight' => 1,
+    ),
+  );
+
+  // Exported field_instance: 'field_collection_item-field_volunteers_pr_party_1-field_role_n2523'
+  $field_instances['field_collection_item-field_volunteers_pr_party_1-field_role_n2523'] = array(
+    'bundle' => 'field_volunteers_pr_party_1',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'valhalla_field_volunteers_roles',
+        'settings' => array(),
+        'type' => 'volunteers_roles_default',
+        'weight' => 6,
+      ),
+      'token' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'field_collection_item',
+    'field_name' => 'field_role_n2523',
+    'label' => 'Role',
+    'required' => TRUE,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'module' => 'valhalla_field_volunteers_roles',
+      'settings' => array(),
+      'type' => 'volunteers_roles_standart',
+      'weight' => 2,
+    ),
+  );
+
+  // Exported field_instance: 'field_collection_item-field_volunteers_pr_party_1-field_role_n2524'
+  $field_instances['field_collection_item-field_volunteers_pr_party_1-field_role_n2524'] = array(
+    'bundle' => 'field_volunteers_pr_party_1',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'valhalla_field_volunteers_roles',
+        'settings' => array(),
+        'type' => 'volunteers_roles_default',
+        'weight' => 7,
+      ),
+      'token' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'field_collection_item',
+    'field_name' => 'field_role_n2524',
+    'label' => 'Role',
+    'required' => TRUE,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'module' => 'valhalla_field_volunteers_roles',
+      'settings' => array(),
+      'type' => 'volunteers_roles_standart',
+      'weight' => 3,
+    ),
+  );
+
+  // Exported field_instance: 'field_collection_item-field_volunteers_pr_party_1-field_role_n2525'
+  $field_instances['field_collection_item-field_volunteers_pr_party_1-field_role_n2525'] = array(
+    'bundle' => 'field_volunteers_pr_party_1',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'valhalla_field_volunteers_roles',
+        'settings' => array(),
+        'type' => 'volunteers_roles_default',
+        'weight' => 8,
+      ),
+      'token' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'field_collection_item',
+    'field_name' => 'field_role_n2525',
+    'label' => 'Role',
+    'required' => TRUE,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'module' => 'valhalla_field_volunteers_roles',
+      'settings' => array(),
+      'type' => 'volunteers_roles_standart',
+      'weight' => 4,
+    ),
+  );
+
+  // Exported field_instance: 'field_collection_item-field_volunteers_pr_party_1-field_role_n2526'
+  $field_instances['field_collection_item-field_volunteers_pr_party_1-field_role_n2526'] = array(
+    'bundle' => 'field_volunteers_pr_party_1',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'valhalla_field_volunteers_roles',
+        'settings' => array(),
+        'type' => 'volunteers_roles_default',
+        'weight' => 9,
+      ),
+      'token' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'field_collection_item',
+    'field_name' => 'field_role_n2526',
+    'label' => 'Role',
+    'required' => TRUE,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'module' => 'valhalla_field_volunteers_roles',
+      'settings' => array(),
+      'type' => 'volunteers_roles_standart',
+      'weight' => 5,
+    ),
+  );
+
+  // Exported field_instance: 'field_collection_item-field_volunteers_pr_party_1-field_role_n2527'
+  $field_instances['field_collection_item-field_volunteers_pr_party_1-field_role_n2527'] = array(
+    'bundle' => 'field_volunteers_pr_party_1',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'valhalla_field_volunteers_roles',
+        'settings' => array(),
+        'type' => 'volunteers_roles_default',
+        'weight' => 10,
+      ),
+      'token' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'field_collection_item',
+    'field_name' => 'field_role_n2527',
+    'label' => 'Role',
+    'required' => TRUE,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'module' => 'valhalla_field_volunteers_roles',
+      'settings' => array(),
+      'type' => 'volunteers_roles_standart',
+      'weight' => 6,
+    ),
+  );
+
+  // Exported field_instance: 'field_collection_item-field_volunteers_pr_party_1-field_role_n2528'
+  $field_instances['field_collection_item-field_volunteers_pr_party_1-field_role_n2528'] = array(
+    'bundle' => 'field_volunteers_pr_party_1',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'valhalla_field_volunteers_roles',
+        'settings' => array(),
+        'type' => 'volunteers_roles_default',
+        'weight' => 11,
+      ),
+      'token' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'field_collection_item',
+    'field_name' => 'field_role_n2528',
+    'label' => 'Role',
+    'required' => TRUE,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'module' => 'valhalla_field_volunteers_roles',
+      'settings' => array(),
+      'type' => 'volunteers_roles_standart',
+      'weight' => 7,
+    ),
+  );
+
+  // Exported field_instance: 'field_collection_item-field_volunteers_pr_party_1-field_role_n2529'
+  $field_instances['field_collection_item-field_volunteers_pr_party_1-field_role_n2529'] = array(
+    'bundle' => 'field_volunteers_pr_party_1',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'valhalla_field_volunteers_roles',
+        'settings' => array(),
+        'type' => 'volunteers_roles_default',
+        'weight' => 12,
+      ),
+      'token' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'field_collection_item',
+    'field_name' => 'field_role_n2529',
+    'label' => 'Role',
+    'required' => TRUE,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'module' => 'valhalla_field_volunteers_roles',
+      'settings' => array(),
+      'type' => 'volunteers_roles_standart',
+      'weight' => 8,
+    ),
+  );
+
+  // Exported field_instance: 'field_collection_item-field_volunteers_pr_party_1-field_role_n2530'
+  $field_instances['field_collection_item-field_volunteers_pr_party_1-field_role_n2530'] = array(
+    'bundle' => 'field_volunteers_pr_party_1',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'valhalla_field_volunteers_roles',
+        'settings' => array(),
+        'type' => 'volunteers_roles_default',
+        'weight' => 13,
+      ),
+      'token' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'field_collection_item',
+    'field_name' => 'field_role_n2530',
+    'label' => 'Role',
+    'required' => TRUE,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'module' => 'valhalla_field_volunteers_roles',
+      'settings' => array(),
+      'type' => 'volunteers_roles_standart',
+      'weight' => 9,
+    ),
+  );
+
   // Exported field_instance: 'node-polling_station-field_address_city'
   $field_instances['node-polling_station-field_address_city'] = array(
     'bundle' => 'polling_station',
@@ -945,8 +1309,10 @@ function valghalla_polling_station_field_default_field_instances() {
   t('Kontaktperson for valgets afvilking på selve valgdagen(e).');
   t('Lokalekontakt');
   t('Nummer');
+  t('Party');
   t('Pladser per bord');
   t('Postnummer');
+  t('Role');
   t('Sal');
   t('Skolekode');
   t('Sted');
