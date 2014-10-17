@@ -415,6 +415,46 @@ function valghalla_polling_station_field_default_field_instances() {
     ),
   );
 
+  // Exported field_instance: 'node-polling_station-field_interntal_name'
+  $field_instances['node-polling_station-field_interntal_name'] = array(
+    'bundle' => 'polling_station',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 36,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_interntal_name',
+    'label' => 'Internt navn',
+    'required' => 0,
+    'settings' => array(
+      'text_processing' => 0,
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'text',
+      'settings' => array(
+        'size' => 60,
+      ),
+      'type' => 'text_textfield',
+      'weight' => 1,
+    ),
+  );
+
   // Exported field_instance: 'node-polling_station-field_role_weight'
   $field_instances['node-polling_station-field_role_weight'] = array(
     'bundle' => 'polling_station',
@@ -450,7 +490,7 @@ function valghalla_polling_station_field_default_field_instances() {
       'module' => 'number',
       'settings' => array(),
       'type' => 'number',
-      'weight' => 21,
+      'weight' => 3,
     ),
   );
 
@@ -901,6 +941,7 @@ function valghalla_polling_station_field_default_field_instances() {
   t('Digital valgliste');
   t('Dør / Side');
   t('Frivillige pr. parti');
+  t('Internt navn');
   t('Kontaktperson for valgets afvilking på selve valgdagen(e).');
   t('Lokalekontakt');
   t('Nummer');

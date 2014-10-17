@@ -363,6 +363,8 @@ function valghalla_mail_form_email_node_form_alter(&$form, &$form_state, $form_i
   $form['body']['#suffix'] = _valghalla_helper_get_volunteer_info_params('info') . $form['body']['#suffix'];
   $url = current_path();
 
+  error_log(__FILE__ . ' : ' . __LINE__ . ': ' .  print_r($form, 1));
+
   $form['title']['#description'] = 'E-mailens interne navn i Valghalla, dette er ikke emnefeltet.';
 
   if ($url == "valghalla/administration/sendmail") {
@@ -398,6 +400,7 @@ function valghalla_mail_form_email_node_form_alter(&$form, &$form_state, $form_i
     $form['actions']['submit']['#value'] = t('Next');
     hide($form['actions']['preview']);
   }
+
 }
 
 /**

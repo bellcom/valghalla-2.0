@@ -110,7 +110,6 @@ function valhalla_block_ajax_view($delta = '') {
                                           $roles,
                                           $user_party_id);
       $markup .= _valhalla_blocks_generate_overview_markup($count);
-
       break;
 
     //
@@ -222,7 +221,7 @@ function _valhalla_blocks_generate_constituency_markup($constituency_nids, $poll
 
   foreach ($constituency_nids as $constituency_nid => $polling_station_nids) {
     $constituency_node = node_load($constituency_nid);
-
+    $constituencies[$constituency_node->title] = $polling_station_nids;
   }
 
   ksort($constituencies);

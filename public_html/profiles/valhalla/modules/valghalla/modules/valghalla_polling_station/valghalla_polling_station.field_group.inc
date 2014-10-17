@@ -115,8 +115,8 @@ function valghalla_polling_station_field_group_info() {
     'weight' => '24',
     'children' => array(
       0 => 'field_contact',
-      1 => 'field_venue_contact_name',
-      2 => 'field_venue_contact',
+      1 => 'field_venue_contact',
+      2 => 'field_venue_contact_name',
     ),
     'format_type' => 'htab',
     'format_settings' => array(
@@ -144,8 +144,8 @@ function valghalla_polling_station_field_group_info() {
     'label' => 'Ressourcer',
     'weight' => '23',
     'children' => array(
-      0 => 'field_venue_teams',
-      1 => 'field_venue_team_members',
+      0 => 'field_venue_team_members',
+      1 => 'field_venue_teams',
       2 => 'field_venue_bespisning_1',
       3 => 'field_venue_bespisning_2',
       4 => 'field_venue_booth_sides',
@@ -177,8 +177,7 @@ function valghalla_polling_station_field_group_info() {
     'label' => 'Valgsted',
     'weight' => '20',
     'children' => array(
-      0 => 'body',
-      1 => 'field_constituency',
+      0 => 'field_constituency',
     ),
     'format_type' => 'htab',
     'format_settings' => array(
@@ -204,7 +203,7 @@ function valghalla_polling_station_field_group_info() {
   $field_group->parent_name = '';
   $field_group->data = array(
     'label' => 'Valgsted',
-    'weight' => '1',
+    'weight' => '2',
     'children' => array(
       0 => 'group_adresse',
       1 => 'group_andet',

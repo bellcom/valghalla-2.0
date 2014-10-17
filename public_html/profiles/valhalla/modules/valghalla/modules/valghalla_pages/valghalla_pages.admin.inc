@@ -9,7 +9,7 @@
  */
 function valghalla_pages_admin_valghalla() {
   $out = '
-    <a class="btn btn-success" href="/node/add/election">' . t('Opret nyt valg') . '</a>
+    <a class="btn btn-success" href="/node/add/election?destination=valghalla/administration/valg">' . t('Opret nyt valg') . '</a>
     <div><h3>' . t('Liste over valg') . '</h3></div>';
 
   // Fetch all elecitons.

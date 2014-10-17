@@ -68,7 +68,7 @@ function valghalla_volunteers_menu() {
     ),
     'volunteers/station/%' => array(
         'title' => 'Håndtér tilforordnede',
-        'access arguments' => array('volunteers rsvp'),
+        'access arguments' => array('add volunteer to station'),
         'page callback' => 'valghalla_volunteers_to_polling_station',
         'page arguments' => array(2),
         'type' => MENU_CALLBACK,
@@ -168,8 +168,14 @@ function valghalla_volunteers_theme($existing, $type, $theme, $path) {
   );
 
   $items['station'] = array(
-      'variables' => array('posts_to_fill' => NULL, 'party_id' => NULL, 'station_id' => NULL, 'existing' => NULL),
-      'template' => 'valghalla_volunteers_to_polling_station'
+    'variables' => array(
+      'node_edit_url' => NULL,
+      'posts_to_fill' => NULL,
+      'party_id' => NULL,
+      'station_id' => NULL,
+      'existing' => NULL,
+    ),
+    'template' => 'valghalla_volunteers_to_polling_station'
   );
 
   return $items;
@@ -376,6 +382,7 @@ function valghalla_volunteers_to_polling_station($station_nid = NULL) {
   drupal_add_js('var valghalla_destination_path = "' . implode('/', arg()) . '";', 'inline');
   drupal_add_js(drupal_get_path('module', 'valghalla_volunteers') . '/valghalla_volunteers.js');
   module_load_include('inc', 'valghalla_volunteers', 'valghalla_volunteers');
+
   $user_party_id = empty($user->field_party[LANGUAGE_NONE][0]['tid']) ? FALSE : $user->field_party[LANGUAGE_NONE][0]['tid'];
   $polling_station = node_load($station_nid);
   $field_digital_election_list=field_get_items('node', $polling_station, 'field_digital_election_list');
@@ -398,7 +405,6 @@ function valghalla_volunteers_to_polling_station($station_nid = NULL) {
   }
 
   $markup = '';
-
   if(in_array('Valgsekretær', $user->roles) && !$user_party_id){
     // tth: If the user is administrator and theres no party chosen, show all parties!
     $taxonomy = taxonomy_vocabulary_machine_name_load('partier');
@@ -445,17 +451,23 @@ function valghalla_volunteers_to_polling_station($station_nid = NULL) {
       </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->';
 
-  return $markup . $modal;
+  // Let the user edit the node, if he/she has sufficient permissions.
+  $node_edit = '';
+  if (node_access('update', node_load(arg(2)))) {
+    $node_edit = '<a class="btn btn-default pull-right" href="' . $node_edit_url . '">Rediger valgsted</a>';
+  }
+
+  return $node_edit . $markup . $modal;
 }
 
 /**
- * Generate list markup for polling station
+ * Generate list markup for polling station.
  */
 function valghalla_volunteers_to_polling_station_markup($polling_station, $user_party_id){
   // Get values
   $posts_array = valghalla_volunteers_to_polling_station_roles($polling_station, $user_party_id);
 
-  if(!empty($posts_array['posts_to_fill'])){
+  if (!empty($posts_array['posts_to_fill'])) {
     arsort($posts_array['posts_to_fill'], SORT_REGULAR);
 
     // Return the themed values
@@ -480,7 +492,7 @@ function valghalla_volunteers_to_polling_station_markup($polling_station, $user_
  * @return
  *  information array
  */
-function valghalla_volunteers_to_polling_station_roles($polling_station, $party_tid, $election_nid = FALSE){
+function valghalla_volunteers_to_polling_station_roles($polling_station, $party_tid, $election_nid = FALSE) {
   global $user, $language;
 
   $station_id = $polling_station->nid;
@@ -834,26 +846,40 @@ function valghalla_volunteers_add_sub_secretary_form_submit($form, array &$form_
 }
 
 /**
- * hook_form_FORM_ID_alter() implementation
+ * Implements hook_form_FORM_ID_alter().
  */
 function valghalla_volunteers_form_volunteers_node_form_alter(&$form, &$form_state, $form_id) {
   global $user;
 
-  // only alter the form on edit and if the user is not an administrator
   $form['buttons']['#weight'] = 100;
-  //
-  // tth: @todo: check to redo this -->
-  if (($form['#node_edit_form'] === TRUE) &&
-      !in_array('administrator', $user->roles)
-  ) {
 
-    $hide_elements = array('field_party', 'field_token', 'field_polling_station', 'field_polling_station_post', 'field_label', 'additional_settings', 'field_address_bnummer', 'field_rolle_id','field_meeting_time');
+  if (isset($form['actions']['preview_changes'])) {
+    $form['actions']['preview_changes']['#access'] = FALSE;
+  }
+  if (isset($form['actions']['preview'])) {
+    $form['actions']['preview']['#access'] = FALSE;
+  }
+
+  // only alter the form on edit and if the user is not an administrator
+  if (($form['#node_edit_form'] === TRUE) 
+     && !user_access('administer valghalla')) {
+
+    $hide_elements = array(
+      'field_party',
+      'field_external_signup',
+      'field_token',
+      'field_polling_station',
+      'field_polling_station_post',
+      'field_label',
+      'additional_settings',
+      'field_address_bnummer',
+      'field_rolle_id',
+      'field_meeting_time'
+    );
+
     foreach ($hide_elements as $field_name) {
       $form[$field_name]['#access'] = FALSE;
     }
-    $form['buttons']['#access'] = FALSE;
-    // <--
-    //
 
     valghalla_volunteers_field_group_hide_field_groups($form, array('group_adress', 'group_rsvp', 'group_system'));
 
