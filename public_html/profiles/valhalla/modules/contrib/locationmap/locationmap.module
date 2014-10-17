@@ -292,8 +292,8 @@ function locationmap_geocode_for_address($address) {
 
   $url_options = array(
     'query' => array(
-      'q' => $address,
-      'output' => 'csv',
+      'sensor' => 'false',
+      'address' => $address
     ),
   );
 
@@ -302,15 +302,15 @@ function locationmap_geocode_for_address($address) {
     'timeout' => 120, 
   );
 
-  $response = drupal_http_request(url('http://maps.google.com/maps/geo', $url_options), $options);
+  $response = drupal_http_request(url('http://maps.googleapis.com/maps/api/geocode/json', $url_options), $options);
 
   if ($response->code != 200) {
     return FALSE;
   }
 
-  // data looks like: 200,5,51.4793862,-2.5729730  
-  $data = explode(',', $response->data);
-  return array($data[2], $data[3]);
+  $data = json_decode($response->data);
+  $location = $data->results[0]->geometry->location;
+  return array($location->lat, $location->lng);
 }
 
 /**
@@ -457,7 +457,7 @@ function locationmap_block_view($delta) {
  * @see http://drupal.org/node/1354
  */
 function locationmap_static_image_url($w = 200, $h = 150) {
-  $image_url = 'http://maps.googleapis.com/maps/api/staticmap?zoom=' . variable_get('locationmap_zoom', 5);
+  $image_url = '//maps.googleapis.com/maps/api/staticmap?zoom=' . variable_get('locationmap_zoom', 5);
   $image_url .= "&amp;size={$w}x{$h}";
   $image_url .= '&amp;markers=' . variable_get('locationmap_lat', 0) . ',' . variable_get('locationmap_lng', 0);
   $image_url .= "&amp;sensor=false";
@@ -498,6 +498,59 @@ function locationmap_block_image() {
   }
 
   return($block);
+}
+
+/**
+ * Implements hook_token_info().
+ */
+function locationmap_token_info() {
+  $types = array(
+    'locationmap' => array(
+      'name' =>  t('Location map'),
+      'description' => t('Tokens provided by the Location Map module.'),
+    ),
+  );
+
+  $tokens['latitude'] = array(
+    'name' => t('Latitude'),
+    'description' => t('Latitude of map marker.'),
+  );
+  $tokens['longitude'] = array(
+    'name' => t('Longitude'),
+    'description' => t('Longitude of map marker.'),
+  );
+
+  return array(
+    'types' => $types,
+    'tokens' => array(
+      'locationmap' => $tokens,
+    ),
+  );
+}
+
+/**
+ * Implements hook_tokens().
+ */
+function locationmap_tokens($type, $tokens, array $data = array(), array $options = array()){
+  $replacements = array();
+  $sanitize = !empty($options['sanitize']);
+
+  if ($type == 'locationmap') {
+    foreach ($tokens as $name => $original) {
+      switch ($name) {
+        case 'latitude':
+          $lat = variable_get('locationmap_lat');
+          $replacements[$original] = $sanitize ? check_plain($lat) : $lat;
+          break;
+        case 'longitude':
+          $lat = variable_get('locationmap_lng');
+          $replacements[$original] = $sanitize ? check_plain($lat) : $lat;
+          break;
+      }
+    }
+  }
+
+  return $replacements;
 }
 
 /**
