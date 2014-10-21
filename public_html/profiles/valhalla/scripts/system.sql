@@ -25,6 +25,7 @@ SET time_zone = "+00:00";
 --
 -- Table structure for table `system`
 --
+DROP TABLE `system`;
 
 CREATE TABLE IF NOT EXISTS `system` (
   `filename` varchar(255) NOT NULL DEFAULT '' COMMENT 'The path of the primary file for this item, relative to the Drupal root; e.g. modules/node/node.module.',
