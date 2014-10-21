@@ -11,33 +11,33 @@ function _valghalla_helper_wrap_name($node, $container = 'p', $fcid = null) {
   global $language;
 
   $rsvp_map = array(
-      0 => t('Har endnu ikke bekræftet'),
-      1 => t('Har bekræftet sin deltagelse'),
-      2 => t('Har meldt afbud til dette valg'),
-      3 => t('Ønsker at blive slettet'),
+    0 => t('Har endnu ikke bekræftet'),
+    1 => t('Har bekræftet sin deltagelse'),
+    2 => t('Har meldt afbud til dette valg'),
+    3 => t('Ønsker at blive slettet'),
   );
   $rsvp_class_map = array(
-      0 => 'unknown',
-      1 => 'yes',
-      2 => 'no',
-      3 => 'never',
+    0 => 'unknown',
+    1 => 'yes',
+    2 => 'no',
+    3 => 'never',
   );
 
   $party = '';
-  if($party_field = field_get_items('node', $node, 'field_party')) {
+  if ($party_field = field_get_items('node', $node, 'field_party')) {
     $party = taxonomy_term_load($party_field[0]['tid']);
   }
 
   $rsvp_markup = "";
 
   $fc = entity_load_single('field_collection_item', $fcid);
-  if(is_object($fc)){
+  if (is_object($fc)) {
     $rsvp_message = field_get_items('field_collection_item', $fc, 'field_rsvp_comment');
     $rsvp = field_get_items('field_collection_item', $fc, 'field_rsvp');
   }
 
-  if($rsvp_message){
-    if(!empty($rsvp_message[0]['value'])){
+  if ($rsvp_message) {
+    if (!empty($rsvp_message[0]['value'])) {
       $rsvp_markup = '<span class="rsvp-message-icon fa fa-envelope-o"></span><span style="display:none;" class="rsvp-message">' . $rsvp_message[0]['value'] . '</span>';
     }
   }
@@ -46,9 +46,9 @@ function _valghalla_helper_wrap_name($node, $container = 'p', $fcid = null) {
 
   $reply_link = '';
 
-  if ($rsvp == 0){
+  if ($rsvp == 0) {
     $field_token = field_get_items('field_collection_item', $fc, 'field_token');
-    $reply_link = '<a title="Svar for denne tilforordnede" class="reply edit" href="/volunteers/rsvp/'  . $field_token[0]['value'] . '"><i class="fa fa-reply"></i></a>';
+    $reply_link = '<a title="Svar for denne tilforordnede" class="reply edit" href="/volunteers/rsvp/'  . $field_token[0]['value'] . '"><span class="glyphicon glyphicon-comment"></span></a>';
   }
 
   $valid = '';
@@ -57,16 +57,15 @@ function _valghalla_helper_wrap_name($node, $container = 'p', $fcid = null) {
     $valid = 'notvalidated';
   }
 
-  $display = '(' . $party->name. ') ' . $node->title . ' (' . $rsvp_map[$rsvp] . ')' . $rsvp_markup . $reply_link ;
+  $display = '(' . $party->name . ') ' . $node->title . ' (' . $rsvp_map[$rsvp] . ')' . $rsvp_markup . $reply_link;
   return '<' . $container . ' class="volunteer ' . $valid . ' ' . $rsvp_class_map[$rsvp] . '">' . $display . '</' . $container . '>';
 }
 
 /**
- * validate the login token
- * if valid, the session variable valghalla_volunteer will contain the related node
+ * Validate the login token.
  *
- * @param string $token
- * @return boolean
+ * If valid, the session variable valghalla_volunteer will contain the related
+ * node.
  */
 function _valghalla_volunteers_validate_key($token) {
   $volunteer_query = new EntityFieldQuery();
@@ -83,12 +82,7 @@ function _valghalla_volunteers_validate_key($token) {
 }
 
 /**
- * get email from its token
- *
- * @global stdClass $language
- * @staticvar array $emails
- * @param string $token
- * @return array
+ * Get email from its token.
  */
 function _valghalla_helper_get_email_by_token($token) {
   global $language;
@@ -104,8 +98,7 @@ function _valghalla_helper_get_email_by_token($token) {
       ->condition('bundle', 'email', '=')
       ->condition('field_token_value', $token, '=')
       ->execute()
-      ->fetchField()
-  ;
+      ->fetchField();
 
   $emails[$token] = FALSE;
   if ($entity_id) {
@@ -408,7 +401,7 @@ function _valghalla_helper_get_token_values($entity){
   }
 
   if ($field = field_get_items('field_collection_item', $entity, 'field_post_role')) {
-    $post_node = node_load($field [0]['target_id']);
+    $post_node = node_load($field[0]['target_id']);
   }
 
   // Empty variables.
@@ -429,15 +422,13 @@ function _valghalla_helper_get_token_values($entity){
   $time = '';
   $responsible = '';
 
-  ////////////////////////////////////
-  // Date info
+  // Date info.
   //
   $date_now = date(variable_get('valghalla_datetime_format', 'd-m-Y H:i:s'));
 
-  ////////////////////////////////////
-  // Host entity (volunteer) info
+  // Host entity (volunteer) info.
   //
-  if(is_object($host_entity)){
+  if (is_object($host_entity)) {
     $volunteer_nid = $host_entity->nid;
 
     $name = $host_entity->title;
@@ -451,35 +442,32 @@ function _valghalla_helper_get_token_values($entity){
     }
   }
 
-  ////////////////////////////////////
-  // RSVP link
+  // RSVP link.
   //
-  if($field = field_get_items('field_collection_item', $entity, 'field_token')){
+  if ($field = field_get_items('field_collection_item', $entity, 'field_token')) {
     global $base_url;
     $link = $base_url . '/volunteers/rsvp/' . $field[0]['value'];
   }
 
-  ////////////////////////////////////
-  // Election info
+  // Election info.
   //
-  if(is_object($election_node)){
+  if (is_object($election_node)) {
     $election = $election_node->title;
 
-    if ($field= field_get_items('node', $election_node, 'field_date')) {
+    if ($field = field_get_items('node', $election_node, 'field_date')) {
       $election_date = date(variable_get('valghalla_date_format', 'd-m-Y'), strtotime($field[0]['value']));
     }
 
     $time_left = strtotime($field[0]['value']) - time();
-    $days = (int)($time_left / 86400);
+    $days = (int) ($time_left / 86400);
   }
 
-  ////////////////////////////////////
-  // Polling station info
+  // Polling station info.
   //
-  if(is_object($polling_station_node)){
+  if (is_object($polling_station_node)) {
     $polling_station = $polling_station_node->title;
 
-    if ($field= field_get_items('node', $polling_station_node, 'field_address_road')) {
+    if ($field = field_get_items('node', $polling_station_node, 'field_address_road')) {
       $polling_station_address = $field[0]['value'] . ' ';
     }
 
@@ -508,10 +496,9 @@ function _valghalla_helper_get_token_values($entity){
     }
   }
 
-  ////////////////////////////////////
-  // Post info
+  // Post info.
   //
-  if(is_object($post_node)){
+  if (is_object($post_node)) {
     $position = $post_node->title;
     $position_nid = $post_node->nid;
 
@@ -570,4 +557,3 @@ function _valghalla_helper_get_volunteer_info_params($node) {
           </ul>
           <p><em>Bemærk!</em> i nogle tilfælde vil nogle tokens ikke være tilgængelige.</p>";
 }
-

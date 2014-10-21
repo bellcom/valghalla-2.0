@@ -352,11 +352,21 @@ function valghalla_volunteers_rsvp_form_submit($form, &$form_state) {
 
   $fc->save();
 
-//  $params  = _valghalla_helper_get_volunteer_info_params($node);
-  $params['rsvp_type'] = $types[$form_state['values']['rsvp']];
-  $to = $params['!email'];
+  $type = 'confirmed';
+
+  $election_field = field_get_items('field_collection_item', $fc, 'field_election');
+  $role_field = field_get_items('field_collection_item', $fc, 'field_post_role');
+  $election_nid = $election_field[0]['target_id'];
+  $role_nid = $role_field[0]['target_id'];
+
+  $mail = valghalla_mail_get_mail($election_nid, $role_nid, $type);
+  $tokens = _valghalla_helper_get_token_values($fc);
+
+  $params = array_merge(array('tokens' => $tokens), $mail);
+  $to = $tokens['!email'];
   $from = variable_get('site_mail', 'admin@example.com');
-  drupal_mail('valghalla_mail', 'rsvp_confirm', $to, $language, $params, $from, TRUE);
+
+  drupal_mail('valghalla_mail', 'mail', $to, $language, $params, $from, TRUE);
   drupal_set_message(t('Vi har modtaget dit svar.'));
 }
 

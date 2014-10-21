@@ -99,6 +99,8 @@ function valghalla_mail_menu() {
  */
 function valghalla_mail_mail($key, &$message, $params) {
   $options = array();
+  error_log(__FILE__ . ' : ' . __LINE__ . ': ' .  print_r($message, 1));
+  error_log(__FILE__ . ' : ' . __LINE__ . ': ' .  print_r($params, 1));
 
   // if $params isnt an array, dont do anything.
   if(!is_array($params)){
