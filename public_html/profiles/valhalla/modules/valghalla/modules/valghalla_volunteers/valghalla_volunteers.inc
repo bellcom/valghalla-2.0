@@ -188,96 +188,6 @@ function _valghalla_helper_get_role_array(){
 }
 
 /**
- * handle csv imports of volunteers
- *
- * @global stdClass $user
- * @global stdClass $language
- * @param stdClass $file_object
- * @param int $party_forced, optional party id if set all imports will have this party id set.
- * @return array
- */
-function _valghalla_helter_parse_csv_import($file_object, $party_forced = FALSE) {
-  global $user, $language;
-
-  $failed = array();
-  $counter = $added = $updated = 0;
-  if ($handle = fopen($file_object->uri, 'r')) {
-
-    while (($data = fgetcsv($handle, 1024, ";")) !== FALSE) {
-      if ($counter == 0) {
-        // header line..
-        $counter++;
-        continue;
-      }
-
-      if (empty($data[0]) || (count($data) != 5)) {
-        continue;
-      }
-
-      // extract fields into readable variables
-      list($party, $cpr, $name, $email, $phone) = $data;
-
-      if ($party_forced) {
-        $party = $party_forced;
-      }
-
-      if (FALSE == _valghalla_helper_validate_cpr($cpr)) {
-        $failed[$cpr] = $name;
-        continue;
-      }
-
-      $node = _valghalla_helper_get_volunteer_by_cpr($cpr);
-
-      if (!$node instanceof stdClass) {
-        $node = new stdClass();
-        $node->type = 'volunteers';
-        node_object_prepare($node);
-        $node->comment = 0;
-        $node->title = $name;
-        $node->language = $language->language;
-        $node->field_cpr_number[$language->language][0]['value'] = $cpr;
-
-        $added++;
-      } else {
-
-        if (($party_forced && !empty($node->field_party[$language->language][0]['tid'])) &&
-            ($node->field_party[$language->language][0]['tid'] != $party_forced)
-        ) {
-          $failed[$cpr] = $name . ' - tilhører et andet parti';
-          continue;
-        }
-
-        $updated++;
-      }
-
-      $node->field_email[$language->language][0]['email'] = $email;
-      $node->field_phone[$language->language][0]['value'] = $phone;
-      $node->field_token[$language->language][0]['value'] = user_password(8);
-
-      if ($party) {
-        if (preg_match('~^[0-9]+$~', $party)) {
-          $tid = $party;
-        } else {
-          $term = taxonomy_get_term_by_name($party);
-          $tid = array_shift(array_keys($term));
-        }
-        $node->field_party[$language->language][0]['tid'] = $tid;
-      }
-
-      node_save($node);
-      $counter++;
-    }
-    fclose($handle);
-  }
-
-  return array(
-      'added' => $added,
-      'updated' => $updated,
-      'failed' => $failed
-  );
-}
-
-/**
  * returns a keyed array of roles
  */
 function _valghalla_helper_get_roles() {
@@ -384,11 +294,11 @@ function _valghalla_helper_volunteers_count() {
 }
 
 /**
- * Retrieve values for tokens
+ * Retrieve values for tokens.
  *
  * @author Thomas Thune Hansen <tth@bellcom.dk>
  */
-function _valghalla_helper_get_token_values($entity){
+function _valghalla_helper_get_token_values($entity) {
   // Get host entity.
   $host_entity = $entity->hostEntity();
   // Load needed fields and nodes.
@@ -446,7 +356,8 @@ function _valghalla_helper_get_token_values($entity){
   //
   if ($field = field_get_items('field_collection_item', $entity, 'field_token')) {
     global $base_url;
-    $link = $base_url . '/volunteers/rsvp/' . $field[0]['value'];
+    $url = $base_url . '/volunteers/rsvp/' . $field[0]['value'];
+    $link = '<a href="' . $url . '">' . $url . '</a>';
   }
 
   // Election info.

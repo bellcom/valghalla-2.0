@@ -31,9 +31,6 @@ function valghalla_volunteers_permission() {
       'see all psn numbers' => array(
           'title' => t('Se alle CPR numre'),
       ),
-      'import volunteers' => array(
-          'title' => t('Importer frivillige'),
-      ),
       'add volunteer to station' => array(
           'title' => t('Tilføj frivillig til valgsted'),
       ),
@@ -127,16 +124,6 @@ function valghalla_volunteers_menu() {
     'access arguments' => array('add volunteers'),
     'page callback' => 'valghalla_volunteers_add',
     'type' => MENU_NORMAL_ITEM,
-  );
-
-  $items['valghalla/deltagere/importer'] = array(
-    'title' => 'Importér deltagere',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('valghalla_volunteers_admin_import_form'),
-    'access arguments' => array('import volunteers'),
-    'file' => 'valghalla_volunteers_admin.inc',
-    'type' => MENU_NORMAL_ITEM,
-    'weight' => 10,
   );
 
   $items['ajax/volunteers/station/%'] = array(
