@@ -1,0 +1,200 @@
+<?php
+/**
+ * @file
+ * Import volunteers from CSV file.
+ */
+
+/**
+ * Implements hook_permission().
+ */
+function valghalla_volunteers_import_permission() {
+  return array(
+    'import volunteers' => array(
+      'title' => t('Importer frivillige'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_menu().
+ */
+function valghalla_volunteeers_import_menu() {
+  $items['valghalla/deltagere/importer'] = array(
+    'title' => 'Importér deltagere',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('valghalla_volunteers_import_form'),
+    'access arguments' => array('import volunteers'),
+    'type' => MENU_NORMAL_ITEM,
+    'weight' => 10,
+  );
+
+  return $items;
+}
+
+/**
+ * Form callback for volunteer import.
+ */
+function valghalla_volunteers_admin_import_form($form, &$form_state) {
+  $form['#attributes'] = array('enctype' => "multipart/form-data");
+
+  $form['import'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Importér nye frivillige'),
+  );
+
+  $form['import']['upload'] = array(
+    '#type' => 'file',
+  );
+
+  $form['import']['truncate'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Slet alle tilforordnede før de importen.'),
+  );
+
+  $form['import']['note'] = array(
+    '#type' => 'item',
+    '#title' => t('Note'),
+    '#description' => '<p>' . t('Hvis du vælger at slette alle tilforordnede før importen, vil al information om disse gå tabt.') . '</p>',
+  );
+
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Importér'),
+  );
+
+  return $form;
+}
+
+/**
+ * Validation handler for import.
+ */
+function valghalla_volunteers_admin_import_form_validate($form, &$form_state) {
+  $validators = array('file_validate_extensions' => array('csv'));
+  $file = file_save_upload('upload', $validators);
+
+  if (FALSE == $file) {
+    form_set_error('import][upload', t('Mangler en gyldig csv fil.'));
+  }
+  else {
+    $form_state['file object'] = $file;
+  }
+}
+
+/**
+ * Submit handler for importing volunteers.
+ */
+function valghalla_volunteers_admin_import_form_submit($form, &$form_state) {
+  global $language;
+
+  module_load_include('inc', 'valghalla_volunteers', 'valghalla_volunteers');
+
+  // Handle truncate request.
+  if ($form_state['values']['truncate'] == 1) {
+    $nids = db_select('node', 'n')
+      ->fields('n', array('nid'))
+      ->condition('type', 'volunteers', '=')
+      ->execute()
+      ->fetchAll(PDO::FETCH_COLUMN);
+    node_delete_multiple($nids);
+  }
+
+  $import = _valghalla_volunteers_parse_csv_import($form_state['file object']);
+
+  if ($import) {
+    drupal_set_message(t('Impotren oprettede @added og opdaterede @updated tilforordnede.', array('@added' => $import['added'], '@updated' => $import['updated'])));
+
+    if ($import['failed']) {
+      $msg = '<p>' . t('Følgende CPR numre er ikke gyldige.') . '</p><ul>';
+      foreach ($import['failed'] as $cpr => $name) {
+        $msg .= '<li>' .  $name . ' ' . $cpr . '</li>';
+      }
+      $msg .= '</ul>';
+      drupal_set_message($msg, 'error');
+    }
+  }
+}
+
+/**
+ * Handle csv imports of volunteers.
+ */
+function _valghalla_volunteers_parse_csv_import($file_object, $party_forced = FALSE) {
+  global $user, $language;
+
+  $failed = array();
+  $counter = $added = $updated = 0;
+  if ($handle = fopen($file_object->uri, 'r')) {
+
+    while (($data = fgetcsv($handle, 1024, ";")) !== FALSE) {
+      if ($counter == 0) {
+        // Header line.
+        $counter++;
+        continue;
+      }
+
+      if (empty($data[0]) || (count($data) != 5)) {
+        continue;
+      }
+
+      // Extract fields into readable variables.
+      list($party, $cpr, $name, $email, $phone) = $data;
+
+      if ($party_forced) {
+        $party = $party_forced;
+      }
+
+      if (FALSE == valghalla_volunteer_validator_validate_format($cpr)) {
+        $failed[$cpr] = $name;
+        continue;
+      }
+
+      $node = _valghalla_helper_get_volunteer_by_cpr($cpr);
+
+      if (!$node instanceof stdClass) {
+        $node = new stdClass();
+        $node->type = 'volunteers';
+        node_object_prepare($node);
+        $node->comment = 0;
+        $node->title = $name;
+        $node->language = $language->language;
+        $node->field_cpr_number[$language->language][0]['value'] = $cpr;
+
+        $added++;
+      }
+      else {
+        if (($party_forced && !empty($node->field_party[$language->language][0]['tid'])) &&
+            ($node->field_party[$language->language][0]['tid'] != $party_forced)
+        ) {
+          $failed[$cpr] = $name . ' - tilhører et andet parti';
+          continue;
+        }
+
+        $updated++;
+      }
+
+      $node->field_email[$language->language][0]['email'] = $email;
+      $node->field_phone[$language->language][0]['value'] = $phone;
+      $node->field_token[$language->language][0]['value'] = user_password(8);
+
+      if ($party) {
+        if (preg_match('~^[0-9]+$~', $party)) {
+          $tid = $party;
+        }
+        else {
+          $term = taxonomy_get_term_by_name($party);
+          $tid = array_shift(array_keys($term));
+        }
+        $node->field_party[$language->language][0]['tid'] = $tid;
+      }
+
+      node_save($node);
+      $counter++;
+    }
+    fclose($handle);
+  }
+
+  return array(
+    'added' => $added,
+    'updated' => $updated,
+    'failed' => $failed,
+  );
+}

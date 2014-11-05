@@ -1,0 +1,4 @@
+name = Valghalla volunteers import
+description = Import volunteers from CSV file
+core = 7.x
+package = Valghalla
