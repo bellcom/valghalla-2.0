@@ -451,6 +451,7 @@ function valghalla_volunteers_to_polling_station($station_nid = NULL) {
   // Let the user edit the node, if he/she has sufficient permissions.
   $node_edit = '';
   if (node_access('update', node_load(arg(2)))) {
+    $node_edit_url = '/node/' . arg(2) . '/edit?destination=' . current_path();
     $node_edit = '<a class="btn btn-default pull-right" href="' . $node_edit_url . '">Rediger valgsted</a>';
   }
 
