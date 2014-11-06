@@ -34,8 +34,29 @@ function valghalla_volunteeers_import_menu() {
 /**
  * Form callback for volunteer import.
  */
-function valghalla_volunteers_admin_import_form($form, &$form_state) {
+function valghalla_volunteers_import_form($form, &$form_state) {
   $form['#attributes'] = array('enctype' => "multipart/form-data");
+
+  $description = <<<EOL
+<p>Her kan du importere en liste af deltagere fra en CSV (comma-seperated values) fil.</p>
+
+<ul>
+  <li>Filens første linje, bliver ikke importeret, da denne bruges som beskrivelse.</li>
+  <li>Værdierne skal være adskildt af et komma (,).</li>
+  <li>Hvis en frivillig allerede findes (findes på CPR), bliver denne opdateret med data fra filen.</li>
+</ul>
+
+<p>Du kan se et eksempel på hvordan sådan en fil kan se ud her:</p>
+<pre>
+Parti,CPR,Navn,Email,Telefon
+A,123456-2342,Fornavn Efternavn,email@adresse.dk,12314141
+A,123223-2242,Fornavn Mellemnavn Efternavn,andenemail@adresse.dk,12314141
+</pre>
+EOL;
+
+  $form['pre'] = array(
+    '#markup' => $description,
+  );
 
   $form['import'] = array(
     '#type' => 'fieldset',
@@ -44,17 +65,6 @@ function valghalla_volunteers_admin_import_form($form, &$form_state) {
 
   $form['import']['upload'] = array(
     '#type' => 'file',
-  );
-
-  $form['import']['truncate'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Slet alle tilforordnede før de importen.'),
-  );
-
-  $form['import']['note'] = array(
-    '#type' => 'item',
-    '#title' => t('Note'),
-    '#description' => '<p>' . t('Hvis du vælger at slette alle tilforordnede før importen, vil al information om disse gå tabt.') . '</p>',
   );
 
   $form['submit'] = array(
@@ -68,7 +78,7 @@ function valghalla_volunteers_admin_import_form($form, &$form_state) {
 /**
  * Validation handler for import.
  */
-function valghalla_volunteers_admin_import_form_validate($form, &$form_state) {
+function valghalla_volunteers_import_form_validate($form, &$form_state) {
   $validators = array('file_validate_extensions' => array('csv'));
   $file = file_save_upload('upload', $validators);
 
@@ -83,28 +93,27 @@ function valghalla_volunteers_admin_import_form_validate($form, &$form_state) {
 /**
  * Submit handler for importing volunteers.
  */
-function valghalla_volunteers_admin_import_form_submit($form, &$form_state) {
+function valghalla_volunteers_import_form_submit($form, &$form_state) {
   global $language;
+  global $user;
 
   module_load_include('inc', 'valghalla_volunteers', 'valghalla_volunteers');
 
-  // Handle truncate request.
-  if ($form_state['values']['truncate'] == 1) {
-    $nids = db_select('node', 'n')
-      ->fields('n', array('nid'))
-      ->condition('type', 'volunteers', '=')
-      ->execute()
-      ->fetchAll(PDO::FETCH_COLUMN);
-    node_delete_multiple($nids);
+  $force_party = FALSE;
+  $user_entity = user_load($user->uid);
+  $user_party_id = empty($user_entity->field_party[LANGUAGE_NONE][0]['tid']) ? FALSE : $user_entity->field_party[LANGUAGE_NONE][0]['tid'];
+
+  if ($user_party_id) {
+    $force_party = $user_party_id;
   }
 
-  $import = _valghalla_volunteers_parse_csv_import($form_state['file object']);
+  $import = _valghalla_volunteers_parse_csv_import($form_state['file object'], $force_party);
 
   if ($import) {
-    drupal_set_message(t('Impotren oprettede @added og opdaterede @updated tilforordnede.', array('@added' => $import['added'], '@updated' => $import['updated'])));
+    drupal_set_message(t('Importen oprettede @added og opdaterede @updated deltagere.', array('@added' => $import['added'], '@updated' => $import['updated'])));
 
     if ($import['failed']) {
-      $msg = '<p>' . t('Følgende CPR numre er ikke gyldige.') . '</p><ul>';
+      $msg = '<p>' . t('Følgende blev ikke importeret.') . '</p><ul>';
       foreach ($import['failed'] as $cpr => $name) {
         $msg .= '<li>' .  $name . ' ' . $cpr . '</li>';
       }
@@ -124,7 +133,7 @@ function _valghalla_volunteers_parse_csv_import($file_object, $party_forced = FA
   $counter = $added = $updated = 0;
   if ($handle = fopen($file_object->uri, 'r')) {
 
-    while (($data = fgetcsv($handle, 1024, ";")) !== FALSE) {
+    while (($data = fgetcsv($handle, 1024, ",")) !== FALSE) {
       if ($counter == 0) {
         // Header line.
         $counter++;
