@@ -1,0 +1,305 @@
+<?php
+/**
+ * @file
+ * liste_deltager.module
+ */
+
+/**
+ * Implements hook_menu().
+ */
+function liste_deltager_menu() {
+  $items['valghalla_lists/deltagere'] = array(
+    'title' => 'Deltagerlister',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('liste_deltager_form'),
+    'access arguments' => array('valghalla-list view all parties'),
+  );
+  return $items;
+}
+
+/**
+ * Form callback for "Deltager lister".
+ */
+function liste_deltager_form($form, $form_state) {
+  drupal_add_js(drupal_get_path('module', 'liste_deltager') . '/js/liste_deltager.js');
+
+  // Show columns.
+  $form['columns'] = array(
+    '#type' => 'checkboxes',
+    '#title' => t('Kolonner'),
+    '#prefix' => '<div class="no-print"><div class="col-left">',
+    '#suffix' => '</div>',
+    '#options' => _liste_deltager_columns(),
+  );
+
+  // Filter volunteers.
+  $form['polling_station'] = array(
+    '#type' => 'select',
+    '#title' => 'Valgsted',
+    '#options' => liste_deltager_polling_station_options(),
+    '#prefix' => '<div class="col-right">',
+  );
+
+  $form['roles'] = array(
+    '#type' => 'checkboxes',
+    '#title' => t('Rolle(r)'),
+    '#options' => _valghalla_helper_get_roles(),
+    '#prefix' => '<div class="col-left">',
+    '#suffix' => '</div>',
+  );
+
+  $form['party'] = array(
+    '#type' => 'checkboxes',
+    '#title' => t('Parti(er) (plads)'),
+    '#prefix' => '<div class="col-right">',
+    '#options' => _valghalla_helper_get_parties(),
+    '#suffix' => '</div></div>',
+  );
+
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Opdater'),
+    '#suffix' => '</div>',
+  );
+
+  if (isset($form_state['rebuild']) && $form_state['rebuild']) {
+    $form['print'] = array(
+      '#type' => 'button',
+      '#value' => t('Print'),
+      '#attributes' => array('onclick' => 'javascript: window.print();'),
+      '#prefix' => '<div class="no-print print-button">',
+      '#suffix' => '</div>',
+    );
+
+    $form['results'] = array(
+      '#markup' => liste_deltager_generate_list($form_state['values']),
+    );
+  }
+
+  return $form;
+}
+
+/**
+ * Submit callback for "Delager lister".
+ */
+function liste_deltager_form_submit(&$form, &$form_state) {
+  $form_state['rebuild'] = TRUE;
+}
+
+/**
+ * Generate list of volunteers.
+ */
+function liste_deltager_generate_list($values) {
+  $variables = array();
+  $variables['header'] = liste_deltager_generate_header($values);
+
+  $variables['table'] = liste_deltager_generate_table($values);
+  return theme('liste_deltager_list', $variables);
+}
+
+/**
+ * Generate header for list.
+ */
+function liste_deltager_generate_header($values) {
+  $header = array();
+
+  if ($election = node_load($_SESSION['election_nid'])) {
+    $header['election'] = $election->title;
+
+    $election_date_field = field_get_items('node', $election, 'field_date');
+    $header['date'] = strtolower(format_date(strtotime($election_date_field[0]['value']), 'custom', 'l, j. F, Y'));
+  }
+
+  if ($polling_station = node_load($values['polling_station'])) {
+    $header['polling_station'] = $polling_station->title;
+    $header['adress'] = valghalla_polling_station_get_adress($polling_station);
+
+    if ($school_code_field = field_get_items('node', $polling_station, 'field_venue_skolekode')) {
+      $header['schoolcode'] = $school_code_field[0]['value'];
+    }
+
+    $header['contact_info'] = valghalla_polling_station_get_contact($polling_station);
+  }
+
+  return $header;
+}
+
+/**
+ * Generate table of volunteers.
+ */
+function liste_deltager_generate_table($values) {
+  $header = array();
+  $rows = array();
+
+  $available_columns = _liste_deltager_columns();
+  foreach ($values['columns'] as $column => $checked) {
+    if ($checked) {
+      $header[] = $available_columns[$column];
+    }
+  }
+
+  foreach (liste_deltager_get_volunteers($values) as $key => $volunteer) {
+    $rows[$key] = array();
+    foreach ($values['columns'] as $column => $checked) {
+      if ($checked) {
+        $rows[$key][$column] = $volunteer[$column];
+      }
+    }
+  }
+
+  return theme('table', array('header' => $header, 'rows' => $rows));
+}
+
+/**
+ * Get a list of volunteers.
+ */
+function liste_deltager_get_volunteers($values) {
+  // Prepare statement.
+  $volunteer_query = new EntityFieldQuery();
+  $volunteer_query->entityCondition('entity_type', 'field_collection_item')
+      ->entityCondition('bundle', 'field_electioninfo');
+
+  $roles = count($values['roles']) > 0 ? $values['roles'] : FALSE;
+  $party = count($values['party']) > 0 ? $values['party'] : FALSE;
+  $polling_station = count($values['polling_station']) > 0 ? $values['polling_station'] : FALSE;
+
+  if ($_SESSION['election_nid']) {
+    $volunteer_query->fieldCondition('field_election', 'target_id', $_SESSION['election_nid']);
+  }
+  if ($roles) {
+    $volunteer_query->fieldCondition('field_post_role', 'target_id', $roles);
+  }
+  if ($party) {
+    $volunteer_query->fieldCondition('field_post_party', 'target_id', $party);
+  }
+  if ($polling_station) {
+    $volunteer_query->fieldCondition('field_vlnt_station', 'target_id', $polling_station);
+  }
+
+  $result = array_keys(array_shift($volunteer_query->execute()));
+
+  $parties = _valghalla_helper_get_parties();
+  $roles_array = _valghalla_helper_get_roles();
+
+  if (db_table_exists('field_election_roles_diaet')) {
+    $diet_rows = db_query("SELECT * FROM {field_election_roles_diaet} r WHERE r.nid = " . $_SESSION['election_nid'])->fetchObject();
+
+    if (!is_null($diet_rows)) {
+      $diet_data = unserialize($diet_rows->role_diaet_value);
+    }
+
+    foreach ($roles_array as $id => $role) {
+      $diet_map[$role] = $diet_data[$id];
+    }
+  }
+
+  $values = array();
+
+  // Loop over results, get info for all columns.
+  foreach ($result as $key => $fc_id) {
+    $volunteer_fc = entity_load_single('field_collection_item', $fc_id);
+    if (!is_object($volunteer_fc)) {
+      continue;
+    }
+
+    $volunteer = $volunteer_fc->hostEntity();
+
+    $party_post_field = field_get_items('field_collection_item', $volunteer_fc, 'field_post_party');
+    $party_post = $parties[$party_post_field[0]['target_id']];
+
+    $party_field = field_get_items('node', $volunteer, 'field_party');
+    $party = $parties[$party_field[0]['tid']];
+
+    $cpr_field = field_get_items('node', $volunteer, 'field_cpr_number');
+    $cpr = $cpr_field[0]['value'];
+
+    $tokens = _valghalla_helper_get_token_values($volunteer_fc);
+
+    // Diet.
+    $diet = $diet_map[$tokens['!position']];
+
+    // If it's set on the fc item, use that. Otherwise we just keep
+    // the value set on the election.
+    if ($diaet_field = field_get_items('field_collection_item', $volunteer_fc, 'field_diaet')) {
+      $diet = $diaet_field[0]['value'];
+    }
+
+    $values[] = array(
+      'name' => $tokens['!name'],
+      'role' => $tokens['!position'],
+      'cpr' => $cpr,
+      'party' => $party,
+      'party_post' => $party_post,
+      'diet' => $diet,
+      'sign' => '<div class="sign-col"></div>',
+    );
+  }
+
+  return $values;
+}
+
+/**
+ * Implements hook_theme().
+ */
+function liste_deltager_theme() {
+  return array(
+    'liste_deltager_list' => array(
+      'template' => 'liste_deltager_list',
+    ),
+  );
+}
+
+/**
+ * A list of columns that could be shown in the list.
+ */
+function _liste_deltager_columns() {
+  return array(
+    'name' => 'Navn',
+    'cpr' => 'Cpr-nr.',
+    'role' => 'Rolle',
+    'party' => 'Parti (deltager)',
+    'party_post' => 'Parti (plads)',
+    'diet' => 'Diæt',
+    'sign' => 'Kvittering',
+  );
+}
+
+/**
+ * Generate list of polling stations.
+ */
+function liste_deltager_polling_station_options() {
+  if (!$election_node = node_load($_SESSION['election_nid'])) {
+    return array('Du skal vælge et valg.');
+  }
+
+  // Generate options list, with polling stations.
+  $polling_stations_field = field_get_items('node', $election_node, 'field_polling_stations');
+
+  foreach ($polling_stations_field as $data) {
+    $polling_station_nids[$data['target_id']] = $data['target_id'];
+  }
+
+  foreach (node_load_multiple($polling_station_nids) as $polling_station) {
+    if ($constituency_field = field_get_items('node', $polling_station, 'field_constituency')) {
+      // We save the data in 2 arrays, and don't populate options yet, as we
+      // have to sort the options according to the title of the
+      // constituencies.
+      $constituency = node_load($constituency_field[0]['nid']);
+      $constituencies[$constituency->nid] = $constituency->title;
+      $polling_stations[$constituency->nid][$polling_station->nid] = $polling_station->title;
+    }
+    else {
+      $options[$polling_station->nid] = $polling_station->title;
+    }
+  }
+
+  if ($constituencies && $polling_stations) {
+    natsort($constituencies);
+
+    foreach ($constituencies as $constituency_nid => $constituency_title) {
+      $options[$constituency_title] = $polling_stations[$constituency_nid];
+    }
+  }
+
+  return $options;
+}
