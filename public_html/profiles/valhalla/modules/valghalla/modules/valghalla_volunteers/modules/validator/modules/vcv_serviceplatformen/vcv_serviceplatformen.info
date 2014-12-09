@@ -1,0 +1,3 @@
+name = Valghalla CPR Validator service: Serviceplatformen
+description = provides CPR service "serviceplatformen.dk"
+core = 7.x

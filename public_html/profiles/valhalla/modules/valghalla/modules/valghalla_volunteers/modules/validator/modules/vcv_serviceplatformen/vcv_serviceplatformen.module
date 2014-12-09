@@ -1,0 +1,395 @@
+<?php
+/**
+ * @file
+ * Implements valghalla cpr validation with serviceplatformen.dk
+ *
+ * @author Thomas Thune Hansen <tth@bellcom.dk>
+ * @copyright 2012 OS2 - Offentligt Digitaliseringsfællesskab.
+ * See README.md at https://github.com/os2web/valghalla_mail
+ */
+
+/**
+ * Implements hook_menu().
+ */
+function vcv_serviceplatformen_menu() {
+  $items['admin/valghalla/validator/vcv_serviceplatformen'] = array(
+    'title' => 'Indstillinger for serviceplatformen.dk',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('vcv_serviceplatformen_settings'),
+    'access arguments' => array('administer valhalla'),
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_valghalla_cpr_validator_cpr_service().
+ */
+function vcv_serviceplatformen_valghalla_volunteer_validator_cpr_service() {
+  return array(
+    'serviceplatformen' => array(
+      // Label for the plugin, shown in CPR validator settings.
+      'label' => 'serviceplatformen.dk',
+      // Short description for the plugin, shown in CPR validator settings.
+      'description' => t('Implements serviceplatformen.dk CPRBasicInformation'),
+      // If the plugin implements CPR validation, the callback must be
+      // specified here.
+      'validate_cpr' => 'vcv_serviceplatformen_validate_cpr',
+      // Same as above, but just for fetching the address for the
+      // volunteer.
+      'get_address' => 'vcv_serviceplatformen_get_address',
+      // Url for plugin configuration.
+      'config' => 'admin/valghalla/validator/vcv_serviceplatformen',
+      // Get cpr form volunteer info.
+      'get_cpr' => 'vcv_serviceplatformen_get_cpr',
+    ),
+  );
+}
+
+/**
+ * Page callback for settings.
+ */
+function vcv_serviceplatformen_settings() {
+  $form['stam'] = array(
+    '#title' => 'Person stamdata',
+    '#type' => 'fieldset',
+  );
+
+  $form['stam']['vcv_serviceplatformen_serviceagreementuuid'] = array(
+    '#type' => 'textfield',
+    '#title' => 'Serviceaftale UUID',
+    '#default_value' => variable_get('vcv_serviceplatformen_serviceagreementuuid', ''),
+  );
+
+  $form['stam']['vcv_serviceplatformen_serviceuuid'] = array(
+    '#type' => 'textfield',
+    '#title' => 'Service UUID',
+    '#default_value' => variable_get('vcv_serviceplatformen_serviceuuid', ''),
+  );
+
+  $form['stam']['vcv_serviceplatformen_wsdl'] = array(
+    '#type' => 'textfield',
+    '#title' => 'Service WSDL location',
+    '#default_value' => variable_get('vcv_serviceplatformen_wsdl', ''),
+    '#description' => t('ex. https://exttestwww.serviceplatformen.dk/administration/wsdl/CPRBasicInformationService.wsdl'),
+  );
+
+  $form['stam']['vcv_serviceplatformen_location'] = array(
+    '#type' => 'textfield',
+    '#title' => 'Service location',
+    '#default_value' => variable_get('vcv_serviceplatformen_location', ''),
+    '#description' => t('ex. https://exttest.serviceplatformen.dk/service/CPRBasicInformation/CPRBasicInformation/1'),
+  );
+
+  $form['adrsog'] = array(
+    '#title' => 'ADRSOG1',
+    '#type' => 'fieldset',
+  );
+
+  $form['adrsog']['vcv_serviceplatformen_adrsog_serviceagreementuuid'] = array(
+    '#type' => 'textfield',
+    '#title' => 'Serviceaftale UUID',
+    '#default_value' => variable_get('vcv_serviceplatformen_adrsog_serviceagreementuuid', ''),
+  );
+
+  $form['adrsog']['vcv_serviceplatformen_adrsog_serviceuuid'] = array(
+    '#type' => 'textfield',
+    '#title' => 'Service UUID',
+    '#default_value' => variable_get('vcv_serviceplatformen_adrsog_serviceuuid', ''),
+  );
+
+  $form['adrsog']['vcv_serviceplatformen_adrsog_wsdl'] = array(
+    '#type' => 'textfield',
+    '#title' => 'Service WSDL location',
+    '#default_value' => variable_get('vcv_serviceplatformen_adrsog_wsdl', ''),
+    '#description' => t('ex. https://exttestwww.serviceplatformen.dk/administration/wsdl/CPRBasicInformationService.wsdl'),
+  );
+
+  $form['adrsog']['vcv_serviceplatformen_adrsog_location'] = array(
+    '#type' => 'textfield',
+    '#title' => 'Service location',
+    '#default_value' => variable_get('vcv_serviceplatformen_adrsog_location', ''),
+    '#description' => t('ex. https://exttest.serviceplatformen.dk/service/CPRBasicInformation/CPRBasicInformation/1'),
+  );
+
+  $form['vcv_serviceplatformen_usersystemuuid'] = array(
+    '#type' => 'textfield',
+    '#title' => 'System UUID',
+    '#default_value' => variable_get('vcv_serviceplatformen_usersystemuuid', ''),
+  );
+
+  $form['vcv_serviceplatformen_useruuid'] = array(
+    '#type' => 'textfield',
+    '#title' => 'Kommune UUID',
+    '#default_value' => variable_get('vcv_serviceplatformen_useruuid', ''),
+  );
+
+  $form['vcv_serviceplatformen_accountinginfo'] = array(
+    '#type' => 'textfield',
+    '#title' => 'AccountingInfo',
+    '#default_value' => variable_get('vcv_serviceplatformen_accountinginfo', ''),
+  );
+
+  $form['vcv_serviceplatformen_onbehalfofuser'] = array(
+    '#type' => 'textfield',
+    '#title' => 'OnBehalfOfUser',
+    '#default_value' => variable_get('vcv_serviceplatformen_onbehalfofuser', ''),
+  );
+
+  $form['vcv_serviceplatformen_certfile_passphrase'] = array(
+    '#type' => 'password',
+    '#title' => 'Certfile passphrase',
+    '#default_value' => variable_get('vcv_serviceplatformen_certfile_passphrase', ''),
+  );
+
+  $form['vcv_serviceplatformen_certfile'] = array(
+    '#type' => 'managed_file',
+    '#title' => 'Certfile',
+    '#upload_location' => 'private://',
+    '#default_value' => variable_get('vcv_serviceplatformen_certfile', ''),
+    '#upload_validators' => array(
+      'file_validate_extensions' => array('pem'),
+    ),
+  );
+
+  $form = system_settings_form($form);
+  array_unshift($form['#submit'], 'vcv_serviceplatformen_settings_submit');
+
+  return $form;
+}
+
+/**
+ * Extra submit handler for serviceplatformen settings.
+ */
+function vcv_serviceplatformen_settings_submit(&$form, &$form_state) {
+  if ($form_state['values']['vcv_serviceplatformen_certfile_passphrase'] == '') {
+    unset($form_state['values']['vcv_serviceplatformen_certfile_passphrase']);
+  }
+}
+
+/**
+ * Validate cpr callback.
+ *
+ * @cpr String - PSN (cpr) ([0-9]{6}\-[0-9]{4})
+ *
+ * @return array
+ *   [status] => TRUE/FALSE
+ *   [text] => Descriptive text shown when CPR doesn't validate
+ */
+function vcv_serviceplatformen_validate_cpr($cpr) {
+  return vcv_serviceplatformen_query($cpr);
+}
+
+/**
+ * Query the webservice.
+ */
+function vcv_serviceplatformen_query($cpr) {
+  ini_set('soap.wsdl_cache_enabled', 0);
+  ini_set('soap.wsdl_cache_ttl', 0);
+
+  try {
+    $wsdl_address = variable_get('vcv_serviceplatformen_wsdl');
+    $service_location = variable_get('vcv_serviceplatformen_location');
+    $certfile_passphrase = variable_get('vcv_serviceplatformen_certfile_passphrase');
+    $certfile = variable_get('vcv_serviceplatformen_certfile');
+    $file = file_load($certfile);
+
+    $client = new SoapClient($wsdl_address, array(
+      'location' => $service_location,
+      'local_cert' => drupal_realpath($file->uri),
+      'passphrase' => $certfile_passphrase,
+      'trace' => TRUE,
+    ));
+
+    $serviceagreementuuid = variable_get('vcv_serviceplatformen_serviceagreementuuid');
+    $usersystemuuid = variable_get('vcv_serviceplatformen_usersystemuuid');
+    $useruuid = variable_get('vcv_serviceplatformen_useruuid');
+    $serviceuuid = variable_get('vcv_serviceplatformen_serviceuuid');
+    $accountinginfo = variable_get('vcv_serviceplatformen_accountinginfo');
+    $onbehalfofuser = variable_get('vcv_serviceplatformen_onbehalfofuser');
+
+    $pnr = str_replace('-', '', $cpr);
+
+    $request = array(
+      'InvocationContext' => array(
+        'ServiceAgreementUUID' => $serviceagreementuuid,
+        'UserSystemUUID' => $usersystemuuid,
+        'UserUUID' => $useruuid,
+        'ServiceUUID' => $serviceuuid,
+        'AccountingInfo' => $accountinginfo,
+        'OnBehalfOfUser' => $onbehalfofuser,
+      ),
+      'PNR' => $pnr,
+    );
+
+    $response = (array) $client->callCPRBasicInformationService($request);
+
+    $response['status'] = TRUE;
+    return $response;
+
+  }
+  catch (Exception $e) {
+    list($fault, $message) = explode(':', $e->faultstring);
+
+    if (!$message) {
+      $message = $e->faultstring;
+    }
+
+    return array(
+      'status' => FALSE,
+      'text' => $message,
+    );
+  }
+}
+
+/**
+ * Fetch address for the specified CPR.
+ *
+ * @cpr
+ *  String - PSN (cpr) ([0-9]{6}\-[0-9]{4})
+ *
+ * @return array
+ *   [status] => TRUE/FALSE
+ *   [address] => Roadname 10
+ *   [zipcode] => 1212
+ *   [text] => Descriptive text if something goes wrong
+ */
+function vcv_serviceplatformen_get_address($cpr) {
+  $message = vcv_serviceplatformen_query($cpr);
+
+  // If all goes well we return de address as valghalla wants it.
+  if ($message['status']) {
+    return array(
+      'status' => TRUE,
+      'road' => isset($message['vejadresseringsnavn']) ? $message['vejadresseringsnavn'] : '',
+      'road_no' => isset($message['husnummer']) ? $message['husnummer'] : '',
+      'floor' => isset($message['etage']) ? $message['etage'] : '',
+      'door' => isset($message['sidedoer']) ? $message['sidedoer'] : '',
+      'zipcode' => isset($message['postnummer']) ? $message['postnummer'] : '',
+      'city' => isset($message['postdistrikt']) ? $message['postdistrikt'] : '',
+      'coname' => isset($message['conavn']) ? $message['conavn'] : '',
+    );
+  }
+  else {
+    return $message;
+  }
+}
+
+/**
+ * Get CPR for specified address and name.
+ */
+function vcv_serviceplatformen_get_cpr($volunteer_info) {
+  // Generate gctp message.
+  $message_start = '<Gctp v="1.0"><System r="CprSoeg"><Service r="ADRSOG1"><CprServiceHeader r="ADRSOG1"><Key>';
+
+  $name_exp = explode(' ', $volunteer_info['name']);
+
+  $message_fields = '
+    <Field r="POST" v="' . $volunteer_info['zipcode'] . '"/>
+    <Field r="NVN" v="' . $name_exp[0] . '"/>
+    <Field r="VNVN" v="' . $volunteer_info['road'] . '"/>
+    <Field r="HNR" v="' . $volunteer_info['road_no'] . '"/>';
+
+  if (isset($volunteer_info['floor']) && $volunteer_info['floor']) {
+    $message_fields = '<Field r="ETAG" v="' . $volunteer_info['floor'] . '"/>';
+  }
+
+  $message_end = '</Key></CprServiceHeader></Service></System></Gctp>';
+
+  $message = $message_start . $message_fields . $message_end;
+
+  ini_set('soap.wsdl_cache_enabled', 0);
+  ini_set('soap.wsdl_cache_ttl', 0);
+
+  try {
+    $wsdl_address = variable_get('vcv_serviceplatformen_adrsog_wsdl');
+    $service_location = variable_get('vcv_serviceplatformen_adrsog_location');
+    $certfile_passphrase = variable_get('vcv_serviceplatformen_certfile_passphrase');
+
+    $client = new SoapClient($wsdl_address, array(
+      'location' => $service_location,
+      'local_cert' => __DIR__ . '/certfile.pem',
+      'passphrase' => $certfile_passphrase,
+      'trace' => TRUE,
+    ));
+
+    $serviceagreementuuid = variable_get('vcv_serviceplatformen_adrsog_serviceagreementuuid');
+    $usersystemuuid = variable_get('vcv_serviceplatformen_usersystemuuid');
+    $useruuid = variable_get('vcv_serviceplatformen_useruuid');
+    $serviceuuid = variable_get('vcv_serviceplatformen_adrsog_serviceuuid');
+    $accountinginfo = variable_get('vcv_serviceplatformen_accountinginfo');
+    $onbehalfofuser = variable_get('vcv_serviceplatformen_onbehalfofuser');
+
+    $response = $client->forwardToCPRService(
+      array(
+        'InvocationContext' => array(
+          'ServiceAgreementUUID' => $serviceagreementuuid,
+          'UserSystemUUID' => $usersystemuuid,
+          'UserUUID' => $useruuid,
+          'ServiceUUID' => $serviceuuid,
+          'AccountingInfo' => 'Valghalla',
+          'OnBehalfOfUser' => 'Valghalla',
+        ),
+        'gctpMessage' => $message,
+      )
+    );
+
+    // Parse the XML that is returned.
+    $xml = simplexml_load_string($response->result);
+
+    $pnr = FALSE;
+
+    // Go through the resulting rows.
+    foreach ($xml->Gctp->System->Service->CprData->Rolle->Table->Row as $row) {
+      $row_attributes = (array) $row->attributes();
+
+      foreach ($row->Field as $delta => $field) {
+        $attributes = (array) $field->attributes();
+
+        if ($attributes['@attributes']['r'] == 'PNR') {
+          if (vcv_serviceplatformen_match_cpr($attributes['@attributes']['v'], $volunteer_info['birthdate'])) {
+            $result_row = (array) $row;
+          }
+        }
+      }
+    }
+
+    if ($result_row) {
+      foreach ($result_row['Field'] as $field) {
+        $attributes = (array) $field->attributes();
+
+        if ($attributes['@attributes']['r'] == 'PNR') {
+          $pnr = $attributes['@attributes']['v'];
+        }
+      }
+    }
+
+    if ($pnr) {
+      return array(
+        'status' => 'success',
+        'pnr' => $pnr,
+      );
+    }
+    else {
+      return array(
+        'status' => 'not found',
+      );
+    }
+
+  }
+  catch (Exception $e) {
+    return array(
+      'status' => 'error',
+    );
+  }
+
+}
+
+/**
+ * Match birthdate to part of PSN from serviceplatformen.
+ */
+function vcv_serviceplatformen_match_cpr($value, $find) {
+  $reg_birthdate = substr($value, 0, 6);
+
+  return $reg_birthdate == $find;
+}
