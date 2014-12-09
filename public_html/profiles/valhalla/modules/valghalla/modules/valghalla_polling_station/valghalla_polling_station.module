@@ -5,3 +5,65 @@
  */
 
 include_once 'valghalla_polling_station.features.inc';
+
+/**
+ * Get polling station adress.
+ */
+function valghalla_polling_station_get_adress($polling_station) {
+  $polling_station_node = $polling_station;
+
+  if (!is_object($polling_station_node)) {
+    $polling_station_node = node_load($polling_station);
+  }
+
+  $polling_station_address = '';
+
+  if ($field = field_get_items('node', $polling_station_node, 'field_address_road')) {
+    $polling_station_address = $field[0]['value'] . ' ';
+  }
+
+  if ($field = field_get_items('node', $polling_station_node, 'field_address_road_no')) {
+    $polling_station_address .= $field[0]['value'];
+  }
+
+  if ($field = field_get_items('node', $polling_station_node, 'field_address_floor')) {
+    $polling_station_address .= $field[0]['value'];
+  }
+
+  if ($field = field_get_items('node', $polling_station_node, 'field_address_door')) {
+    $polling_station_address .= ', ' . $field[0]['value'] . ' ';
+  }
+
+  if ($field = field_get_items('node', $polling_station_node, 'field_address_zipcode')) {
+    $polling_station_address .= ",\n" . $field[0]['value'] . ' ';
+  }
+
+  if ($field = field_get_items('node', $polling_station_node, 'field_address_city')) {
+    $polling_station_address .= $field[0]['value'];
+  }
+
+  return $polling_station_address;
+}
+
+/**
+ * Get polling station contact info.
+ */
+function valghalla_polling_station_get_contact($polling_station) {
+  $polling_station_node = $polling_station;
+
+  if (!is_object($polling_station_node)) {
+    $polling_station_node = node_load($polling_station);
+  }
+
+  $contact_info_array = array();
+
+  if ($contact_name_field = field_get_items('node', $polling_station_node, 'field_venue_contact_name')) {
+    $contact_info_array[] = $contact_name_field[0]['value'];
+  }
+
+  if ($contact_field = field_get_items('node', $polling_station_node, 'field_venue_contact')) {
+    $contact_info_array[] = $contact_field[0]['value'];
+  }
+
+  return implode($contact_info_array, ', ');
+}
