@@ -378,29 +378,7 @@ function _valghalla_helper_get_token_values($entity) {
   if (is_object($polling_station_node)) {
     $polling_station = $polling_station_node->title;
 
-    if ($field = field_get_items('node', $polling_station_node, 'field_address_road')) {
-      $polling_station_address = $field[0]['value'] . ' ';
-    }
-
-    if ($field = field_get_items('node', $polling_station_node, 'field_address_road_no')) {
-      $polling_station_address .= $field[0]['value'];
-    }
-
-    if ($field = field_get_items('node', $polling_station_node, 'field_address_floor')) {
-      $polling_station_address .= $field[0]['value'];
-    }
-
-    if ($field = field_get_items('node', $polling_station_node, 'field_address_door')) {
-      $polling_station_address .= ', ' . $field[0]['value'] . ' ';
-    }
-
-    if ($field = field_get_items('node', $polling_station_node, 'field_address_zipcode')) {
-      $polling_station_address .= ",\n" . $field[0]['value'] . ' ';
-    }
-
-    if ($field = field_get_items('node', $polling_station_node, 'field_address_city')) {
-      $polling_station_address .= $field[0]['value'];
-    }
+    $polling_station_address = valghalla_polling_station_get_adress($polling_station_node);
 
     if ($field = field_get_items('node', $polling_station_node, 'field_contact')) {
       $responsible = $field[0]['value'];

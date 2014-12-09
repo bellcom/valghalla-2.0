@@ -1,0 +1,21 @@
+.no-print() {
+  @media print
+  {
+    display: none !important;
+  }
+}
+
+@media print{
+  body {
+    margin: 25mm, 25mm;
+    font-size: 12px;
+  }
+}
+
+.breadcrumb,
+.region-page-top,
+.footer,
+#navbar,
+.no-print, .no-print * {
+  .no-print();
+}
