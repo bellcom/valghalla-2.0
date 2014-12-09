@@ -397,7 +397,6 @@ function valghalla_signup_signup_form_validate($form, &$form_state) {
       }
 
       curl_close($handle);
-
     }
   }
 }
