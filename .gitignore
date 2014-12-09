@@ -4,3 +4,4 @@ sessions
 tmp
 sites/default/files
 public_html_before_gitlist
+*.swp
