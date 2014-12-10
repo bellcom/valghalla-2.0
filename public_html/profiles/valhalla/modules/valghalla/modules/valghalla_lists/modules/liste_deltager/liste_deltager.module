@@ -12,7 +12,7 @@ function liste_deltager_menu() {
     'title' => 'Deltagerlister',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('liste_deltager_form'),
-    'access arguments' => array('valghalla liste see list'),
+    'access arguments' => array('liste deltager see list'),
   );
   return $items;
 }
@@ -22,11 +22,11 @@ function liste_deltager_menu() {
  */
 function liste_deltager_permission() {
   return array(
-    'valghalla liste see list' => array(
+    'liste deltager see list' => array(
       'title' => 'Se "Deltagerlister"',
       'description' => 'Dette tillader kun brugeren at se gemte lister',
     ),
-    'valghalla liste change filters' => array(
+    'liste deltager change filters' => array(
       'title' => 'Ændre filtre på "Deltagerlister"',
       'description' => 'Dette tillader brugeren at se gemte liste og skifte deres filtre',
     ),
