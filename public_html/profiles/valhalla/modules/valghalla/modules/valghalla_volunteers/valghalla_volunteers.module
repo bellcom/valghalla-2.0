@@ -13,102 +13,97 @@ include_once 'valghalla_volunteers.features.inc';
 require_once 'valghalla_volunteers.inc';
 
 /**
- * implement hook_permission for the volunteers module
- *
- * @return array
+ * Implements hook_permission().
  */
 function valghalla_volunteers_permission() {
   return array(
-      'administer valghalla' => array(
-          'title' => t('Administer valghalla'),
-      ),
-      'view volunteers' => array(
-          'title' => t('Se deltagere'),
-      ),
-      'add volunteers' => array(
-          'title' => t('Tilføj frivillige'),
-      ),
-      'see all psn numbers' => array(
-          'title' => t('Se alle CPR numre'),
-      ),
-      'add volunteer to station' => array(
-          'title' => t('Tilføj frivillig til valgsted'),
-      ),
-      'volunteers rsvp' => array(
-          'title' => t('Access to rsvp for volunteers'),
-      ),
-      'administer sub secretaries' => array(
-          'title' => t('Access to administer sub secretaries'),
-      ),
+    'administer valghalla' => array(
+      'title' => t('Administer valghalla'),
+    ),
+    'view volunteers' => array(
+      'title' => t('Se deltagere'),
+    ),
+    'add volunteers' => array(
+      'title' => t('Tilføj frivillige'),
+    ),
+    'see all psn numbers' => array(
+      'title' => t('Se alle CPR numre'),
+    ),
+    'add volunteer to station' => array(
+      'title' => t('Tilføj frivillig til valgsted'),
+    ),
+    'volunteers rsvp' => array(
+      'title' => t('Access to rsvp for volunteers'),
+    ),
+    'administer sub secretaries' => array(
+      'title' => t('Access to administer sub secretaries'),
+    ),
   );
 }
 
 /**
- * implement hook_menu for the volunteers module
- *
- * @return array
+ * Implements hook_menu().
  */
 function valghalla_volunteers_menu() {
 
   $items = array(
     'volunteers/rsvp' => array(
-        'title' => 'Anmodning om svar',
-        'access arguments' => array('volunteers rsvp'),
-        'page callback' => 'valghalla_volunteers_rsvp',
-        'type' => MENU_CALLBACK,
+      'title' => 'Anmodning om svar',
+      'access arguments' => array('volunteers rsvp'),
+      'page callback' => 'valghalla_volunteers_rsvp',
+      'type' => MENU_CALLBACK,
     ),
     'volunteers/login' => array(
-        'title' => 'Anmodning om svar: Login',
-        'access arguments' => array('volunteers rsvp'),
-        'page callback' => 'valghalla_volunteers_login',
-        'type' => MENU_CALLBACK,
+      'title' => 'Anmodning om svar: Login',
+      'access arguments' => array('volunteers rsvp'),
+      'page callback' => 'valghalla_volunteers_login',
+      'type' => MENU_CALLBACK,
     ),
     'volunteers/station/%' => array(
-        'title' => 'Håndtér tilforordnede',
-        'access arguments' => array('add volunteer to station'),
-        'page callback' => 'valghalla_volunteers_to_polling_station',
-        'page arguments' => array(2),
-        'type' => MENU_CALLBACK,
+      'title' => 'Håndtér tilforordnede',
+      'access arguments' => array('add volunteer to station'),
+      'page callback' => 'valghalla_volunteers_to_polling_station',
+      'page arguments' => array(2),
+      'type' => MENU_CALLBACK,
     ),
     'volunteers/export' => array(
-        'title' => 'Eksportér tilforordnede',
-        'access arguments' => array('administer volunteers'),
-        'page callback' => 'valghalla_volunteers_export',
-        'type' => MENU_CALLBACK,
+      'title' => 'Eksportér tilforordnede',
+      'access arguments' => array('administer volunteers'),
+      'page callback' => 'valghalla_volunteers_export',
+      'type' => MENU_CALLBACK,
     ),
     'add-sub-secretary' => array(
-        'title' => 'Tilføj underbruger',
-        'page callback' => 'drupal_get_form',
-        'page arguments' => array('valghalla_volunteers_add_sub_secretary_form'),
-        'access arguments' => array('administer sub secretaries'),
-        'type' => MENU_CALLBACK,
+      'title' => 'Tilføj underbruger',
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array('valghalla_volunteers_add_sub_secretary_form'),
+      'access arguments' => array('administer sub secretaries'),
+      'type' => MENU_CALLBACK,
     ),
     'valghalla/change/party/%' => array(
-        'title' => 'Skift parti',
-        'page callback' => 'valghalla_volunteers_change_party',
-        'page arguments' => array(3),
-        'access arguments' => array('administer valghalla'),
-        'type' => MENU_CALLBACK,
+      'title' => 'Skift parti',
+      'page callback' => 'valghalla_volunteers_change_party',
+      'page arguments' => array(3),
+      'access arguments' => array('administer valghalla'),
+      'type' => MENU_CALLBACK,
     ),
     'volunteers/data/%' => array(
-        'title' => 'test',
-        'access arguments' => array('volunteers rsvp'),
-        'page callback' => 'valghalla_volunteers_data',
-        'page arguments' => array(2),
-        'type' => MENU_CALLBACK,
+      'title' => 'test',
+      'access arguments' => array('volunteers rsvp'),
+      'page callback' => 'valghalla_volunteers_data',
+      'page arguments' => array(2),
+      'type' => MENU_CALLBACK,
     ),
     'admin/valghalla/valghalla' => array(
-        'title' => 'Overview',
-        'description' => 'blablabla... valghalla election overview.',
-        'access arguments' => array('administer volunteers'),
-        'type' => MENU_DEFAULT_LOCAL_TASK,
-        'file' => 'valghalla_volunteers_admin.inc',
-        'weight' => -4,
-      )
-    );
+      'title' => 'Overview',
+      'description' => 'blablabla... valghalla election overview.',
+      'access arguments' => array('administer volunteers'),
+      'type' => MENU_DEFAULT_LOCAL_TASK,
+      'file' => 'valghalla_volunteers_admin.inc',
+      'weight' => -4,
+    ),
+  );
 
-
-  // New menu callbacks
+  // New menu callbacks.
   // plan is that when an item has been processed og the callback
   // has been updated, the item is moved here.
   $items['valghalla/deltagere'] = array(
@@ -138,20 +133,20 @@ function valghalla_volunteers_menu() {
 }
 
 /**
- * implement hook_theme for the volunteers module
- *
- * @param array $existing
- * @param string $type
- * @param string $theme
- * @param string $path
- * @return array
+ * Implements hook_theme().
  */
 function valghalla_volunteers_theme($existing, $type, $theme, $path) {
   $items = array();
 
   $items['rsvp'] = array(
-      'variables' => array('rsvp' => NULL, 'name' => NULL, 'phone' => NULL, 'email' => NULL, 'form' => NULL),
-      'template' => 'valghalla_volunteers_rsvp'
+    'variables' => array(
+      'rsvp' => NULL,
+      'name' => NULL,
+      'phone' => NULL,
+      'email' => NULL,
+      'form' => NULL,
+    ),
+    'template' => 'valghalla_volunteers_rsvp',
   );
 
   $items['station'] = array(
@@ -162,7 +157,7 @@ function valghalla_volunteers_theme($existing, $type, $theme, $path) {
       'station_id' => NULL,
       'existing' => NULL,
     ),
-    'template' => 'valghalla_volunteers_to_polling_station'
+    'template' => 'valghalla_volunteers_to_polling_station',
   );
 
   return $items;
@@ -879,7 +874,11 @@ function valghalla_volunteers_form_volunteers_node_form_alter(&$form, &$form_sta
       $form[$field_name]['#access'] = FALSE;
     }
 
-    valghalla_volunteers_field_group_hide_field_groups($form, array('group_adress', 'group_rsvp', 'group_system'));
+    valghalla_volunteers_field_group_hide_field_groups($form, array(
+      'group_adress',
+      'group_rsvp',
+      'group_system',
+    ));
 
     if (!user_access('see all psn numbers')) {
       $form['field_cpr_number']['#access'] = FALSE;
@@ -890,6 +889,28 @@ function valghalla_volunteers_form_volunteers_node_form_alter(&$form, &$form_sta
   // Redid the add volunteer form
   // Thomas Thune Hansen <tth@bellcom.dk>
   if (current_path() == 'valghalla/deltagere/tilfoej') {
+
+    // The user has the option of creating and adding a volunteer to a polling
+    // station directly. The info about the post is sent as query parameters.
+    // We put these in the form, for later.
+    $query = drupal_get_query_parameters();
+    if ($query['role_nid']) {
+      $form['role_nid'] = array(
+        '#value' => $query['role_nid'],
+        '#type' => 'hidden',
+      );
+
+      $form['party_tid'] = array(
+        '#value' => $query['party_tid'],
+        '#type' => 'hidden',
+      );
+
+      $form['pollingstation_nid'] = array(
+        '#value' => $query['pollingstation_nid'],
+        '#type' => 'hidden',
+      );
+    }
+
     $account = user_load($user->uid);
     $user_party_id = empty($account->field_party[LANGUAGE_NONE][0]['tid']) ? FALSE : $account->field_party[LANGUAGE_NONE][0]['tid'];
 
@@ -931,7 +952,7 @@ function valghalla_volunteers_form_volunteers_node_form_alter(&$form, &$form_sta
     );
 
     $form_state['volunteer_add'] = TRUE;
-    $form['actions']['submit']['#submit'][] = 'valghalla_volunteers_node_form_submit'; // custom callback name
+    $form['actions']['submit']['#submit'][] = 'valghalla_volunteers_node_form_submit';
   }
 }
 
@@ -941,6 +962,41 @@ function valghalla_volunteers_form_volunteers_node_form_alter(&$form, &$form_sta
 function valghalla_volunteers_node_form_submit($form, &$form_state) {
   // Redirect to the add volunteer page.
   $form_state['redirect'] = 'valghalla/deltagere/tilfoej';
+}
+
+/**
+ * Implements hook_node_submit().
+ */
+function valghalla_volunteers_node_submit($node, $form, &$form_state) {
+  // We move the values from the form, to a temporary storage on the node,
+  // the adding of a volunteer to at post is happening in hook_node_insert.
+  if (isset($form_state['values']['party_tid']) &&
+    isset($form_state['values']['role_nid']) &&
+    isset($form_state['values']['pollingstation_nid'])) {
+
+    $node->add_to_post = array(
+      'party_tid' => $form_state['values']['party_tid'],
+      'role_nid' => $form_state['values']['role_nid'],
+      'pollingstation_nid' => $form_state['values']['pollingstation_nid'],
+    );
+  }
+}
+
+/**
+ * Implements hook_node_insert().
+ */
+function valghalla_volunteers_node_insert($node) {
+  // If the post values are set on the node in 'add_to_post',
+  // the volunteer should be added to the post with these options.
+  if (isset($node->add_to_post)) {
+    $volunteer_nid = $node->nid;
+    $pollingstation_nid = $node->add_to_post['pollingstation_nid'];
+    $role_nid = $node->add_to_post['role_nid'];
+    $party_tid = $node->add_to_post['party_tid'];
+    $election_nid = $_SESSION['election_nid'];
+
+    valghalla_volunteers_add_volunteer_to_post($volunteer_nid, $pollingstation_nid, $role_nid, $party_tid, $election_nid);
+  }
 }
 
 /**

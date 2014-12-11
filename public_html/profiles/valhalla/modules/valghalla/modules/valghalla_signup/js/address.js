@@ -1,11 +1,8 @@
-﻿console.log('hest');
-
-
-(function ($) {
+﻿(function ($) {
   Drupal.behaviors.exampleModule = {
     attach: function (context, settings) {
 
-      var url = 'http://geo.oiorest.dk/postnumre.json';
+      var url = 'http://dawa.aws.dk/postnumre';
       $.ajax({
         url: url,
         dataType: "jsonp",
@@ -34,10 +31,9 @@
                   }
               }
             }).data('ui-autocomplete')._renderItem = function( ul, item ) {
-              console.log('hest');
-                  return $( "<li>" )
-                  .append( "<a>" + item.label + "<br>" + item.desc + "</a>" )
-                  .appendTo( ul );
+              return $( "<li>" )
+                .append( "<a>" + item.label + "<br>" + item.desc + "</a>" )
+                .appendTo( ul );
             };
           });
         }
