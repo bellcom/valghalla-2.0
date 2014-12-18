@@ -4,7 +4,6 @@
  * This file install the Valhalla profile.
  */
 
-
 /**
  * Implements hook_install().
  *
@@ -69,9 +68,6 @@ function valhalla_install() {
   $full_html_format = (object) $full_html_format;
   filter_format_save($full_html_format);
 
-  // Allow visitor account creation, but with administrative approval.
-  // variable_set('user_register', USER_REGISTER_VISITORS_ADMINISTRATIVE_APPROVAL);
-
   // Disable user registration.
   variable_set('user_register', FALSE);
 
@@ -82,55 +78,56 @@ function valhalla_install() {
   theme_enable(array('valghalla_theme', 'AT Subtheme'));
   theme_disable(array('bartik', 'rubik'));
 
-  // Set default home page
-  variable_set('site_frontpage', 'status');
-
-  // Set default theme to Valhalla
-  variable_set('theme_default', 'valghalla_theme');
   // Set admin theme to Rubik.
   variable_set('admin_theme', 'seven');
   // Set admin theme on node/edit and node/add
-  variable_set('node_admin_theme', '1');
   module_disable(array('update'));
   // Set default TZ.
   variable_set('date_default_timezone', "Europe/Berlin");
   variable_set('date_first_day', "1");
   variable_set('configurable_timezones', "0");
 
-  // Programmatically enable ckeditor module, since enabling through dependencies doesn't work.
+  // Programmatically enable ckeditor module, since enabling through
+  // dependencies doesn't work.
   module_enable(array('ckeditor'));
 
-  // Create party terms
+  // Create party terms.
   $terms = array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'X', 'Z', 'Æ', 'Ø', 'Å');
 
   $taxonomy = taxonomy_vocabulary_machine_name_load('partier');
   $vid = $taxonomy->vid;
-  foreach($terms as $term){
+  foreach ($terms as $term) {
     $edit = new stdClass();
     $edit->name = $term;
     $edit->vid = $vid;
-    
+
     taxonomy_term_save($edit);
   };
 
-  // Create election types
-  $terms = array('EU parlamentsvalg', 'Folketingsvalg', 'Kommunalvalg', 'Regionsvalg');
+  // Create election types.
+  $terms = array(
+    'EU parlamentsvalg',
+    'Folketingsvalg',
+    'Kommunalvalg',
+    'Regionsvalg',
+  );
 
   $taxonomy = taxonomy_vocabulary_machine_name_load('valgtype');
   $vid = $taxonomy->vid;
-  foreach($terms as $term){
-    $edit= new stdClass();
+
+  foreach ($terms as $term) {
+    $edit = new stdClass();
     $edit->name = $term;
     $edit->vid = $vid;
     taxonomy_term_save($edit);
   };
 
-  // Create meeting time
+  // Create meeting time.
   $terms = array('8:00');
 
   $taxonomy = taxonomy_vocabulary_machine_name_load('volonteers_meeting_time');
   $vid = $taxonomy->vid;
-  foreach($terms as $term){
+  foreach ($terms as $term) {
     $edit = new stdClass();
     $edit->name = $term;
     $edit->vid = $vid;
