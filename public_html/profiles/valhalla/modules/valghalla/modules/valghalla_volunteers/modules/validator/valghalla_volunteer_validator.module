@@ -1,8 +1,13 @@
 <?php
 /**
- * Implements hook_menu()
+ * @file
+ * Volunteer validate module.
  */
-function valghalla_volunteer_validator_menu(){
+
+/**
+ * Implements hook_menu().
+ */
+function valghalla_volunteer_validator_menu() {
   $items['admin/valghalla/validator'] = array(
     'title' => 'Frivillig Validering',
     'description' => 'Indstillinger for CPR validering',
@@ -25,9 +30,9 @@ function valghalla_volunteer_validator_menu(){
 }
 
 /**
- * Implements hook_ctools_plugin_type()
+ * Implements hook_ctools_plugin_type().
  */
-function valghalla_volunteer_validator_ctools_plugin_type(){
+function valghalla_volunteer_validator_ctools_plugin_type() {
   return array(
     'cpr_service' => array(
       'use hooks' => TRUE,
@@ -126,8 +131,18 @@ function valghalla_volunteer_validator_node_validate($node, $form, &$form_state)
  * will be fetched from the CPR service.
  */
 function valghalla_volunteer_validator_form_volunteers_node_form_alter(&$form, &$form_state, $form_id) {
-  if(variable_get('valghalla_volunteer_validator_get_address', FALSE)){
-    foreach(array('field_address_road', 'field_address_road_no', 'field_address_floor', 'field_address_door', 'field_address_zipcode', 'field_address_city', 'field_address_coname') as $field){
+  if (variable_get('valghalla_volunteer_validator_get_address', FALSE)) {
+    $fields = array(
+      'field_address_road',
+      'field_address_road_no',
+      'field_address_floor',
+      'field_address_door',
+      'field_address_zipcode',
+      'field_address_city',
+      'field_address_coname',
+    );
+
+    foreach ($fields as $field) {
       $form[$field]['#disabled'] = TRUE;
       $form[$field]['#suffix'] = '<em>Indholdet af dette felt bliver automatisk hentet fra CPR service, når indholdet gemmes.</em>';
     }
@@ -139,7 +154,7 @@ function valghalla_volunteer_validator_form_volunteers_node_form_alter(&$form, &
  *
  * The format must be 123456-1234
  */
-function valghalla_volunteer_validator_validate_format($cpr){
+function valghalla_volunteer_validator_validate_format($cpr) {
   return preg_match("/^[0-9]{6}-[0-9]{4}$/", $cpr);
 }
 
@@ -156,7 +171,7 @@ function valghalla_volunteer_validator_check_duplicates($cpr) {
 }
 
 /**
- * Query cpr service
+ * Query cpr service.
  */
 function valghalla_volunteer_validator_query_service($action, $cpr) {
   ctools_include('plugins');
@@ -199,4 +214,52 @@ function valghalla_volunteer_validator_validate(&$volunteer, $cpr_message) {
     return $log;
   }
   return FALSE;
+}
+
+/**
+ * Get a volunteers CPR.
+ */
+function valghalla_volunteer_validator_get_cpr($volunteer) {
+  ctools_include('plugins');
+  if ($service = variable_get('valghalla_volunteer_validator_cpr_service', FALSE)) {
+    $plugin = ctools_get_plugins('valghalla_volunteer_validator', 'cpr_service', $service);
+
+    if (isset($plugin['get_cpr'])) {
+      if ($field = field_get_items('node', $volunteer, 'field_address_road')) {
+        $volunteer_info['road'] = $field[0]['value'];
+      }
+
+      if ($field = field_get_items('node', $volunteer, 'field_address_road_no')) {
+        $volunteer_info['road_no'] = $field[0]['value'];
+      }
+
+      if ($field = field_get_items('node', $volunteer, 'field_address_floor')) {
+        $volunteer_info['floor'] = $field[0]['value'];
+      }
+
+      if ($field = field_get_items('node', $volunteer, 'field_address_zipcode')) {
+        $volunteer_info['zipcode'] = $field[0]['value'];
+      }
+
+      if ($field = field_get_items('node', $volunteer, 'field_cpr_number')) {
+        $volunteer_info['birthdate'] = substr($field[0]['value'], 0, 6);
+      }
+
+      $volunteer_info['name'] = $volunteer->title;
+
+      $return = call_user_func($plugin['get_cpr'], $volunteer_info);
+      $language = field_language('node', $volunteer, 'field_cpr_number');
+
+      if ($return['status'] == 'success') {
+        $cpr = substr($return['pnr'], 0, 6) . '-' . substr($return['pnr'], 6, 10);
+
+        $volunteer->field_cpr_number[$language][0]['value'] = $cpr;
+      }
+
+      $volunteer->field_cpr_valid_date[$language][0]['value'] = time();
+      $volunteer->field_cpr_status[$language][0]['value'] = $return['status'];
+
+      node_save($volunteer);
+    }
+  }
 }
