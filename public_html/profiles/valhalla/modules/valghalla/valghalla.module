@@ -56,7 +56,9 @@ function valghalla_init() {
 
   drupal_alter('valghalla_allowed_uris', $allowed_uris);
 
-  if ($user->uid == 0 && !drupal_match_path(request_uri(), implode("\n", $allowed_uris)) && !drupal_is_cli()) {
+  $limit_uris = variable_get('valghalla_limit_uris', FALSE);
+
+  if ($limit_uris && $user->uid == 0 && !drupal_match_path(request_uri(), implode("\n", $allowed_uris)) && !drupal_is_cli()) {
     drupal_goto('user/login', array('query' => array('destination' => current_path())));
   }
 }
