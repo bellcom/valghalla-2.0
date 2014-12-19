@@ -144,12 +144,19 @@ function valghalla_signup_signup_page() {
 }
 
 /**
+ * Implements hook_init().
+ */
+function valghalla_signup_init() {
+  if (current_path() == 'valghalla/signup') {
+    drupal_add_library('system', 'ui.autocomplete');
+    drupal_add_js(drupal_get_path('module', 'valghalla_signup') . '/js/address.js');
+  }
+}
+
+/**
  * Form callback, for signup.
  */
 function valghalla_signup_signup_form($form, &$form_state) {
-  drupal_add_library('system', 'ui.autocomplete');
-  drupal_add_js(drupal_get_path('module', 'valghalla_signup') . '/js/address.js');
-
   $election_nid = variable_get('valghalla_signup_election_nid', FALSE);
   $election_node = node_load($election_nid);
   $signup_roles = variable_get('valghalla_signup_roles', array());

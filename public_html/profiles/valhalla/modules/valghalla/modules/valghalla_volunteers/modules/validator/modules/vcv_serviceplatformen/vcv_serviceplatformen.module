@@ -380,6 +380,7 @@ function vcv_serviceplatformen_get_cpr($volunteer_info) {
 
   }
   catch (Exception $e) {
+    error_log(__FILE__ . ' : ' . __LINE__ . ': ' .  print_r($e, 1));
     return array(
       'status' => 'error',
     );
