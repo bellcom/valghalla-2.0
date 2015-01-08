@@ -1,5 +1,5 @@
 <?php
-$election_nid = 2651;
+$election_nid = 2380;
 
 $taxonomy = taxonomy_vocabulary_machine_name_load('partier');
 $roles_array = _valhalla_helper_get_role_array();

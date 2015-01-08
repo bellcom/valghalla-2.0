@@ -193,7 +193,7 @@ function vcv_serviceplatformen_query($cpr) {
     $certfile_passphrase = variable_get('vcv_serviceplatformen_certfile_passphrase');
     $certfile = variable_get('vcv_serviceplatformen_certfile');
     $file = file_load($certfile);
-
+error_log(print_r(drupal_realpath($file->uri), 1));
     $client = new SoapClient($wsdl_address, array(
       'location' => $service_location,
       'local_cert' => drupal_realpath($file->uri),
