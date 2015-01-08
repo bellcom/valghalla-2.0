@@ -3,4 +3,6 @@ site
 sessions
 tmp
 public_html/sites/sites.php
+public_html/sites/all/themes
+public_html/sites/valg-*
 virtualhost.conf
