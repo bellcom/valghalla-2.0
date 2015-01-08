@@ -2,5 +2,5 @@ logs
 site
 sessions
 tmp
-sites/default/files
-public_html_before_gitlist
+public_html/sites/sites.php
+virtualhost.conf
