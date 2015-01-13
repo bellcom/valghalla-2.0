@@ -145,7 +145,7 @@ function valhalla_bs_vol_election_info($node) {
       if ($field = field_get_items('field_collection_item', $fc, 'field_vlnt_station')) {
         if ($field[0]['entity']) {
           $_node = $field[0]['entity'];
-          $polling_station = l($_node->title, 'valghalla/volunteers/' . $_node->nid);
+          $polling_station = l($_node->title, 'volunteers/station/' . $_node->nid);
         }
       }
 
