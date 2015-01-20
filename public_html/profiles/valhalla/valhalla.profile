@@ -23,7 +23,6 @@ function valhalla_form_install_configure_form_alter(&$form, $form_state) {
   $form['site_information']['site_name']['#default_value'] = $_SERVER['SERVER_NAME'];
 
   $form['#submit'][] = 'valhalla_settings_extra_submit';
-  error_log(print_r($form, 1));
 }
 
 /**
