@@ -142,7 +142,7 @@ function valghalla_signup_list_volunteers_rows($volunteer_nids) {
     $cpr_statuses = array(
       'not found' => 'Ikke fundet',
       'error' => 'Fejl',
-      'succcess' => 'Ok',
+      'success' => 'Ok',
     );
 
     $email_field = field_get_items('node', $volunteer_node, 'field_email');
