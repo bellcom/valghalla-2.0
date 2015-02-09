@@ -391,19 +391,15 @@ function valghalla_signup_signup_form_validate($form, &$form_state) {
         form_set_error('volunteers][' . $id . '][road_no', 'Ikke gyldigt husnummer.');
       }
 
-      $url = 'http://geo.oiorest.dk/adresser/' . $volunteer['road'] . ',' . $volunteer['road_no'] . ',' . $volunteer['zipcode'];
+      $url = 'http://dawa.aws.dk/adresser?vejnavn=' . urlencode($volunteer['road']) . '&husnr=' . $volunteer['road_no'] . '&postnr=' . $volunteer['zipcode'];
 
-      $handle = curl_init($url);
-      curl_setopt($handle, CURLOPT_RETURNTRANSFER, TRUE);
+      $response = file_get_contents($url);
 
-      $response = curl_exec($handle);
+      $response_array = json_decode($response);
 
-      $http_code = curl_getinfo($handle, CURLINFO_HTTP_CODE);
-      if ($http_code == 404) {
+      if (count($response_array) < 1) {
         form_set_error('volunteers][' . $id . '][road', 'Ikke gyldig adresse.');
       }
-
-      curl_close($handle);
     }
   }
 }

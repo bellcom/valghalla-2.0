@@ -332,6 +332,7 @@ EOL;
 
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $service_location);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
     curl_setopt($ch, CURLOPT_POST, TRUE);
     curl_setopt($ch, CURLOPT_POSTFIELDS, $xml_post_string);
     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
