@@ -14,6 +14,7 @@ dependencies[] = node
 dependencies[] = node_reference
 dependencies[] = number
 dependencies[] = options
+dependencies[] = angularjs
 dependencies[] = taxonomy
 dependencies[] = text
 dependencies[] = valghalla_election

@@ -118,8 +118,8 @@ var valghalla_volunteers = valghalla_volunteers || [];
 
     },
     populateTable: function(){
-        oTable = $('.volunteers-list').dataTable();
-        oTable.fnClearTable();
+        //oTable = $('.volunteers-list').dataTable();
+        //oTable.fnClearTable();
 
         $.get('/ajax/volunteers/station/getvolunteers', function(data){
 
@@ -134,9 +134,9 @@ var valghalla_volunteers = valghalla_volunteers || [];
 
             });
 
-            oTable.fnAddData([ data[key].volunteer_party, data[key].volunteer_name, '<a class="js-select-volunteer" data-volunteer_nid="' + data[key].volunteer_nid + '"><span class="btn btn-xs btn-success">Vælg</span></a>']);
+            //oTable.fnAddData([ data[key].volunteer_party, data[key].volunteer_name, '<a class="js-select-volunteer" data-volunteer_nid="' + data[key].volunteer_nid + '"><span class="btn btn-xs btn-success">Vælg</span></a>']);
           }
-          $('.modal .spinner-loading').remove();
+          //$('.modal .spinner-loading').remove();
 
           Drupal.behaviors.valghalla_volunteers.autocomplete();
         });

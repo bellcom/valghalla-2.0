@@ -370,6 +370,11 @@ function valghalla_volunteers_to_polling_station($station_nid = NULL) {
 
   $user = user_load($user->uid);
 
+  angularjs_init_application('volunteersTable');
+
+  drupal_add_js(drupal_get_path('module', 'valghalla_volunteers') . '/vendor/angular-table.js');
+  drupal_add_js(drupal_get_path('module', 'valghalla_volunteers') . '/js/volunteers_table.js');
+
   drupal_add_library('system', 'ui.autocomplete');
   drupal_add_js('var valghalla_destination_path = "' . implode('/', arg()) . '";', 'inline');
   drupal_add_js(drupal_get_path('module', 'valghalla_volunteers') . '/valghalla_volunteers.js');
@@ -427,8 +432,22 @@ function valghalla_volunteers_to_polling_station($station_nid = NULL) {
             <h4 class="modal-title">Vælg tilforordnet</h4>
           </div>
           <div class="modal-body">
+            <div ng-controller="volunteerController">
+              <input type="text" class="form-control ng-valid ng-dirty" ng-model="query" ng-change="updateFilteredList()">
+              <table at-table at-paginated at-config="config" at-list="volunteers"  class="table">
+                <tr>
+                  <td  at-title="Name" at-sortable>
+                  {{item.label}}
+                  </td>
+                  <td><a class="js-select-volunteer" ng-click="reset()" data-volunteer_nid="{{item.volunteer_nid}}"><span class="btn btn-xs btn-success">Vælg</span></a>
+
+                  </td>
+                <tr>
+              </table>
+              <at-pagination at-list="volunteers" at-config="config"></at-pagination>
+
+            </div>
             <p></p>
-            <div class="spinner-loading"></div>
             <table class="volunteers-list table">
               <thead>
                 <tr>
@@ -636,7 +655,7 @@ function valghalla_volunteers_get_volunteers(){
       continue;
     }
 
-    $volunteer_result[] = array('volunteer_nid' => $value->nid, 'volunteer_name' => $value->title, 'volunteer_party' => $volunteer_party);
+    $volunteer_result[$value->nid] = array('volunteer_nid' => $value->nid, 'volunteer_name' => $value->title, 'volunteer_party' => $volunteer_party);
   }
   return $volunteer_result;
 }
