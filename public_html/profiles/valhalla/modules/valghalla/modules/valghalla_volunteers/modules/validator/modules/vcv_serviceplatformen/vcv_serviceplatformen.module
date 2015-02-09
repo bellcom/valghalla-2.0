@@ -351,7 +351,10 @@ EOL;
 
     $xml = simplexml_load_string($gctp);
 
+    // Init variables.
+    $result_row = FALSE;
     $pnr = FALSE;
+    $name= FALSE;
 
     // Go through the resulting rows.
     foreach ($xml->System->Service->CprData->Rolle->Table->Row as $row) {
@@ -360,8 +363,17 @@ EOL;
       foreach ($row->Field as $delta => $field) {
         $attributes = (array) $field->attributes();
 
+        // Check if the first name of volunteer matches data in response.
+        if ($attributes['@attributes']['r'] == 'CNVN_ADRNVN') {
+          if (vcv_serviceplatformen_match_name($attributes['@attributes']['t'], $volunteer_info['name'])) {
+            $name = TRUE;
+          }
+        }
+
+        // If match the entered birthdate with the PNR. We assume this must the
+        // the one.
         if ($attributes['@attributes']['r'] == 'PNR') {
-          if (vcv_serviceplatformen_match_cpr($attributes['@attributes']['v'], $volunteer_info['birthdate'])) {
+          if (vcv_serviceplatformen_match_cpr($attributes['@attributes']['v'], $volunteer_info['birthdate']) && $name) {
             $result_row = (array) $row;
           }
         }
@@ -407,4 +419,14 @@ function vcv_serviceplatformen_match_cpr($value, $find) {
   $reg_birthdate = substr($value, 0, 6);
 
   return $reg_birthdate == $find;
+}
+
+/**
+ * Match name from serviceplatformen to the volunteers name.
+ */
+function vcv_serviceplatformen_match_name($value, $find) {
+  $value_array = explode(' ', $value);
+  $find_array = explode(' ', $find);
+
+  return strtolower($find_array[0]) == strtolower($value_array[0]);
 }
