@@ -98,13 +98,6 @@ function vcv_serviceplatformen_settings() {
     '#default_value' => variable_get('vcv_serviceplatformen_adrsog_serviceuuid', ''),
   );
 
-  $form['adrsog']['vcv_serviceplatformen_adrsog_wsdl'] = array(
-    '#type' => 'textfield',
-    '#title' => 'Service WSDL location',
-    '#default_value' => variable_get('vcv_serviceplatformen_adrsog_wsdl', ''),
-    '#description' => t('ex. https://exttestwww.serviceplatformen.dk/administration/wsdl/CPRBasicInformationService.wsdl'),
-  );
-
   $form['adrsog']['vcv_serviceplatformen_adrsog_location'] = array(
     '#type' => 'textfield',
     '#title' => 'Service location',
@@ -143,13 +136,9 @@ function vcv_serviceplatformen_settings() {
   );
 
   $form['vcv_serviceplatformen_certfile'] = array(
-    '#type' => 'managed_file',
+    '#type' => 'textfield',
     '#title' => 'Certfile',
-    '#upload_location' => 'private://',
     '#default_value' => variable_get('vcv_serviceplatformen_certfile', ''),
-    '#upload_validators' => array(
-      'file_validate_extensions' => array('pem'),
-    ),
   );
 
   $form = system_settings_form($form);
@@ -195,7 +184,7 @@ function vcv_serviceplatformen_query($cpr) {
 
     $client = new SoapClient($wsdl_address, array(
       'location' => $service_location,
-      'local_cert' => drupal_realpath($certfile),
+      'local_cert' => $certfile,
       'passphrase' => $certfile_passphrase,
       'trace' => TRUE,
     ));
@@ -278,14 +267,12 @@ function vcv_serviceplatformen_get_address($cpr) {
  * Get CPR for specified address and name.
  */
 function vcv_serviceplatformen_get_cpr($volunteer_info) {
+
   // Generate gctp message.
   $message_start = '<Gctp v="1.0"><System r="CprSoeg"><Service r="ADRSOG1"><CprServiceHeader r="ADRSOG1"><Key>';
 
-  $name_exp = explode(' ', $volunteer_info['name']);
-
   $message_fields = '
     <Field r="POST" v="' . $volunteer_info['zipcode'] . '"/>
-    <Field r="NVN" v="' . $name_exp[0] . '"/>
     <Field r="VNVN" v="' . $volunteer_info['road'] . '"/>
     <Field r="HNR" v="' . $volunteer_info['road_no'] . '"/>';
 
@@ -297,51 +284,76 @@ function vcv_serviceplatformen_get_cpr($volunteer_info) {
 
   $message = $message_start . $message_fields . $message_end;
 
-  ini_set('soap.wsdl_cache_enabled', 0);
-  ini_set('soap.wsdl_cache_ttl', 0);
+  // Entire xml post string.
+  $xml_post_string = <<<EOL
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:kom="http://serviceplatformen.dk/xml/wsdl/soap11/CprService/1/" xmlns:invctx="http://serviceplatformen.dk/xml/schemas/InvocationContext/1/">
+  <soapenv:Header/>
+  <soapenv:Body>
+    <kom:callGCTPCheckServiceRequest>
+      <invctx:InvocationContext>
+        <invctx:ServiceAgreementUUID>5e78dc5f-873e-46d8-b176-f55814d32c15</invctx:ServiceAgreementUUID>
+        <invctx:UserSystemUUID>8a0aa317-6805-427a-acd5-78f2af15a3c9</invctx:UserSystemUUID>
+        <invctx:UserUUID>09ea08cc-853c-4c02-a150-ed5962021596</invctx:UserUUID>
+        <invctx:ServiceUUID>d0361006-6891-11e3-9ed6-e376a4d43aa6</invctx:ServiceUUID>
+      </invctx:InvocationContext>
+      <kom:gctpMessage>
+        <![CDATA[
+$message
+]]>
+      </kom:gctpMessage>
+    </kom:callGCTPCheckServiceRequest>
+  </soapenv:Body>
+</soapenv:Envelope>
+EOL;
 
   try {
-    $wsdl_address = variable_get('vcv_serviceplatformen_adrsog_wsdl');
     $service_location = variable_get('vcv_serviceplatformen_adrsog_location');
     $certfile_passphrase = variable_get('vcv_serviceplatformen_certfile_passphrase');
     $certfile = variable_get('vcv_serviceplatformen_certfile');
-    $file = file_load($certfile);
 
-    $client = new SoapClient($wsdl_address, array(
-      'location' => $service_location,
-      'local_cert' => drupal_realpath($file->uri),
-      'passphrase' => $certfile_passphrase,
-      'trace' => TRUE,
-    ));
-
+    // ADRSOG1 specific uuids.
     $serviceagreementuuid = variable_get('vcv_serviceplatformen_adrsog_serviceagreementuuid');
+    $serviceuuid = variable_get('vcv_serviceplatformen_adrsog_serviceuuid');
+    // Generic/municipality uuids.
     $usersystemuuid = variable_get('vcv_serviceplatformen_usersystemuuid');
     $useruuid = variable_get('vcv_serviceplatformen_useruuid');
-    $serviceuuid = variable_get('vcv_serviceplatformen_adrsog_serviceuuid');
+    // Extra info.
     $accountinginfo = variable_get('vcv_serviceplatformen_accountinginfo');
     $onbehalfofuser = variable_get('vcv_serviceplatformen_onbehalfofuser');
 
-    $response = $client->forwardToCPRService(
-      array(
-        'InvocationContext' => array(
-          'ServiceAgreementUUID' => $serviceagreementuuid,
-          'UserSystemUUID' => $usersystemuuid,
-          'UserUUID' => $useruuid,
-          'ServiceUUID' => $serviceuuid,
-          'AccountingInfo' => 'Valghalla',
-          'OnBehalfOfUser' => 'Valghalla',
-        ),
-        'gctpMessage' => $message,
-      )
+    // Curl call to service.
+    $headers = array(
+      "Content-type: text/xml;charset=\"utf-8\"",
+      "Accept: text/xml",
+      "Cache-Control: no-cache",
+      "Pragma: no-cache",
+      "Content-length: " . strlen($xml_post_string),
     );
 
-    // Parse the XML that is returned.
-    $xml = simplexml_load_string($response->result);
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $service_location);
+    curl_setopt($ch, CURLOPT_POST, TRUE);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $xml_post_string);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    curl_setopt($ch, CURLOPT_SSLCERT, $certfile);
+    curl_setopt($ch, CURLOPT_SSLCERTPASSWD, $certfile_passphrase);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+    $response = curl_exec($ch);
+
+    curl_close($ch);
+
+    $xml = simplexml_load_string($response);
+    $xml->registerXPathNamespace('ns2', 'http://serviceplatformen.dk/xml/wsdl/soap11/CprService/1/');
+
+    $gctp = end(end($xml->xpath('//env:Body/ns2:callGCTPCheckServiceResponse/ns2:result')));
+
+    $xml = simplexml_load_string($gctp);
 
     $pnr = FALSE;
 
     // Go through the resulting rows.
-    foreach ($xml->Gctp->System->Service->CprData->Rolle->Table->Row as $row) {
+    foreach ($xml->System->Service->CprData->Rolle->Table->Row as $row) {
       $row_attributes = (array) $row->attributes();
 
       foreach ($row->Field as $delta => $field) {
@@ -385,7 +397,6 @@ function vcv_serviceplatformen_get_cpr($volunteer_info) {
       'status' => 'error',
     );
   }
-
 }
 
 /**
