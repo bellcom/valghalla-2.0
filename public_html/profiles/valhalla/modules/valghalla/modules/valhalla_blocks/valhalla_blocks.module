@@ -281,8 +281,34 @@ function _valhalla_blocks_generate_constituency_markup($constituency_nids, $poll
 function _valhalla_blocks_generate_polling_station_markup($polling_station_nids, $polling_station_count) {
   $markup = '';
 
+  // Preload all polling station nodes, get their weight.
   foreach ($polling_station_nids as $polling_station_nid) {
     $polling_station_node = node_load($polling_station_nid);
+
+    if ($field = field_get_items('node', $polling_station_node, 'field_role_weight')) {
+      $weight = $field[0]['value'];
+    }
+
+    $polling_station_nodes[] = array(
+      'weight' => $weight,
+      'node' => $polling_station_node,
+    );
+  }
+
+  // Sort callback.
+  $sort_polling_stations = function($a, $b) {
+    if ($a['weight'] == $b['weight']) {
+      return 0;
+    }
+
+    return ($a['weight'] < $b['weight']) ? -1 : 1;
+  };
+
+  // Sort pollingstations according to set weight.
+  uasort($polling_station_nodes, $sort_polling_stations);
+
+  foreach ($polling_station_nodes as $data) {
+    $polling_station_node = $data['node'];
 
     $markup .= '<tr><td class="column-first"><a href="/volunteers/station/' . $polling_station_nid . '">';
     $markup .= $polling_station_node->title . '</a></td>';
