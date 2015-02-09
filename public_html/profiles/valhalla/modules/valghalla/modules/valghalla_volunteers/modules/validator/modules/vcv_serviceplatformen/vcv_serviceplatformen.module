@@ -192,11 +192,10 @@ function vcv_serviceplatformen_query($cpr) {
     $service_location = variable_get('vcv_serviceplatformen_location');
     $certfile_passphrase = variable_get('vcv_serviceplatformen_certfile_passphrase');
     $certfile = variable_get('vcv_serviceplatformen_certfile');
-    $file = file_load($certfile);
 
     $client = new SoapClient($wsdl_address, array(
       'location' => $service_location,
-      'local_cert' => drupal_realpath($file->uri),
+      'local_cert' => drupal_realpath($certfile),
       'passphrase' => $certfile_passphrase,
       'trace' => TRUE,
     ));
@@ -381,6 +380,7 @@ function vcv_serviceplatformen_get_cpr($volunteer_info) {
   }
   catch (Exception $e) {
     error_log(__FILE__ . ' : ' . __LINE__ . ': ' .  print_r($e, 1));
+
     return array(
       'status' => 'error',
     );

@@ -4,6 +4,9 @@
  * template.php
  */
 
+/**
+ * THEME_preprocess_page().
+ */
 function valhalla_bs_preprocess_page(&$vars) {
   $vars['valghalla_deltagere'] = valghalla_bs_theme_navbarmenu('valghalla/deltagere');
   $vars['valghalla_administration'] = valghalla_bs_theme_navbarmenu('valghalla/administration');
@@ -11,6 +14,9 @@ function valhalla_bs_preprocess_page(&$vars) {
   $vars['admin_valghalla'] = valghalla_bs_theme_navbarmenu('admin/valghalla');
 }
 
+/**
+ * Genereate navbar menu.
+ */
 function valghalla_bs_theme_navbarmenu($path) {
   $parent = menu_link_get_preferred($path);
   $parameters = array(
@@ -25,6 +31,8 @@ function valghalla_bs_theme_navbarmenu($path) {
 
   $tree_output = menu_tree_output($children);
 
+  $items = array();
+
   foreach ($tree_output as $item_id => $item_data) {
     if (is_numeric($item_id) && is_array($item_data)) {
       $items[] = l($item_data['#title'], $item_data['#href'], array(
@@ -35,7 +43,13 @@ function valghalla_bs_theme_navbarmenu($path) {
     }
   }
 
-  $menu = theme('item_list', array('items' => $items, 'type' => 'ul', 'attributes' => array('class' => 'dropdown-menu')));
+  $menu = theme('item_list', array(
+    'items' => $items,
+    'type' => 'ul',
+    'attributes' => array(
+      'class' => 'dropdown-menu',
+    ),
+  ));
 
   $toggle = '<a href="#" class="dropdown-toggle" data-toggle="dropdown">' . $parent['link_title'] . ' <b class="caret"></b></a>';
   if ($menu) {
