@@ -69,9 +69,9 @@ function valhalla_blocks_block_view($delta = '') {
             </div>
           </div>
           <div class="content">' . $block_cache . '</div>
-        </div>';
+        </div><script>valhalla_blocks.loadOverview("' . $delta . '");</script>';
 
-      return array("content" => $output . '<script>valhalla_blocks.loadOverview("' . $delta . '");</script>');
+      return array("content" => $output);
   }
 }
 /**
