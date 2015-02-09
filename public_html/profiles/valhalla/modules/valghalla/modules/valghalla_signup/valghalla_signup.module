@@ -391,7 +391,7 @@ function valghalla_signup_signup_form_validate($form, &$form_state) {
         form_set_error('volunteers][' . $id . '][road_no', 'Ikke gyldigt husnummer.');
       }
 
-      $url = 'http://dawa.aws.dk/adresser?vejnavn=' . urlencode($volunteer['road']) . '&husnr=' . $volunteer['road_no'] . '&postnr=' . $volunteer['zipcode'];
+      $url = 'https://dawa.aws.dk/adresser?vejnavn=' . urlencode($volunteer['road']) . '&husnr=' . $volunteer['road_no'] . '&postnr=' . $volunteer['zipcode'];
 
       $response = file_get_contents($url);
 

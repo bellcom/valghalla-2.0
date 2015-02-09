@@ -2,7 +2,7 @@
   Drupal.behaviors.exampleModule = {
     attach: function (context, settings) {
 
-      var url = 'http://dawa.aws.dk/postnumre';
+      var url = 'https://dawa.aws.dk/postnumre';
       $.ajax({
         url: url,
         dataType: "jsonp",
@@ -50,7 +50,7 @@
         parametre.frapostnr = postnr;
         parametre.tilpostnr = postnr;
 
-        var url = 'http://geo.oiorest.dk/vejnavne.json';
+        var url = 'https://geo.oiorest.dk/vejnavne.json';
         $.ajax({
           url: url,
           dataType: "jsonp",
@@ -88,7 +88,7 @@
           parametre.vejnavn = road;
           parametre.postnr = postnr;
 
-          var url = 'http://geo.oiorest.dk/adresser.json';
+          var url = 'https://geo.oiorest.dk/adresser.json';
           $.ajax({
             url: url,
             dataType: "jsonp",
