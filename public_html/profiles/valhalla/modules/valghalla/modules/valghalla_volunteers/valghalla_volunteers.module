@@ -448,15 +448,6 @@ function valghalla_volunteers_to_polling_station($station_nid = NULL) {
 
             </div>
             <p></p>
-            <table class="volunteers-list table">
-              <thead>
-                <tr>
-                  <th>Parti</th>
-                  <th>Navn</th>
-                  <th>Vælg</th>
-                </tr>
-              </thead>
-            </table>
           </div>
         </div><!-- /.modal-content -->
       </div><!-- /.modal-dialog -->
