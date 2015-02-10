@@ -402,7 +402,7 @@ function valghalla_volunteers_to_polling_station($station_nid = NULL) {
   }
 
   $markup = '';
-  if(in_array('Valgsekretær', $user->roles) && !$user_party_id){
+  if(user_access('valghalla see all parties') && !$user_party_id){
     // tth: If the user is administrator and theres no party chosen, show all parties!
     $taxonomy = taxonomy_vocabulary_machine_name_load('partier');
     foreach (taxonomy_get_tree($taxonomy->vid) as $term) {

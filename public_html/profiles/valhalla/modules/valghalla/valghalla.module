@@ -194,5 +194,8 @@ function valghalla_permission() {
     'valghalla change party' => array(
       'title' => t('Tilladelse til at skifte parti'),
     ),
+    'valghalla see all parties' => array(
+      'title' => t('Tilladelse til at se alle partier'),
+    ),
   );
 }
