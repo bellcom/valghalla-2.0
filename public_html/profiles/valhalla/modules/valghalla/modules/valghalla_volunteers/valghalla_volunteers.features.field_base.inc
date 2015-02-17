@@ -97,6 +97,33 @@ function valghalla_volunteers_field_default_field_bases() {
     'type' => 'text',
   );
 
+  // Exported field_base: 'field_cpr_status'
+  $field_bases['field_cpr_status'] = array(
+    'active' => 1,
+    'cardinality' => 1,
+    'deleted' => 0,
+    'entity_types' => array(),
+    'field_name' => 'field_cpr_status',
+    'foreign keys' => array(),
+    'indexes' => array(
+      'value' => array(
+        0 => 'value',
+      ),
+    ),
+    'locked' => 0,
+    'module' => 'list',
+    'settings' => array(
+      'allowed_values' => array(
+        'success' => 'Ok',
+        'not found' => 'Ikke fundet',
+        'error' => 'Fejl',
+      ),
+      'allowed_values_function' => '',
+    ),
+    'translatable' => 0,
+    'type' => 'list_text',
+  );
+
   // Exported field_base: 'field_cpr_valid_date'
   $field_bases['field_cpr_valid_date'] = array(
     'active' => 1,
@@ -109,9 +136,14 @@ function valghalla_volunteers_field_default_field_bases() {
     'locked' => 0,
     'module' => 'date',
     'settings' => array(
+      'cache_count' => 4,
+      'cache_enabled' => 0,
       'granularity' => array(
         'day' => 'day',
+        'hour' => 0,
+        'minute' => 0,
         'month' => 'month',
+        'second' => 0,
         'year' => 'year',
       ),
       'repeat' => 0,
@@ -997,6 +1029,32 @@ function valghalla_volunteers_field_default_field_bases() {
     'type' => 'text',
   );
 
+  // Exported field_base: 'field_valid_state'
+  $field_bases['field_valid_state'] = array(
+    'active' => 1,
+    'cardinality' => 1,
+    'deleted' => 0,
+    'entity_types' => array(),
+    'field_name' => 'field_valid_state',
+    'foreign keys' => array(),
+    'indexes' => array(
+      'value' => array(
+        0 => 'value',
+      ),
+    ),
+    'locked' => 0,
+    'module' => 'list',
+    'settings' => array(
+      'allowed_values' => array(
+        'valid' => 'Valideret',
+        'invalid' => 'Ikke valideret',
+      ),
+      'allowed_values_function' => '',
+    ),
+    'translatable' => 0,
+    'type' => 'list_text',
+  );
+
   // Exported field_base: 'field_vlnt_station'
   $field_bases['field_vlnt_station'] = array(
     'active' => 1,
@@ -1038,6 +1096,36 @@ function valghalla_volunteers_field_default_field_bases() {
     ),
     'translatable' => 0,
     'type' => 'entityreference',
+  );
+
+  // Exported field_base: 'field_volunteer_valid_date'
+  $field_bases['field_volunteer_valid_date'] = array(
+    'active' => 1,
+    'cardinality' => 1,
+    'deleted' => 0,
+    'entity_types' => array(),
+    'field_name' => 'field_volunteer_valid_date',
+    'foreign keys' => array(),
+    'indexes' => array(),
+    'locked' => 0,
+    'module' => 'date',
+    'settings' => array(
+      'cache_count' => 4,
+      'cache_enabled' => 0,
+      'granularity' => array(
+        'day' => 'day',
+        'hour' => 'hour',
+        'minute' => 'minute',
+        'month' => 'month',
+        'second' => 0,
+        'year' => 'year',
+      ),
+      'timezone_db' => 'UTC',
+      'todate' => '',
+      'tz_handling' => 'site',
+    ),
+    'translatable' => 0,
+    'type' => 'datetime',
   );
 
   return $field_bases;

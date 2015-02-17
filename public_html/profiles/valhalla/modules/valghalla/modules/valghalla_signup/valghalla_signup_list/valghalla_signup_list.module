@@ -25,17 +25,25 @@ function valghalla_signup_list_permission(){
     'valghalla view external signup list' => array(
       'title'=> t('Se "Eksterne tilmeldinger" liste'),
     ),
- );
+  );
 }
 
 /**
- * Page callback for valghalla signup list
+ * Page callback for valghalla signup list.
  */
 function valghalla_signup_list_page($form, &$form_state) {
   $volunteer_nids = valghalla_signup_list_get_volunteer_nids($form_state['values']);
-  $rows =  valghalla_signup_list_volunteers_rows($volunteer_nids);
+  $rows = valghalla_signup_list_volunteers_rows($volunteer_nids);
 
-  $header = array('Navn', 'CPR Nummer', 'E-mail', 'Tilmeldingdato', 'Valideret', t('Edit') );
+  $header = array(
+    'Navn',
+    'CPR Nummer',
+    'E-mail',
+    'Tilmeldingdato',
+    'CPR status',
+    t('Edit'),
+  );
+
   $form['#attributes'] = array('class' => 'form-inline');
 
   $form['name'] = array(
@@ -56,13 +64,14 @@ function valghalla_signup_list_page($form, &$form_state) {
     '#title' => t('Email'),
   );
 
-  $form['validated'] = array(
+  $form['cpr_status'] = array(
     '#type' => 'select',
-    '#title' => t('Valideret'),
+    '#title' => t('CPR status'),
     '#options' => array(
-      'no' => 'Ikke valideret',
-      'yes' => 'Valideret',
       'all' => 'Alle',
+      'success' => 'Ok',
+      'not found' => 'Ikke fundet',
+      'error' => 'Fejl',
     ),
     '#default_value' => 'all',
   );
@@ -83,27 +92,17 @@ function valghalla_signup_list_page($form, &$form_state) {
   return $form;
 }
 
+/**
+ * Query the volunteers according to selection.
+ */
 function valghalla_signup_list_get_volunteer_nids($params) {
   $query = new EntityFieldQuery();
   $query->entityCondition('entity_type', 'node')
         ->entityCondition('bundle', 'volunteers')
         ->fieldCondition('field_external_signup', 'value', 1);
 
-  if ($params['validated'] == 'yes') {
-    $query->fieldCondition('field_cpr_valid_date', 'value', 'NULL', '!=');
-  }
-
-  if ($params['validated'] == 'no') {
-    $not_query = new EntityFieldQuery();
-    $not_query->entityCondition('entity_type', 'node')
-        ->entityCondition('bundle', 'volunteers')
-        ->fieldCondition('field_external_signup', 'value', 1)
-        ->fieldCondition('field_cpr_valid_date', 'value', 'NULL', '!=');
-    $not_result = $not_query->execute();
-
-    if (isset($not_result['node'])) {
-      $query->entityCondition('entity_id', array_keys($not_result['node']), 'NOT IN');
-    }
+  if ($params['cpr_status'] != 'all') {
+    $query->fieldCondition('field_cpr_status', 'value', $params['cpr_status']);
   }
 
   if ($params['name']) {
@@ -128,6 +127,9 @@ function valghalla_signup_list_get_volunteer_nids($params) {
   return $volunteer_nids;
 }
 
+/**
+ * Generate table.
+ */
 function valghalla_signup_list_volunteers_rows($volunteer_nids) {
   $rows = array();
 
@@ -135,8 +137,13 @@ function valghalla_signup_list_volunteers_rows($volunteer_nids) {
     $cpr_field = field_get_items('node', $volunteer_node, 'field_cpr_number');
     $cpr = $cpr_field ? $cpr_field[0]['value'] : '';
 
-    $cpr_valid_date_field = field_get_items('node', $volunteer_node, 'field_cpr_valid_date');
-    $cpr_valid_date = $cpr_valid_date_field ? strtotime($cpr_valid_date_field[0]['value']) : '';
+    $cpr_status_field = field_get_items('node', $volunteer_node, 'field_cpr_status');
+    $cpr_status = $cpr_status_field ? $cpr_status_field[0]['value'] : '';
+    $cpr_statuses = array(
+      'not found' => 'Ikke fundet',
+      'error' => 'Fejl',
+      'success' => 'Ok',
+    );
 
     $email_field = field_get_items('node', $volunteer_node, 'field_email');
     $email = $email_field ? $email_field[0]['email'] : '';
@@ -146,7 +153,7 @@ function valghalla_signup_list_volunteers_rows($volunteer_nids) {
       $cpr,
       $email,
       format_date($volunteer_node->created, 'custom', 'd.m.y'),
-      format_date($cpr_valid_date, 'custom', 'd.m.y'),
+      $cpr_statuses[$cpr_status],
       l(t('edit'), 'node/' . $volunteer_node->nid . '/edit', array('query' => array('destination' => current_path()))),
     );
   }
@@ -154,6 +161,9 @@ function valghalla_signup_list_volunteers_rows($volunteer_nids) {
   return $rows;
 }
 
+/**
+ * Submit handler for overview form.
+ */
 function valghalla_signup_list_page_submit(&$form, &$form_state) {
   $form_state['rebuild'] = TRUE;
 }

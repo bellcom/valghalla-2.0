@@ -1,8 +1,12 @@
 (function ($) {
   Drupal.behaviors.liste_deltager = {
     attach: function (context, settings) {
+      $('.js-select-all').click(function(e){
+        $(this).parent().find('input').prop('checked', true);
+        $(this).parent().find('option').attr('selected','selected');
+        e.preventDefault();
+      });
       if ($('.table').length === 0) {
-        $('#liste-deltager-form input[type="checkbox"]').prop('checked', 1);
       }
       else {
         $('table').tablesorter({

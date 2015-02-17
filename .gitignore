@@ -2,6 +2,9 @@ logs
 site
 sessions
 tmp
+sites/default/files
+public_html_before_gitlist
+*.swp
 public_html/sites/sites.php
 public_html/sites/all/themes/naestved
 public_html/sites/all/themes/skbrg

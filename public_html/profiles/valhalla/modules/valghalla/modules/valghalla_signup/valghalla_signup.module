@@ -144,6 +144,16 @@ function valghalla_signup_signup_page() {
 }
 
 /**
+ * Implements hook_init().
+ */
+function valghalla_signup_init() {
+  if (current_path() == 'valghalla/signup') {
+    drupal_add_library('system', 'ui.autocomplete');
+    drupal_add_js(drupal_get_path('module', 'valghalla_signup') . '/js/address.js');
+  }
+}
+
+/**
  * Form callback, for signup.
  */
 function valghalla_signup_signup_form($form, &$form_state) {
@@ -234,9 +244,8 @@ function valghalla_signup_signup_form($form, &$form_state) {
       array_unshift($pollingstations, 'Vælg valgsted');
       $form['pollingstation_nid'] = array(
         '#type' => 'select',
-        '#title' => 'Valgsted',
+        '#title' => 'Valgsteder - Med ledige pladser',
         '#options' => $pollingstations,
-        '#suffix' => 'Der vises kun valgsteder i listen med tilstrækkeligt ledige pladser.<hr>',
       );
 
       $form['volunteers']['#tree'] = TRUE;
@@ -258,6 +267,23 @@ function valghalla_signup_signup_form($form, &$form_state) {
           '#required' => TRUE,
           '#date_format' => 'd-m-Y',
           '#pre_render' => array('_valghalla_signup_birthdate_pre_render'),
+        );
+
+        $form['volunteers'][$i]['zipcode'] = array(
+          '#required' => TRUE,
+          '#title' => 'Postnummer',
+          '#type' => 'textfield',
+          '#prefix' => '<div class="row"><div class="col-sm-6">',
+          '#suffix' => '</div>',
+        );
+
+        $form['volunteers'][$i]['city'] = array(
+          '#title' => 'By',
+          '#type' => 'textfield',
+          '#required' => TRUE,
+          '#prefix' => '<div class="col-sm-6">',
+          '#suffix' => '</div></div>',
+          '#attributes' => array('readonly' => 'readonly'),
         );
 
         $form['volunteers'][$i]['road'] = array(
@@ -287,22 +313,6 @@ function valghalla_signup_signup_form($form, &$form_state) {
           '#title' => 'Dør/side',
           '#type' => 'textfield',
           '#prefix' => '<div class="col-sm-2">',
-          '#suffix' => '</div></div>',
-        );
-
-        $form['volunteers'][$i]['zipcode'] = array(
-          '#required' => TRUE,
-          '#title' => 'Postnummer',
-          '#type' => 'textfield',
-          '#prefix' => '<div class="row"><div class="col-sm-6">',
-          '#suffix' => '</div>',
-        );
-
-        $form['volunteers'][$i]['city'] = array(
-          '#title' => 'By',
-          '#type' => 'textfield',
-          '#required' => TRUE,
-          '#prefix' => '<div class="col-sm-6">',
           '#suffix' => '</div></div>',
         );
 
@@ -380,7 +390,16 @@ function valghalla_signup_signup_form_validate($form, &$form_state) {
       if (strlen((int) $volunteer['road_no']) < 1 || $volunteer['road_no'] == 0) {
         form_set_error('volunteers][' . $id . '][road_no', 'Ikke gyldigt husnummer.');
       }
-      // We could validate all addresses using a geoservice...
+
+      $url = 'https://dawa.aws.dk/adresser?vejnavn=' . urlencode($volunteer['road']) . '&husnr=' . $volunteer['road_no'] . '&postnr=' . $volunteer['zipcode'];
+
+      $response = file_get_contents($url);
+
+      $response_array = json_decode($response);
+
+      if (count($response_array) < 1) {
+        form_set_error('volunteers][' . $id . '][road', 'Ikke gyldig adresse.');
+      }
     }
   }
 }
@@ -434,7 +453,7 @@ function valghalla_signup_add_volunteer($volunteer, $polling_station_nid) {
 
   $cpr = str_pad($volunteer['birthdate']['day'], 2, 0, STR_PAD_LEFT)
          . str_pad($volunteer['birthdate']['month'], 2, 0, STR_PAD_LEFT)
-         . substr($volunteer['birthdate']['year'], -2);
+         . (substr($volunteer['birthdate']['year'], -2) - 1);
 
   $volunteer_party_tid = variable_get('valghalla_signup_party_tid', FALSE);
 
@@ -453,6 +472,10 @@ function valghalla_signup_add_volunteer($volunteer, $polling_station_nid) {
   $volunteer_node->field_external_signup[LANGUAGE_NONE][]['value'] = 1;
 
   node_save($volunteer_node);
+
+  if (function_exists('valghalla_volunteer_validator_get_cpr')) {
+    valghalla_volunteer_validator_get_cpr($volunteer_node);
+  }
 
   $role_nid = $volunteer['role_nid'];
   $election_nid = variable_get('valghalla_signup_election_nid', FALSE);

@@ -23,6 +23,17 @@
        data-pollingstation_nid="<?php print $pollingstation_nid; ?>"
       <?php if(isset($existing[$i])): ?> style="display:none;"  <?php endif;?> class="btn btn-default btn-xs js-add-volunteer"><span class="glyphicon glyphicon-plus"></span></a>
 
+<?php $add_url = url('valghalla/deltagere/tilfoej', array(
+  'query' => array(
+    'role_nid' => $post['role_nid'],
+    'party_tid' => $post['party_tid'],
+    'pollingstation_nid' => $pollingstation_nid,
+    'destination' => current_path(),
+  ),
+));
+?>
+    <a href="<?php print $add_url; ?>" <?php if(isset($existing[$i])): ?> style="display:none;"  <?php endif;?> class="btn btn-default btn-xs"><span class="glyphicon glyphicon-user"></span><span class="glyphicon glyphicon-plus"></span></a>
+
     <?php if(isset($existing[$i])): ?>
       <a href="/node/<?php print $existing[$i]['nid'] ?>/edit?destination=<?php print (implode('/', arg())) ?>" class="btn btn-default btn-xs edit"><span class="glyphicon glyphicon-user"></span></a>
       <a data-fcid="<?php print $existing[$i]['fcid'] ?>" class="remove btn btn-default btn-xs js-remove-volunteer" ><span class="glyphicon glyphicon-minus"></span></a>
