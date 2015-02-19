@@ -6,7 +6,7 @@ function valghalla_pages_menu(){
   $items['valghalla/administration/valg'] = array(
     'title' => 'Valg oversigt',
     'page callback' => 'valghalla_pages_admin_valghalla',
-    'access arguments' => array('administer valhalla'),
+    'access arguments' => array('administer valghalla'),
     'file' => 'valghalla_pages.admin.inc',
     'type' => MENU_NORMAL_ITEM,
   );
