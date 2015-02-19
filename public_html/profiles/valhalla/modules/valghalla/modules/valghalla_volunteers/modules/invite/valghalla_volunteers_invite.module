@@ -11,7 +11,7 @@ function valghalla_volunteers_invite_menu() {
       'title' => 'Inviter tidligere deltagere',
       'page callback' => 'drupal_get_form',
       'page arguments' => array('valghalla_volunteers_invite_select'),
-      'access arguments' => array('administer valhalla'),
+      'access arguments' => array('administer valghalla'),
       'type' => MENU_NORMAL_ITEM,
       'weight' => 10,
   );

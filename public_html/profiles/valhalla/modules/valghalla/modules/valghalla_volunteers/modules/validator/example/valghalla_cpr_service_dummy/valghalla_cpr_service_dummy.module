@@ -15,7 +15,7 @@ function valghalla_cpr_service_dummy_menu(){
     'title' => t('Indstillinger for Dummy service'),
     'page callback' => 'drupal_get_form',
     'page arguments' => array('valghalla_cpr_service_dummy_settings'),
-    'access arguments' => array('administer valhalla'),
+    'access arguments' => array('administer valghalla'),
   );
 
   return $items;

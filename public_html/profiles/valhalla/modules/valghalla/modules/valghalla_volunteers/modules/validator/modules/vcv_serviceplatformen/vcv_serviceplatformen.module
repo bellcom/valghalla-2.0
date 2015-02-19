@@ -16,7 +16,7 @@ function vcv_serviceplatformen_menu() {
     'title' => 'Indstillinger for serviceplatformen.dk',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('vcv_serviceplatformen_settings'),
-    'access arguments' => array('administer valhalla'),
+    'access arguments' => array('administer valghalla'),
   );
 
   return $items;

@@ -10,7 +10,7 @@ function valhalla_settings_menu() {
     'description' => 'General valghalla settings',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('valhalla_admin_settings_form'),
-    'access arguments' => array('administer valhalla'),
+    'access arguments' => array('administer valghalla'),
     'type' => MENU_NORMAL_ITEM,
     'weight' => -3,
   );

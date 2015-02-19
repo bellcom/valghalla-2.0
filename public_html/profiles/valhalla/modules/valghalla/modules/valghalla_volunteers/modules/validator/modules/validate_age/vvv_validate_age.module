@@ -16,7 +16,7 @@ function vvv_validate_age_menu() {
     'title' => 'Indstillinger for "Valider Alder"',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('vvv_validate_age_settings'),
-    'access arguments' => array('administer valhalla'),
+    'access arguments' => array('administer valghalla'),
     'type' => MENU_CALLBACK,
   );
 
