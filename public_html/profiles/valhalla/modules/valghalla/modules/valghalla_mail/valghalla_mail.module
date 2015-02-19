@@ -45,7 +45,7 @@ function valghalla_mail_menu() {
       'description' => 'Tilretning af mail notifikationer.',
       'page callback' => 'drupal_get_form',
       'page arguments' => array('valghalla_mail_admin_notifications'),
-      'access arguments' => array('administer valhalla'),
+      'access arguments' => array('administer valghalla'),
       'file' => 'valghalla_mail_admin.inc',
       'type' => MENU_NORMAL_ITEM,
       'weight' => -4,
@@ -55,7 +55,7 @@ function valghalla_mail_menu() {
       'description' => 'Tilretning af standard mails.',
       'page callback' => 'drupal_get_form',
       'page arguments' => array('valghalla_mail_admin_valghalla_mails'),
-      'access arguments' => array('administer valhalla'),
+      'access arguments' => array('administer valghalla'),
       'file' => 'valghalla_mail_admin.inc',
       'type' => MENU_NORMAL_ITEM,
       'weight' => -4,
@@ -65,7 +65,7 @@ function valghalla_mail_menu() {
       'title' => 'Send mails til frivillige',
       'description' => 'Her kan der udsendes mails til alle, eller udvalgte segmenter, af de frivillige.',
       'page callback' => 'valghalla_mail_sendmail_create_email_node', // Step 1 create an email node
-      'access arguments' => array('administer valhalla'),
+      'access arguments' => array('administer valghalla'),
       'file' =>'includes/valghalla_mail_form.inc',
       'type' => MENU_NORMAL_ITEM,
       'weight' => -5,
@@ -74,19 +74,19 @@ function valghalla_mail_menu() {
       'title' => 'Send invitationer',
       'page callback' => 'drupal_get_form',
       'page arguments' => array('valghalla_mail_sendinvitation_form', 3), // Step 2 get mail addresses.
-      'access arguments' => array('administer valhalla'),
+      'access arguments' => array('administer valghalla'),
       'file' =>'includes/valghalla_mail_form.inc',
       'type' => MENU_LOCAL_TASK,
     );
   $items['valghalla/administration/sendto/%'] = array(
       'page callback' => 'drupal_get_form',
       'page arguments' => array('valghalla_mail_sendmail_form', 3), // Step 2 get mail addresses.
-      'access arguments' => array('administer valhalla'),
+      'access arguments' => array('administer valghalla'),
       'file' =>'includes/valghalla_mail_form.inc',
   );
   $items['valghalla_mail/ajax/view/%/%'] = array(
     'page callback' => 'valghalla_mail_ajax_view',
-    'access arguments' => array('administer valhalla'),
+    'access arguments' => array('administer valghalla'),
     'page arguments' => array(3,4),
 
   );
