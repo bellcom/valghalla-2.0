@@ -127,9 +127,9 @@ function valhalla_bs_vol_cpr($node) {
 
   $day = substr($cpr, 0, 2);
   $month = substr($cpr, 2, 2);
-  $year = substr($cpr, 4, 2);
+  $year = 19 . substr($cpr, 4, 2);
 
-  $date = DateTime::createFromFormat('d-m-y', $day . '-' . $month . '-' . $year);
+  $date = DateTime::createFromFormat('d-m-Y', $day . '-' . $month . '-' . $year);
   $now = new DateTime();
   $interval = $now->diff($date);
   $age = ' (' . $interval->y . ' år)';
