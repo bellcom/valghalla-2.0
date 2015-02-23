@@ -143,8 +143,7 @@ function valghalla_volunteer_validator_form_volunteers_node_form_alter(&$form, &
     );
 
     foreach ($fields as $field) {
-      $form[$field]['#disabled'] = TRUE;
-      $form[$field]['#suffix'] = '<em>Indholdet af dette felt bliver automatisk hentet fra CPR service, når indholdet gemmes.</em>';
+      $form[$field]['#access'] = FALSE;
     }
   }
 }

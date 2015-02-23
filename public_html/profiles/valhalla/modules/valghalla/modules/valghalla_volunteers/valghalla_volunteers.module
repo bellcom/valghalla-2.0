@@ -878,6 +878,11 @@ function valghalla_volunteers_form_volunteers_node_form_alter(&$form, &$form_sta
       'field_address_bnummer',
       'field_rolle_id',
       'field_meeting_time',
+      'field_electioninfo',
+      'field_volunteer_valid_date',
+      'field_cpr_valid_date',
+      'field_valid_state',
+      'field_cpr_status',
     );
 
     foreach ($hide_elements as $field_name) {
@@ -893,7 +898,6 @@ function valghalla_volunteers_form_volunteers_node_form_alter(&$form, &$form_sta
     if (!user_access('see all psn numbers')) {
       $form['field_cpr_number']['#access'] = FALSE;
     }
-    $form['field_electioninfo']['#access'] = FALSE;
   }
 
   // Redid the add volunteer form
@@ -940,6 +944,11 @@ function valghalla_volunteers_form_volunteers_node_form_alter(&$form, &$form_sta
       'field_label',
       'field_polling_station_post',
       'field_electioninfo',
+      'field_electioninfo',
+      'field_volunteer_valid_date',
+      'field_cpr_valid_date',
+      'field_valid_state',
+      'field_cpr_status',
     );
 
     if ($user_party_id) {
