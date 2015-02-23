@@ -391,7 +391,7 @@ function _valghalla_helper_get_token_values($entity) {
     $position = $post_node->title;
     $position_nid = $post_node->nid;
 
-    if ($field = field_get_items('node', $post_node, 'field_time')) {
+    if ($field = field_get_items('node', $post_node, 'field_meetingtime')) {
       $time = $field[0]['value'];
     }
 
