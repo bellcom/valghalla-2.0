@@ -1,15 +1,16 @@
 angular.module('volunteersTable', ['angular-table']).controller('volunteerController', ['$scope', '$window', '$filter', function($scope, $window, $filter){
 
-  $scope.volunteers = {};
+  $scope.volunteers = [{label: 'Henter'}];
 
   /** redo this **/
   function load() {
-    setTimeout(function(){
-      $scope.volunteers = $window.valghalla_volunteers;
-      $scope.$apply();
-    }, 500);
+    $scope.volunteers = $window.valghalla_volunteers;
+    $scope.$apply();
   }
-  load();
+
+  jQuery(document).on('volunteersLoaded', function(){
+    load();
+  });
 
   $scope.config = {
     itemsPerPage: 15,
