@@ -1,13 +1,4 @@
-(function(angular) {
-  'use strict';
-// declare a module
-var myAppModule = angular.module('myApp', []);
-
-// configure the module.
-// in this example we will create a greeting filter
-myAppModule.filter('greet', function() {
- return function(name) {
-    return 'Hello, ' + name + '!';
-  };
+angular.module('ngAppDemo', []).controller('ngAppDemoController', function($scope) {
+  $scope.a = 1;
+  $scope.b = 2;
 });
-})(window.angular);

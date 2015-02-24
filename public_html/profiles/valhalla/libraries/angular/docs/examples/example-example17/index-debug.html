@@ -11,10 +11,11 @@
 
   
 </head>
-<body ng-app="docsTimeDirective">
-  <div ng-controller="Controller">
-  Date format: <input ng-model="format"> <hr/>
-  Current time is: <span my-current-time="format"></span>
-</div>
+<body ng-app="docsIsoFnBindExample">
+    <div ng-controller="Controller">
+    <my-dialog ng-hide="dialogIsHidden" on-close="hideDialog()">
+      Check out the contents, {{name}}!
+    </my-dialog>
+  </div>
 </body>
 </html>

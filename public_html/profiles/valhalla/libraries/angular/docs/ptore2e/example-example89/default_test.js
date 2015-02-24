@@ -2,19 +2,22 @@ describe("", function() {
   var rootEl;
   beforeEach(function() {
     rootEl = browser.rootEl;
-    browser.get("build/docs/examples/example-example89/index.html");
+    browser.get("examples/example-example89/index.html");
   });
   
-var thumbsUp = element(by.css('span.glyphicon-thumbs-up'));
-var thumbsDown = element(by.css('span.glyphicon-thumbs-down'));
-
-it('should check ng-show / ng-hide', function() {
-  expect(thumbsUp.isDisplayed()).toBeFalsy();
-  expect(thumbsDown.isDisplayed()).toBeTruthy();
-
-  element(by.model('checked')).click();
-
-  expect(thumbsUp.isDisplayed()).toBeTruthy();
-  expect(thumbsDown.isDisplayed()).toBeFalsy();
-});
+  it('should init with 1234.56', function() {
+    expect(element(by.id('currency-default')).getText()).toBe('$1,234.56');
+    expect(element(by.binding('amount | currency:"USD$"')).getText()).toBe('USD$1,234.56');
+  });
+  it('should update', function() {
+    if (browser.params.browser == 'safari') {
+      // Safari does not understand the minus key. See
+      // https://github.com/angular/protractor/issues/481
+      return;
+    }
+    element(by.model('amount')).clear();
+    element(by.model('amount')).sendKeys('-1234');
+    expect(element(by.id('currency-default')).getText()).toBe('($1,234.00)');
+    expect(element(by.binding('amount | currency:"USD$"')).getText()).toBe('(USD$1,234.00)');
+  });
 });

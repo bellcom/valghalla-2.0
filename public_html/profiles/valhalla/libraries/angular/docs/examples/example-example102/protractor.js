@@ -1,40 +1,30 @@
-var numLimitInput = element(by.model('numLimit'));
-var letterLimitInput = element(by.model('letterLimit'));
-var longNumberLimitInput = element(by.model('longNumberLimit'));
-var limitedNumbers = element(by.binding('numbers | limitTo:numLimit'));
-var limitedLetters = element(by.binding('letters | limitTo:letterLimit'));
-var limitedLongNumber = element(by.binding('longNumber | limitTo:longNumberLimit'));
+  it('should linkify the snippet with urls', function() {
+    expect(element(by.id('linky-filter')).element(by.binding('snippet | linky')).getText()).
+        toBe('Pretty text with some links: http://angularjs.org/, us@somewhere.org, ' +
+             'another@somewhere.org, and one more: ftp://127.0.0.1/.');
+    expect(element.all(by.css('#linky-filter a')).count()).toEqual(4);
+  });
 
-it('should limit the number array to first three items', function() {
-  expect(numLimitInput.getAttribute('value')).toBe('3');
-  expect(letterLimitInput.getAttribute('value')).toBe('3');
-  expect(longNumberLimitInput.getAttribute('value')).toBe('3');
-  expect(limitedNumbers.getText()).toEqual('Output numbers: [1,2,3]');
-  expect(limitedLetters.getText()).toEqual('Output letters: abc');
-  expect(limitedLongNumber.getText()).toEqual('Output long number: 234');
-});
+  it('should not linkify snippet without the linky filter', function() {
+    expect(element(by.id('escaped-html')).element(by.binding('snippet')).getText()).
+        toBe('Pretty text with some links: http://angularjs.org/, mailto:us@somewhere.org, ' +
+             'another@somewhere.org, and one more: ftp://127.0.0.1/.');
+    expect(element.all(by.css('#escaped-html a')).count()).toEqual(0);
+  });
 
-// There is a bug in safari and protractor that doesn't like the minus key
-// it('should update the output when -3 is entered', function() {
-//   numLimitInput.clear();
-//   numLimitInput.sendKeys('-3');
-//   letterLimitInput.clear();
-//   letterLimitInput.sendKeys('-3');
-//   longNumberLimitInput.clear();
-//   longNumberLimitInput.sendKeys('-3');
-//   expect(limitedNumbers.getText()).toEqual('Output numbers: [7,8,9]');
-//   expect(limitedLetters.getText()).toEqual('Output letters: ghi');
-//   expect(limitedLongNumber.getText()).toEqual('Output long number: 342');
-// });
+  it('should update', function() {
+    element(by.model('snippet')).clear();
+    element(by.model('snippet')).sendKeys('new http://link.');
+    expect(element(by.id('linky-filter')).element(by.binding('snippet | linky')).getText()).
+        toBe('new http://link.');
+    expect(element.all(by.css('#linky-filter a')).count()).toEqual(1);
+    expect(element(by.id('escaped-html')).element(by.binding('snippet')).getText())
+        .toBe('new http://link.');
+  });
 
-it('should not exceed the maximum size of input array', function() {
-  numLimitInput.clear();
-  numLimitInput.sendKeys('100');
-  letterLimitInput.clear();
-  letterLimitInput.sendKeys('100');
-  longNumberLimitInput.clear();
-  longNumberLimitInput.sendKeys('100');
-  expect(limitedNumbers.getText()).toEqual('Output numbers: [1,2,3,4,5,6,7,8,9]');
-  expect(limitedLetters.getText()).toEqual('Output letters: abcdefghi');
-  expect(limitedLongNumber.getText()).toEqual('Output long number: 2345432342');
-});
+  it('should work with the target property', function() {
+   expect(element(by.id('linky-target')).
+       element(by.binding("snippetWithTarget | linky:'_blank'")).getText()).
+       toBe('http://angularjs.org/');
+   expect(element(by.css('#linky-target a')).getAttribute('target')).toEqual('_blank');
+  });

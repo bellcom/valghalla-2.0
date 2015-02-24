@@ -17,6 +17,7 @@ angular.module('docsApp', [
   'ui.bootstrap.dropdown'
 ])
 
+
 .config(['$locationProvider', function($locationProvider) {
   $locationProvider.html5Mode(true).hashPrefix('!');
 }]);
@@ -45,19 +46,14 @@ angular.module('directives', [])
     terminal: true,
     compile: function(element) {
       var linenums = element.hasClass('linenum');// || element.parent()[0].nodeName === 'PRE';
-      var match = /lang-(\S+)/.exec(element[0].className);
+      var match = /lang-(\S)+/.exec(element.className);
       var lang = match && match[1];
       var html = element.html();
       element.html(window.prettyPrintOne(html, lang, linenums));
     }
   };
-})
+});
 
-.directive('scrollYOffsetElement', ['$anchorScroll', function($anchorScroll) {
-  return function(scope, element) {
-    $anchorScroll.yOffset = element;
-  };
-}]);
 
 angular.module('DocsController', [])
 
@@ -73,8 +69,7 @@ angular.module('DocsController', [])
 
   $scope.navClass = function(navItem) {
     return {
-      active: navItem.href && this.currentPage && this.currentPage.path,
-      current: this.currentPage && this.currentPage.path === navItem.href,
+      active: navItem.href && this.currentPage.path,
       'nav-index-section': navItem.type === 'section'
     };
   };
@@ -310,14 +305,10 @@ angular.module('search', [])
 
   $scope.submit = function() {
     var result;
-    if ($scope.results.api) {
-      result = $scope.results.api[0];
-    } else {
-      for(var i in $scope.results) {
-        result = $scope.results[i][0];
-        if(result) {
-          break;
-        }
+    for(var i in $scope.results) {
+      result = $scope.results[i][0];
+      if(result) {
+        break;
       }
     }
     if(result) {
@@ -465,7 +456,7 @@ angular.module('search', [])
   return function(scope, element, attrs) {
     var ESCAPE_KEY_KEYCODE = 27,
         FORWARD_SLASH_KEYCODE = 191;
-    angular.element($document[0].body).on('keydown', function(event) {
+    angular.element($document[0].body).bind('keydown', function(event) {
       var input = element[0];
       if(event.keyCode == FORWARD_SLASH_KEYCODE && document.activeElement != input) {
         event.stopPropagation();
@@ -474,7 +465,7 @@ angular.module('search', [])
       }
     });
 
-    element.on('keydown', function(event) {
+    element.bind('keydown', function(event) {
       if(event.keyCode == ESCAPE_KEY_KEYCODE) {
         event.stopPropagation();
         event.preventDefault();

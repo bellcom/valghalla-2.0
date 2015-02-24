@@ -3,35 +3,39 @@
 <head>
   <meta charset="UTF-8">
   <title>Example - example-example50-jquery</title>
-  <link href="style.css" rel="stylesheet" type="text/css">
   
 
   <script src="../../components/jquery-2.1.1/jquery.js"></script>
   <script src="../../../angular.js"></script>
-  <script src="script.js"></script>
+  <script src="../../../angular-animate.js"></script>
   
 
-  
+  <script type="text/javascript">
+    angular.element(document.getElementsByTagName('head')).append(angular.element('<base href="' + window.location.pathname + '" />'));
+  </script>
 </head>
-<body ng-app="cacheExampleApp">
-  <div ng-controller="CacheController">
-  <input ng-model="newCacheKey" placeholder="Key">
-  <input ng-model="newCacheValue" placeholder="Value">
-  <button ng-click="put(newCacheKey, newCacheValue)">Cache</button>
-
-  <p ng-if="keys.length">Cached Values</p>
-  <div ng-repeat="key in keys">
-    <span ng-bind="key"></span>
-    <span>: </span>
-    <b ng-bind="cache.get(key)"></b>
-  </div>
-
-  <p>Cache Info</p>
-  <div ng-repeat="(key, value) in cache.info()">
-    <span ng-bind="key"></span>
-    <span>: </span>
-    <b ng-bind="value"></b>
-  </div>
-</div>
+<body ng-app="inputExample">
+    <script>
+   angular.module('inputExample', [])
+     .controller('ExampleController', ['$scope', function($scope) {
+       $scope.val = '1';
+     }]);
+  </script>
+  <style>
+    .my-input {
+      -webkit-transition:all linear 0.5s;
+      transition:all linear 0.5s;
+      background: transparent;
+    }
+    .my-input.ng-invalid {
+      color:white;
+      background: red;
+    }
+  </style>
+  Update input to see transitions when valid/invalid.
+  Integer is a valid value.
+  <form name="testForm" ng-controller="ExampleController">
+    <input ng-model="val" ng-pattern="/^\d+$/" name="anim" class="my-input" />
+  </form>
 </body>
 </html>

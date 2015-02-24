@@ -1,5 +1,6 @@
-it('should toggle open', function() {
-  expect(element(by.id('details')).getAttribute('open')).toBeFalsy();
-  element(by.model('open')).click();
-  expect(element(by.id('details')).getAttribute('open')).toBeTruthy();
-});
+  it('should check ng-class-odd and ng-class-even', function() {
+    expect(element(by.repeater('name in names').row(0).column('name')).getAttribute('class')).
+      toMatch(/odd/);
+    expect(element(by.repeater('name in names').row(1).column('name')).getAttribute('class')).
+      toMatch(/even/);
+  });

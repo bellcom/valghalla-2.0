@@ -8,15 +8,23 @@
 
   <script src="../../../angular.js"></script>
   <script src="../../../angular-animate.js"></script>
+  <script src="script.js"></script>
   
 
   
 </head>
-<body ng-app="ngAnimate">
-  Click me: <input type="checkbox" ng-model="checked" ng-init="checked=true" /><br/>
-Show when checked:
-<span ng-if="checked" class="animate-if">
-  This is removed when the checkbox is unchecked.
-</span>
+<body ng-app="switchExample">
+    <div ng-controller="ExampleController">
+    <select ng-model="selection" ng-options="item for item in items">
+    </select>
+    <tt>selection={{selection}}</tt>
+    <hr/>
+    <div class="animate-switch-container"
+      ng-switch on="selection">
+        <div class="animate-switch" ng-switch-when="settings">Settings Div</div>
+        <div class="animate-switch" ng-switch-when="home">Home Span</div>
+        <div class="animate-switch" ng-switch-default>default</div>
+    </div>
+  </div>
 </body>
 </html>

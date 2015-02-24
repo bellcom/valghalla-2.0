@@ -12,11 +12,12 @@
 
   
 </head>
-<body ng-app="expressionExample">
-  <div class="example2" ng-controller="ExampleController">
-  Name: <input ng-model="name" type="text"/>
-  <button ng-click="greet()">Greet</button>
-  <button ng-click="window.alert('Should not see me')">Won't greet</button>
-</div>
+<body ng-app="myReverseModule">
+    <div ng-controller="Controller">
+    <input ng-model="greeting" type="text"><br>
+    No filter: {{greeting}}<br>
+    Reverse: {{greeting|reverse}}<br>
+    Reverse + uppercase: {{greeting|reverse:true}}<br>
+  </div>
 </body>
 </html>

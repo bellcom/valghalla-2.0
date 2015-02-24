@@ -2,19 +2,20 @@ describe("", function() {
   var rootEl;
   beforeEach(function() {
     rootEl = browser.rootEl;
-    browser.get("build/docs/examples/example-example90/index.html");
+    browser.get("examples/example-example90/index.html");
   });
   
-var thumbsUp = element(by.css('span.glyphicon-thumbs-up'));
-var thumbsDown = element(by.css('span.glyphicon-thumbs-down'));
+  it('should format numbers', function() {
+    expect(element(by.id('number-default')).getText()).toBe('1,234.568');
+    expect(element(by.binding('val | number:0')).getText()).toBe('1,235');
+    expect(element(by.binding('-val | number:4')).getText()).toBe('-1,234.5679');
+  });
 
-it('should check ng-show / ng-hide', function() {
-  expect(thumbsUp.isDisplayed()).toBeFalsy();
-  expect(thumbsDown.isDisplayed()).toBeTruthy();
-
-  element(by.model('checked')).click();
-
-  expect(thumbsUp.isDisplayed()).toBeTruthy();
-  expect(thumbsDown.isDisplayed()).toBeFalsy();
-});
+  it('should update', function() {
+    element(by.model('val')).clear();
+    element(by.model('val')).sendKeys('3374.333');
+    expect(element(by.id('number-default')).getText()).toBe('3,374.333');
+    expect(element(by.binding('val | number:0')).getText()).toBe('3,374');
+    expect(element(by.binding('-val | number:4')).getText()).toBe('-3,374.3330');
+ });
 });

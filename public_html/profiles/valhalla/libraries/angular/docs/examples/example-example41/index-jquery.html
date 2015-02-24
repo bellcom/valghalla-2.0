@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Example - example-example41-jquery</title>
+  <link href="style.css" rel="stylesheet" type="text/css">
   
 
   <script src="../../components/jquery-2.1.1/jquery.js"></script>
@@ -12,13 +13,25 @@
 
   
 </head>
-<body ng-app="scopeExample">
-  <div ng-controller="MyController">
-  Your name:
-    <input type="text" ng-model="username">
-    <button ng-click='sayHello()'>greet</button>
-  <hr>
-  {{greeting}}
-</div>
+<body ng-app="cacheExampleApp">
+    <div ng-controller="CacheController">
+    <input ng-model="newCacheKey" placeholder="Key">
+    <input ng-model="newCacheValue" placeholder="Value">
+    <button ng-click="put(newCacheKey, newCacheValue)">Cache</button>
+
+    <p ng-if="keys.length">Cached Values</p>
+    <div ng-repeat="key in keys">
+      <span ng-bind="key"></span>
+      <span>: </span>
+      <b ng-bind="cache.get(key)"></b>
+    </div>
+
+    <p>Cache Info</p>
+    <div ng-repeat="(key, value) in cache.info()">
+      <span ng-bind="key"></span>
+      <span>: </span>
+      <b ng-bind="value"></b>
+    </div>
+  </div>
 </body>
 </html>
