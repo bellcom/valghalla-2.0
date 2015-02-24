@@ -131,6 +131,8 @@ var valghalla_volunteers = valghalla_volunteers || [];
 
           });
         }
+
+        $(document).trigger('volunteersLoaded');
       });
     },
     unsetVolunteer: function(nid){
