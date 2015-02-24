@@ -11,9 +11,7 @@
   
 </head>
 <body ng-app="">
-  <button ng-mouseenter="count = count + 1" ng-init="count=0">
-  Increment (when mouse enters)
-</button>
-count: {{count}}
+   <input ng-paste="paste=true" ng-init="paste=false" placeholder='paste here'>
+ pasted: {{paste}}
 </body>
 </html>

@@ -11,11 +11,9 @@
 
   
 </head>
-<body ng-app="docsIsolateScopeDirective">
-  <div ng-controller="Controller">
-  <my-customer info="naomi"></my-customer>
-  <hr>
-  <my-customer info="igor"></my-customer>
-</div>
+<body ng-app="docsTransclusionDirective">
+    <div ng-controller="Controller">
+    <my-dialog>Check out the contents, {{name}}!</my-dialog>
+  </div>
 </body>
 </html>

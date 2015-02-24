@@ -6,22 +6,20 @@
   
 
   <script src="../../../angular.js"></script>
+  <script src="script.js"></script>
   
 
   
 </head>
-<body ng-app="numberFilterExample">
-  <script>
-  angular.module('numberFilterExample', [])
-    .controller('ExampleController', ['$scope', function($scope) {
-      $scope.val = 1234.56789;
-    }]);
-</script>
-<div ng-controller="ExampleController">
-  Enter number: <input ng-model='val'><br>
-  Default formatting: <span id='number-default'>{{val | number}}</span><br>
-  No fractions: <span>{{val | number:0}}</span><br>
-  Negative number: <span>{{-val | number:4}}</span>
-</div>
+<body ng-app="logExample">
+    <div ng-controller="LogController">
+    <p>Reload this page with open console, enter text and hit the log button...</p>
+    Message:
+    <input type="text" ng-model="message"/>
+    <button ng-click="$log.log(message)">log</button>
+    <button ng-click="$log.warn(message)">warn</button>
+    <button ng-click="$log.info(message)">info</button>
+    <button ng-click="$log.error(message)">error</button>
+  </div>
 </body>
 </html>

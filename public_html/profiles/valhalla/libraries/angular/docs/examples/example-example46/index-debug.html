@@ -6,14 +6,12 @@
   
 
   <script src="../../../angular.js"></script>
-  <script src="script.js"></script>
   
 
   
 </head>
-<body ng-app="ngAppDemo">
-  <div ng-controller="ngAppDemoController">
-  I can add: {{a}} + {{b}} =  {{ a+b }}
-</div>
+<body ng-app="">
+    Check me to make text readonly: <input type="checkbox" ng-model="checked"><br/>
+  <input type="text" ng-readonly="checked" value="I'm Angular"/>
 </body>
 </html>

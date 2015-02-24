@@ -1,59 +1,17 @@
-(function(angular) {
-  'use strict';
-var app = angular.module('form-example1', []);
-
-var INTEGER_REGEXP = /^\-?\d+$/;
-app.directive('integer', function() {
-  return {
-    require: 'ngModel',
-    link: function(scope, elm, attrs, ctrl) {
-      ctrl.$validators.integer = function(modelValue, viewValue) {
-        if (ctrl.$isEmpty(modelValue)) {
-          // consider empty models to be valid
-          return true;
-        }
-
-        if (INTEGER_REGEXP.test(viewValue)) {
-          // it is valid
-          return true;
-        }
-
-        // it is invalid
-        return false;
+  angular.
+   module('myServiceModule', []).
+    controller('MyController', ['$scope','notify', function ($scope, notify) {
+      $scope.callNotify = function(msg) {
+        notify(msg);
       };
-    }
-  };
-});
-
-app.directive('username', function($q, $timeout) {
-  return {
-    require: 'ngModel',
-    link: function(scope, elm, attrs, ctrl) {
-    var usernames = ['Jim', 'John', 'Jill', 'Jackie'];
-
-      ctrl.$asyncValidators.username = function(modelValue, viewValue) {
-
-        if (ctrl.$isEmpty(modelValue)) {
-          // consider empty model valid
-          return $q.when();
+    }]).
+   factory('notify', ['$window', function(win) {
+      var msgs = [];
+      return function(msg) {
+        msgs.push(msg);
+        if (msgs.length == 3) {
+          win.alert(msgs.join("\n"));
+          msgs = [];
         }
-
-        var def = $q.defer();
-
-        $timeout(function() {
-          // Mock a delayed response
-          if (usernames.indexOf(modelValue) === -1) {
-            // The username is available
-            def.resolve();
-          } else {
-            def.reject();
-          }
-
-        }, 2000);
-
-        return def.promise;
       };
-    }
-  };
-});
-})(window.angular);
+    }]);

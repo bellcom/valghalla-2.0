@@ -1,18 +1,60 @@
 // Meta data used by the AngularJS docs app
 angular.module('versionsData', [])
   .value('NG_VERSION', {
-  "raw": "v1.3.4",
+  "raw": "v1.2.28",
   "major": 1,
-  "minor": 3,
-  "patch": 4,
+  "minor": 2,
+  "patch": 28,
   "prerelease": [],
   "build": [],
-  "version": "1.3.4",
-  "codeName": "highfalutin-petroglyph",
-  "full": "1.3.4",
-  "branch": "v1.3.x"
+  "version": "1.2.28",
+  "codeName": "finnish-disembarkation",
+  "full": "1.2.28",
+  "branch": "v1.2.x"
 })
   .value('NG_VERSIONS', [
+  {
+    "raw": "v1.2.28",
+    "major": 1,
+    "minor": 2,
+    "patch": 28,
+    "prerelease": [],
+    "build": [],
+    "version": "1.2.28",
+    "codeName": "finnish-disembarkation",
+    "full": "1.2.28",
+    "branch": "v1.2.x"
+  },
+  {
+    "raw": "v1.3.7",
+    "major": 1,
+    "minor": 3,
+    "patch": 7,
+    "prerelease": [],
+    "build": [],
+    "version": "1.3.7",
+    "docsUrl": "http://code.angularjs.org/1.3.7/docs"
+  },
+  {
+    "raw": "v1.3.6",
+    "major": 1,
+    "minor": 3,
+    "patch": 6,
+    "prerelease": [],
+    "build": [],
+    "version": "1.3.6",
+    "docsUrl": "http://code.angularjs.org/1.3.6/docs"
+  },
+  {
+    "raw": "v1.3.5",
+    "major": 1,
+    "minor": 3,
+    "patch": 5,
+    "prerelease": [],
+    "build": [],
+    "version": "1.3.5",
+    "docsUrl": "http://code.angularjs.org/1.3.5/docs"
+  },
   {
     "raw": "v1.3.4",
     "major": 1,
@@ -21,9 +63,7 @@ angular.module('versionsData', [])
     "prerelease": [],
     "build": [],
     "version": "1.3.4",
-    "codeName": "highfalutin-petroglyph",
-    "full": "1.3.4",
-    "branch": "v1.3.x"
+    "docsUrl": "http://code.angularjs.org/1.3.4/docs"
   },
   {
     "raw": "v1.3.3",

@@ -1,15 +1,18 @@
-(function(angular) {
-  'use strict';
-angular.module('FilterInControllerModule', []).
-  controller('FilterController', ['filterFilter', function(filterFilter) {
-    this.array = [
-      {name: 'Tobias'},
-      {name: 'Jeff'},
-      {name: 'Brian'},
-      {name: 'Igor'},
-      {name: 'James'},
-      {name: 'Brad'}
-    ];
-    this.filteredArray = filterFilter(this.array, 'a');
-  }]);
-})(window.angular);
+  angular.module('formExample', [])
+    .controller('ExampleController', ['$scope', function($scope) {
+      $scope.master = {};
+
+      $scope.update = function(user) {
+        $scope.master = angular.copy(user);
+      };
+
+      $scope.reset = function() {
+        $scope.user = angular.copy($scope.master);
+      };
+
+      $scope.isUnchanged = function(user) {
+        return angular.equals(user, $scope.master);
+      };
+
+      $scope.reset();
+    }]);
