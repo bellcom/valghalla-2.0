@@ -307,6 +307,8 @@ function _valhalla_blocks_generate_polling_station_markup($polling_station_nids,
   foreach ($polling_station_nids as $polling_station_nid) {
     $polling_station_node = node_load($polling_station_nid);
 
+    $weight = 0;
+
     if ($field = field_get_items('node', $polling_station_node, 'field_role_weight')) {
       $weight = $field[0]['value'];
     }
@@ -317,8 +319,23 @@ function _valhalla_blocks_generate_polling_station_markup($polling_station_nids,
     );
   }
 
-  // Sort callback.
+  // Sort callback. 
   $sort_polling_stations = function($a, $b) {
+    if ($a['node']->title == $b['node']->title) {
+      return 0;
+    }
+
+    $result = strnatcmp($b['node']->title, $a['node']->title);
+    return $result;
+  };
+
+  // Sort callback for weight.
+  $sort_polling_stations_weight = function($a, $b) {
+    // Skip sorting if no weight is set.
+    if ($a['weight'] == 0 || $b['weight'] == 0) {
+      return 0;
+    }
+
     if ($a['weight'] == $b['weight']) {
       return 0;
     }
@@ -326,8 +343,11 @@ function _valhalla_blocks_generate_polling_station_markup($polling_station_nids,
     return ($a['weight'] < $b['weight']) ? -1 : 1;
   };
 
-  // Sort pollingstations according to set weight.
+  // Sort naturally first.
   uasort($polling_station_nodes, $sort_polling_stations);
+
+  // Sort pollingstations according to set weight.
+  uasort($polling_station_nodes, $sort_polling_stations_weight);
 
   foreach ($polling_station_nodes as $data) {
     $polling_station_node = $data['node'];

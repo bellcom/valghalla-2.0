@@ -11,6 +11,7 @@ function valghalla_volunteers_import_permission() {
   return array(
     'import volunteers' => array(
       'title' => t('Importer frivillige'),
+      'description' => 'Giv brugeren lov til at importere deltagere fra CSV.',
     ),
   );
 }
@@ -18,7 +19,7 @@ function valghalla_volunteers_import_permission() {
 /**
  * Implements hook_menu().
  */
-function valghalla_volunteeers_import_menu() {
+function valghalla_volunteers_import_menu() {
   $items['valghalla/deltagere/importer'] = array(
     'title' => 'Importér deltagere',
     'page callback' => 'drupal_get_form',

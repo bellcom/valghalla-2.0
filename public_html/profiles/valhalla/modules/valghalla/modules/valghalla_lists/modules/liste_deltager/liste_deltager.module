@@ -14,6 +14,20 @@ function liste_deltager_menu() {
     'page arguments' => array('liste_deltager_form'),
     'access arguments' => array('liste deltager see list'),
   );
+
+  $saved_filters = variable_get('liste_deltager_saved_filters', array());
+
+  foreach ($saved_filters as $id => $filter) {
+    $items['valghalla_lists/gemt_liste-' . $id] = array(
+      'title' => 'Gemt liste: ' . $filter['name'],
+      'page callback' => 'drupal_goto',
+      'page arguments' => array('valghalla_lists/deltagere/' . $id),
+      'access arguments' => array('liste deltager see list'),
+      'weight' => 100,
+      'type' => MENU_NORMAL_ITEM,
+    );
+  }
+
   return $items;
 }
 
@@ -146,6 +160,8 @@ function liste_deltager_form($form, &$form_state) {
   if (isset($saved_filters[arg(2)])) {
 
     $input = $saved_filters[arg(2)]['input'];
+    $filter = $saved_filters[arg(2)];
+    drupal_set_title('Gemt liste: ' . $filter['name']);
 
     $form['filter']['columns']['#default_value'] = $input['columns'];
     $form['filter']['polling_station']['#default_value'] = $input['polling_station'];
@@ -190,6 +206,7 @@ function liste_deltager_save_filter(&$form, &$form_state) {
   $saved_filters[$id]['input'] = $input;
 
   variable_set('liste_deltager_saved_filters', $saved_filters);
+  menu_rebuild();
   drupal_goto('valghalla_lists/deltagere/' . $id);
 }
 
@@ -202,6 +219,7 @@ function liste_deltager_delete_filter(&$form, &$form_state) {
   unset($saved_filters[arg(2)]);
 
   variable_set('liste_deltager_saved_filters', $saved_filters);
+  menu_rebuild();
   drupal_goto('valghalla_lists/deltagere');
 }
 /**
@@ -477,11 +495,4 @@ function liste_deltager_polling_station_options() {
   }
 
   return $options;
-}
-
-/**
- * Get a list of saved filters.
- */
-function liste_deltager_get_saved_filters() {
-  return array();
 }

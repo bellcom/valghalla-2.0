@@ -14,7 +14,7 @@
  */
 function valghalla_mail_sendmail_form_step(&$form, &$form_state) {
   $nid = $form_state['node']->nid;
-  drupal_goto('admin/valhalla/sendto/' . $nid);
+  drupal_goto('valghalla/administration/sendto/' . $nid);
 }
 
 /**
@@ -118,14 +118,14 @@ function valghalla_mail_sendmail_get_recipients_form($form, &$form_state, $nid) 
 
   if ($nid) {
     if ($node = node_load($nid)) {
-      $description = ' <a class="form-submit" href="/node/' . $nid . '/edit?destination=/admin/valhalla/sendto/' . $nid . '">' . t('edit') . '</a>';
+      $description = ' <a class="form-submit" href="/node/' . $nid . '/edit?destination=valghalla/administration/sendto/' . $nid . '">' . t('edit') . '</a>';
     }
     else {
-      $description = ' <a class="form-submit" href="/admin/valhalla/sendmail">Add</a>';
+      $description = ' <a class="form-submit" href="/valghalla/administration/sendmail">Add</a>';
     }
   }
   else {
-    $description = ' <a class="form-submit" href="/admin/valhalla/sendmail">Add</a>';
+    $description = ' <a class="form-submit" href="/valghalla/administration/sendmail">Add</a>';
   }
 
   $form['mail_content']['valghalla_mail_email_node_ID'] = array(
@@ -400,7 +400,6 @@ function valghalla_mail_form_email_node_form_alter(&$form, &$form_state, $form_i
     $form['actions']['submit']['#value'] = t('Next');
     hide($form['actions']['preview']);
   }
-
 }
 
 /**

@@ -23,4 +23,5 @@
   <?php print $header[$polling_station]['contact_info']; ?>
   </h5>
   <?php print $table[$polling_station]; ?>
+  <div style="page-break-after: always;"></div>
 <?php endforeach; ?>
