@@ -1,8 +1,8 @@
-<a href='https://github.com/angular/angular.js/edit/v1.3.x/src/ng/filter/orderBy.js?message=docs(orderBy)%3A%20describe%20your%20change...#L3' class='improve-docs btn btn-primary'><i class="glyphicon glyphicon-edit">&nbsp;</i>Improve this Doc</a>
+<a href='https://github.com/angular/angular.js/edit/v1.2.x/src/ng/filter/orderBy.js?message=docs(orderBy)%3A%20describe%20your%20change...#L3' class='improve-docs btn btn-primary'><i class="glyphicon glyphicon-edit">&nbsp;</i>Improve this Doc</a>
 
 
 
-<a href='https://github.com/angular/angular.js/tree/v1.3.4/src/ng/filter/orderBy.js#L3' class='view-source pull-right btn btn-primary'>
+<a href='https://github.com/angular/angular.js/tree/v1.2.28/src/ng/filter/orderBy.js#L3' class='view-source pull-right btn btn-primary'>
   <i class="glyphicon glyphicon-zoom-in">&nbsp;</i>View Source
 </a>
 
@@ -141,12 +141,12 @@ is used for sorting, but when two items are equivalent, the next predicate is us
   <h2 id="example">Example</h2><p>
 
 <div>
-  <a ng-click="openPlunkr('examples/example-example103')" class="btn pull-right">
+  <a ng-click="openPlunkr('examples/example-example94')" class="btn pull-right">
     <i class="glyphicon glyphicon-edit">&nbsp;</i>
     Edit in Plunker</a>
 
   <div class="runnable-example"
-      path="examples/example-example103"
+      path="examples/example-example94"
       module="orderByExample">
 
   
@@ -158,7 +158,7 @@ is used for sorting, but when two items are equivalent, the next predicate is us
     </div>
   
 
-    <iframe class="runnable-example-frame" src="examples/example-example103/index.html" name="example-example103"></iframe>
+    <iframe class="runnable-example-frame" src="examples/example-example94/index.html" name="example-example94"></iframe>
   </div>
 </div>
 
@@ -171,12 +171,12 @@ desired parameters.</p>
 <p>
 
 <div>
-  <a ng-click="openPlunkr('examples/example-example104')" class="btn pull-right">
+  <a ng-click="openPlunkr('examples/example-example95')" class="btn pull-right">
     <i class="glyphicon glyphicon-edit">&nbsp;</i>
     Edit in Plunker</a>
 
   <div class="runnable-example"
-      path="examples/example-example104"
+      path="examples/example-example95"
       module="orderByExample">
 
   
@@ -191,11 +191,11 @@ desired parameters.</p>
       name="script.js"
       language="js"
       type="js">
-      <pre><code>angular.module(&#39;orderByExample&#39;, [])&#10;.controller(&#39;ExampleController&#39;, [&#39;$scope&#39;, &#39;$filter&#39;, function($scope, $filter) {&#10;  var orderBy = $filter(&#39;orderBy&#39;);&#10;  $scope.friends = [&#10;    { name: &#39;John&#39;,    phone: &#39;555-1212&#39;,    age: 10 },&#10;    { name: &#39;Mary&#39;,    phone: &#39;555-9876&#39;,    age: 19 },&#10;    { name: &#39;Mike&#39;,    phone: &#39;555-4321&#39;,    age: 21 },&#10;    { name: &#39;Adam&#39;,    phone: &#39;555-5678&#39;,    age: 35 },&#10;    { name: &#39;Julie&#39;,   phone: &#39;555-8765&#39;,    age: 29 }&#10;  ];&#10;  $scope.order = function(predicate, reverse) {&#10;    $scope.friends = orderBy($scope.friends, predicate, reverse);&#10;  };&#10;  $scope.order(&#39;-age&#39;,false);&#10;}]);</code></pre>
+      <pre><code>angular.module(&#39;orderByExample&#39;, [])&#10;  .controller(&#39;ExampleController&#39;, [&#39;$scope&#39;, &#39;$filter&#39;, function($scope, $filter) {&#10;    var orderBy = $filter(&#39;orderBy&#39;);&#10;    $scope.friends = [&#10;      { name: &#39;John&#39;,    phone: &#39;555-1212&#39;,    age: 10 },&#10;      { name: &#39;Mary&#39;,    phone: &#39;555-9876&#39;,    age: 19 },&#10;      { name: &#39;Mike&#39;,    phone: &#39;555-4321&#39;,    age: 21 },&#10;      { name: &#39;Adam&#39;,    phone: &#39;555-5678&#39;,    age: 35 },&#10;      { name: &#39;Julie&#39;,   phone: &#39;555-8765&#39;,    age: 29 }&#10;    ];&#10;    $scope.order = function(predicate, reverse) {&#10;      $scope.friends = orderBy($scope.friends, predicate, reverse);&#10;    };&#10;    $scope.order(&#39;-age&#39;,false);&#10;  }]);</code></pre>
     </div>
   
 
-    <iframe class="runnable-example-frame" src="examples/example-example104/index.html" name="example-example104"></iframe>
+    <iframe class="runnable-example-frame" src="examples/example-example95/index.html" name="example-example95"></iframe>
   </div>
 </div>
 

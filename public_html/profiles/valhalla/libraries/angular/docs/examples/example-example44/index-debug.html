@@ -6,17 +6,12 @@
   
 
   <script src="../../../angular.js"></script>
-  <script src="script.js"></script>
   
 
   
 </head>
-<body ng-app="myServiceModule">
-  <div id="simple" ng-controller="MyController">
-  <p>Let's try this simple notify service, injected into the controller...</p>
-  <input ng-init="message='test'" ng-model="message" >
-  <button ng-click="callNotify(message);">NOTIFY</button>
-  <p>(you have to click 3 times to see an alert)</p>
-</div>
+<body ng-app="">
+    Click me to toggle: <input type="checkbox" ng-model="checked"><br/>
+  <button ng-model="button" ng-disabled="checked">Button</button>
 </body>
 </html>

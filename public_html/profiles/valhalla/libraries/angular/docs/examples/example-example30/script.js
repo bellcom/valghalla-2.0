@@ -1,18 +1,21 @@
-(function(angular) {
-  'use strict';
-angular.module('myStatefulFilterApp', [])
-  .filter('decorate', ['decoration', function(decoration) {
+  angular.module('form-example2', []).directive('contenteditable', function() {
+    return {
+      require: 'ngModel',
+      link: function(scope, elm, attrs, ctrl) {
+        // view -> model
+        elm.on('blur', function() {
+          scope.$apply(function() {
+            ctrl.$setViewValue(elm.html());
+          });
+        });
 
-    function decorateFilter(input) {
-      return decoration.symbol + input + decoration.symbol;
-    }
-    decorateFilter.$stateful = true;
+        // model -> view
+        ctrl.$render = function() {
+          elm.html(ctrl.$viewValue);
+        };
 
-    return decorateFilter;
-  }])
-  .controller('MyController', ['$scope', 'decoration', function($scope, decoration) {
-    $scope.greeting = 'hello';
-    $scope.decoration = decoration;
-  }])
-  .value('decoration', {symbol: '*'});
-})(window.angular);
+        // load init value from DOM
+        ctrl.$setViewValue(elm.html());
+      }
+    };
+  });

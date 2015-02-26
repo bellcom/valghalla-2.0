@@ -2,12 +2,13 @@ describe("", function() {
   var rootEl;
   beforeEach(function() {
     rootEl = browser.rootEl;
-    browser.get("build/docs/examples/example-example57/index-jquery.html");
+    browser.get("examples/example-example57/index-jquery.html");
   });
   
-it('should toggle open', function() {
-  expect(element(by.id('details')).getAttribute('open')).toBeFalsy();
-  element(by.model('open')).click();
-  expect(element(by.id('details')).getAttribute('open')).toBeTruthy();
-});
+  it('should check ng-class-odd and ng-class-even', function() {
+    expect(element(by.repeater('name in names').row(0).column('name')).getAttribute('class')).
+      toMatch(/odd/);
+    expect(element(by.repeater('name in names').row(1).column('name')).getAttribute('class')).
+      toMatch(/even/);
+  });
 });

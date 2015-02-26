@@ -1,4 +1,4 @@
-<a href='https://github.com/angular/angular.js/edit/v1.3.x/src/Angular.js?message=docs(ng)%3A%20describe%20your%20change...#L95' class='improve-docs btn btn-primary'><i class="glyphicon glyphicon-edit">&nbsp;</i>Improve this Doc</a>
+<a href='https://github.com/angular/angular.js/edit/v1.2.x/src/Angular.js?message=docs(ng)%3A%20describe%20your%20change...#L90' class='improve-docs btn btn-primary'><i class="glyphicon glyphicon-edit">&nbsp;</i>Improve this Doc</a>
 
 
 <h1>
@@ -40,18 +40,16 @@ components available within this core module.</p>
       <tr>
         <td><a href="api/ng/function/angular.forEach">angular.forEach</a></td>
         <td><p>Invokes the <code>iterator</code> function once for each item in <code>obj</code> collection, which can be either an
-object or an array. The <code>iterator</code> function is invoked with <code>iterator(value, key, obj)</code>, where <code>value</code>
-is the value of an object property or an array element, <code>key</code> is the object property key or
-array element index and obj is the <code>obj</code> itself. Specifying a <code>context</code> for the function is optional.</p>
+object or an array. The <code>iterator</code> function is invoked with <code>iterator(value, key)</code>, where <code>value</code>
+is the value of an object property or an array element and <code>key</code> is the object property key or
+array element index. Specifying a <code>context</code> for the function is optional.</p>
 </td>
       </tr>
       
       <tr>
         <td><a href="api/ng/function/angular.extend">angular.extend</a></td>
         <td><p>Extends the destination object <code>dst</code> by copying own enumerable properties from the <code>src</code> object(s)
-to <code>dst</code>. You can specify multiple <code>src</code> objects. If you want to preserve original objects, you can do so
-by passing an empty object as the target: <code>var object = angular.extend({}, object1, object2)</code>.
-Note: Keep in mind that <code>angular.extend</code> does not support recursive merge (deep copy).</p>
+to <code>dst</code>. You can specify multiple <code>src</code> objects.</p>
 </td>
       </tr>
       
@@ -153,7 +151,7 @@ distinguished from <a href="http://en.wikipedia.org/wiki/Currying#Contrast_with_
       
       <tr>
         <td><a href="api/ng/function/angular.toJson">angular.toJson</a></td>
-        <td><p>Serializes input into a JSON-formatted string. Properties with leading $$ characters will be
+        <td><p>Serializes input into a JSON-formatted string. Properties with leading $ characters will be
 stripped since angular uses this notation internally.</p>
 </td>
       </tr>
@@ -167,13 +165,6 @@ stripped since angular uses this notation internally.</p>
       <tr>
         <td><a href="api/ng/function/angular.bootstrap">angular.bootstrap</a></td>
         <td><p>Use this function to manually start up angular application.</p>
-</td>
-      </tr>
-      
-      <tr>
-        <td><a href="api/ng/function/angular.reloadWithDebugInfo">angular.reloadWithDebugInfo</a></td>
-        <td><p>Use this function to reload the current application with debug information turned on.
-This takes precedence over a call to <code>$compileProvider.debugInfoEnabled(false)</code>.</p>
 </td>
       </tr>
       
@@ -231,7 +222,8 @@ the href attribute is empty.</p>
 make the link go to the wrong URL if the user clicks it before
 Angular has a chance to replace the <code>{{hash}}</code> markup with its
 value. Until Angular replaces the markup the link will be broken
-and will most likely return a 404 error.</p>
+and will most likely return a 404 error. The <code>ngHref</code> directive
+solves this problem.</p>
 </td>
       </tr>
       
@@ -257,7 +249,7 @@ text <code>{{hash}}</code> until Angular replaces the expression inside
         <td><a href="api/ng/directive/ngDisabled">ngDisabled</a></td>
         <td><p>We shouldn&#39;t do this, because it will make the button enabled on Chrome/Firefox but not on IE8 and older IEs:</p>
 <pre><code class="lang-html">&lt;div ng-init=&quot;scope = { isDisabled: false }&quot;&gt;
- &lt;button disabled=&quot;{{scope.isDisabled}}&quot;&gt;Disabled&lt;/button&gt;
+&lt;button disabled=&quot;{{scope.isDisabled}}&quot;&gt;Disabled&lt;/button&gt;
 &lt;/div&gt;
 </code></pre>
 </td>
@@ -336,9 +328,8 @@ properties of this element are exactly the same as those of the
       
       <tr>
         <td><a href="api/ng/directive/input">input</a></td>
-        <td><p>HTML input element control. When used together with <a href="api/ng/directive/ngModel"><code>ngModel</code></a>, it provides data-binding,
-input state control, and validation.
-Input control follows HTML5 input types and polyfills the HTML5 validation behavior for older browsers.</p>
+        <td><p>HTML input element control with angular data-binding. Input control follows HTML5 input types
+and polyfills the HTML5 validation behavior for older browsers.</p>
 </td>
       </tr>
       
@@ -355,31 +346,23 @@ which is created and exposed by this directive.</p>
         <td><p>Evaluate the given expression when the user changes the input.
 The expression is evaluated immediately, unlike the JavaScript onchange event
 which only triggers at the end of a change (usually, when the user leaves the
-form element or presses the return key).</p>
+form element or presses the return key).
+The expression is not evaluated when the value change is coming from the model.</p>
 </td>
       </tr>
       
       <tr>
         <td><a href="api/ng/directive/ngList">ngList</a></td>
-        <td><p>Text input that converts between a delimited string and an array of strings. The default
-delimiter is a comma followed by a space - equivalent to <code>ng-list=&quot;, &quot;</code>. You can specify a custom
-delimiter as the value of the <code>ngList</code> attribute - for example, <code>ng-list=&quot; | &quot;</code>.</p>
+        <td><p>Text input that converts between a delimited string and an array of strings. The delimiter
+can be a fixed string (by default a comma) or a regular expression.</p>
 </td>
       </tr>
       
       <tr>
         <td><a href="api/ng/directive/ngValue">ngValue</a></td>
-        <td><p>Binds the given expression to the value of <code>&lt;option&gt;</code> or <a href="api/ng/input/input[radio]"><code>input[radio]</code></a>,
-so that when the element is selected, the <a href="api/ng/directive/ngModel"><code>ngModel</code></a> of that element is set to
-the bound value.</p>
-</td>
-      </tr>
-      
-      <tr>
-        <td><a href="api/ng/directive/ngModelOptions">ngModelOptions</a></td>
-        <td><p>Allows tuning how model updates are done. Using <code>ngModelOptions</code> you can specify a custom list of
-events that will trigger a model update and/or a debouncing delay so that the actual update only
-takes place when a timer expires; this timer will be reset after another change takes place.</p>
+        <td><p>Binds the given expression to the value of <code>input[select]</code> or <code>input[radio]</code>, so
+that when the element is selected, the <code>ngModel</code> of that element is set to the
+bound value.</p>
 </td>
       </tr>
       
@@ -404,10 +387,11 @@ expressions. This directive is needed since some HTML elements
       
       <tr>
         <td><a href="api/ng/directive/ngBindHtml">ngBindHtml</a></td>
-        <td><p>Evaluates the expression and inserts the resulting HTML into the element in a secure way. By default,
-the resulting HTML content will be sanitized using the <a href="api/ngSanitize/service/$sanitize">$sanitize</a> service.
-To utilize this functionality, ensure that <code>$sanitize</code> is available, for example, by including <a href="api/ngSanitize"><code>ngSanitize</code></a> in your module&#39;s dependencies (not in core Angular). In order to use <a href="api/ngSanitize"><code>ngSanitize</code></a>
-in your module&#39;s dependencies, you need to include &quot;angular-sanitize.js&quot; in your application.</p>
+        <td><p>Creates a binding that will innerHTML the result of evaluating the <code>expression</code> into the current
+element in a secure way.  By default, the innerHTML-ed content will be sanitized using the <a href="api/ngSanitize/service/$sanitize">$sanitize</a> service.  To utilize this functionality, ensure that <code>$sanitize</code>
+is available, for example, by including <a href="api/ngSanitize"><code>ngSanitize</code></a> in your module&#39;s dependencies (not in
+core Angular). In order to use <a href="api/ngSanitize"><code>ngSanitize</code></a> in your module&#39;s dependencies, you need to
+include &quot;angular-sanitize.js&quot; in your application.</p>
 </td>
       </tr>
       
@@ -724,14 +708,11 @@ such as being valid/invalid or dirty/pristine.</p>
       
       <tr>
         <td><a href="api/ng/type/ngModel.NgModelController">ngModel.NgModelController</a></td>
-        <td><p><code>NgModelController</code> provides API for the <a href="api/ng/directive/ngModel"><code>ngModel</code></a> directive.
-The controller contains services for data-binding, validation, CSS updates, and value formatting
-and parsing. It purposefully does not contain any logic which deals with DOM rendering or
-listening to DOM events.
-Such DOM related logic should be provided by other directives which make use of
-<code>NgModelController</code> for data-binding to control elements.
-Angular provides this DOM logic for most <a href="api/ng/directive/input"><code>input</code></a> elements.
-At the end of this page you can find a <a href="api/ng/type/ngModel.NgModelController#custom-control-example">custom control example</a> that uses <code>ngModelController</code> to bind to <code>contenteditable</code> elements.</p>
+        <td><p><code>NgModelController</code> provides API for the <code>ng-model</code> directive. The controller contains
+services for data-binding, validation, CSS updates, and value formatting and parsing. It
+purposefully does not contain any logic which deals with DOM rendering or listening to
+DOM events. Such DOM related logic should be provided by other directives which make use of
+<code>NgModelController</code> for data-binding.</p>
 </td>
       </tr>
       
@@ -748,107 +729,6 @@ compiled HTML template is executed.)</p>
   </div>
   
   <div>
-    <h3 class="component-heading" id="provider">Provider</h3>
-    <table class="definition-table">
-      <tr>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-      
-      <tr>
-        <td><a href="api/ng/provider/$anchorScrollProvider">$anchorScrollProvider</a></td>
-        <td><p>Use <code>$anchorScrollProvider</code> to disable automatic scrolling whenever
-<a href="api/ng/service/$location#hash">$location.hash()</a> changes.</p>
-</td>
-      </tr>
-      
-      <tr>
-        <td><a href="api/ng/provider/$animateProvider">$animateProvider</a></td>
-        <td><p>Default implementation of $animate that doesn&#39;t perform any animations, instead just
-synchronously performs DOM
-updates and calls done() callbacks.</p>
-</td>
-      </tr>
-      
-      <tr>
-        <td><a href="api/ng/provider/$compileProvider">$compileProvider</a></td>
-        <td></td>
-      </tr>
-      
-      <tr>
-        <td><a href="api/ng/provider/$controllerProvider">$controllerProvider</a></td>
-        <td><p>The <a href="api/ng/service/$controller">$controller service</a> is used by Angular to create new
-controllers.</p>
-</td>
-      </tr>
-      
-      <tr>
-        <td><a href="api/ng/provider/$filterProvider">$filterProvider</a></td>
-        <td><p>Filters are just functions which transform input to an output. However filters need to be
-Dependency Injected. To achieve this a filter definition consists of a factory function which is
-annotated with dependencies and is responsible for creating a filter function.</p>
-</td>
-      </tr>
-      
-      <tr>
-        <td><a href="api/ng/provider/$httpProvider">$httpProvider</a></td>
-        <td><p>Use <code>$httpProvider</code> to change the default behavior of the <a href="api/ng/service/$http">$http</a> service.</p>
-</td>
-      </tr>
-      
-      <tr>
-        <td><a href="api/ng/provider/$interpolateProvider">$interpolateProvider</a></td>
-        <td><p>Used for configuring the interpolation markup. Defaults to <code>{{</code> and <code>}}</code>.</p>
-</td>
-      </tr>
-      
-      <tr>
-        <td><a href="api/ng/provider/$locationProvider">$locationProvider</a></td>
-        <td><p>Use the <code>$locationProvider</code> to configure how the application deep linking paths are stored.</p>
-</td>
-      </tr>
-      
-      <tr>
-        <td><a href="api/ng/provider/$logProvider">$logProvider</a></td>
-        <td><p>Use the <code>$logProvider</code> to configure how the application logs messages</p>
-</td>
-      </tr>
-      
-      <tr>
-        <td><a href="api/ng/provider/$parseProvider">$parseProvider</a></td>
-        <td><p><code>$parseProvider</code> can be used for configuring the default behavior of the <a href="api/ng/service/$parse">$parse</a>
- service.</p>
-</td>
-      </tr>
-      
-      <tr>
-        <td><a href="api/ng/provider/$rootScopeProvider">$rootScopeProvider</a></td>
-        <td><p>Provider for the $rootScope service.</p>
-</td>
-      </tr>
-      
-      <tr>
-        <td><a href="api/ng/provider/$sceDelegateProvider">$sceDelegateProvider</a></td>
-        <td><p>The <code>$sceDelegateProvider</code> provider allows developers to configure the <a href="api/ng/service/$sceDelegate">$sceDelegate</a> service.  This allows one to get/set the whitelists and blacklists used to ensure
-that the URLs used for sourcing Angular templates are safe.  Refer <a href="api/ng/provider/$sceDelegateProvider#resourceUrlWhitelist">$sceDelegateProvider.resourceUrlWhitelist</a> and
-<a href="api/ng/provider/$sceDelegateProvider#resourceUrlBlacklist">$sceDelegateProvider.resourceUrlBlacklist</a></p>
-</td>
-      </tr>
-      
-      <tr>
-        <td><a href="api/ng/provider/$sceProvider">$sceProvider</a></td>
-        <td><p>The $sceProvider provider allows developers to configure the <a href="api/ng/service/$sce">$sce</a> service.</p>
-<ul>
-<li>enable/disable Strict Contextual Escaping (SCE) in a module</li>
-<li>override the default implementation with a custom delegate</li>
-</ul>
-</td>
-      </tr>
-      
-    </table>
-  </div>
-  
-  <div>
     <h3 class="component-heading" id="service">Service</h3>
     <table class="definition-table">
       <tr>
@@ -858,8 +738,8 @@ that the URLs used for sourcing Angular templates are safe.  Refer <a href="api/
       
       <tr>
         <td><a href="api/ng/service/$anchorScroll">$anchorScroll</a></td>
-        <td><p>When called, it checks the current value of <a href="api/ng/service/$location#hash">$location.hash()</a> and
-scrolls to the related element, according to the rules specified in the
+        <td><p>When called, it checks current value of <code>$location.hash()</code> and scrolls to the related element,
+according to rules specified in
 <a href="http://dev.w3.org/html5/spec/Overview.html#the-indicated-part-of-the-document">Html5 spec</a>.</p>
 </td>
       </tr>
@@ -1021,15 +901,6 @@ Contextual Escaping (SCE)</a> services to AngularJS.</p>
       </tr>
       
       <tr>
-        <td><a href="api/ng/service/$templateRequest">$templateRequest</a></td>
-        <td><p>The <code>$templateRequest</code> service downloads the provided template using <code>$http</code> and, upon success,
-stores the contents inside of <code>$templateCache</code>. If the HTTP request fails or the response data
-of the HTTP request is empty then a <code>$compile</code> error will be thrown (the exception can be thwarted
-by setting the 2nd parameter of the function to true).</p>
-</td>
-      </tr>
-      
-      <tr>
         <td><a href="api/ng/service/$timeout">$timeout</a></td>
         <td><p>Angular&#39;s wrapper for <code>window.setTimeout</code>. The <code>fn</code> function is wrapped into a try/catch
 block and delegates any exceptions to
@@ -1050,6 +921,100 @@ it is a global variable. In angular we always refer to it through the
   </div>
   
   <div>
+    <h3 class="component-heading" id="provider">Provider</h3>
+    <table class="definition-table">
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+      
+      <tr>
+        <td><a href="api/ng/provider/$animateProvider">$animateProvider</a></td>
+        <td><p>Default implementation of $animate that doesn&#39;t perform any animations, instead just
+synchronously performs DOM
+updates and calls done() callbacks.</p>
+</td>
+      </tr>
+      
+      <tr>
+        <td><a href="api/ng/provider/$compileProvider">$compileProvider</a></td>
+        <td></td>
+      </tr>
+      
+      <tr>
+        <td><a href="api/ng/provider/$controllerProvider">$controllerProvider</a></td>
+        <td><p>The <a href="api/ng/service/$controller">$controller service</a> is used by Angular to create new
+controllers.</p>
+</td>
+      </tr>
+      
+      <tr>
+        <td><a href="api/ng/provider/$filterProvider">$filterProvider</a></td>
+        <td><p>Filters are just functions which transform input to an output. However filters need to be
+Dependency Injected. To achieve this a filter definition consists of a factory function which is
+annotated with dependencies and is responsible for creating a filter function.</p>
+</td>
+      </tr>
+      
+      <tr>
+        <td><a href="api/ng/provider/$httpProvider">$httpProvider</a></td>
+        <td><p>Use <code>$httpProvider</code> to change the default behavior of the <a href="api/ng/service/$http">$http</a> service.</p>
+</td>
+      </tr>
+      
+      <tr>
+        <td><a href="api/ng/provider/$interpolateProvider">$interpolateProvider</a></td>
+        <td><p>Used for configuring the interpolation markup. Defaults to <code>{{</code> and <code>}}</code>.</p>
+</td>
+      </tr>
+      
+      <tr>
+        <td><a href="api/ng/provider/$locationProvider">$locationProvider</a></td>
+        <td><p>Use the <code>$locationProvider</code> to configure how the application deep linking paths are stored.</p>
+</td>
+      </tr>
+      
+      <tr>
+        <td><a href="api/ng/provider/$logProvider">$logProvider</a></td>
+        <td><p>Use the <code>$logProvider</code> to configure how the application logs messages</p>
+</td>
+      </tr>
+      
+      <tr>
+        <td><a href="api/ng/provider/$parseProvider">$parseProvider</a></td>
+        <td><p><code>$parseProvider</code> can be used for configuring the default behavior of the <a href="api/ng/service/$parse">$parse</a>
+ service.</p>
+</td>
+      </tr>
+      
+      <tr>
+        <td><a href="api/ng/provider/$rootScopeProvider">$rootScopeProvider</a></td>
+        <td><p>Provider for the $rootScope service.</p>
+</td>
+      </tr>
+      
+      <tr>
+        <td><a href="api/ng/provider/$sceDelegateProvider">$sceDelegateProvider</a></td>
+        <td><p>The <code>$sceDelegateProvider</code> provider allows developers to configure the <a href="api/ng/service/$sceDelegate">$sceDelegate</a> service.  This allows one to get/set the whitelists and blacklists used to ensure
+that the URLs used for sourcing Angular templates are safe.  Refer <a href="api/ng/provider/$sceDelegateProvider#resourceUrlWhitelist">$sceDelegateProvider.resourceUrlWhitelist</a> and
+<a href="api/ng/provider/$sceDelegateProvider#resourceUrlBlacklist">$sceDelegateProvider.resourceUrlBlacklist</a></p>
+</td>
+      </tr>
+      
+      <tr>
+        <td><a href="api/ng/provider/$sceProvider">$sceProvider</a></td>
+        <td><p>The $sceProvider provider allows developers to configure the <a href="api/ng/service/$sce">$sce</a> service.</p>
+<ul>
+<li>enable/disable Strict Contextual Escaping (SCE) in a module</li>
+<li>override the default implementation with a custom delegate</li>
+</ul>
+</td>
+      </tr>
+      
+    </table>
+  </div>
+  
+  <div>
     <h3 class="component-heading" id="input">Input</h3>
     <table class="definition-table">
       <tr>
@@ -1060,49 +1025,6 @@ it is a global variable. In angular we always refer to it through the
       <tr>
         <td><a href="api/ng/input/input[text]">input[text]</a></td>
         <td><p>Standard HTML text input with angular data binding, inherited by most of the <code>input</code> elements.</p>
-</td>
-      </tr>
-      
-      <tr>
-        <td><a href="api/ng/input/input[date]">input[date]</a></td>
-        <td><p>Input with date validation and transformation. In browsers that do not yet support
-the HTML5 date input, a text element will be used. In that case, text must be entered in a valid ISO-8601
-date format (yyyy-MM-dd), for example: <code>2009-01-06</code>. Since many
-modern browsers do not yet support this input type, it is important to provide cues to users on the
-expected input format via a placeholder or label.</p>
-</td>
-      </tr>
-      
-      <tr>
-        <td><a href="api/ng/input/input[datetime-local]">input[datetime-local]</a></td>
-        <td><p>Input with datetime validation and transformation. In browsers that do not yet support
-the HTML5 date input, a text element will be used. In that case, the text must be entered in a valid ISO-8601
-local datetime format (yyyy-MM-ddTHH:mm:ss), for example: <code>2010-12-28T14:57:00</code>.</p>
-</td>
-      </tr>
-      
-      <tr>
-        <td><a href="api/ng/input/input[time]">input[time]</a></td>
-        <td><p>Input with time validation and transformation. In browsers that do not yet support
-the HTML5 date input, a text element will be used. In that case, the text must be entered in a valid ISO-8601
-local time format (HH:mm:ss), for example: <code>14:57:00</code>. Model must be a Date object. This binding will always output a
-Date object to the model of January 1, 1970, or local date <code>new Date(1970, 0, 1, HH, mm, ss)</code>.</p>
-</td>
-      </tr>
-      
-      <tr>
-        <td><a href="api/ng/input/input[week]">input[week]</a></td>
-        <td><p>Input with week-of-the-year validation and transformation to Date. In browsers that do not yet support
-the HTML5 week input, a text element will be used. In that case, the text must be entered in a valid ISO-8601
-week format (yyyy-W##), for example: <code>2013-W02</code>.</p>
-</td>
-      </tr>
-      
-      <tr>
-        <td><a href="api/ng/input/input[month]">input[month]</a></td>
-        <td><p>Input with month validation and transformation. In browsers that do not yet support
-the HTML5 month input, a text element will be used. In that case, the text must be entered in a valid ISO-8601
-month format (yyyy-MM), for example: <code>2009-01</code>.</p>
 </td>
       </tr>
       
@@ -1196,9 +1118,8 @@ symbol for current locale is used.</p>
       <tr>
         <td><a href="api/ng/filter/limitTo">limitTo</a></td>
         <td><p>Creates a new array or string containing only a specified number of elements. The elements
-are taken from either the beginning or the end of the source array, string or number, as specified by
-the value and sign (positive or negative) of <code>limit</code>. If a number is used as input, it is
-converted to a string.</p>
+are taken from either the beginning or the end of the source array or string, as specified by
+the value and sign (positive or negative) of <code>limit</code>.</p>
 </td>
       </tr>
       

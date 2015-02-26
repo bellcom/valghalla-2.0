@@ -3,23 +3,41 @@
 <head>
   <meta charset="UTF-8">
   <title>Example - example-example49-debug</title>
-  <link href="style.css" rel="stylesheet" type="text/css">
   
 
   <script src="../../../angular.js"></script>
-  <script src="script.js"></script>
+  <script src="../../../angular-animate.js"></script>
   
 
-  
+  <script type="text/javascript">
+    angular.element(document.getElementsByTagName('head')).append(angular.element('<base href="' + window.location.pathname + '" />'));
+  </script>
 </head>
-<body ng-app="anchorScrollOffsetExample">
-  <div class="fixed-header" ng-controller="headerCtrl">
-  <a href="" ng-click="gotoAnchor(x)" ng-repeat="x in [1,2,3,4,5]">
-    Go to anchor {{x}}
-  </a>
-</div>
-<div id="anchor{{x}}" class="anchor" ng-repeat="x in [1,2,3,4,5]">
-  Anchor {{x}} of 5
-</div>
+<body ng-app="formExample">
+   <script>
+   angular.module('formExample', [])
+     .controller('FormController', ['$scope', function($scope) {
+       $scope.userType = 'guest';
+     }]);
+ </script>
+ <style>
+  .my-form {
+    -webkit-transition:all linear 0.5s;
+    transition:all linear 0.5s;
+    background: transparent;
+  }
+  .my-form.ng-invalid {
+    background: red;
+  }
+ </style>
+ <form name="myForm" ng-controller="FormController" class="my-form">
+   userType: <input name="input" ng-model="userType" required>
+   <span class="error" ng-show="myForm.input.$error.required">Required!</span><br>
+   <tt>userType = {{userType}}</tt><br>
+   <tt>myForm.input.$valid = {{myForm.input.$valid}}</tt><br>
+   <tt>myForm.input.$error = {{myForm.input.$error}}</tt><br>
+   <tt>myForm.$valid = {{myForm.$valid}}</tt><br>
+   <tt>myForm.$error.required = {{!!myForm.$error.required}}</tt><br>
+  </form>
 </body>
 </html>

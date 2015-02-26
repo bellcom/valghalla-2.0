@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <title>Example - example-example91-jquery</title>
-  <link href="style.css" rel="stylesheet" type="text/css">
   
 
   <script src="../../components/jquery-2.1.1/jquery.js"></script>
@@ -13,11 +12,13 @@
   
 </head>
 <body ng-app="">
-  <input type="button" value="set color" ng-click="myStyle={color:'red'}">
-<input type="button" value="set background" ng-click="myStyle={'background-color':'blue'}">
-<input type="button" value="clear" ng-click="myStyle={}">
-<br/>
-<span ng-style="myStyle">Sample Text</span>
-<pre>myStyle={{myStyle}}</pre>
+    <span ng-non-bindable>{{1288323623006 | date:'medium'}}</span>:
+      <span>{{1288323623006 | date:'medium'}}</span><br>
+  <span ng-non-bindable>{{1288323623006 | date:'yyyy-MM-dd HH:mm:ss Z'}}</span>:
+     <span>{{1288323623006 | date:'yyyy-MM-dd HH:mm:ss Z'}}</span><br>
+  <span ng-non-bindable>{{1288323623006 | date:'MM/dd/yyyy @ h:mma'}}</span>:
+     <span>{{'1288323623006' | date:'MM/dd/yyyy @ h:mma'}}</span><br>
+  <span ng-non-bindable>{{1288323623006 | date:"MM/dd/yyyy 'at' h:mma"}}</span>:
+     <span>{{'1288323623006' | date:"MM/dd/yyyy 'at' h:mma"}}</span><br>
 </body>
 </html>

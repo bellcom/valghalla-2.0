@@ -7,15 +7,14 @@
 
   <script src="../../components/jquery-2.1.1/jquery.js"></script>
   <script src="../../../angular.js"></script>
-  <script src="../../../angular-sanitize.js"></script>
-  <script src="script.js"></script>
   
 
   
 </head>
-<body ng-app="bindHtmlExample">
-  <div ng-controller="ExampleController">
- <p ng-bind-html="myHTML"></p>
-</div>
+<body ng-app="">
+   <button ng-mouseup="count = count + 1" ng-init="count=0">
+   Increment (on mouse up)
+ </button>
+ count: {{count}}
 </body>
 </html>
