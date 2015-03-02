@@ -956,7 +956,7 @@ function valghalla_volunteers_form_volunteers_node_form_alter(&$form, &$form_sta
     }
 
     foreach ($field_ids as $field_id) {
-      hide($form[$field_id]);
+      $form[$field_id]['#access'] = FALSE;
     }
 
     $form['additional_settings']['#prefix'] = '<div style="display:none;">';
