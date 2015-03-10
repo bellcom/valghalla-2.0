@@ -19,7 +19,7 @@ function valghalla_lists_menu(){
   $items['valghalla_lists/exportxls'] = array(
     'title' => 'Eksporter valgdeltagere som XLS',
     'type' => MENU_NORMAL_ITEM,
-    'page callback' => 'drupal_goto',
+    'page callback' => 'valghalla_lists_redirect',
     'page arguments' => array('valghalla_lists/export_xls'),
     'access arguments' => array('valghalla export volunteers list'),
   );
@@ -27,12 +27,30 @@ function valghalla_lists_menu(){
   $items['valghalla_lists/exportcsv'] = array(
     'title' => 'Eksporter valgdeltagere som CSV',
     'type' => MENU_NORMAL_ITEM,
-    'page callback' => 'drupal_goto',
+    'page callback' => 'valghalla_lists_redirect',
     'page arguments' => array('valghalla_lists/export_csv'),
     'access arguments' => array('valghalla export volunteers list'),
   );
 
   return $items;
+}
+
+/**
+ * Redirect page for export lists.
+ */
+function valghalla_lists_redirect($path) {
+  // Load user, we need to know what party the user is associated to.
+  global $user;
+  $user_entity = user_load($user->uid);
+
+  // The first argument is the user party id.
+  $arguments = empty($user_entity->field_party[LANGUAGE_NONE][0]['tid']) ? FALSE : $user_entity->field_party[LANGUAGE_NONE][0]['tid'];
+
+  // And add the election nid if it's set.
+  if ($_SESSION['election_nid']) {
+    $arguments .= '/' . $_SESSION['election_nid'];
+  }
+  drupal_goto($path . '/' . $arguments);
 }
 
 /**
