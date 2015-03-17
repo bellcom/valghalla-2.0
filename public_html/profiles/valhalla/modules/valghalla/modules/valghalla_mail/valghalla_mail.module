@@ -102,6 +102,7 @@ function valghalla_mail_mail($key, &$message, $params) {
 
   // if $params isnt an array, dont do anything.
   if(!is_array($params)){
+    $message['send'] = FALSE;
     return;
   }
 

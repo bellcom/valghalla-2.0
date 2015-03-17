@@ -118,7 +118,17 @@ function valghalla_signup_administration_form() {
     '#type' => 'item',
   );
 
-  return system_settings_form($form);
+  $form = system_settings_form($form);
+
+  $form['#submit'][] = 'valghalla_signup_settings_submit';
+  return $form;
+}
+
+/**
+ * Extra submit handler for settings form.
+ */
+function valghalla_signup_settings_submit(&$form, &$form_submit) {
+  menu_rebuild();
 }
 
 /**

@@ -120,8 +120,6 @@ function valghalla_volunteers_invite_select_submit(&$form, &$form_state) {
     }
 
     if ($polling_station_nid && $role_nid && $party_tid) {
-      error_log('hest');
-
       if (!odin_volunteer_has_post_on_election($volunteer_nid, $election_nid) && _valghalla_helper_validate_polling_post($polling_station_nid, $role_nid, $party_tid)) {
         valghalla_volunteers_add_volunteer_to_post($volunteer_nid, $polling_station_nid, $role_nid, $party_tid, $election_nid);
       }

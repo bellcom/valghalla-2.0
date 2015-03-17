@@ -51,7 +51,7 @@ function valghalla_mail_admin_valghalla_mails($form, $form_state, $election_nid 
   $form['valghalla_volunteers_mail']['mails'] = array(
     '#type' => 'fieldset',
     '#title' => t('Standard E-Mail skabeloner'),
-    '#description' => '<a href="/node/add/email?destination=/valghalla/administration/mails"><span class="glyphicon glyphicon-plus"></span> Tilføj ny</a>',
+    '#description' => '<a href="/node/add/email?destination=' . current_path() . '"><span class="glyphicon glyphicon-plus"></span> Tilføj ny</a>',
   );
 
   $mail_options = valghalla_mail_get_mails();
@@ -63,7 +63,7 @@ function valghalla_mail_admin_valghalla_mails($form, $form_state, $election_nid 
     $mail_nid = variable_get($variable_name, FALSE);
 
     if($mail_nid){
-      $description .= ' <a class="form-submit" href="/node/' . $mail_nid . '/edit?destination=/admin/valghalla/mails">'.t('edit').'</a>';
+      $description .= ' <a class="form-submit" href="/node/' . $mail_nid . '/edit?destination=' . current_path() . '">'.t('edit').'</a>';
     }
 
     $form['valghalla_volunteers_mail']['mails'][$variable_name] = array(
@@ -108,7 +108,7 @@ function valghalla_mail_admin_valghalla_mails($form, $form_state, $election_nid 
       // Show mail title, and edit link if a mail is chosen.
       $description = t('standard');
       if($mail_nid){
-        $description = $mail_title .': <a href="/node/' . $mail_nid . '/edit?destination=/admin/valhalla/mails">'.t('edit').'</a>';
+        $description = $mail_title .': <a href="/node/' . $mail_nid . '/edit?destination=' . current_path() . '">'.t('edit').'</a>';
       }
 
       $form['valghalla_role_mails'][$role_node->nid][$variable_name] = array(
@@ -179,10 +179,10 @@ function valghalla_mail_admin_notifications(){
       $mailnid = variable_get("valghalla_mail_cancellation_from_participants_mail_$mail_type", FALSE);
 
       if($mailnid){
-        $description_2 .= ' <a class="form-submit" href="/node/' . $mailnid . '/edit?destination=/admin/valghalla/mails">'.t('edit').'</a>';
+        $description_2 .= ' <a class="form-submit" href="/node/' . $mailnid . '/edit?destination=' . current_path() . '">'.t('edit').'</a>';
       }
       elseif (node_type_load('email')) {
-        $description_2 .= ' <a class="form-submit" href="/node/add/email?destination=/admin/valghalla/mails">'.t('add').'</a>';
+        $description_2 .= ' <a class="form-submit" href="/node/add/email?destination=' . current_path() . '">'.t('add').'</a>';
       }
       $form['valghalla_volunteers_mail']['valghalla_mail_cancel']['valghalla_mail_cancellation_from_participants_mail_' . $mail_type] = array(
         '#type' => 'select',

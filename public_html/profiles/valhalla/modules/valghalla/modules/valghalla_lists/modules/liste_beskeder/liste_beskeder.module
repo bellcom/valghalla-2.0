@@ -5,3 +5,19 @@
  */
 
 include_once 'liste_beskeder.features.inc';
+
+/**
+ * Implements hook_views_pre_view().
+ */
+function liste_beskeder_views_pre_view(&$view) {
+  // Only alter view "Beskeder".
+  if ($view->name == 'Beskeder') {
+    // Load user, and figure out party association.
+    global $user;
+    $user = user_load($user->uid);
+    $user_party_id = empty($user->field_party[LANGUAGE_NONE][0]['tid']) ? 'all' : $user->field_party[LANGUAGE_NONE][0]['tid'];
+
+    // Set the second argument of the view.
+    $view->args[1] = $user_party_id;
+  }
+}

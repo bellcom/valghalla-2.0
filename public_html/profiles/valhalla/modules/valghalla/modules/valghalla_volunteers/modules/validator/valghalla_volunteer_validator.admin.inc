@@ -41,6 +41,12 @@ function valghalla_volunteer_validator_settings(){
     '#default_value' => variable_get('valghalla_volunteer_validator_get_address', FALSE),
   );
 
+  $form['valghalla_volunteer_validator_hide_address_fields'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Skjul adressefelter på deltagerformular'),
+    '#default_value' => variable_get('valghalla_volunteer_validator_hide_address_fields', TRUE),
+  );
+
   $header = ['CPR service', 'Beskrivelse', 'Understøtter', 'Valgmuligheder'];
 
   $form['valghalla_volunteer_validator_cpr_service'] = array(

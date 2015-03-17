@@ -170,6 +170,16 @@ function liste_beskeder_views_default_views() {
   $handler->display->display_options['arguments']['field_election_target_id']['summary']['number_of_records'] = '0';
   $handler->display->display_options['arguments']['field_election_target_id']['summary']['format'] = 'default_summary';
   $handler->display->display_options['arguments']['field_election_target_id']['summary_options']['items_per_page'] = '25';
+  /* Kontekstuelt filter: User party id: liste_beskeder_views_pre_view() */
+  $handler->display->display_options['arguments']['field_party_tid']['id'] = 'field_party_tid';
+  $handler->display->display_options['arguments']['field_party_tid']['table'] = 'field_data_field_party';
+  $handler->display->display_options['arguments']['field_party_tid']['field'] = 'field_party_tid';
+  $handler->display->display_options['arguments']['field_party_tid']['ui_name'] = 'User party id: liste_beskeder_views_pre_view()';
+  $handler->display->display_options['arguments']['field_party_tid']['exception']['title'] = 'Alle';
+  $handler->display->display_options['arguments']['field_party_tid']['default_argument_type'] = 'fixed';
+  $handler->display->display_options['arguments']['field_party_tid']['summary']['number_of_records'] = '0';
+  $handler->display->display_options['arguments']['field_party_tid']['summary']['format'] = 'default_summary';
+  $handler->display->display_options['arguments']['field_party_tid']['summary_options']['items_per_page'] = '25';
   /* Filterkriterie: Indhold: Udgivet */
   $handler->display->display_options['filters']['status']['id'] = 'status';
   $handler->display->display_options['filters']['status']['table'] = 'node';
@@ -191,6 +201,12 @@ function liste_beskeder_views_default_views() {
   $handler->display->display_options['filters']['field_rsvp_comment_value']['relationship'] = 'field_electioninfo_value';
   $handler->display->display_options['filters']['field_rsvp_comment_value']['operator'] = 'longerthan';
   $handler->display->display_options['filters']['field_rsvp_comment_value']['value'] = '1';
+  /* Filterkriterie: Field collection item: Valgsted (field_vlnt_station) */
+  $handler->display->display_options['filters']['field_vlnt_station_target_id']['id'] = 'field_vlnt_station_target_id';
+  $handler->display->display_options['filters']['field_vlnt_station_target_id']['table'] = 'field_data_field_vlnt_station';
+  $handler->display->display_options['filters']['field_vlnt_station_target_id']['field'] = 'field_vlnt_station_target_id';
+  $handler->display->display_options['filters']['field_vlnt_station_target_id']['relationship'] = 'field_electioninfo_value';
+  $handler->display->display_options['filters']['field_vlnt_station_target_id']['operator'] = 'not empty';
 
   /* Display: Beskeder */
   $handler = $view->new_display('page', 'Beskeder', 'page');
@@ -237,6 +253,18 @@ function liste_beskeder_views_default_views() {
     2 => '2',
     3 => '3',
   );
+  /* Filterkriterie: Field collection item: Valgsted (field_vlnt_station) */
+  $handler->display->display_options['filters']['field_vlnt_station_target_id']['id'] = 'field_vlnt_station_target_id';
+  $handler->display->display_options['filters']['field_vlnt_station_target_id']['table'] = 'field_data_field_vlnt_station';
+  $handler->display->display_options['filters']['field_vlnt_station_target_id']['field'] = 'field_vlnt_station_target_id';
+  $handler->display->display_options['filters']['field_vlnt_station_target_id']['relationship'] = 'field_electioninfo_value';
+  $handler->display->display_options['filters']['field_vlnt_station_target_id']['operator'] = 'not empty';
+  /* Filterkriterie: Field collection item: Parti plads (field_post_party) */
+  $handler->display->display_options['filters']['field_post_party_target_id']['id'] = 'field_post_party_target_id';
+  $handler->display->display_options['filters']['field_post_party_target_id']['table'] = 'field_data_field_post_party';
+  $handler->display->display_options['filters']['field_post_party_target_id']['field'] = 'field_post_party_target_id';
+  $handler->display->display_options['filters']['field_post_party_target_id']['relationship'] = 'field_electioninfo_value';
+  $handler->display->display_options['filters']['field_post_party_target_id']['operator'] = 'not empty';
   $handler->display->display_options['path'] = 'valghalla_lists/no_reply';
   $handler->display->display_options['menu']['type'] = 'normal';
   $handler->display->display_options['menu']['title'] = 'Deltagere der ikke har svaret';

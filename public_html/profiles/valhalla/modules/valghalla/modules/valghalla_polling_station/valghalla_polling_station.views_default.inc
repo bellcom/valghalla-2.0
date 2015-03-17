@@ -119,7 +119,8 @@ function valghalla_polling_station_views_default_views() {
   $handler->display->display_options['header']['area']['id'] = 'area';
   $handler->display->display_options['header']['area']['table'] = 'views';
   $handler->display->display_options['header']['area']['field'] = 'area';
-  $handler->display->display_options['header']['area']['content'] = '<a class="btn btn-success" href="/node/add/polling-station?destination=valghalla/administration/valgsteder">Tilføj Valgsted</a>';
+  $handler->display->display_options['header']['area']['empty'] = TRUE;
+  $handler->display->display_options['header']['area']['content'] = '<a class="btn btn-success" href="/node/add/polling-station?destination=valghalla/administration/valgsteder">+ Tilføj valgsted</a>';
   $handler->display->display_options['header']['area']['format'] = 'full_html';
   $handler->display->display_options['defaults']['fields'] = FALSE;
   /* Felt: Indhold: Titel */
@@ -129,16 +130,18 @@ function valghalla_polling_station_views_default_views() {
   $handler->display->display_options['fields']['title']['label'] = '';
   $handler->display->display_options['fields']['title']['alter']['word_boundary'] = FALSE;
   $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
+  $handler->display->display_options['fields']['title']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['title']['link_to_node'] = FALSE;
   /* Felt: Indhold: Internt navn */
   $handler->display->display_options['fields']['field_interntal_name']['id'] = 'field_interntal_name';
   $handler->display->display_options['fields']['field_interntal_name']['table'] = 'field_data_field_interntal_name';
   $handler->display->display_options['fields']['field_interntal_name']['field'] = 'field_interntal_name';
-  $handler->display->display_options['fields']['field_interntal_name']['label'] = '';
   $handler->display->display_options['fields']['field_interntal_name']['element_label_colon'] = FALSE;
   /* Felt: Indhold: Redigér-link */
   $handler->display->display_options['fields']['edit_node']['id'] = 'edit_node';
   $handler->display->display_options['fields']['edit_node']['table'] = 'views_entity_node';
   $handler->display->display_options['fields']['edit_node']['field'] = 'edit_node';
+  $handler->display->display_options['fields']['edit_node']['label'] = 'Rediger';
   $handler->display->display_options['path'] = 'valghalla/administration/valgsteder';
   $handler->display->display_options['menu']['type'] = 'normal';
   $handler->display->display_options['menu']['title'] = 'Valgsteder';
@@ -168,8 +171,9 @@ function valghalla_polling_station_views_default_views() {
     t('Stigende'),
     t('Faldende'),
     t('Page'),
-    t('<a class="btn btn-success" href="/node/add/polling-station?destination=valghalla/administration/valgsteder">Tilføj Valgsted</a>'),
-    t('Redigér-link'),
+    t('<a class="btn btn-success" href="/node/add/polling-station?destination=valghalla/administration/valgsteder">+ Tilføj valgsted</a>'),
+    t('Internt navn'),
+    t('Rediger'),
     t('Entity Reference'),
   );
   $export['polling_stations'] = $view;

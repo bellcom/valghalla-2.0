@@ -711,8 +711,9 @@ function valghalla_volunteers_notify_volunteer($election_nid, $role_nid, $fc, $t
   $field_status = field_get_items('node', $election_node, 'field_election_status');
   $active = $field_status ? $field_status[0]['value'] : FALSE;
 
-  if ($active) {
-    $mail = valghalla_mail_get_mail($election_nid, $role_nid, $type);
+  $mail = valghalla_mail_get_mail($election_nid, $role_nid, $type);
+
+  if ($active && is_array($mail)) {
     $tokens = _valghalla_helper_get_token_values($fc);
     $params = array_merge(array('tokens' => $tokens), $mail);
     $to = $tokens['!email'];
@@ -883,6 +884,7 @@ function valghalla_volunteers_form_volunteers_node_form_alter(&$form, &$form_sta
       'field_cpr_valid_date',
       'field_valid_state',
       'field_cpr_status',
+      'field_ending_time',
     );
 
     foreach ($hide_elements as $field_name) {

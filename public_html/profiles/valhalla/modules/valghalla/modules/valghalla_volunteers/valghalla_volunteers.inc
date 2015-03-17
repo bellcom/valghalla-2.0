@@ -407,6 +407,7 @@ function _valghalla_helper_get_token_values($entity) {
     '!email' => $email,
     '!phone' => $phone,
     '!link' => $link,
+    '!url' => $url,
     '!date_now' => $date_now,
     '!days' => $days,
     '!election' => $election,
@@ -441,7 +442,8 @@ function _valghalla_helper_get_volunteer_info_params($node) {
           <li><em>!position</em> vil blive erstattet af rollens titel</li>
           <li><em>!position_description</em> vil blive erstattet af rollens beskrivelse</li>
           <li><em>!time</em> vil blive erstattet af rollens mødetidspunkt</li>
-          <li><em>!link</em> vil blive erstattet med link til RSVP side</li>
+          <li><em>!link</em> vil blive erstattet med link til RSVP side (brug denne hvis der sendes HTML mails.)</li>
+          <li><em>!url</em> vil blive erstattet med url'en til RSVP side (brug denne hvis der sendes plain text mails.)</li>
           <li><em>!polling_station_contact</em> vil blive erstattet med kontaktpersonen på valgstedet</li>
           </ul>
           <p><em>Bemærk!</em> i nogle tilfælde vil nogle tokens ikke være tilgængelige.</p>";
