@@ -123,12 +123,6 @@ function vcv_serviceplatformen_settings() {
     '#default_value' => variable_get('vcv_serviceplatformen_accountinginfo', ''),
   );
 
-  $form['vcv_serviceplatformen_onbehalfofuser'] = array(
-    '#type' => 'textfield',
-    '#title' => 'OnBehalfOfUser',
-    '#default_value' => variable_get('vcv_serviceplatformen_onbehalfofuser', ''),
-  );
-
   $form['vcv_serviceplatformen_certfile_passphrase'] = array(
     '#type' => 'password',
     '#title' => 'Certfile passphrase',
@@ -194,7 +188,8 @@ function vcv_serviceplatformen_query($cpr) {
     $useruuid = variable_get('vcv_serviceplatformen_useruuid');
     $serviceuuid = variable_get('vcv_serviceplatformen_serviceuuid');
     $accountinginfo = variable_get('vcv_serviceplatformen_accountinginfo');
-    $onbehalfofuser = variable_get('vcv_serviceplatformen_onbehalfofuser');
+    global $user;
+    $onbehalfofuser = $user->name;
 
     $pnr = str_replace('-', '', $cpr);
 
@@ -267,6 +262,20 @@ function vcv_serviceplatformen_get_address($cpr) {
  * Get CPR for specified address and name.
  */
 function vcv_serviceplatformen_get_cpr($volunteer_info) {
+  $service_location = variable_get('vcv_serviceplatformen_adrsog_location');
+  $certfile_passphrase = variable_get('vcv_serviceplatformen_certfile_passphrase');
+  $certfile = variable_get('vcv_serviceplatformen_certfile');
+
+  // ADRSOG1 specific uuids.
+  $serviceagreementuuid = variable_get('vcv_serviceplatformen_adrsog_serviceagreementuuid');
+  $serviceuuid = variable_get('vcv_serviceplatformen_adrsog_serviceuuid');
+  // Generic/municipality uuids.
+  $usersystemuuid = variable_get('vcv_serviceplatformen_usersystemuuid');
+  $useruuid = variable_get('vcv_serviceplatformen_useruuid');
+  // Extra info.
+  $accountinginfo = variable_get('vcv_serviceplatformen_accountinginfo');
+  global $user;
+  $onbehalfofuser = $user->name;
 
   // Generate gctp message.
   $message_start = '<Gctp v="1.0"><System r="CprSoeg"><Service r="ADRSOG1"><CprServiceHeader r="ADRSOG1"><Key>';
@@ -291,10 +300,12 @@ function vcv_serviceplatformen_get_cpr($volunteer_info) {
   <soapenv:Body>
     <kom:callGCTPCheckServiceRequest>
       <invctx:InvocationContext>
-        <invctx:ServiceAgreementUUID>5e78dc5f-873e-46d8-b176-f55814d32c15</invctx:ServiceAgreementUUID>
-        <invctx:UserSystemUUID>8a0aa317-6805-427a-acd5-78f2af15a3c9</invctx:UserSystemUUID>
-        <invctx:UserUUID>09ea08cc-853c-4c02-a150-ed5962021596</invctx:UserUUID>
-        <invctx:ServiceUUID>d0361006-6891-11e3-9ed6-e376a4d43aa6</invctx:ServiceUUID>
+        <invctx:ServiceAgreementUUID>$serviceagreementuuid</invctx:ServiceAgreementUUID>
+        <invctx:UserSystemUUID>$usersystemuuid</invctx:UserSystemUUID>
+        <invctx:UserUUID>$useruuid</invctx:UserUUID>
+        <invctx:ServiceUUID>$serviceuuid</invctx:ServiceUUID>
+        <invctx:OnBehalfOfUser>$serviceuuid</invctx:OnBehalfOfUser>
+        <invctx:AccountingInfo>$serviceuuid</invctx:AccountingInfo>
       </invctx:InvocationContext>
       <kom:gctpMessage>
         <![CDATA[
@@ -307,20 +318,6 @@ $message
 EOL;
 
   try {
-    $service_location = variable_get('vcv_serviceplatformen_adrsog_location');
-    $certfile_passphrase = variable_get('vcv_serviceplatformen_certfile_passphrase');
-    $certfile = variable_get('vcv_serviceplatformen_certfile');
-
-    // ADRSOG1 specific uuids.
-    $serviceagreementuuid = variable_get('vcv_serviceplatformen_adrsog_serviceagreementuuid');
-    $serviceuuid = variable_get('vcv_serviceplatformen_adrsog_serviceuuid');
-    // Generic/municipality uuids.
-    $usersystemuuid = variable_get('vcv_serviceplatformen_usersystemuuid');
-    $useruuid = variable_get('vcv_serviceplatformen_useruuid');
-    // Extra info.
-    $accountinginfo = variable_get('vcv_serviceplatformen_accountinginfo');
-    $onbehalfofuser = variable_get('vcv_serviceplatformen_onbehalfofuser');
-
     // Curl call to service.
     $headers = array(
       "Content-type: text/xml;charset=\"utf-8\"",
@@ -342,6 +339,13 @@ EOL;
 
     $response = curl_exec($ch);
 
+    // If no theres no response from the service, return an error.
+    if (!$response) {
+      return array(
+        'status' => 'error',
+      );
+    }
+
     curl_close($ch);
 
     $xml = simplexml_load_string($response);
@@ -354,7 +358,7 @@ EOL;
     // Init variables.
     $result_row = FALSE;
     $pnr = FALSE;
-    $name= FALSE;
+    $name = FALSE;
 
     // Go through the resulting rows.
     foreach ($xml->System->Service->CprData->Rolle->Table->Row as $row) {
