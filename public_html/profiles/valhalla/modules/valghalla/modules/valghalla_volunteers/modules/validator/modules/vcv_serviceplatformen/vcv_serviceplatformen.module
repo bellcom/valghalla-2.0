@@ -339,6 +339,13 @@ EOL;
 
     $response = curl_exec($ch);
 
+    // If no theres no response from the service, return an error.
+    if (!$response) {
+      return array(
+        'status' => 'error',
+      );
+    }
+
     curl_close($ch);
 
     $xml = simplexml_load_string($response);
@@ -351,7 +358,7 @@ EOL;
     // Init variables.
     $result_row = FALSE;
     $pnr = FALSE;
-    $name= FALSE;
+    $name = FALSE;
 
     // Go through the resulting rows.
     foreach ($xml->System->Service->CprData->Rolle->Table->Row as $row) {
