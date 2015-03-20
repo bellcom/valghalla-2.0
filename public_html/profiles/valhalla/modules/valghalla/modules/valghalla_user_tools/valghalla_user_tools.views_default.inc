@@ -531,7 +531,8 @@ function valghalla_user_tools_views_default_views() {
   $handler->display->display_options['header']['area']['table'] = 'views';
   $handler->display->display_options['header']['area']['field'] = 'area';
   $handler->display->display_options['header']['area']['empty'] = TRUE;
-  $handler->display->display_options['header']['area']['content'] = '<a class="btn btn-success" href="/node/add/roles?destination=valghalla/administration/roller">+ Tilføj rolle</a>';
+  $handler->display->display_options['header']['area']['content'] = '<a class="btn btn-success" href="/node/add/roles?destination=valghalla/administration/roller">+ Tilføj rolle</a>
+<span class="pull-right"><a class="btn btn-xs btn-warning" href="/reset-alphabetical/roles?destination=valghalla/administration/roller">Nulstil rækkefølge til alfabetisk</a></span>';
   $handler->display->display_options['header']['area']['format'] = 'full_html';
   /* Felt: Indhold: Titel */
   $handler->display->display_options['fields']['title']['id'] = 'title';
@@ -555,15 +556,25 @@ function valghalla_user_tools_views_default_views() {
   $handler->display->display_options['fields']['field_role_hours']['id'] = 'field_role_hours';
   $handler->display->display_options['fields']['field_role_hours']['table'] = 'field_data_field_role_hours';
   $handler->display->display_options['fields']['field_role_hours']['field'] = 'field_role_hours';
+  /* Felt: Indhold: Role Rækkefølge */
+  $handler->display->display_options['fields']['field_role_weight']['id'] = 'field_role_weight';
+  $handler->display->display_options['fields']['field_role_weight']['table'] = 'field_data_field_role_weight';
+  $handler->display->display_options['fields']['field_role_weight']['field'] = 'field_role_weight';
+  $handler->display->display_options['fields']['field_role_weight']['label'] = 'Rækkefølge';
+  $handler->display->display_options['fields']['field_role_weight']['settings'] = array(
+    'thousand_separator' => ' ',
+    'decimal_separator' => '.',
+    'scale' => '2',
+    'prefix_suffix' => 0,
+  );
   /* Felt: Indhold: Redigér-link */
   $handler->display->display_options['fields']['edit_node']['id'] = 'edit_node';
   $handler->display->display_options['fields']['edit_node']['table'] = 'views_entity_node';
   $handler->display->display_options['fields']['edit_node']['field'] = 'edit_node';
-  /* Sorteringskriterie: Indhold: Oprettelsesdato */
-  $handler->display->display_options['sorts']['created']['id'] = 'created';
-  $handler->display->display_options['sorts']['created']['table'] = 'node';
-  $handler->display->display_options['sorts']['created']['field'] = 'created';
-  $handler->display->display_options['sorts']['created']['order'] = 'DESC';
+  /* Sorteringskriterie: Indhold: Role Rækkefølge (field_role_weight) */
+  $handler->display->display_options['sorts']['field_role_weight_value']['id'] = 'field_role_weight_value';
+  $handler->display->display_options['sorts']['field_role_weight_value']['table'] = 'field_data_field_role_weight';
+  $handler->display->display_options['sorts']['field_role_weight_value']['field'] = 'field_role_weight_value';
   /* Filterkriterie: Indhold: Udgivet */
   $handler->display->display_options['filters']['status']['id'] = 'status';
   $handler->display->display_options['filters']['status']['table'] = 'node';
@@ -596,10 +607,12 @@ function valghalla_user_tools_views_default_views() {
     t('Sortér efter'),
     t('Stigende'),
     t('Faldende'),
-    t('<a class="btn btn-success" href="/node/add/roles?destination=valghalla/administration/roller">+ Tilføj rolle</a>'),
+    t('<a class="btn btn-success" href="/node/add/roles?destination=valghalla/administration/roller">+ Tilføj rolle</a>
+<span class="pull-right"><a class="btn btn-xs btn-warning" href="/reset-alphabetical/roles?destination=valghalla/administration/roller">Nulstil rækkefølge til alfabetisk</a></span>'),
     t('Beskrivelse'),
     t('Mødetidspunkt'),
     t('Timer'),
+    t('Rækkefølge'),
     t('Redigér-link'),
     t('Page'),
   );

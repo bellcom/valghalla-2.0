@@ -56,15 +56,10 @@ function valghalla_polling_station_views_default_views() {
   $handler->display->display_options['fields']['field_interntal_name']['field'] = 'field_interntal_name';
   $handler->display->display_options['fields']['field_interntal_name']['label'] = '';
   $handler->display->display_options['fields']['field_interntal_name']['element_label_colon'] = FALSE;
-  /* Sorteringskriterie: Indhold: Titel */
-  $handler->display->display_options['sorts']['title']['id'] = 'title';
-  $handler->display->display_options['sorts']['title']['table'] = 'node';
-  $handler->display->display_options['sorts']['title']['field'] = 'title';
-  /* Sorteringskriterie: Indhold: Oprettelsesdato */
-  $handler->display->display_options['sorts']['created']['id'] = 'created';
-  $handler->display->display_options['sorts']['created']['table'] = 'node';
-  $handler->display->display_options['sorts']['created']['field'] = 'created';
-  $handler->display->display_options['sorts']['created']['order'] = 'DESC';
+  /* Sorteringskriterie: Indhold: Role Rækkefølge (field_role_weight) */
+  $handler->display->display_options['sorts']['field_role_weight_value']['id'] = 'field_role_weight_value';
+  $handler->display->display_options['sorts']['field_role_weight_value']['table'] = 'field_data_field_role_weight';
+  $handler->display->display_options['sorts']['field_role_weight_value']['field'] = 'field_role_weight_value';
   /* Filterkriterie: Indhold: Udgivet */
   $handler->display->display_options['filters']['status']['id'] = 'status';
   $handler->display->display_options['filters']['status']['table'] = 'node';
@@ -120,7 +115,8 @@ function valghalla_polling_station_views_default_views() {
   $handler->display->display_options['header']['area']['table'] = 'views';
   $handler->display->display_options['header']['area']['field'] = 'area';
   $handler->display->display_options['header']['area']['empty'] = TRUE;
-  $handler->display->display_options['header']['area']['content'] = '<a class="btn btn-success" href="/node/add/polling-station?destination=valghalla/administration/valgsteder">+ Tilføj valgsted</a>';
+  $handler->display->display_options['header']['area']['content'] = '<a class="btn btn-success" href="/node/add/polling-station?destination=valghalla/administration/valgsteder">+ Tilføj valgsted</a>
+<span class="pull-right"><a class="btn btn-xs btn-warning" href="/reset-alphabetical/polling_station?destination=valghalla/administration/valgsteder">Nulstil rækkefølge til alfabetisk</a></span>';
   $handler->display->display_options['header']['area']['format'] = 'full_html';
   $handler->display->display_options['defaults']['fields'] = FALSE;
   /* Felt: Indhold: Titel */
@@ -137,6 +133,17 @@ function valghalla_polling_station_views_default_views() {
   $handler->display->display_options['fields']['field_interntal_name']['table'] = 'field_data_field_interntal_name';
   $handler->display->display_options['fields']['field_interntal_name']['field'] = 'field_interntal_name';
   $handler->display->display_options['fields']['field_interntal_name']['element_label_colon'] = FALSE;
+  /* Felt: Indhold: Role Rækkefølge */
+  $handler->display->display_options['fields']['field_role_weight']['id'] = 'field_role_weight';
+  $handler->display->display_options['fields']['field_role_weight']['table'] = 'field_data_field_role_weight';
+  $handler->display->display_options['fields']['field_role_weight']['field'] = 'field_role_weight';
+  $handler->display->display_options['fields']['field_role_weight']['label'] = 'Rækkefølge';
+  $handler->display->display_options['fields']['field_role_weight']['settings'] = array(
+    'thousand_separator' => ' ',
+    'decimal_separator' => '.',
+    'scale' => '2',
+    'prefix_suffix' => 0,
+  );
   /* Felt: Indhold: Redigér-link */
   $handler->display->display_options['fields']['edit_node']['id'] = 'edit_node';
   $handler->display->display_options['fields']['edit_node']['table'] = 'views_entity_node';
@@ -171,8 +178,10 @@ function valghalla_polling_station_views_default_views() {
     t('Stigende'),
     t('Faldende'),
     t('Page'),
-    t('<a class="btn btn-success" href="/node/add/polling-station?destination=valghalla/administration/valgsteder">+ Tilføj valgsted</a>'),
+    t('<a class="btn btn-success" href="/node/add/polling-station?destination=valghalla/administration/valgsteder">+ Tilføj valgsted</a>
+<span class="pull-right"><a class="btn btn-xs btn-warning" href="/reset-alphabetical/polling_station?destination=valghalla/administration/valgsteder">Nulstil rækkefølge til alfabetisk</a></span>'),
     t('Internt navn'),
+    t('Rækkefølge'),
     t('Rediger'),
     t('Entity Reference'),
   );
