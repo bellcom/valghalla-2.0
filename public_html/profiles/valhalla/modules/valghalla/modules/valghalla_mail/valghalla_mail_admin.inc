@@ -82,8 +82,12 @@ function valghalla_mail_admin_valghalla_mails($form, $form_state, $election_nid 
   $form['valghalla_role_mails'] = array(
     '#title' => t('Rollespecifikke E-mail skabeloner'),
     '#type' => 'fieldset',
-    '#description' => t('Herunder kan du vælge rollespecifikke E-mail skabeloner. Tryk på rolle titlen for at folde ud. Hvis du ikke vælger nogen ("ingen") bliver standard skabelonen brugt (vælges i boksen til venstre).'),
+    '#description' => t('Herunder kan du vælge rollespecifikke E-mail skabeloner. Disse indstillinger overskriver "Standard E-Mail skabeloner" for den valgte rolle.'),
   );
+
+  // Override 'none' for role specific mails. Let the user know that the default
+  // role value is inherited.
+  $mail_options[0] = t('Nedarves fra "Standard E-Mail skabeloner"');
 
   foreach($role_nodes as $role_node){
     $form['valghalla_role_mails'][$role_node->nid] = array(
