@@ -471,7 +471,6 @@ function valghalla_volunteers_to_polling_station_markup($polling_station, $user_
   $posts_array = valghalla_volunteers_to_polling_station_roles($polling_station, $user_party_id);
 
   if (!empty($posts_array['posts_to_fill'])) {
-    arsort($posts_array['posts_to_fill'], SORT_REGULAR);
 
     // Return the themed values
     return theme('station', array(
@@ -503,7 +502,7 @@ function valghalla_volunteers_to_polling_station_roles($polling_station, $party_
   $assigned_posts = _valghalla_helper_get_posts_to_fill($polling_station, $party_tid);
 
   // tth: Get all roles, query all content from bundle 'roles'
-  $role_array = _valghalla_helper_get_role_array();
+  $role_array = array_flip(odin_get_roles());
 
   $query_election_nid = $election_nid ? $election_nid : $_SESSION['election_nid'];
 

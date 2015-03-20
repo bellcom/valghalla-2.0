@@ -104,11 +104,7 @@ function valhalla_block_ajax_view($delta = '') {
 
   // We need to know what polling stations are active in this
   // election.
-  $polling_stations_field = field_get_items('node', $election_node, 'field_polling_stations');
-
-  foreach ($polling_stations_field as $data) {
-    $polling_station_nids[$data['target_id']] = $data['target_id'];
-  }
+  $polling_station_nids = odin_get_polling_stations($election_node->nid);
 
   if (empty($polling_station_nids)) {
     print 'Der er ingen valsteder på dette valg';
@@ -116,7 +112,7 @@ function valhalla_block_ajax_view($delta = '') {
   }
 
   // We also need the roles.
-  $roles = _valghalla_helper_get_roles();
+  $roles = odin_get_roles();
 
   switch ($delta) {
     //
@@ -124,7 +120,7 @@ function valhalla_block_ajax_view($delta = '') {
     //
     case 'party_status':
       $count = odin_get_volunteers_count($_SESSION['election_nid'],
-                                          $polling_station_nids,
+                                          array_keys($polling_station_nids),
                                           $roles,
                                           $user_party_id);
       $markup .= _valhalla_blocks_generate_overview_markup($count);
@@ -134,22 +130,15 @@ function valhalla_block_ajax_view($delta = '') {
     // Polling station status.
     //
     case 'party_constituency_status':
-      $constituency_nids = array();
-
       // We need info on the polling station nodes (constituency)
       // So we just load them all.
-      foreach (node_load_multiple($polling_station_nids) as $polling_station) {
+      foreach ($polling_station_nids as $polling_station_nid => $polling_station_title) {
         // If the array of restricting stations is not empty we only let the
         // user see the polling stations in this array.
         if (!empty($restrict_polling_stations) &&
-           !in_array($polling_station->nid, $restrict_polling_stations)) {
+           !in_array($polling_station_nid, $restrict_polling_stations)) {
           continue;
         }
-
-        $polling_station_nid = $polling_station->nid;
-
-        $constituency_field = field_get_items('node', $polling_station, 'field_constituency');
-        $constituency_nids[$constituency_field[0]['nid']][$polling_station_nid] = $polling_station_nid;
 
         $polling_station_count[$polling_station_nid] = odin_get_volunteers_count(
                                                                           $_SESSION['election_nid'],
@@ -157,6 +146,7 @@ function valhalla_block_ajax_view($delta = '') {
                                                                           $roles,
                                                                           $user_party_id);
       }
+      $constituency_nids = odin_get_constituencies($_SESSION['election_nid']);
       $markup .= _valhalla_blocks_generate_constituency_markup($constituency_nids, $polling_station_count);
 
       break;
@@ -214,9 +204,14 @@ function _valhalla_blocks_generate_overview_markup($count) {
                   </tr>
                 </thead>';
 
-  $roles = _valghalla_helper_get_roles();
+  $roles = odin_get_roles();
 
   foreach ($count['role_count'] as $role_nid => $role_count) {
+    if ($role_count['assigned'] == 0) {
+      // Skip roles that have no assigned posts.
+      continue;
+    }
+
     $label = _valhalla_blocks_get_label($role_count);
     $markup .= '
         <tr>
@@ -237,32 +232,18 @@ function _valhalla_blocks_generate_overview_markup($count) {
  * Generates table markup for constituency.
  */
 function _valhalla_blocks_generate_constituency_markup($constituency_nids, $polling_station_count) {
-  $roles = _valghalla_helper_get_roles();
+  $roles = odin_get_roles();
 
   $constituencies = array();
 
   foreach ($constituency_nids as $constituency_nid => $polling_station_nids) {
     $constituency_node = node_load($constituency_nid);
-    $constituencies[$constituency_node->title] = $polling_station_nids;
-  }
 
-  ksort($constituencies);
-
-  foreach ($constituencies as $constituency_title => $polling_station_nids) {
-    $markup .= '<table class="table"><thead><tr><th>' . $constituency_title . '</th>';
-    foreach ($roles as $role_nid => $role_title) {
-      $markup .= '<th class="column-label">' . $role_title . '</th>';
-    }
-
-    $markup .= '<th class="column-label">I alt</th>';
-    $markup .= '</tr></thead>';
-    $markup .= _valhalla_blocks_generate_polling_station_markup($polling_station_nids,
-                                                                $polling_station_count);
     $constituency_total = array();
 
     // Count constituency totals.
     foreach ($polling_station_count as $polling_station_nid => $data) {
-      if (in_array($polling_station_nid, $polling_station_nids)) {
+      if (in_array($polling_station_nid, array_keys($polling_station_nids))) {
         $constituency_total['total_count']['assigned'] += $data['total_count']['assigned'];
         $constituency_total['total_count']['total'] += $data['total_count']['total'];
         $constituency_total['total_count']['rsvp_ok'] += $data['total_count']['rsvp_ok'];
@@ -277,22 +258,49 @@ function _valhalla_blocks_generate_constituency_markup($constituency_nids, $poll
       }
     }
 
-    $markup .= '<tr><td class="total">I alt</td>';
+    $header_markup = '';
+    $bottom_markup = '';
 
-    // Generate bottom totals row.
+    // Generate header and bottom rows, for each constituency.
     foreach ($roles as $role_nid => $role_title) {
+      if ($constituency_total['role_count'][$role_nid]['assigned'] == 0) {
+        // Skip roles, if they have no assigned posts.
+        $skip_roles[] = $role_nid;
+        continue;
+      }
+      $header_markup .= '<th class="column-label">' . $role_title . '</th>';
+
+      // Generate bottom totals row.
       $label = _valhalla_blocks_get_label($constituency_total['role_count'][$role_nid]);
 
-      $markup .= '<td class="total column-count ' . $label . ' ">' . $constituency_total['role_count'][$role_nid]['total'];
-      $markup .= '/' . $constituency_total['role_count'][$role_nid]['assigned'] . '</td>';
+      $bottom_markup .= '<td class="total column-count ' . $label . ' ">' . $constituency_total['role_count'][$role_nid]['total'];
+      $bottom_markup .= '/' . $constituency_total['role_count'][$role_nid]['assigned'] . '</td>';
     }
+
+    // Generate constituency status block.
+    $markup = '<table class="table"><thead><tr><th>' . $constituency_node->title . '</th>';
+    $markup .= $header_markup;
+    $markup .= '<th class="column-label">I alt</th>';
+    $markup .= '</tr></thead>';
+    $markup .= _valhalla_blocks_generate_polling_station_markup($polling_station_nids,
+                                                                $polling_station_count, $skip_roles);
+
+    $markup .= '<tr><td class="total">I alt</td>';
+    $markup .= $bottom_markup;
+
     $label = _valhalla_blocks_get_label($constituency_total['total_count']);
 
     $markup .= '<td class="total column-count ' . $label . ' ">' . $constituency_total['total_count']['total'];
     $markup .= '/' . $constituency_total['total_count']['assigned'] . '</td>';
     $markup .= '</tr>';
     $markup .= '</table>';
+
+    $constituencies[$constituency_node->title] = $markup;
   }
+
+  ksort($constituencies);
+
+  $markup = implode('', $constituencies);
 
   return $markup;
 }
@@ -300,72 +308,27 @@ function _valhalla_blocks_generate_constituency_markup($constituency_nids, $poll
 /**
  * Generates row markup for overview page.
  */
-function _valhalla_blocks_generate_polling_station_markup($polling_station_nids, $polling_station_count) {
+function _valhalla_blocks_generate_polling_station_markup($polling_station_nids, $polling_station_count, $skip_roles = array()) {
   $markup = '';
 
-  // Preload all polling station nodes, get their weight.
-  foreach ($polling_station_nids as $polling_station_nid) {
-    $polling_station_node = node_load($polling_station_nid);
+  foreach ($polling_station_nids as $polling_station_nid => $polling_station_title) {
+    $markup .= '<tr><td class="column-first"><a href="/volunteers/station/' . $polling_station_nid . '">';
+    $markup .= $polling_station_title . '</a></td>';
 
-    $weight = 0;
-
-    if ($field = field_get_items('node', $polling_station_node, 'field_role_weight')) {
-      $weight = $field[0]['value'];
-    }
-
-    $polling_station_nodes[] = array(
-      'weight' => $weight,
-      'node' => $polling_station_node,
-    );
-  }
-
-  // Sort callback. 
-  $sort_polling_stations = function($a, $b) {
-    if ($a['node']->title == $b['node']->title) {
-      return 0;
-    }
-
-    $result = strnatcmp($b['node']->title, $a['node']->title);
-    return $result;
-  };
-
-  // Sort callback for weight.
-  $sort_polling_stations_weight = function($a, $b) {
-    // Skip sorting if no weight is set.
-    if ($a['weight'] == 0 || $b['weight'] == 0) {
-      return 0;
-    }
-
-    if ($a['weight'] == $b['weight']) {
-      return 0;
-    }
-
-    return ($a['weight'] < $b['weight']) ? -1 : 1;
-  };
-
-  // Sort naturally first.
-  uasort($polling_station_nodes, $sort_polling_stations);
-
-  // Sort pollingstations according to set weight.
-  uasort($polling_station_nodes, $sort_polling_stations_weight);
-
-  foreach ($polling_station_nodes as $data) {
-    $polling_station_node = $data['node'];
-
-    $markup .= '<tr><td class="column-first"><a href="/volunteers/station/' . $polling_station_node->nid . '">';
-    $markup .= $polling_station_node->title . '</a></td>';
-
-    foreach ($polling_station_count[$polling_station_node->nid]['role_count'] as $role_nid => $role_count) {
-
+    foreach ($polling_station_count[$polling_station_nid]['role_count'] as $role_nid => $role_count) {
+      if (in_array($role_nid, $skip_roles)) {
+        // Skip roles that have no assigned posts.
+        continue;
+      }
       $label = _valhalla_blocks_get_label($role_count);
 
       $markup .= '<td class="column-count ' . $label . '">'  .    $role_count['total'] . '/' . $role_count['assigned'] . '</td>';
     }
 
-    $label = _valhalla_blocks_get_label($polling_station_count[$polling_station_node->nid]['total_count']);
+    $label = _valhalla_blocks_get_label($polling_station_count[$polling_station_nid]['total_count']);
 
-    $markup .= '<td class="column-count ' . $label . '">'  .  $polling_station_count[$polling_station_node->nid]['total_count']['total'];
-    $markup .= '/' . $polling_station_count[$polling_station_node->nid]['total_count']['assigned'] . '</td>';
+    $markup .= '<td class="column-count ' . $label . '">'  .  $polling_station_count[$polling_station_nid]['total_count']['total'];
+    $markup .= '/' . $polling_station_count[$polling_station_nid]['total_count']['assigned'] . '</td>';
 
     $markup .= '</tr>';
   }
