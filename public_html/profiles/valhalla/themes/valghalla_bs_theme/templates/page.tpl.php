@@ -121,7 +121,7 @@
         <?php $block = module_invoke('valghalla', 'block_view', 'election_party_switcher'); ?>
         <?php print render($block['content']); ?>
 
-        <?php if (!empty($primary_nav)): ?>
+        <?php if (!empty($primary_nav) && user_is_logged_in()): ?>
           <?php print render($primary_nav); ?>
         <?php endif; ?>
 
