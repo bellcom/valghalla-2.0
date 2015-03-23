@@ -1,7 +1,7 @@
 name = Valghalla
 description = Valghalla base
 core = 7.x
-version = "7.x-1.2"
+version = "7.x-1.3"
 package = Valghalla
 project = valghalla
 dependencies[] = addressfield
