@@ -314,6 +314,7 @@ function valghalla_election_field_default_field_bases() {
         3 => 0,
         4 => 4,
         5 => 0,
+        6 => 0,
       ),
       'referenceable_status' => array(
         0 => 0,

@@ -290,7 +290,7 @@ function valghalla_election_field_default_field_instances() {
     'entity_type' => 'taxonomy_term',
     'field_name' => 'field_bogstav',
     'label' => 'Bogstav',
-    'required' => 1,
+    'required' => 0,
     'settings' => array(
       'text_processing' => 0,
       'user_register_form' => FALSE,
@@ -402,7 +402,7 @@ function valghalla_election_field_default_field_instances() {
     'entity_type' => 'taxonomy_term',
     'field_name' => 'field_partisek',
     'label' => 'Partisekretær',
-    'required' => 1,
+    'required' => 0,
     'settings' => array(
       'text_processing' => 0,
       'user_register_form' => FALSE,
@@ -436,7 +436,7 @@ function valghalla_election_field_default_field_instances() {
     'entity_type' => 'taxonomy_term',
     'field_name' => 'field_secretary',
     'label' => 'Partisekretær',
-    'required' => 1,
+    'required' => 0,
     'settings' => array(
       'user_register_form' => FALSE,
     ),

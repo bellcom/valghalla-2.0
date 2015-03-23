@@ -701,7 +701,7 @@ function valghalla_polling_station_field_default_field_instances() {
     'bundle' => 'polling_station',
     'default_value' => NULL,
     'deleted' => 0,
-    'description' => 'Kontaktperson for valgets afvilking på selve valgdagen(e).',
+    'description' => 'Kontaktperson for valgets afvilking på selve valgdagen(e). Kan benyttes som flettefelt i mailskabeloner.',
     'display' => array(
       'default' => array(
         'label' => 'hidden',
@@ -1066,7 +1066,7 @@ function valghalla_polling_station_field_default_field_instances() {
     'entity_type' => 'node',
     'field_name' => 'field_venue_contact',
     'label' => 'Andre kontaktoplysninger',
-    'required' => 1,
+    'required' => 0,
     'settings' => array(
       'text_processing' => 0,
       'user_register_form' => FALSE,
@@ -1306,7 +1306,7 @@ function valghalla_polling_station_field_default_field_instances() {
   t('Dør / Side');
   t('Frivillige pr. parti');
   t('Internt navn');
-  t('Kontaktperson for valgets afvilking på selve valgdagen(e).');
+  t('Kontaktperson for valgets afvilking på selve valgdagen(e). Kan benyttes som flettefelt i mailskabeloner.');
   t('Lokalekontakt');
   t('Nummer');
   t('Party');

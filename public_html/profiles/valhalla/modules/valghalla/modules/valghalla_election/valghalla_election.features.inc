@@ -14,7 +14,7 @@ function valghalla_election_node_info() {
       'base' => 'node_content',
       'description' => '',
       'has_title' => '1',
-      'title_label' => t('Title'),
+      'title_label' => t('Titel'),
       'help' => '',
     ),
     'election' => array(
@@ -26,5 +26,6 @@ function valghalla_election_node_info() {
       'help' => '',
     ),
   );
+  drupal_alter('node_info', $items);
   return $items;
 }
