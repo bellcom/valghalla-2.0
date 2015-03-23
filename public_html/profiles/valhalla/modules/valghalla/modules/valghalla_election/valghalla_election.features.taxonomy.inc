@@ -13,7 +13,7 @@ function valghalla_election_taxonomy_default_vocabularies() {
       'name' => 'Partier',
       'machine_name' => 'partier',
       'description' => '',
-      'hierarchy' => 1,
+      'hierarchy' => 0,
       'module' => 'taxonomy',
       'weight' => 0,
     ),
