@@ -532,7 +532,8 @@ function valghalla_user_tools_views_default_views() {
   $handler->display->display_options['header']['area']['field'] = 'area';
   $handler->display->display_options['header']['area']['empty'] = TRUE;
   $handler->display->display_options['header']['area']['content'] = '<a class="btn btn-success" href="/node/add/roles?destination=valghalla/administration/roller">+ Tilføj rolle</a>
-<span class="pull-right"><a class="btn btn-xs btn-warning" href="/reset-alphabetical/roles?destination=valghalla/administration/roller">Nulstil rækkefølge til alfabetisk</a></span>';
+<span class="pull-right"><a class="btn btn-xs btn-warning" href="/reset-alphabetical/roles?destination=valghalla/administration/roller">Nulstil rækkefølge til alfabetisk</a></span>
+<br />';
   $handler->display->display_options['header']['area']['format'] = 'full_html';
   /* Felt: Indhold: Titel */
   $handler->display->display_options['fields']['title']['id'] = 'title';
@@ -575,6 +576,10 @@ function valghalla_user_tools_views_default_views() {
   $handler->display->display_options['sorts']['field_role_weight_value']['id'] = 'field_role_weight_value';
   $handler->display->display_options['sorts']['field_role_weight_value']['table'] = 'field_data_field_role_weight';
   $handler->display->display_options['sorts']['field_role_weight_value']['field'] = 'field_role_weight_value';
+  /* Sorteringskriterie: Indhold: Titel */
+  $handler->display->display_options['sorts']['title']['id'] = 'title';
+  $handler->display->display_options['sorts']['title']['table'] = 'node';
+  $handler->display->display_options['sorts']['title']['field'] = 'title';
   /* Filterkriterie: Indhold: Udgivet */
   $handler->display->display_options['filters']['status']['id'] = 'status';
   $handler->display->display_options['filters']['status']['table'] = 'node';
@@ -608,7 +613,8 @@ function valghalla_user_tools_views_default_views() {
     t('Stigende'),
     t('Faldende'),
     t('<a class="btn btn-success" href="/node/add/roles?destination=valghalla/administration/roller">+ Tilføj rolle</a>
-<span class="pull-right"><a class="btn btn-xs btn-warning" href="/reset-alphabetical/roles?destination=valghalla/administration/roller">Nulstil rækkefølge til alfabetisk</a></span>'),
+<span class="pull-right"><a class="btn btn-xs btn-warning" href="/reset-alphabetical/roles?destination=valghalla/administration/roller">Nulstil rækkefølge til alfabetisk</a></span>
+<br />'),
     t('Beskrivelse'),
     t('Mødetidspunkt'),
     t('Timer'),
