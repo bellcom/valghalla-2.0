@@ -223,7 +223,8 @@ function odin_get_roles() {
       WHERE
         (( (node.type IN  ('roles')) ))
       ORDER BY
-        field_data_field_role_weight_field_role_weight_value ASC
+        field_data_field_role_weight_field_role_weight_value ASC,
+        node_title ASC
 EOL;
 
     $result = db_query($sql)->fetchAllKeyed(1, 0);
@@ -269,8 +270,9 @@ EOL;
   $constituencies = array();
 
   if ($result) {
-    foreach ($result as $polling_station_nid => $constituency_nid) {
-      $constituencies[$constituency_nid][$polling_station_nid] = $polling_stations[$polling_station_nid];
+    foreach ($polling_stations as $polling_station_nid => $polling_station_title) {
+      $constituency_nid = $result[$polling_station_nid];
+      $constituencies[$constituency_nid][$polling_station_nid] = $polling_station_title;
     }
   }
 
@@ -302,7 +304,9 @@ function odin_get_polling_stations($election_nid) {
           (field_data_field_role_weight.entity_type = 'node' AND field_data_field_role_weight.deleted = '0')
     WHERE
       (( (node.type IN  ('polling_station')) AND (node.nid IN (:nids)) ))
-    ORDER BY field_data_field_role_weight_field_role_weight_value ASC
+    ORDER BY
+      field_data_field_role_weight_field_role_weight_value ASC,
+      node_title ASC
 EOL;
 
   $result = db_query($sql, array(':nids' => $nids))->fetchAllKeyed(0, 1);
