@@ -711,8 +711,9 @@ function valghalla_volunteers_notify_volunteer($election_nid, $role_nid, $fc, $t
   $active = $field_status ? $field_status[0]['value'] : FALSE;
 
   $mail = valghalla_mail_get_mail($election_nid, $role_nid, $type);
+  $no_mail = valghalla_mail_volunteer_no_mail($fc->hostEntity());
 
-  if ($active && is_array($mail)) {
+  if (($active && is_array($mail)) && !$no_mail) {
     $tokens = _valghalla_helper_get_token_values($fc);
     $params = array_merge(array('tokens' => $tokens), $mail);
     $to = $tokens['!email'];
