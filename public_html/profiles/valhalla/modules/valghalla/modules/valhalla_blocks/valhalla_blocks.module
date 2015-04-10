@@ -263,11 +263,6 @@ function _valhalla_blocks_generate_constituency_markup($constituency_nids, $poll
 
     // Generate header and bottom rows, for each constituency.
     foreach ($roles as $role_nid => $role_title) {
-      if ($constituency_total['role_count'][$role_nid]['assigned'] == 0) {
-        // Skip roles, if they have no assigned posts.
-        $skip_roles[] = $role_nid;
-        continue;
-      }
       $header_markup .= '<th class="column-label">' . $role_title . '</th>';
 
       // Generate bottom totals row.
@@ -283,7 +278,7 @@ function _valhalla_blocks_generate_constituency_markup($constituency_nids, $poll
     $markup .= '<th class="column-label">I alt</th>';
     $markup .= '</tr></thead>';
     $markup .= _valhalla_blocks_generate_polling_station_markup($polling_station_nids,
-                                                                $polling_station_count, $skip_roles);
+                                                                $polling_station_count);
 
     $markup .= '<tr><td class="total">I alt</td>';
     $markup .= $bottom_markup;
@@ -308,7 +303,7 @@ function _valhalla_blocks_generate_constituency_markup($constituency_nids, $poll
 /**
  * Generates row markup for overview page.
  */
-function _valhalla_blocks_generate_polling_station_markup($polling_station_nids, $polling_station_count, $skip_roles = array()) {
+function _valhalla_blocks_generate_polling_station_markup($polling_station_nids, $polling_station_count) {
   $markup = '';
 
   foreach ($polling_station_nids as $polling_station_nid => $polling_station_title) {
@@ -316,10 +311,6 @@ function _valhalla_blocks_generate_polling_station_markup($polling_station_nids,
     $markup .= $polling_station_title . '</a></td>';
 
     foreach ($polling_station_count[$polling_station_nid]['role_count'] as $role_nid => $role_count) {
-      if (in_array($role_nid, $skip_roles)) {
-        // Skip roles that have no assigned posts.
-        continue;
-      }
       $label = _valhalla_blocks_get_label($role_count);
 
       $markup .= '<td class="column-count ' . $label . '">'  .    $role_count['total'] . '/' . $role_count['assigned'] . '</td>';
