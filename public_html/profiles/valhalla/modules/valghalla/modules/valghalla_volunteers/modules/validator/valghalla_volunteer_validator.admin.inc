@@ -41,10 +41,10 @@ function valghalla_volunteer_validator_settings(){
     '#default_value' => variable_get('valghalla_volunteer_validator_get_address', FALSE),
   );
 
-  $form['valghalla_volunteer_validator_hide_address_fields'] = array(
+  $form['valghalla_volunteer_validator_get_name'] = array(
     '#type' => 'checkbox',
-    '#title' => t('Skjul adressefelter på deltagerformular'),
-    '#default_value' => variable_get('valghalla_volunteer_validator_hide_address_fields', TRUE),
+    '#title' => t('Hent deltagerens navn fra CPR service. Kræver indhentning af adresse.'),
+    '#default_value' => variable_get('valghalla_volunteer_validator_get_name', FALSE),
   );
 
   $header = ['CPR service', 'Beskrivelse', 'Understøtter', 'Valgmuligheder'];
@@ -195,7 +195,6 @@ function valghalla_volunteer_validator_batch_process($op, $nids, &$context){
 
         // Validate volunteer, send the message from the cpr query
         if ($errors = valghalla_volunteer_validator_validate($node, $message)) {
-          error_log(__FILE__.' : '.__LINE__.': '. print_r($errors, 1)); // tth@bellcom.dk debugging
           $context['results']['validate_errors'][$nid] = array_merge($context['results']['validate_errors'][$nid], $errors);
         }
 
