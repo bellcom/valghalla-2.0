@@ -244,6 +244,7 @@ function vcv_serviceplatformen_get_address($cpr) {
   if ($message['status']) {
     return array(
       'status' => TRUE,
+      'name' => isset($message['adresseringsnavn']) ? $message['adresseringsnavn'] : '',
       'road' => isset($message['vejadresseringsnavn']) ? $message['vejadresseringsnavn'] : '',
       'road_no' => isset($message['husnummer']) ? $message['husnummer'] : '',
       'floor' => isset($message['etage']) ? $message['etage'] : '',
