@@ -43,7 +43,7 @@ function valghalla_volunteer_validator_settings(){
 
   $form['valghalla_volunteer_validator_get_name'] = array(
     '#type' => 'checkbox',
-    '#title' => t('Hent deltagerens navn fra CPR service.'),
+    '#title' => t('Hent deltagerens navn fra CPR service. Kræver indhentning af adresse.'),
     '#default_value' => variable_get('valghalla_volunteer_validator_get_name', FALSE),
   );
 
