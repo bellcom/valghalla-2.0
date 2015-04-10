@@ -24,9 +24,25 @@ function valhalla_admin_settings_form($form, &$form_state) {
     '#default_value' => variable_get('valhalla_settings_polling_station_lock', FALSE),
   );
 
+  //
+  // Let the admin select who should see the address fields on the edit form.
+  $form['valhalla_settings_hide_address_fields'] = array(
+    '#type' => 'radios',
+    '#title' => 'Skjul adresse felter på deltager redigeringsformular.',
+    '#options' => array(
+      0 => 'Vis for alle',
+      1 => 'Skjul for alle',
+      2 => 'Vis kun for administrator (roller med tilladelsen "Administerer valghalla")',
+    ),
+    '#default_value' => variable_get('valhalla_settings_hide_address_fields', 0),
+  );
+
   return system_settings_form($form);
 }
 
+/**
+ * Implements hook_form_alter().
+ */
 function valhalla_settings_form_alter(&$form, &$form_state, $form_id) {
   if($form_id == 'user_profile_form'){
     global $user;
@@ -38,6 +54,45 @@ function valhalla_settings_form_alter(&$form, &$form_state, $form_id) {
 
   if (variable_get('valhalla_settings_polling_station_lock', FALSE)) {
     _valhalla_settings_lock_field($form, $form_state);
+  }
+
+  // Hide the address fields for on the volunteer according to settings.
+  if ($form_id == 'volunteers_node_form') {
+    $fields = array(
+      'field_address_road',
+      'field_address_road_no',
+      'field_address_floor',
+      'field_address_door',
+      'field_address_zipcode',
+      'field_address_city',
+      'field_address_coname',
+    );
+
+    $user_access = user_access('administer valghalla');
+    $hide_address_field = variable_get('valhalla_settings_hide_address_fields', 0);
+
+    switch ($hide_address_field) {
+      case 0:
+        $show_fields = TRUE;
+        break;
+
+      case 1:
+        $show_fields = FALSE;
+        break;
+
+      case 2:
+        $show_fields = TRUE;
+        if (!$user_access) {
+          $show_fields = FALSE;
+        }
+        break;
+    }
+
+    if (!$show_fields) {
+      foreach ($fields as $field) {
+        $form[$field]['#access'] = FALSE;
+      }
+    }
   }
 }
 
