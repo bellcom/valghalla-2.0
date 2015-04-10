@@ -61,7 +61,7 @@ function liste_deltager_form($form, &$form_state) {
     '#type' => 'fieldset',
     '#title' => t('Gem filtre'),
     '#collapsible' => TRUE,
-    '#collapsed' => TRUE,
+    '#collapsed' => FALSE,
     '#prefix' => '<div class="no-print">',
     '#suffix' => '</div>',
     '#access' => user_access('liste deltager administer saved filters'),
@@ -159,8 +159,8 @@ function liste_deltager_form($form, &$form_state) {
     '#suffix' => '</div>',
   );
 
+  // If a saved filters is selected. Fill out the forms default values.
   if (isset($saved_filters[arg(2)])) {
-
     $input = $saved_filters[arg(2)]['input'];
     $filter = $saved_filters[arg(2)];
     drupal_set_title('Gemt liste: ' . $filter['name']);
@@ -171,6 +171,13 @@ function liste_deltager_form($form, &$form_state) {
     $form['filter']['party']['#default_value'] = $input['party'];
     $form['filter']['rsvp']['#default_value'] = $input['rsvp'];
     $form['save_filters']['name']['#default_value'] = $saved_filters[arg(2)]['name'];
+
+    // And if it is not already rebuild (submitted), set the formstate values
+    // and pretend that it is rebuild, to trigger an update of the results.
+    if (!isset($form_state['rebuild']) || !$form_state['rebuild']) {
+      $form_state['values'] = $input;
+      $form_state['rebuild'] = TRUE;
+    }
   }
 
   if (isset($form_state['rebuild']) && $form_state['rebuild']) {
