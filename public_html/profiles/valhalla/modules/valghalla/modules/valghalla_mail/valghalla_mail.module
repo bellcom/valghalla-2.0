@@ -236,3 +236,14 @@ function valghalla_mail_get_mails(){
   }
   return $mail_options;
 }
+
+/**
+ * Check if the user should recieve mails.
+ */
+function valghalla_mail_volunteer_no_mail($volunteer_node) {
+  if ($field = field_get_items('node', $volunteer_node, 'field_no_mail')) {
+    return $field[0]['value'] == 1;
+  }
+
+  return FALSE;
+}
