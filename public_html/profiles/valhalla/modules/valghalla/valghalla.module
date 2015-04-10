@@ -72,6 +72,9 @@ function valghalla_block_info() {
       'info' => t('Skift valg og parti'),
       'cache' => DRUPAL_NO_CACHE,
     ),
+    'valghalla_version_tag' => array(
+      'info' => t('Valghalla version'),
+    ),
   );
 }
 
@@ -85,6 +88,13 @@ function valghalla_block_view($delta = '') {
       if (user_is_logged_in()) {
         $election_form = drupal_get_form('valghalla_change_election_party_form');
         return array("content" => drupal_render($election_form));
+      }
+      break;
+
+    case 'valghalla_version_tag':
+      if (user_is_logged_in()) {
+        $version = file_get_contents($_SERVER['DOCUMENT_ROOT'] . '/valghalla.version' );
+        return array("content" => '<small><a href="https://github.com/OS2Valghalla/valghalla/tags">v.' . $version . '</a></small>');
       }
   }
 }
