@@ -321,6 +321,43 @@ function valghalla_volunteers_field_default_field_instances() {
     ),
   );
 
+  // Exported field_instance: 'node-roles-field_meeting_time'
+  $field_instances['node-roles-field_meeting_time'] = array(
+    'bundle' => 'roles',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'taxonomy',
+        'settings' => array(),
+        'type' => 'taxonomy_term_reference_link',
+        'weight' => 5,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_meeting_time',
+    'label' => 'Mødetid',
+    'required' => 0,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'options',
+      'settings' => array(),
+      'type' => 'options_select',
+      'weight' => 4,
+    ),
+  );
+
   // Exported field_instance: 'node-roles-field_meetingtime'
   $field_instances['node-roles-field_meetingtime'] = array(
     'bundle' => 'roles',
@@ -790,7 +827,7 @@ function valghalla_volunteers_field_default_field_instances() {
     ),
     'entity_type' => 'node',
     'field_name' => 'field_cpr_number',
-    'label' => 'CPR Number',
+    'label' => 'CPR Nummer',
     'required' => 1,
     'settings' => array(
       'text_processing' => 0,
@@ -1150,6 +1187,49 @@ function valghalla_volunteers_field_default_field_instances() {
     ),
   );
 
+  // Exported field_instance: 'node-volunteers-field_no_mail'
+  $field_instances['node-volunteers-field_no_mail'] = array(
+    'bundle' => 'volunteers',
+    'default_value' => array(
+      0 => array(
+        'value' => 0,
+      ),
+    ),
+    'deleted' => 0,
+    'description' => 'Deltageren er fritaget for Digital Post. Afkrydses dette felt, vil deltageren ikke modtage mails fra Valghalla.',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'list',
+        'settings' => array(),
+        'type' => 'list_default',
+        'weight' => 35,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_no_mail',
+    'label' => 'Fritagelse for Digital Post',
+    'required' => 0,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'options',
+      'settings' => array(
+        'display_label' => 1,
+      ),
+      'type' => 'options_onoff',
+      'weight' => 26,
+    ),
+  );
+
   // Exported field_instance: 'node-volunteers-field_party'
   $field_instances['node-volunteers-field_party'] = array(
     'bundle' => 'volunteers',
@@ -1290,7 +1370,7 @@ function valghalla_volunteers_field_default_field_instances() {
     ),
     'entity_type' => 'node',
     'field_name' => 'field_polling_station',
-    'label' => 'Polling Station',
+    'label' => 'Valgsted',
     'required' => 0,
     'settings' => array(
       'user_register_form' => FALSE,
@@ -1481,20 +1561,22 @@ function valghalla_volunteers_field_default_field_instances() {
   t('BNummer');
   t('By');
   t('CO Navn');
-  t('CPR Number');
+  t('CPR Nummer');
   t('CPR Opslag dato');
   t('CPR status');
+  t('Deltageren er fritaget for Digital Post. Afkrydses dette felt, vil deltageren ikke modtage mails fra Valghalla.');
   t('Description');
   t('Diæt');
   t('Dør / side');
   t('Ekstern tilmelding');
   t('Email');
+  t('Fritagelse for Digital Post');
   t('Hus nr.');
   t('Label');
+  t('Mødetid');
   t('Mødetidspunkt');
   t('Parti');
   t('Parti plads');
-  t('Polling Station');
   t('Polling Station post');
   t('Postnr.');
   t('Role Rækkefølge');
