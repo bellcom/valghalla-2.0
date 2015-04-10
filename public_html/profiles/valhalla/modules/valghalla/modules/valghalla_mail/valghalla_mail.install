@@ -89,3 +89,13 @@ function valghalla_mail_install(){
   variable_del('valhalla_rsvp_status_subject_never');
   variable_del('valhalla_rsvp_status_body_never');
 }
+
+/**
+ * Set mimemail variables, send filtered_html mails.
+ */
+function valghalla_mail_update_7102() {
+  // Set variables for sending html mails.
+  variable_set('mimemail_engine', 'mimemail');
+  variable_set('mimemail_format', 'filtered_html');
+  variable_set('mail_system', array('default-system' => 'MimeMailSystem'));
+}

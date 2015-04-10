@@ -316,39 +316,47 @@ function valghalla_mail_sendmail_get_recipients($values) {
     $volunteer_query->fieldCondition('field_election', 'target_id', $values['election_nid']);
 
     $result = array_keys(array_shift($volunteer_query->execute()));
-    return $result;
+  }
+  else {
+    $rsvp_status = count($values['rsvp_status']) > 0 ? $values['rsvp_status'] : FALSE;
+    $roles = count($values['roles']) > 0 ? $values['roles'] : FALSE;
+    $party = count($values['party']) > 0 ? $values['party'] : FALSE;
+    $polling_station = count($values['polling_station']) > 0 ? $values['polling_station'] : FALSE;
+    $election = count($values['election']) > 0 ? $values['election'] : FALSE;
+
+    // Prepare statement.
+    $volunteer_query = new EntityFieldQuery();
+    $volunteer_query->entityCondition('entity_type', 'field_collection_item')
+        ->entityCondition('bundle', 'field_electioninfo');
+
+    if ($election) {
+      $volunteer_query->fieldCondition('field_election', 'target_id', $election);
+    }
+    if ($rsvp_status) {
+      $volunteer_query->fieldCondition('field_rsvp', 'value', $rsvp_status);
+    }
+    if ($roles) {
+      $volunteer_query->fieldCondition('field_post_role', 'target_id', $roles);
+    }
+    if ($party) {
+      $volunteer_query->fieldCondition('field_post_party', 'target_id', $party);
+    }
+    if ($polling_station) {
+      $volunteer_query->fieldCondition('field_vlnt_station', 'target_id', $polling_station);
+    }
+
+    $result = array_keys(array_shift($volunteer_query->execute()));
   }
 
-  $rsvp_status = count($values['rsvp_status']) > 0 ? $values['rsvp_status'] : FALSE;
-  $roles = count($values['roles']) > 0 ? $values['roles'] : FALSE;
-  $party = count($values['party']) > 0 ? $values['party'] : FALSE;
-  $polling_station = count($values['polling_station']) > 0 ? $values['polling_station'] : FALSE;
-  $election = count($values['election']) > 0 ? $values['election'] : FALSE;
+  foreach (entity_load('field_collection_item', $result) as $volunteer_item) {
+    $volunteer_node = $volunteer_item->hostEntity();
 
-  // Prepare statement.
-  $volunteer_query = new EntityFieldQuery();
-  $volunteer_query->entityCondition('entity_type', 'field_collection_item')
-      ->entityCondition('bundle', 'field_electioninfo');
-
-  if ($election) {
-    $volunteer_query->fieldCondition('field_election', 'target_id', $election);
-  }
-  if ($rsvp_status) {
-    $volunteer_query->fieldCondition('field_rsvp', 'value', $rsvp_status);
-  }
-  if ($roles) {
-    $volunteer_query->fieldCondition('field_post_role', 'target_id', $roles);
-  }
-  if ($party) {
-    $volunteer_query->fieldCondition('field_post_party', 'target_id', $party);
-  }
-  if ($polling_station) {
-    $volunteer_query->fieldCondition('field_vlnt_station', 'target_id', $polling_station);
+    if (!valghalla_mail_volunteer_no_mail($volunteer_node)) {
+      $volunteer_fcids[] = $volunteer_item->item_id;
+    }
   }
 
-  $result = array_keys(array_shift($volunteer_query->execute()));
-
-  return $result;
+  return $volunteer_fcids;
 }
 
 /**
