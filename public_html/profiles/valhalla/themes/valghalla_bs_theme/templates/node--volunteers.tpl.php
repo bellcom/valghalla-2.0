@@ -8,14 +8,21 @@
       <td>Adresse:</td>
       <td><?php print valhalla_bs_vol_address($node);?></td>
     </tr>
+    <tr>
       <td>Telefon:</td>
       <td><?php print valhalla_bs_vol_phone($node);?></td>
     </tr>
+    <tr>
       <td>Email:</td>
       <td><?php print valhalla_bs_vol_mail($node);?></td>
     </tr>
+    <tr>
       <td>Cpr:</td>
       <td><?php print valhalla_bs_vol_cpr($node);?></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td><?php print valhalla_bs_vol_no_mail($node);?></td>
     </tr>
   </table>
   <br /><br />
