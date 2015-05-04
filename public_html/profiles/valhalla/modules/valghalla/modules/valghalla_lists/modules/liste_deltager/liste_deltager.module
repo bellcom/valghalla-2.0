@@ -380,6 +380,13 @@ function liste_deltager_get_volunteers($values) {
     $party_post = $parties[$party_post_field[0]['target_id']];
 
     $rsvp_field = field_get_items('field_collection_item', $volunteer_fc, 'field_rsvp');
+
+    // If the field does not contain any content, set the field value to 0.
+    if (!$rsvp_field) {
+      $rsvp_field[0]['value'] = '0';
+    }
+
+    // The value of the volunteers response.
     $rsvp = $rsvp_map[$rsvp_field[0]['value']];
 
     if (!in_array($rsvp_field[0]['value'], $rsvp_filter, TRUE)) {
