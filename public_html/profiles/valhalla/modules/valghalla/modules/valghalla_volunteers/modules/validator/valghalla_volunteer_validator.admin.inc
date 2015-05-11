@@ -203,12 +203,27 @@ function valghalla_volunteer_validator_batch_process($op, $nids, &$context){
       case 'address':
         $message = valghalla_volunteer_validator_query_service('get_address', $cpr);
 
+        // If the volunteer is not found in the CPR service, save the error.
         if(!$message['status']){
           $context['results']['address_errors'][$nid]['address'] = array('nid' => $nid, 'text' => $message['text']);
           continue;
         }
-        $node->field_address_road[$node->language][0]['value'] = $message['address'];
-        $node->field_address_zipcode[$node->language][0]['value'] = $message['zipcode'];
+
+        // Map of volunteer fields and indexes on the message array.
+        $field_map = array(
+          'field_address_road' => 'road',
+          'field_address_road_no' => 'road_no',
+          'field_address_floor' => 'floor',
+          'field_address_door' => 'door',
+          'field_address_zipcode' => 'zipcode',
+          'field_address_city' => 'city',
+          'field_address_coname' => 'coname',
+        );
+
+        // Set the values on the node.
+        foreach ($field_map as $field => $index) {
+          $node->{$field}[$node->language][0]['value'] = trim($message[$index]);
+        }
         break;
     }
 

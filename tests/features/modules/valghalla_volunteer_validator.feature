@@ -40,3 +40,19 @@ Background:
     And I press "Udfør"
     Then I should see "Jens Mortensen"
     And I should see "070761-4285"
+
+@api @javascript @test
+  # This test is dependant of https://cpr.dk/migrering-af-cpr-systemet/test/testpersoner-i-testmiljoeet/
+  # And two attendees with CPR 070761-4293 and 070661-4184
+  Scenario: Updating all attendee addresses with the validator
+    Given I am logged in as a user with the "administrator" role
+    Given I go to "admin/valghalla/validator"
+    And I click "Opdater alle deltagers adresser"
+    And I press "Ja, fortsæt"
+    And I wait for the batch job to finish
+    Then I should see "Handlingen blev gennemført"
+    And I go to attendee page for "Arne Henriksen"
+    Then I should see "Toregårdsvej 009, 05 tv, 9000 Aalborg"
+    And I go to attendee page for "Lars Henriksen"
+    Then I should see "Svinget 050, , 9000 Aalborg"
+
