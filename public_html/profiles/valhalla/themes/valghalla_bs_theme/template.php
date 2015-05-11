@@ -122,7 +122,9 @@ function valhalla_bs_vol_phone($node) {
 
 function valhalla_bs_vol_no_mail($node) {
   if ($field = field_get_items('node', $node, 'field_no_mail')) {
-    return '<b>Deltageren er fritaget for digital post</b>';
+    if ($field[0]['value']) {
+      return '<b>Deltageren er fritaget for digital post</b>';
+    }
   }
   return '';
 }
