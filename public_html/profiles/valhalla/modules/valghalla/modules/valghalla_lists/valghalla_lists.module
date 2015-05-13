@@ -44,13 +44,15 @@ function valghalla_lists_redirect($path) {
   $user_entity = user_load($user->uid);
 
   // The first argument is the user party id.
-  $arguments = empty($user_entity->field_party[LANGUAGE_NONE][0]['tid']) ? FALSE : $user_entity->field_party[LANGUAGE_NONE][0]['tid'];
+  $arguments = empty($user_entity->field_party[LANGUAGE_NONE][0]['tid']) ? 'all' : $user_entity->field_party[LANGUAGE_NONE][0]['tid'];
 
   // And add the election nid if it's set.
   if ($_SESSION['election_nid']) {
     $arguments .= '/' . $_SESSION['election_nid'];
+    drupal_goto($path . '/' . $arguments);
   }
-  drupal_goto($path . '/' . $arguments);
+  drupal_set_message(t('Du skal vælge et valg i topmenuen'));
+  drupal_goto();
 }
 
 /**
