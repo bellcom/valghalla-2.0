@@ -93,7 +93,7 @@ function valghalla_mail_rsvp_reminder_send($election, $volunteer_fc) {
 
   $to = $email[0]['email'];
   $from = variable_get('site_mail', 'admin@example.com');
-  $tokens = _valhalla_helper_get_token_values($volunteer_fc);
+  $tokens = _valghalla_helper_get_token_values($volunteer_fc);
 
   // Fetch the mail for the volunteers role
   if($mail = valghalla_mail_get_mail($election->nid, $tokens['!position_nid'], 'reminder')){
