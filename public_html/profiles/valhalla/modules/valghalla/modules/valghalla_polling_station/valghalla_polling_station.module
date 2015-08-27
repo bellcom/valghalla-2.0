@@ -67,3 +67,74 @@ function valghalla_polling_station_get_contact($polling_station) {
 
   return implode($contact_info_array, ', ');
 }
+
+/**
+ * Implements hook_form_alter().
+ */
+function valghalla_polling_station_form_alter(&$form, &$form_state, $form_id) {
+  if ($form_id == 'polling_station_node_form') {
+    // Add extra validation handler for polling station node.
+    $form['#validate'][] = 'valghalla_polling_station_node_form_validate';
+
+    if (is_numeric(arg(1))) {
+      drupal_set_message(t('Ved opdatering af deltagerantal vil det blive kontrolleret hvorvidt det indtastede antal ikke er mindre end det allerede tilføjede antal deltagere på valgsted for det aktive valg.'));
+    }
+  }
+}
+
+/**
+ * Validation handler for polling station node form.
+ */
+function valghalla_polling_station_node_form_validate($form, $form_state) {
+  // Only validate if editing an existing node.
+  if (is_numeric(arg(1))) {
+    foreach ($form_state['values']['field_volunteers_pr_party_1'][LANGUAGE_NONE] as $delta => $value) {
+      if (is_numeric($delta)) {
+        foreach ($value as $field_name => $field_value) {
+          // Extract party tid.
+          if ($field_name == 'field_party_list') {
+            $party_tid = $field_value[LANGUAGE_NONE][0]['party_list'];
+          }
+
+          if (strpos($field_name, 'field_role_n') !== FALSE) {
+            $role_nid = str_replace('field_role_n', '', $field_name);
+            $count = $field_value[LANGUAGE_NONE][0]['number_vo'];
+
+          }
+          if ($party_tid && $role_nid) {
+            $map[$party_tid][$role_nid] = $count;
+          }
+        }
+      }
+    }
+
+    $roles = odin_get_roles();
+    $parties = odin_get_parties();
+
+    $polling_station = arg(1);
+    if ($_SESSION['election_nid']) {
+      // Loop through all combinations and find out if any of the input values
+      // are lower than the already allocated count.
+      foreach ($map as $party_tid => $roles_map) {
+        foreach ($roles_map as $role_nid => $count) {
+          $volunteer_query = new EntityFieldQuery();
+          $volunteer_query->entityCondition('entity_type', 'field_collection_item')
+              ->entityCondition('bundle', 'field_electioninfo')
+              ->fieldCondition('field_election', 'target_id', $_SESSION['election_nid'])
+              ->fieldCondition('field_post_role', 'target_id', $role_nid)
+              ->fieldCondition('field_post_party', 'target_id', $party_tid)
+              ->fieldCondition('field_vlnt_station', 'target_id', $polling_station);
+
+          $result = array_keys(array_shift($volunteer_query->execute()));
+          if ($result) {
+            $allocated = count($result);
+
+            if ($allocated > $count) {
+              form_set_error('field_role_n' . $role_nid, 'Deltagere - Det indtastede antal er mindre end antallet af tilføjede deltagere. Parti: ' . $parties[$party_tid] . ', Rolle: ' . $roles[$role_nid] . ', antal: ' . $allocated . ', indtastet: ' . $count);
+            }
+          }
+        }
+      }
+    }
+  }
+}
