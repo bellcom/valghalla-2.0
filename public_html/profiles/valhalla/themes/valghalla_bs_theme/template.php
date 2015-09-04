@@ -134,14 +134,8 @@ function valhalla_bs_vol_cpr($node) {
     $cpr = $field[0]['value'];
   }
 
-  $day = substr($cpr, 0, 2);
-  $month = substr($cpr, 2, 2);
-  $year = 19 . substr($cpr, 4, 2);
-
-  $date = DateTime::createFromFormat('d-m-Y', $day . '-' . $month . '-' . $year);
-  $now = new DateTime();
-  $interval = $now->diff($date);
-  $age = ' (' . $interval->y . ' år)';
+  $age = _valghalla_helper_get_age_from_cpr($cpr);
+  $age = ' (' . $age . ' år)';
 
   if (user_access('see all psn numbers')) {
     return $cpr . $age;

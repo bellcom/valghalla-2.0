@@ -448,3 +448,56 @@ function _valghalla_helper_get_volunteer_info_params($node) {
           </ul>
           <p><em>Bemærk!</em> i nogle tilfælde vil nogle tokens ikke være tilgængelige.</p>";
 }
+
+/**
+ * _valghalla_helper_get_age_from_cpr
+ * Returns the correct age from CPR number taking century into account
+ *
+ * @param string $cpr
+ *
+ * @return int
+ * @author Henrik Farre <hf@bellcom.dk>
+ */
+function _valghalla_helper_get_age_from_cpr($cpr)
+{
+  // Based on http://kronsell.net/cpralder.htm
+  $year_prefix = 19;
+  $year        = substr($cpr, 4, 2);
+
+  switch (substr($cpr, 7, 1))
+  {
+    case 0:
+    case 1:
+    case 2:
+    case 3:
+      $year_prefix = 19;
+      break;
+    case 4:
+    case 9:
+      if ($year <= 36) {
+        $year_prefix = 20;
+      }
+      break;
+    case 5:
+    case 6:
+    case 7:
+    case 8:
+      if ($year <= 36) {
+        $year_prefix = 20;
+      }
+      if ($year >= 58) {
+        $year_prefix = 18;
+      }
+      break;
+  }
+
+  $day   = substr($cpr, 0, 2);
+  $month = substr($cpr, 2, 2);
+  $year  = $year_prefix . $year;
+
+  $date     = DateTime::createFromFormat('d-m-Y', $day . '-' . $month . '-' . $year);
+  $now      = new DateTime();
+  $interval = $now->diff($date);
+
+  return $interval->y;
+}
