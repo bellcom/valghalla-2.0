@@ -311,11 +311,32 @@ function valghalla_mail_sendmail_get_recipients($values) {
     $volunteer_query = new EntityFieldQuery();
     $volunteer_query->entityCondition('entity_type', 'field_collection_item')
       ->entityCondition('bundle', 'field_electioninfo')
-      ->fieldCondition('field_post_role', 'target_id', 'NULL', '!=');
+      ->fieldCondition('field_post_role', 'target_id', 'NULL', '!=')
+      ->fieldCondition('field_election', 'target_id', $values['election_nid']);
 
-    $volunteer_query->fieldCondition('field_election', 'target_id', $values['election_nid']);
+    // Ensure that e-mails only are send to volunteers on polling stations that are active
+    $result = array();
+    $polling_stations = odin_get_polling_stations($values['election_nid']);
 
-    $result = array_keys(array_shift($volunteer_query->execute()));
+    if (!empty($polling_stations)) {
+      $unfiltered_result = array_shift($volunteer_query->execute());
+      foreach ($unfiltered_result as $volunteer_id => $volunteer_item) {
+        $polling_station_nid = 0;
+
+        if ($fc = entity_load_single('field_collection_item', $volunteer_item->item_id)) {
+          $election_field = field_get_items('field_collection_item', $fc, 'field_election');
+          $polling_station_field = field_get_items('field_collection_item', $fc, 'field_vlnt_station');
+          $polling_station_nid = $polling_station_field ? $polling_station_field[0]['target_id'] : 0;
+        }
+
+        if (isset($polling_stations[$polling_station_nid])) {
+          $result[] = $volunteer_id;
+        }
+      }
+    }
+    else {
+      drupal_set_message(t('Der er ingen aktive valgsteder på valget'), 'warning');
+    }
   }
   else {
     $rsvp_status = count($values['rsvp_status']) > 0 ? $values['rsvp_status'] : FALSE;
