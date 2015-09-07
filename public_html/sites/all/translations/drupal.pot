@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
-"POT-Creation-Date: 2015-09-07 13:18+0200\n"
+"POT-Creation-Date: 2015-09-07 14:12+0200\n"
 "PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
 "Last-Translator: NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
@@ -59,10 +59,6 @@ msgstr ""
 
 #: /admin/config/regional/language
 msgid "Valgstedets navn"
-msgstr ""
-
-#: /admin/config/regional/language
-msgid "Deltagere"
 msgstr ""
 
 #: /admin/config/regional/language
@@ -5370,10 +5366,6 @@ msgid "Displays the fields in a panel rather than using a template."
 msgstr ""
 
 #: /index.php
-msgid "Data export"
-msgstr ""
-
-#: /index.php
 msgid "Export the view results to a file. Can handle very large result sets."
 msgstr ""
 
@@ -5813,14 +5805,6 @@ msgstr ""
 
 #: /admin/appearance/default?token=QetAKYKhI6s0Kt6M8p6AV4Fw90n4PLkleukJk3a0Zz0&theme=valhalla_bs
 msgid "Symbol"
-msgstr ""
-
-#: /admin/appearance/default?token=QetAKYKhI6s0Kt6M8p6AV4Fw90n4PLkleukJk3a0Zz0&theme=valhalla_bs
-msgid "Data Export CSV"
-msgstr ""
-
-#: /admin/appearance/default?token=QetAKYKhI6s0Kt6M8p6AV4Fw90n4PLkleukJk3a0Zz0&theme=valhalla_bs
-msgid "Data Export XLS"
 msgstr ""
 
 #: /admin/appearance/default?token=QetAKYKhI6s0Kt6M8p6AV4Fw90n4PLkleukJk3a0Zz0&theme=valhalla_bs
@@ -8123,36 +8107,6 @@ msgstr ""
 msgid "Mangler en gyldig csv fil."
 msgstr ""
 
-#: /valghalla_lists/export_xls
-msgid "Building export"
-msgstr ""
-
-#: /valghalla_lists/export_xls
-msgid "Export is starting up."
-msgstr ""
-
-#: /valghalla_lists/export_xls
-msgid "Exporting @percentage% complete,"
-msgstr ""
-
-#: /valghalla_lists/export_xls
-msgid "Export has encountered an error."
-msgstr ""
-
-#: /batch?id=9&op=do
-msgid "Time remaining: about @interval."
-msgstr ""
-
-#: /valghalla_lists/export_xls?eid=1&return-url
-msgid "Data export successful"
-msgstr ""
-
-#: /valghalla_lists/export_xls?eid=1&return-url
-msgid ""
-"Your export has been created. View/download the file <a "
-"href=\"@link\">here</a> (will automatically download in 3 seconds.)"
-msgstr ""
-
 #: /admin/help
 msgid "block"
 msgstr ""
@@ -9921,16 +9875,8 @@ msgstr ""
 msgid "Valider deltager"
 msgstr ""
 
-#: /
-msgid "Deltagere pr. parti"
-msgstr ""
-
 #: /admin/valghalla/validator
 msgid "Deltager validering"
-msgstr ""
-
-#: /admin/valghalla/validator
-msgid "Send mails til deltagere"
 msgstr ""
 
 #: /admin/valghalla/validator
@@ -10061,51 +10007,36 @@ msgstr ""
 msgid "Preview .info file"
 msgstr ""
 
-#: /valghalla/deltagere/importer
-msgid "Importér nye deltagere"
-msgstr ""
-
-#: ; misc/drupal.js
 msgid "An AJAX HTTP error occurred."
 msgstr ""
 
-#: ; misc/drupal.js
 msgid "HTTP Result Code: !status"
 msgstr ""
 
-#: ; misc/drupal.js
 msgid "An AJAX HTTP request terminated abnormally."
 msgstr ""
 
-#: ; misc/drupal.js
 msgid "Debugging information follows."
 msgstr ""
 
-#: ; misc/drupal.js
 msgid "Path: !uri"
 msgstr ""
 
-#: ; misc/drupal.js
 msgid "StatusText: !statusText"
 msgstr ""
 
-#: ; misc/drupal.js
 msgid "ResponseText: !responseText"
 msgstr ""
 
-#: ; misc/drupal.js
 msgid "ReadyState: !readyState"
 msgstr ""
 
-#: ; modules/toolbar/toolbar.js
 msgid "Show shortcuts"
 msgstr ""
 
-#: ; modules/toolbar/toolbar.js
 msgid "Hide shortcuts"
 msgstr ""
 
-#: ; modules/contextual/contextual.js
 msgid "Configure"
 msgstr ""
 
@@ -10116,7 +10047,6 @@ msgstr ""
 msgid "Done"
 msgstr ""
 
-#: ; misc/ajax.js
 msgid "Please wait..."
 msgstr ""
 
@@ -10126,11 +10056,9 @@ msgid ""
 "following extensions are allowed: %extensions."
 msgstr ""
 
-#: ; misc/collapse.js
 msgid "Hide"
 msgstr ""
 
-#: ; misc/collapse.js
 msgid "Show"
 msgstr ""
 
@@ -10156,19 +10084,16 @@ msgid ""
 "submitted."
 msgstr ""
 
-#: ; misc/tableselect.js
 msgid "Select all rows in this table"
 msgstr ""
 
-#: ; misc/tableselect.js
 msgid "Deselect all rows in this table"
 msgstr ""
 
-#: ; modules/user/user.permissions.js
 msgid "This permission is inherited from the authenticated user role."
 msgstr ""
 
-#: ; profiles/valhalla/modules/contrib/field_group/horizontal-tabs/horizontal-tabs.js; misc/vertical-tabs.js
+#: ; profiles/valhalla/modules/contrib/field_group/horizontal-tabs/horizontal-tabs.js
 msgid "(active tab)"
 msgstr ""
 
@@ -18367,6 +18292,7 @@ msgstr ""
 msgid "Embedded"
 msgstr ""
 
+#: ; profiles/valhalla/modules/contrib/views/js/views-admin.js
 msgid "Add"
 msgstr ""
 
@@ -21295,15 +21221,19 @@ msgstr ""
 msgid ":"
 msgstr ""
 
+#: ; profiles/valhalla/modules/contrib/views/js/views-admin.js
 msgid "Remove group"
 msgstr ""
 
+#: ; profiles/valhalla/modules/contrib/views/js/views-admin.js
 msgid "Apply (all displays)"
 msgstr ""
 
+#: ; profiles/valhalla/modules/contrib/views/js/views-admin.js
 msgid "Revert to default"
 msgstr ""
 
+#: ; profiles/valhalla/modules/contrib/views/js/views-admin.js
 msgid "Apply (this display)"
 msgstr ""
 
@@ -21973,7 +21903,6 @@ msgstr ""
 msgid "Expose filter"
 msgstr ""
 
-#: ; profiles/valhalla/modules/contrib/features/features.js
 msgid "Select all"
 msgstr ""
 
@@ -43747,6 +43676,10 @@ msgid ""
 "'tar.gz' or 'tar.bz2' instead of just 'gz'."
 msgstr ""
 
+#: /admin/config/regional/language
+msgid "Deltagere"
+msgstr ""
+
 #: /
 msgid "Valg oversigt"
 msgstr ""
@@ -43763,12 +43696,54 @@ msgstr ""
 msgid "Parti oversigt"
 msgstr ""
 
+#: /index.php
+msgid "Data export"
+msgstr ""
+
+#: /admin/appearance/default?token=QetAKYKhI6s0Kt6M8p6AV4Fw90n4PLkleukJk3a0Zz0&theme=valhalla_bs
+msgid "Data Export CSV"
+msgstr ""
+
+#: /admin/appearance/default?token=QetAKYKhI6s0Kt6M8p6AV4Fw90n4PLkleukJk3a0Zz0&theme=valhalla_bs
+msgid "Data Export XLS"
+msgstr ""
+
 #: /admin/people
 msgid "Se \"Parti oversigt\" liste"
 msgstr ""
 
 #: /valghalla/administration/valg/mails/35
 msgid "Standard E-Mail skabeloner"
+msgstr ""
+
+#: /valghalla_lists/export_xls
+msgid "Building export"
+msgstr ""
+
+#: /valghalla_lists/export_xls
+msgid "Export is starting up."
+msgstr ""
+
+#: /valghalla_lists/export_xls
+msgid "Exporting @percentage% complete,"
+msgstr ""
+
+#: /valghalla_lists/export_xls
+msgid "Export has encountered an error."
+msgstr ""
+
+#: /batch?id=9&op=do
+msgid "Time remaining: about @interval."
+msgstr ""
+
+#: /valghalla_lists/export_xls?eid=1&return-url
+msgid "Data export successful"
+msgstr ""
+
+#: /valghalla_lists/export_xls?eid=1&return-url
+msgid ""
+"Your export has been created. View/download the file <a "
+"href=\"@link\">here</a> (will automatically download in 3 seconds.)"
 msgstr ""
 
 msgid "help"
@@ -43841,5 +43816,55 @@ msgid ""
 msgstr ""
 
 msgid "The %variant variant of the %library library could not be found."
+msgstr ""
+
+#: /admin/modules
+msgid "Deltagere pr. parti"
+msgstr ""
+
+#: /admin/valhalla
+msgid "Send mails til deltagere"
+msgstr ""
+
+#: /admin/valhalla/volunteers
+msgid "Importér nye deltagere"
+msgstr ""
+
+#: /admin/modules
+msgid "Deltagere pr. parti_v2"
+msgstr ""
+
+#: /admin/modules/list/confirm
+msgid "Alle deltagere"
+msgstr ""
+
+#: /admin/modules/list/confirm
+msgid "Deltagere der ønsker at blive slettet"
+msgstr ""
+
+#: /admin/modules/list/confirm
+msgid "Deltagere der mangler at svare tilbage"
+msgstr ""
+
+#: /admin/modules/list/confirm
+msgid "Deltagere på dette valgsted"
+msgstr ""
+
+#: /admin/valhalla
+msgid ""
+"Her kan der udsendes mails til alle, eller udvalgte segmenter, af de "
+"deltagere."
+msgstr ""
+
+#: /valghalla/volunteers/action/reset/pos
+msgid "Nulstil deltagere"
+msgstr ""
+
+#: /index.php
+msgid "Deltagere uden email"
+msgstr ""
+
+#: /volunteers/add
+msgid "Deltageren \"@name\" er nu blevet oprettet."
 msgstr ""
 
