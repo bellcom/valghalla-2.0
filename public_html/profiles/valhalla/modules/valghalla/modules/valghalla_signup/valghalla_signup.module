@@ -65,7 +65,7 @@ function valghalla_signup_administration_form() {
   }
 
   $form['valghalla_signup_max_qty'] = array(
-    '#title' => t('Antal frivillige'),
+    '#title' => t('Antal deltagere'),
     '#type' => 'textfield',
     '#element_validate' => array('element_validate_integer_positive'),
     '#default_value' => variable_get('valghalla_signup_max_qty', 3),
@@ -217,7 +217,7 @@ function valghalla_signup_signup_form($form, &$form_state) {
   }
 
   $form['qty'] = array(
-    '#title' => 'Antal frivillige',
+    '#title' => 'Antal deltagere',
     '#type' => 'select',
     '#disabled' => $locked,
     '#default_value' => $qty,
@@ -262,7 +262,7 @@ function valghalla_signup_signup_form($form, &$form_state) {
       for ($i = 1; $i <= $qty; $i++) {
         $form['volunteers'][$i] = array(
           '#type' => 'fieldset',
-          '#title' => 'Frivillig nr. ' . $i,
+          '#title' => 'Deltager nr. ' . $i,
           '#tree' => TRUE,
         );
         $form['volunteers'][$i]['name'] = array(

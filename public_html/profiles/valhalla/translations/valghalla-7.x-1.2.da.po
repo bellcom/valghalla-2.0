@@ -48,7 +48,7 @@ msgstr ""
 
 #: /admin/config/regional/language
 msgid ""
-"opsætning af brevstemme frivillige - er ikke i brug i Valhalla, kan muligvis "
+"opsætning af brevstemme deltagere - er ikke i brug i Valhalla, kan muligvis "
 "slettes, har ikke undersøgt mulige konsekvenser (selvom der nok ikke er "
 "nogen)"
 msgstr ""
@@ -10671,7 +10671,7 @@ msgid "Successful"
 msgstr ""
 
 #: /admin/structure/views/ajax/add-item/valgsted/ctools_context_1/field
-msgid "Frivillige pr. parti_v2 (field_volunteers_pr_party_1:delta)"
+msgid "Deltagere pr. parti_v2 (field_volunteers_pr_party_1:delta)"
 msgstr ""
 
 #: /admin/structure/views/ajax/config-item/list/panel_pane_1/argument/field_polling_station_nid
@@ -12793,15 +12793,15 @@ msgid "Change roles assigned to user."
 msgstr ""
 
 #: /admin/structure/views/add
-msgid "Find Frivillig"
+msgid "Find deltager"
 msgstr ""
 
 #: /admin/structure/views/ajax/config-item/find_frivillig/page/filter/title
-msgid "Filtrer frivillige"
+msgid "Filtrer deltagere"
 msgstr ""
 
 #: /admin/structure/views/ajax/config-item/find_frivillig/page/field/title
-msgid "Frivillig"
+msgid "Deltager"
 msgstr ""
 
 #: /admin/structure/views/view/find_frivillig/edit/page?destination=find-frivillig
@@ -15334,7 +15334,7 @@ msgid ""
 "\r\n"
 "I den forbindelse hører jeg meget gerne om din mening, gode ideer mv. \r\n"
 "\r\n"
-"Mange af jer havde meldt jer som frivillige og var for første gang med til "
+"Mange af jer havde meldt jer som deltagere og var for første gang med til "
 "et valg. Jeg håber I også en anden gang har lyst og mod på at melde jer. Jeg "
 "håber selvfølgelig også på et gensyn blandt alle de tilforordnede fra "
 "partierne.\r\n"
@@ -16377,7 +16377,7 @@ msgstr ""
 
 #: /
 msgid ""
-"Der er ingen frivillige uden email-adresse.\n"
+"Der er ingen deltagere uden email-adresse.\n"
 "\n"
 "Bemærk: Det kontrolleres ikke om det indtastede er en korrekt email-adresse."
 msgstr ""
@@ -16571,7 +16571,7 @@ msgid "Se deltagere"
 msgstr ""
 
 #: /index.php
-msgid "Tilføj frivillige"
+msgid "Tilføj deltagere"
 msgstr ""
 
 #: /index.php
@@ -16579,11 +16579,11 @@ msgid "Se alle CPR numre"
 msgstr ""
 
 #: /index.php
-msgid "Importer frivillige"
+msgid "Importer deltagere"
 msgstr ""
 
 #: /index.php
-msgid "Tilføj frivillig til valgsted"
+msgid "Tilføj deltager til valgsted"
 msgstr ""
 
 #: /index.php
@@ -16673,7 +16673,7 @@ msgid "Liste over deltagere der mangler e-mail adresse"
 msgstr ""
 
 #: /
-msgid "Frivillig Validering"
+msgid "Deltager validering"
 msgstr ""
 
 #: /
@@ -17208,7 +17208,7 @@ msgid "Der er ikke installeret nogen cpr services"
 msgstr ""
 
 #: /admin/valghalla/validator
-msgid "Valider Frivillig"
+msgid "Valider deltager"
 msgstr ""
 
 #: /admin/valghalla/validator
@@ -17228,7 +17228,7 @@ msgid "volunteers ajax"
 msgstr ""
 
 #: /admin/valghalla/validator
-msgid "Valider den frivilliges alder"
+msgid "Valider deltagerens alder"
 msgstr ""
 
 #: /admin/valghalla/validator/batch/validate
@@ -17343,7 +17343,7 @@ msgid "Drupals cache skal slettes efter opdatering"
 msgstr ""
 
 #: /valghalla/administration/signup
-msgid "Antal frivillige"
+msgid "Antal deltagere"
 msgstr ""
 
 #: /valghalla/signup
@@ -17810,7 +17810,7 @@ msgid "Indstillinger for \"Valider Alder\""
 msgstr ""
 
 #: /node/2610/edit?destination=valghalla/deltagere/alle
-msgid "Den frivillige kan ikke valideres:"
+msgid "Deltageren kan ikke valideres:"
 msgstr ""
 
 #: /valghalla/administration/sendinvitation/2651
@@ -19255,7 +19255,7 @@ msgid "Article"
 msgstr "Artikel"
 
 #: /admin/config/regional/language
-msgid "Frivillige"
+msgid "Deltagere"
 msgstr "Deltagere"
 
 #: /admin/config/regional/language
@@ -27620,26 +27620,26 @@ msgid "CPR Number"
 msgstr "CPR nummer"
 
 #: /admin/modules
-msgid "Frivillige pr. parti"
+msgid "Deltagere pr. parti"
 msgstr "Deltagere pr. parti"
 
 #: /admin/modules/list/confirm
-msgid "Alle frivillige"
+msgid "Alle deltagere"
 msgstr "Alle deltagere"
 
 #: /admin/modules/list/confirm
-msgid "Frivillige der ønsker at blive slettet"
+msgid "Deltagere der ønsker at blive slettet"
 msgstr "Deltagere der ønsker at blive slettet"
 
 #: /admin/modules/list/confirm
-msgid "Frivillige der mangler at svare tilbage"
+msgid "Deltagere der mangler at svare tilbage"
 msgstr "Deltagere der mangler at svare"
 
 msgid "Token"
 msgstr "Symbol"
 
 #: /admin/modules/list/confirm
-msgid "Frivillige på dette valgsted"
+msgid "Deltagere på dette valgsted"
 msgstr "Deltagere på dette valgsted"
 
 msgid "City"
@@ -28530,13 +28530,13 @@ msgid "Advanced"
 msgstr "Avanceret"
 
 #: /admin/valhalla
-msgid "Send mails til frivillige"
+msgid "Send mails til deltagere"
 msgstr "Send mails til deltagere"
 
 #: /admin/valhalla
 msgid ""
 "Her kan der udsendes mails til alle, eller udvalgte segmenter, af de "
-"frivillige."
+"deltagere."
 msgstr ""
 "Her kan der udsendes mails til alle, eller udvalgte segmenter, af deltagerne."
 
@@ -28828,7 +28828,7 @@ msgid "- Any -"
 msgstr "- Enhver -"
 
 #: /volunteers/add
-msgid "Den frivillige \"@name\" er nu blevet oprettet."
+msgid "Deltageren \"@name\" er nu blevet oprettet."
 msgstr "Deltageren \"@name\" er nu blevet oprettet."
 
 msgid "Error: missing @component"
@@ -28841,7 +28841,7 @@ msgid "Edit view"
 msgstr "Rediger oversigt"
 
 #: /admin/valhalla/volunteers
-msgid "Importér nye frivillige"
+msgid "Importér nye deltagere"
 msgstr "Importér nye deltagere"
 
 msgctxt "datetime"
@@ -32628,7 +32628,7 @@ msgid "Import @entity_type"
 msgstr "Importér @entity_type"
 
 #: /admin/modules
-msgid "Frivillige pr. parti_v2"
+msgid "Deltagere pr. parti_v2"
 msgstr "Deltagere pr. parti"
 
 msgid "@current of @total"
@@ -56482,9 +56482,9 @@ msgid "Missing library: @library"
 msgstr "Manglende library: @library"
 
 #: /valghalla/volunteers/action/reset/pos
-msgid "Nulstil frivillige"
+msgid "Nulstil deltagere"
 msgstr "Nulstil deltagere"
 
 #: /index.php
-msgid "Frivillige uden email"
+msgid "Deltagere uden email"
 msgstr "Deltagere der er registreret uden email"
