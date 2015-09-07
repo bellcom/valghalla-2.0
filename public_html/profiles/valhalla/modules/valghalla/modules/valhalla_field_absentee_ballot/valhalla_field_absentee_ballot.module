@@ -88,7 +88,7 @@ function valhalla_field_absentee_ballot_field_widget_form(&$form, &$form_state, 
 
     $element['volunteer'] = array(
       '#type' => 'select',
-      '#title' => t('Vælg en frivillig til posten'),
+      '#title' => t('Vælg en deltager til posten'),
       '#options' => $volunteers,
       '#default_value' => $volunteer_value,
     );
@@ -128,7 +128,7 @@ function valhalla_field_absentee_ballot_field_formatter_view($entity_type, $enti
       foreach ($items as $delta => $item) {
         $element[$delta]['#markup'] = ' · Post ' . ($delta + 1) . ' - ' . $item['post'] . ': ';
         if (empty($item['volunteer'])) {
-           $element[$delta]['#markup'] .= t('Mangler tildeling af frivillig.') . '';
+           $element[$delta]['#markup'] .= t('Mangler tildeling af deltager.') . '';
         }
         else {
           $node = node_load($item['volunteer']);
