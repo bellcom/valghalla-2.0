@@ -62,7 +62,7 @@ function valghalla_volunteer_validator_settings(){
   $plugins = ctools_get_plugins('valghalla_volunteer_validator', 'validate');
 
   $services = array(
-    'validate' => t('Valider Frivillig'),
+    'validate' => t('Valider deltager'),
   );
 
   $map_services = function(&$value, $key, $services){
@@ -93,8 +93,8 @@ function valghalla_volunteer_validator_settings(){
 
   $form['bottom'] = array(
     '#type' => 'item',
-    '#prefix' => '<p><a href="/admin/valghalla/validator/batch/validate">Valider alle frivillige</a></p>'
-              .  '<p><a href="/admin/valghalla/validator/batch/address">Opdater alle deltagers adresser</a></p>',
+    '#prefix' => '<p><a href="/admin/valghalla/validator/batch/validate">Valider alle deltagere</a></p>'
+              .  '<p><a href="/admin/valghalla/validator/batch/address">Opdater alle deltageres adresser</a></p>',
   );
 
   return system_settings_form($form);
@@ -105,7 +105,7 @@ function valghalla_volunteer_validator_settings(){
  */
 function valghalla_volunteer_validator_batch($form, &$form_state, $arg){
   $types = array(
-    'validate' => 'Validere alle frivillige',
+    'validate' => 'Validere alle deltagere',
     'address' => 'Hente alle deltageres adresser'
   );
 

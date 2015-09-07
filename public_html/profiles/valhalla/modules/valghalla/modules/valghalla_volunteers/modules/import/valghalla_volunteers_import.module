@@ -10,7 +10,7 @@
 function valghalla_volunteers_import_permission() {
   return array(
     'import volunteers' => array(
-      'title' => t('Importer frivillige'),
+      'title' => t('Importer deltagere'),
       'description' => 'Giv brugeren lov til at importere deltagere fra CSV.',
     ),
   );
@@ -44,7 +44,7 @@ function valghalla_volunteers_import_form($form, &$form_state) {
 <ul>
   <li>Filens første linje, bliver ikke importeret, da denne bruges som beskrivelse.</li>
   <li>Værdierne skal være adskildt af et komma (,).</li>
-  <li>Hvis en frivillig allerede findes (findes på CPR), bliver denne opdateret med data fra filen.</li>
+  <li>Hvis en deltager allerede findes (findes på CPR), bliver denne opdateret med data fra filen.</li>
 </ul>
 
 <p>Du kan se et eksempel på hvordan sådan en fil kan se ud her:</p>
@@ -61,7 +61,7 @@ EOL;
 
   $form['import'] = array(
     '#type' => 'fieldset',
-    '#title' => t('Importér nye frivillige'),
+    '#title' => t('Importér nye deltagere'),
   );
 
   $form['import']['upload'] = array(

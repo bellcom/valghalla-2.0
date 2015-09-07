@@ -35,7 +35,7 @@ function valghalla_mail_sendmail_get_header($form, &$form_state) {
 
   $form['header'] = array(
     '#type' => 'fieldset',
-    '#title' => 'Send mail til frivillige.',
+    '#title' => 'Send mail til deltagere.',
   );
   $form['header']['steps'] = array(
     '#markup' => $stages_list,
