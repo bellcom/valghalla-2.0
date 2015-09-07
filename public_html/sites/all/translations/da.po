@@ -4,8 +4,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
-"POT-Creation-Date: 2015-09-07 11:04+0200\n"
-"PO-Revision-Date: 2015-09-07 11:04+0200\n"
+"POT-Creation-Date: 2015-09-07 13:18+0200\n"
+"PO-Revision-Date: 2015-09-07 13:18+0200\n"
 "Last-Translator: NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
 "MIME-Version: 1.0\n"
@@ -127,10 +127,6 @@ msgstr ""
 
 #: /
 msgid "Send invitationer"
-msgstr ""
-
-#: /
-msgid "Valg oversigt"
 msgstr ""
 
 #: /
@@ -6893,10 +6889,6 @@ msgid "Se \"Deltagere der endnu ikke har svaret\" liste"
 msgstr ""
 
 #: /admin/people
-msgid "Se \"Parti oversigt\" liste"
-msgstr ""
-
-#: /admin/people
 msgid "Se \"Deltagere uden e-mail adresse\" liste"
 msgstr ""
 
@@ -7851,10 +7843,6 @@ msgstr ""
 
 #: /ckeditor/xss
 msgid "XSS Filter."
-msgstr ""
-
-#: /valghalla/administration/valg/mails/35
-msgid "Standard E-Mail skabeloner"
 msgstr ""
 
 #: /valghalla/administration/valg/mails/35
@@ -10071,6 +10059,10 @@ msgstr ""
 
 #: /admin/structure/features/valghalla_polling_station/recreate
 msgid "Preview .info file"
+msgstr ""
+
+#: /valghalla/deltagere/importer
+msgid "Importér nye deltagere"
 msgstr ""
 
 #: ; misc/drupal.js
@@ -48837,6 +48829,10 @@ msgstr ""
 "'gz'."
 
 #: /
+msgid "Valg oversigt"
+msgstr "Valgoversigt"
+
+#: /
 msgid "Mail skabeloner"
 msgstr "Mailskabeloner"
 
@@ -48847,6 +48843,14 @@ msgstr "Rolleoversigt"
 #: /
 msgid "Parti oversigt"
 msgstr "Partioversigt"
+
+#: /admin/people
+msgid "Se \"Parti oversigt\" liste"
+msgstr "Se \"Partioversigt\" liste"
+
+#: /valghalla/administration/valg/mails/35
+msgid "Standard E-Mail skabeloner"
+msgstr "Standard e-mail skabeloner"
 
 msgid "help"
 msgstr "hjælp"
