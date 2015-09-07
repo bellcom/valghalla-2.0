@@ -15,7 +15,7 @@ function liste_frivillige_uden_email_views_default_views() {
   $view->description = '';
   $view->tag = 'valghalla, list';
   $view->base_table = 'node';
-  $view->human_name = 'Liste frivillige uden email';
+  $view->human_name = 'Liste deltagere uden email';
   $view->core = 7;
   $view->api_version = '3.0';
   $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
@@ -81,7 +81,7 @@ function liste_frivillige_uden_email_views_default_views() {
   $handler->display->display_options['empty']['area_text_custom']['table'] = 'views';
   $handler->display->display_options['empty']['area_text_custom']['field'] = 'area_text_custom';
   $handler->display->display_options['empty']['area_text_custom']['empty'] = TRUE;
-  $handler->display->display_options['empty']['area_text_custom']['content'] = 'Der er ingen frivillige uden email-adresse.
+  $handler->display->display_options['empty']['area_text_custom']['content'] = 'Der er ingen deltagere uden email-adresse.
 
 Bemærk: Det kontrolleres ikke om det indtastede er en korrekt email-adresse.';
   /* Felt: Indhold: Titel */
@@ -162,7 +162,7 @@ Bemærk: Det kontrolleres ikke om det indtastede er en korrekt email-adresse.';
     t('‹ forrige'),
     t('næste ›'),
     t('sidste »'),
-    t('Der er ingen frivillige uden email-adresse.
+    t('Der er ingen deltagere uden email-adresse.
 
 Bemærk: Det kontrolleres ikke om det indtastede er en korrekt email-adresse.'),
     t('E-mail'),

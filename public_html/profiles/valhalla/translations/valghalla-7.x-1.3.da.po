@@ -671,11 +671,11 @@ msgstr "Deltagere der er registreret uden email"
 
 #: /install.php?profile=valhalla&locale=da
 msgid ""
-"Der er ingen frivillige uden email-adresse.\n"
+"Der er ingen deltagere uden email-adresse.\n"
 "\n"
 "Bemærk: Det kontrolleres ikke om det indtastede er en korrekt email-adresse."
 msgstr ""
-"Der er ingen frivillige uden email-adresse.\n"
+"Der er ingen deltagere uden email-adresse.\n"
 "\n"
 "Bemærk: Det kontrolleres ikke om det indtastede er en korrekt email-adresse."
 
@@ -2982,7 +2982,7 @@ msgid "Valghalla"
 msgstr ""
 
 #: /
-msgid "Frivillig Validering"
+msgid "Deltager validering"
 msgstr ""
 
 #: /
@@ -6345,7 +6345,7 @@ msgid "Article"
 msgstr ""
 
 #: /admin/config/regional/language
-msgid "Frivillige"
+msgid "Deltagere"
 msgstr ""
 
 msgid "My account"
@@ -9805,11 +9805,11 @@ msgid "Rules"
 msgstr ""
 
 #: /admin/modules
-msgid "Frivillige pr. parti"
+msgid "Deltagere pr. parti"
 msgstr ""
 
 #: /admin/modules
-msgid "Frivillige pr. parti_v2"
+msgid "Deltagere pr. parti_v2"
 msgstr ""
 
 msgid "Menu items for any enabled features."
@@ -10860,19 +10860,19 @@ msgid "What links here"
 msgstr ""
 
 #: /admin/modules/list/confirm
-msgid "Alle frivillige"
+msgid "Alle deltagere"
 msgstr ""
 
 #: /admin/modules/list/confirm
-msgid "Frivillige der ønsker at blive slettet"
+msgid "Deltagere der ønsker at blive slettet"
 msgstr ""
 
 #: /admin/modules/list/confirm
-msgid "Frivillige der mangler at svare tilbage"
+msgid "Deltagere der mangler at svare tilbage"
 msgstr ""
 
 #: /admin/modules/list/confirm
-msgid "Frivillige på dette valgsted"
+msgid "Deltagere på dette valgsted"
 msgstr ""
 
 msgid "Options"
@@ -35938,13 +35938,13 @@ msgid "Address"
 msgstr ""
 
 #: /admin/valhalla
-msgid "Send mails til frivillige"
+msgid "Send mails til deltagere"
 msgstr ""
 
 #: /admin/valhalla
 msgid ""
 "Her kan der udsendes mails til alle, eller udvalgte segmenter, af de "
-"frivillige."
+"deltagere."
 msgstr ""
 
 #: /node/27/edit?destination=admin/content
@@ -35962,14 +35962,14 @@ msgid "Get an overview of all content."
 msgstr ""
 
 #: /valghalla/volunteers/action/reset/pos
-msgid "Nulstil frivillige"
+msgid "Nulstil deltagere"
 msgstr ""
 
 msgid "Get an overview of <a href=\"@url\">all content</a>."
 msgstr ""
 
 #: /index.php
-msgid "Frivillige uden email"
+msgid "Deltagere uden email"
 msgstr ""
 
 msgid ""
@@ -35980,14 +35980,14 @@ msgid "General Information"
 msgstr ""
 
 #: /admin/valhalla/volunteers
-msgid "Importér nye frivillige"
+msgid "Importér nye deltagere"
 msgstr ""
 
 msgid " in "
 msgstr ""
 
 #: /volunteers/add
-msgid "Den frivillige \"@name\" er nu blevet oprettet."
+msgid "Deltageren \"@name\" er nu blevet oprettet."
 msgstr ""
 
 msgid ""

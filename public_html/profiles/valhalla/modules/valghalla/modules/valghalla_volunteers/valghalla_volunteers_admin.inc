@@ -21,7 +21,7 @@ function valghalla_volunteers_reset(){
 
   $message = t('Er du sikker på at du ønsker at slette alle tilforordenes ') . $types[$type] . '?';
 
-  return confirm_form($form, 'Nulstil frivillige', 'admin/valghalla/', $message, t('Ja, fortsæt'), t('Annuller'));
+  return confirm_form($form, 'Nulstil deltagere', 'admin/valghalla/', $message, t('Ja, fortsæt'), t('Annuller'));
 }
 
 /**
@@ -45,7 +45,7 @@ function valghalla_volunteers_reset_submit(&$form, &$form_state){
   // Start batch
   batch_set(
     array(
-      'title' => t('Nulstil frivillige'),
+      'title' => t('Nulstil deltagere'),
       'operations' => $operations,
       'finished' => 'valghalla_volunteers_reset_finished_batch',
       'file' => drupal_get_path('module', 'valghalla_volunteers') .'/valghalla_volunteers_admin.inc',
@@ -86,7 +86,7 @@ function valghalla_volunteers_reset_batch($op, $nids, &$context){
  */
 function valghalla_volunteers_reset_finished_batch($success, $results, $operations){
   if($success){
-    drupal_set_message(t('De frivillige er nu nulstillet'));
+    drupal_set_message(t('Deltagerne er nu nulstillet'));
     drupal_goto('admin/valghalla');
   }
 }
