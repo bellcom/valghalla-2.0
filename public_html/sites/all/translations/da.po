@@ -8125,32 +8125,32 @@ msgstr ""
 
 #: /valghalla_lists/export_xls
 msgid "Building export"
-msgstr ""
+msgstr "Foretager eksport"
 
 #: /valghalla_lists/export_xls
 msgid "Export is starting up."
-msgstr ""
+msgstr "Eksporten starten"
 
 #: /valghalla_lists/export_xls
 msgid "Exporting @percentage% complete,"
-msgstr ""
+msgstr "Eksporten er @percentage% færdig"
 
 #: /valghalla_lists/export_xls
 msgid "Export has encountered an error."
-msgstr ""
+msgstr "Der opstod en fejl ved eksporten"
 
 #: /batch?id=9&op=do
-msgid "Time remaining: about @interval."
+msgid "Resterende tid: ca. @interval."
 msgstr ""
 
 #: /valghalla_lists/export_xls?eid=1&return-url
-msgid "Data export successful"
+msgid "Eksporten er fuldført"
 msgstr ""
 
 #: /valghalla_lists/export_xls?eid=1&return-url
 msgid ""
-"Your export has been created. View/download the file <a "
-"href=\"@link\">here</a> (will automatically download in 3 seconds.)"
+"Din eksport er foretaget. Se/download filen <a "
+"href=\"@link\">her</a> (vil automatiske påbegynde download indenfor 3 sek.)"
 msgstr ""
 
 #: /admin/help
