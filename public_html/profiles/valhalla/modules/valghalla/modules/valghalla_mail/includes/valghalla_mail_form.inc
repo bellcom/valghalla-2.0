@@ -329,19 +329,19 @@ function valghalla_mail_sendmail_get_recipients($values) {
     $volunteer_query->entityCondition('entity_type', 'field_collection_item')
         ->entityCondition('bundle', 'field_electioninfo');
 
-    if ($election) {
+    if ($election !== FALSE) {
       $volunteer_query->fieldCondition('field_election', 'target_id', $election);
     }
-    if ($rsvp_status) {
+    if ($rsvp_status !== FALSE) {
       $volunteer_query->fieldCondition('field_rsvp', 'value', $rsvp_status);
     }
-    if ($roles) {
+    if ($roles !== FALSE) {
       $volunteer_query->fieldCondition('field_post_role', 'target_id', $roles);
     }
-    if ($party) {
+    if ($party !== FALSE) {
       $volunteer_query->fieldCondition('field_post_party', 'target_id', $party);
     }
-    if ($polling_station) {
+    if ($polling_station !== FALSE) {
       $volunteer_query->fieldCondition('field_vlnt_station', 'target_id', $polling_station);
     }
 
