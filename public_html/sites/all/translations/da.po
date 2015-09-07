@@ -48287,3 +48287,19 @@ msgstr "Ugyldig eller manglende cache bin: %bin"
 msgid "General settings"
 msgstr "Generelle indstillinger"
 
+#: /
+msgid "Mail skabeloner"
+msgstr "Mailskabeloner"
+
+#: /
+msgid "Rolle oversigt"
+msgstr "Rolleoversigt"
+
+#: /
+msgid "Parti oversigt"
+msgstr "Partioversigt"
+
+#: /
+msgid "Valg oversigt"
+msgstr "Valgoversigt"
+
