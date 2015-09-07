@@ -9,7 +9,7 @@
  */
 function valghalla_volunteer_validator_menu() {
   $items['admin/valghalla/validator'] = array(
-    'title' => 'Frivillig Validering',
+    'title' => 'Deltager validering',
     'description' => 'Indstillinger for CPR validering',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('valghalla_volunteer_validator_settings'),
@@ -19,7 +19,7 @@ function valghalla_volunteer_validator_menu() {
   );
 
   $items['admin/valghalla/validator/batch'] = array(
-    'title' => 'Frivillig Validering',
+    'title' => 'Deltager validering',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('valghalla_volunteer_validator_batch'),
     'access arguments' => array('administer valghalla'),
@@ -121,7 +121,7 @@ function valghalla_volunteer_validator_node_validate($node, $form, &$form_state)
       }
     }
     if ($invalid_text) {
-      form_set_error('field_cpr_number', t('Den frivillige kan ikke valideres:') . ' ' . $result['text']);
+      form_set_error('field_cpr_number', t('Deltageren kan ikke valideres:') . ' ' . $result['text']);
     }
   }
 }

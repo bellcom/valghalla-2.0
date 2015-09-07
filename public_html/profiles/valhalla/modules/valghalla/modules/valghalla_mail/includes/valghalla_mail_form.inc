@@ -170,7 +170,7 @@ function valghalla_mail_sendmail_get_recipients_form($form, &$form_state, $nid) 
 
   $form['recipents']['roles'] = array(
     '#type' => 'select',
-    '#title' => 'Frivillig type',
+    '#title' => 'Deltager type',
     '#multiple' => TRUE,
     '#options' => $roles,
     '#size' => 5,
