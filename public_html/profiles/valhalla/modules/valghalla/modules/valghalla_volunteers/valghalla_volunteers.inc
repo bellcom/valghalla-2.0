@@ -461,6 +461,7 @@ function _valghalla_helper_get_volunteer_info_params($node) {
 function _valghalla_helper_get_age_from_cpr($cpr)
 {
   // Based on http://kronsell.net/cpralder.htm
+  // Also see http://da.wikipedia.org/wiki/CPR-nummer#Under_eller_over_100_.C3.A5r
   $year_prefix = 19;
   $year        = substr($cpr, 4, 2);
 
