@@ -20,7 +20,6 @@ function valghalla_volunteers_invite_menu() {
 }
 
 function valghalla_volunteers_invite_select($form, &$form_state) {
-  $form['#attributes'] = array('class' => 'form-inline');
   $form['header'] = array(
     '#type' => 'fieldset',
     '#title' => 'Vælg deltagere',
