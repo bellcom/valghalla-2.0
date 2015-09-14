@@ -317,14 +317,13 @@ function valghalla_volunteers_rsvp_form($form, &$form_state) {
 }
 
 /**
- * handle rsvp form submits
+ * Handle rsvp form submits
  *
  * @param array $form
  * @param array $form_state
  */
 function valghalla_volunteers_rsvp_form_submit($form, &$form_state) {
   global $language;
-  $types = array('unknown','yes','no','never');
   module_load_include('inc', 'valghalla_volunteers', 'valghalla_volunteers');
 
   $fc = _valghalla_volunteers_validate_key(arg(2));
@@ -334,7 +333,19 @@ function valghalla_volunteers_rsvp_form_submit($form, &$form_state) {
 
   $fc->save();
 
-  $type = 'confirmed';
+  switch ($form_state['values']['rsvp']) {
+    case 1:
+      $type = 'rsvp_yes';
+      break;
+
+    case 2:
+      $type = 'rsvp_no';
+      break;
+
+    case 3:
+      $type = 'rsvp_never';
+      break;
+  }
 
   $election_field = field_get_items('field_collection_item', $fc, 'field_election');
   $role_field = field_get_items('field_collection_item', $fc, 'field_post_role');
@@ -350,6 +361,23 @@ function valghalla_volunteers_rsvp_form_submit($form, &$form_state) {
 
   drupal_mail('valghalla_mail', 'mail', $to, $language, $params, $from, TRUE);
   drupal_set_message(t('Vi har modtaget dit svar.'));
+}
+
+/**
+ * Validates the rsvp form.
+ *
+ * @param array $form
+ *   The submitted form.
+ * @param array $form_state
+ *   The submitted form_state.
+ *
+ * @author Henrik Farre <hf@bellcom.dk>
+ */
+function valghalla_volunteers_rsvp_form_validate($form, &$form_state) {
+  $rsvp = $form_state['values']['rsvp'];
+  if ($rsvp < 0 || $rsvp > 3) {
+    form_set_error('rsvp', t('Ugyldig værdig for svar'));
+  }
 }
 
 /**
