@@ -59,40 +59,36 @@ function liste_valghalla_kvittering_listpage() {
 
   $lists = array();
 
-  if(isset($_SESSION['election_nid'])){
-    $default_election = $_SESSION['election_nid'];
-  } else {
+  if(!isset($_SESSION['election_nid'])){
     return theme('liste_valghalla_kvittering', array(
           'lists' => $lists,
           'user_restrict_stations' => $user_restrict_stations,
     ));
   }
 
-  $stations = array();
-  // Election is NOT empty
-  if(isset($default_election) && $default_election != 0) {
-    $election = node_load($default_election);
-    if($station_nids = field_get_items('node', $election, 'field_polling_stations')) {
-      foreach ($station_nids as $station) {
-        $stations[] = $station['target_id'];
-      }
-    }
-    // Load all polling stations
-    foreach (node_load_multiple($stations) as $polling_station) {
-      $polling_station_nid = $polling_station->nid;
-      if (!empty($user_restrict_stations) && !array_key_exists($polling_station_nid,$user_restrict_stations)) {
-        continue;
-      }
-      $constituency_field = field_get_items('node', $polling_station, 'field_constituency');
-      foreach ($constituency_field as $constituency) {
-        $lists[$constituency['nid']][$polling_station_nid] = $polling_station_nid;
-      }
-    }
-    $lists = _liste_valghalla_generate_list_array($lists);
+  $polling_station_nids = array();
+  if ($election_node = node_load($_SESSION['election_nid'])) {
+    // Use odin_get_polling_stations(), it will return a correctly sorted array
+    // of polling stations.
+    $polling_station_nids = odin_get_polling_stations($election_node->nid);
   }
+
+  foreach ($polling_station_nids as $polling_station_nid => $polling_station_title) {
+    $polling_station = node_load($polling_station_nid);
+
+    if (!empty($user_restrict_stations) && !array_key_exists($polling_station_nid, $user_restrict_stations)) {
+      continue;
+    }
+    $constituency_field = field_get_items('node', $polling_station, 'field_constituency');
+    foreach ($constituency_field as $constituency) {
+      $lists[$constituency['nid']][$polling_station_nid] = $polling_station_nid;
+    }
+  }
+  $lists = _liste_valghalla_generate_list_array($lists);
+
   return theme('liste_valghalla_kvittering', array(
           'lists' => $lists,
-          'user_restrict_stations' =>$user_restrict_stations,
+          'user_restrict_stations' => $user_restrict_stations,
   ));
 }
 
@@ -107,8 +103,6 @@ function _liste_valghalla_generate_list_array($lists) {
     foreach ($station_nids as $nid => $station) {
       $node = node_load($nid);
       $lists_node[$constituency_nid][$nid] = array('title' => $node->title);
-      // Sorting polling station
-      aasort($lists_node[$constituency_nid],"title");
       $lists[$constituency_nid] = array(
               'c_title' => $constituency->title,
               'nodes'=> $lists_node[$constituency_nid]);
