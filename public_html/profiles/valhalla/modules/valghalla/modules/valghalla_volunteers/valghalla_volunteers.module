@@ -35,6 +35,9 @@ function valghalla_volunteers_permission() {
     'volunteers rsvp' => array(
       'title' => t('Access to rsvp for volunteers'),
     ),
+    'change volunteers rsvp' => array(
+      'title' => t('Tilladelse til at ændre deltager RSVP'),
+    ),
     'administer sub secretaries' => array(
       'title' => t('Access to administer sub secretaries'),
     ),
@@ -199,7 +202,10 @@ function valghalla_volunteers_rsvp() {
 
   $post_script = filter_xss(variable_get('valghalla_rsvp_update_message'));
 
-  if(!$rsvp || variable_get('valghalla_allow_rsvp_update', FALSE)){
+  $allow_update = variable_get('valghalla_allow_rsvp_update', FALSE);
+  $user_access = user_access('change volunteers rsvp');
+
+  if (!$rsvp || $allow_update || $user_acces) {
     $post_script = drupal_render($form);
   }
 
@@ -1181,7 +1187,7 @@ function valghalla_volunteers_export() {
 /**
  * Implement hook_form_FORM_ID_alter()
  */
-function valghalla_volunteers_form_valghalla_admin_settings_form_alter(&$form, &$form_state, $form_id){
+function valghalla_volunteers_form_valhalla_admin_settings_form_alter(&$form, &$form_state, $form_id){
   $form['valghalla_allow_rsvp_update'] = array(
     '#type' => 'checkbox',
     '#title' => 'Tillad den tilforordnede at opdatere sin status',
@@ -1192,6 +1198,12 @@ function valghalla_volunteers_form_valghalla_admin_settings_form_alter(&$form, &
     '#type' => 'textarea',
     '#title' => 'Besked til deltageren efter svar er afgivet',
     '#default_value' => variable_get('valghalla_rsvp_update_message'),
+  );
+
+  $form['valghalla_volunteers_always_show_rsvp_link'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Vis altid svar link ud for deltager på valgoversigt (blå talebobbel).'),
+    '#default_value' => variable_get('valghalla_volunteers_always_show_rsvp_link', FALSE),
   );
 }
 
