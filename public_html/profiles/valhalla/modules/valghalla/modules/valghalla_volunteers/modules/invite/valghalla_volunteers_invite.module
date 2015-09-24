@@ -92,6 +92,7 @@ function valghalla_volunteers_invite_select_submit(&$form, &$form_state) {
     }
   }
 
+  // Unused:?
   $polling_stations = odin_get_polling_stations($election_nid);
 
   $count = 0;
