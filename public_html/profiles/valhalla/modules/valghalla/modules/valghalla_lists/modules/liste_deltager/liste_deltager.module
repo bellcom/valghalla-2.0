@@ -71,15 +71,6 @@ function liste_deltager_form($form, &$form_state) {
     '#access' => user_access('liste deltager change filters'),
   );
 
-  // Show columns.
-  $form['filter']['columns'] = array(
-    '#type' => 'checkboxes',
-    '#title' => t('Kolonner'),
-    '#prefix' => '<div class="no-print"><div class="col-left">',
-    '#suffix' => '<a class="js-select-all" href="#">Vælg alle</a></div>',
-    '#options' => _liste_deltager_columns(),
-  );
-
   // Filter volunteers.
   $form['filter']['polling_station'] = array(
     '#type' => 'select',
@@ -87,23 +78,32 @@ function liste_deltager_form($form, &$form_state) {
     '#size' => 8,
     '#title' => 'Valgsted',
     '#options' => liste_deltager_polling_station_options(),
-    '#prefix' => '<div class="col-right"><div>',
+    '#prefix' => '<div class="row"><div class="col-xs-12">',
     '#suffix' => '<a class="js-select-all" href="#">Vælg alle</a></div>',
+  );
+
+  // Show columns.
+  $form['filter']['columns'] = array(
+    '#type' => 'checkboxes',
+    '#title' => t('Kolonner'),
+    '#prefix' => '<div class="col-sm-6 col-md-3">',
+    '#suffix' => '<a class="js-select-all" href="#">Vælg alle</a></div>',
+    '#options' => _liste_deltager_columns(),
   );
 
   $form['filter']['roles'] = array(
     '#type' => 'checkboxes',
     '#title' => t('Rolle(r)'),
     '#options' => _valghalla_helper_get_roles(),
-    '#prefix' => '<div class="col-left">',
+    '#prefix' => '<div class="col-sm-6 col-md-3">',
     '#suffix' => '<a class="js-select-all" href="#">Vælg alle</a></div>',
   );
 
   $form['filter']['party'] = array(
     '#type' => 'checkboxes',
     '#title' => t('Parti(er) (plads)'),
-    '#prefix' => '<div class="col-right">',
-    '#suffix' => '<a class="js-select-all" href="#">Vælg alle</a>',
+    '#prefix' => '<div class="col-sm-6 col-md-3">',
+    '#suffix' => '<a class="js-select-all" href="#">Vælg alle</a></div>',
     '#options' => _valghalla_helper_get_parties(),
   );
 
@@ -116,6 +116,7 @@ function liste_deltager_form($form, &$form_state) {
       2 => 'Nej',
       3 => 'Aldrig',
     ),
+    '#prefix' => '<div class="col-sm-6 col-md-3">',
     '#suffix' => '<a class="js-select-all" href="#">Vælg alle</a></div></div>',
   );
 
