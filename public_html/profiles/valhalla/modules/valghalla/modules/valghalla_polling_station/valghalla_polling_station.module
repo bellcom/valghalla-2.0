@@ -125,7 +125,9 @@ function valghalla_polling_station_node_form_validate($form, $form_state) {
               ->fieldCondition('field_post_party', 'target_id', $party_tid)
               ->fieldCondition('field_vlnt_station', 'target_id', $polling_station);
 
-          $result = array_keys(array_shift($volunteer_query->execute()));
+          $query_result = $volunteer_query->execute();
+          $result       = array_keys(array_shift($query_result));
+
           if ($result) {
             $allocated = count($result);
 

@@ -133,7 +133,8 @@ function odin_get_volunteers_count($election_nid, $polling_station_nids, $roles,
       $volunteer_query->fieldCondition('field_post_party', 'target_id', $user_party_id);
     }
 
-    $result = array_shift($volunteer_query->execute());
+    $query_result = $volunteer_query->execute();
+    $result       = array_shift($query_result);
 
     $role_count[$role_nid]['total'] = count($result);
     $total_count['total'] += $role_count[$role_nid]['total'];
@@ -155,7 +156,8 @@ function odin_get_volunteers_count($election_nid, $polling_station_nids, $roles,
       $volunteer_query->fieldCondition('field_post_party', 'target_id', $user_party_id);
     }
 
-    $result = array_shift($volunteer_query->execute());
+    $query_result = $volunteer_query->execute();
+    $result       = array_shift($query_result);
 
     $role_count[$role_nid]['rsvp_ok'] = count($result);
     $total_count['rsvp_ok'] += $role_count[$role_nid]['rsvp_ok'];
@@ -177,7 +179,8 @@ function odin_get_volunteers_count($election_nid, $polling_station_nids, $roles,
       $volunteer_query->fieldCondition('field_post_party', 'target_id', $user_party_id);
     }
 
-    $result = array_shift($volunteer_query->execute());
+    $query_result = $volunteer_query->execute();
+    $result       = array_shift($query_result);
 
     $role_count[$role_nid]['rsvp_no'] = count($result);
     $total_count['rsvp_no'] += $role_count[$role_nid]['rsvp_no'];

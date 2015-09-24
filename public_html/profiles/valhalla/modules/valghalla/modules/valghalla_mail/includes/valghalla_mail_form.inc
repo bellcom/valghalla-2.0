@@ -319,7 +319,8 @@ function valghalla_mail_sendmail_get_recipients($values) {
     $polling_stations = odin_get_polling_stations($values['election_nid']);
 
     if (!empty($polling_stations)) {
-      $unfiltered_result = array_shift($volunteer_query->execute());
+      $query_result      = $volunteer_query->execute();
+      $unfiltered_result = array_shift($query_result);
       foreach ($unfiltered_result as $volunteer_id => $volunteer_item) {
         $polling_station_nid = 0;
 
@@ -366,7 +367,8 @@ function valghalla_mail_sendmail_get_recipients($values) {
       $volunteer_query->fieldCondition('field_vlnt_station', 'target_id', $polling_station);
     }
 
-    $result = array_keys(array_shift($volunteer_query->execute()));
+    $query_result = $volunteer_query->execute();
+    $result       = array_keys(array_shift($query_result));
   }
 
   foreach (entity_load('field_collection_item', $result) as $volunteer_item) {
