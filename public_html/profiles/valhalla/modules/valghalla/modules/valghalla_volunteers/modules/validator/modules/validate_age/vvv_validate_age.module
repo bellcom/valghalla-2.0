@@ -30,7 +30,7 @@ function vvv_validate_age_valghalla_volunteer_validator_validate() {
   return array(
     'age' => array(
       'label' => 'Valider alder',
-      'description' => t('Valider den frivilliges alder'),
+      'description' => t('Valider deltagerens alder'),
       'validate' => 'vvv_validate_age_validate',
       'config' => 'admin/valghalla/validator/validate_age',
     ),
@@ -52,7 +52,7 @@ function vvv_validate_age_settings() {
     '#type' => 'textfield',
     '#title' => 'Alder',
     '#default_value' => variable_get('vvv_validate_age_age', 18),
-    '#description' => 'Hvilken alder skal den frivillige min have',
+    '#description' => 'Hvilken alder skal deltageren min. have',
   );
 
   return system_settings_form($form);
@@ -98,7 +98,7 @@ function vvv_validate_age_validate($volunteer, $message) {
   catch (Exception $e) {
     return array(
       'valid' => FALSE,
-      'text' => 'Den frivillige har ikke en gyldig fødselsdato',
+      'text' => 'Deltageren har ikke en gyldig fødselsdato',
     );
   }
 
@@ -107,7 +107,7 @@ function vvv_validate_age_validate($volunteer, $message) {
   if ($years < $min_age) {
     return array(
       'valid' => FALSE,
-      'text' => 'Den frivilliges alder er under: ' . $min_age,
+      'text' => 'Deltagerens alder er under: ' . $min_age,
     );
   }
   return array(

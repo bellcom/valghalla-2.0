@@ -62,8 +62,8 @@ function valghalla_mail_menu() {
   );
 
   $items['valghalla/administration/sendmail'] = array(
-      'title' => 'Send mails til frivillige',
-      'description' => 'Her kan der udsendes mails til alle, eller udvalgte segmenter, af de frivillige.',
+      'title' => 'Send mails til deltagere',
+      'description' => 'Her kan der udsendes mails til alle, eller udvalgte segmenter, af deltagere.',
       'page callback' => 'valghalla_mail_sendmail_create_email_node', // Step 1 create an email node
       'access arguments' => array('administer valghalla'),
       'file' =>'includes/valghalla_mail_form.inc',
