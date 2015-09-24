@@ -92,17 +92,8 @@ function vvv_validate_age_validate($volunteer, $message) {
   $cpr_field = field_get_items('node', $volunteer, 'field_cpr_number');
   $cpr = $cpr_field ? $cpr_field[0]['value'] : '';
 
-  $dd = substr($cpr, 0, 2);
-  $mm = substr($cpr, 2, 2);
-  $yy = substr($cpr, 4, 2);
-
-  // Find md - "magic digit".
-  $md = substr($cpr, 7, 1);
-
-  $century = _vvv_validate_age_get_century($yy, $md);
-
   try {
-    $birthdate = new DateTime($century . $yy . '-' . $mm . '-' . $dd);
+    $years = _valghalla_helper_get_age_from_cpr($cpr);
   }
   catch (Exception $e) {
     return array(
@@ -111,8 +102,6 @@ function vvv_validate_age_validate($volunteer, $message) {
     );
   }
 
-  $diff = $date->diff($birthdate);
-  $years = $diff->format('%y');
   $min_age = variable_get('vvv_validate_age_age', 18);
 
   if ($years < $min_age) {
@@ -124,40 +113,4 @@ function vvv_validate_age_validate($volunteer, $message) {
   return array(
     'valid' => TRUE,
   );
-}
-
-/**
- * Helper function, to find the correct century.
- */
-function _vvv_validate_age_get_century($yy, $md) {
-  // See http://da.wikipedia.org/wiki/CPR-nummer#Under_eller_over_100_.C3.A5r
-  if ($md <= 3) {
-    return 19;
-  }
-  elseif ($md === 4) {
-    if ($yy <= 36) {
-      return 20;
-    }
-    else {
-      return 19;
-    }
-  }
-  elseif ($md >= 5 && $md <= 8) {
-    if ($yy <= 57) {
-      return 20;
-    }
-    else {
-      return 19;
-    }
-  }
-  elseif ($md === 9) {
-    if ($yy <= 36) {
-      return 20;
-    }
-    else {
-      return 19;
-    }
-  }
-  // If all else fails, we go with 19
-  return 19;
 }
