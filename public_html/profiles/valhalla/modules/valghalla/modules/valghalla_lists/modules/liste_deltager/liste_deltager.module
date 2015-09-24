@@ -481,14 +481,12 @@ function liste_deltager_polling_station_options() {
     return array('Du skal vælge et valg i dropdown menuen øverst.');
   }
 
-  // Generate options list, with polling stations.
-  $polling_stations_field = field_get_items('node', $election_node, 'field_polling_stations');
+  // Use odin_get_polling_stations(), it will return a correctly sorted array
+  // of polling stations.
+  $polling_station_nids = odin_get_polling_stations($election_node->nid);
 
-  foreach ($polling_stations_field as $data) {
-    $polling_station_nids[$data['target_id']] = $data['target_id'];
-  }
-
-  foreach (node_load_multiple($polling_station_nids) as $polling_station) {
+  foreach ($polling_station_nids as $polling_station_nid => $polling_station_title) {
+    $polling_station = node_load($polling_station_nid);
     if ($constituency_field = field_get_items('node', $polling_station, 'field_constituency')) {
       // We save the data in 2 arrays, and don't populate options yet, as we
       // have to sort the options according to the title of the
