@@ -553,7 +553,8 @@ function valghalla_volunteers_to_polling_station_roles($polling_station, $party_
       ->fieldCondition('field_post_party', 'target_id', $party_tid)
       ->fieldCondition('field_post_role', 'target_id', $value['role_nid']);
 
-    $result = array_shift($volunteer_query->execute());
+    $query_result = $volunteer_query->execute();
+    $result       = array_shift($query_result);
 
     if(!empty($result)){
       foreach($result as $fcid => $fc){
