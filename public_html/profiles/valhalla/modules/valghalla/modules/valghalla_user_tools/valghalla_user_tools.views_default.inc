@@ -315,7 +315,7 @@ function valghalla_user_tools_views_default_views() {
   $handler->display->display_options['header']['area']['table'] = 'views';
   $handler->display->display_options['header']['area']['field'] = 'area';
   $handler->display->display_options['header']['area']['empty'] = TRUE;
-  $handler->display->display_options['header']['area']['content'] = '<a class="btn btn-success" href="/valghalla/administration/sendmail">+ Tilføj skabelon</a>';
+  $handler->display->display_options['header']['area']['content'] = '<a class="btn btn-success" href="/node/add/email">+ Tilføj skabelon</a>';
   $handler->display->display_options['header']['area']['format'] = 'full_html';
   /* Felt: Indhold: Titel */
   $handler->display->display_options['fields']['title']['id'] = 'title';
@@ -381,7 +381,7 @@ function valghalla_user_tools_views_default_views() {
     t('Sortér efter'),
     t('Stigende'),
     t('Faldende'),
-    t('<a class="btn btn-success" href="/valghalla/administration/sendmail">+ Tilføj skabelon</a>'),
+    t('<a class="btn btn-success" href="/node/add/email">+ Tilføj skabelon</a>'),
     t('Emne'),
     t('Brødtekst'),
     t('Redigér-link'),
