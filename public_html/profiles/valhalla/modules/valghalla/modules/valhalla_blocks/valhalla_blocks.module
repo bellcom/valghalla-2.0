@@ -239,21 +239,37 @@ function _valhalla_blocks_generate_constituency_markup($constituency_nids, $poll
   foreach ($constituency_nids as $constituency_nid => $polling_station_nids) {
     $constituency_node = node_load($constituency_nid);
 
-    $constituency_total = array();
+    $constituency_total = array(
+      'total_count' => array(
+        'assigned' => 0,
+        'total'    => 0,
+        'rsvp_ok'  => 0,
+        'rsvp_no'  => 0,
+      ),
+      'role_count' => array(),
+    );
 
     // Count constituency totals.
     foreach ($polling_station_count as $polling_station_nid => $data) {
       if (in_array($polling_station_nid, array_keys($polling_station_nids))) {
         $constituency_total['total_count']['assigned'] += $data['total_count']['assigned'];
-        $constituency_total['total_count']['total'] += $data['total_count']['total'];
-        $constituency_total['total_count']['rsvp_ok'] += $data['total_count']['rsvp_ok'];
-        $constituency_total['total_count']['rsvp_no'] += $data['total_count']['rsvp_no'];
+        $constituency_total['total_count']['total']    += $data['total_count']['total'];
+        $constituency_total['total_count']['rsvp_ok']  += $data['total_count']['rsvp_ok'];
+        $constituency_total['total_count']['rsvp_no']  += $data['total_count']['rsvp_no'];
 
         foreach ($data['role_count'] as $role_nid => $role_count) {
-          $constituency_total['role_count'][$role_nid]['assigned'] += $role_count['assigned'];
-          $constituency_total['role_count'][$role_nid]['total'] += $role_count['total'];
-          $constituency_total['role_count'][$role_nid]['rsvp_ok'] += $role_count['rsvp_ok'];
-          $constituency_total['role_count'][$role_nid]['rsvp_no'] += $role_count['rsvp_no'];
+          if (!isset($constituency_total['role_count'][$role_nid])) {
+            $constituency_total['role_count'][$role_nid] = array(
+              'assigned' => 0,
+              'total'    => 0,
+              'rsvp_ok'  => 0,
+              'rsvp_no'  => 0,
+            );
+          }
+          $constituency_total['role_count'][$role_nid]['assigned'] += isset($role_count['assigned']) ? $role_count['assigned'] : 0;
+          $constituency_total['role_count'][$role_nid]['total']    += isset($role_count['total'])    ? $role_count['total'] : 0;
+          $constituency_total['role_count'][$role_nid]['rsvp_ok']  += isset($role_count['rsvp_ok'])  ? $role_count['rsvp_ok'] : 0;
+          $constituency_total['role_count'][$role_nid]['rsvp_no']  += isset($role_count['rsvp_no'])  ? $role_count['rsvp_no'] : 0;
         }
       }
     }

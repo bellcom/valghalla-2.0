@@ -349,7 +349,8 @@ function liste_deltager_get_volunteers($values) {
     $volunteer_query->fieldCondition('field_vlnt_station', 'target_id', $polling_station);
   }
 
-  $result = array_keys(array_shift($volunteer_query->execute()));
+  $query_result = $volunteer_query->execute();
+  $result       = array_keys(array_shift($query_result));
 
   $parties = _valghalla_helper_get_parties();
   $roles_array = _valghalla_helper_get_roles();
