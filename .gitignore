@@ -11,3 +11,5 @@ public_html/sites/all/themes/skbrg
 public_html/sites/valg-*
 virtualhost.conf
 cert
+
+public_html/sites/all/translations/*.po
