@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Administrative script for running authorized file operations.
