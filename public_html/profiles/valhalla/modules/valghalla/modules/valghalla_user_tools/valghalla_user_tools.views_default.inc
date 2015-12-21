@@ -120,7 +120,7 @@ function valghalla_user_tools_views_default_views() {
   $handler->display->display_options['fields']['title']['label'] = '';
   $handler->display->display_options['fields']['title']['alter']['word_boundary'] = FALSE;
   $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
-  /* Felt: Indhold: CPR Number */
+  /* Felt: Indhold: CPR Nummer */
   $handler->display->display_options['fields']['field_cpr_number']['id'] = 'field_cpr_number';
   $handler->display->display_options['fields']['field_cpr_number']['table'] = 'field_data_field_cpr_number';
   $handler->display->display_options['fields']['field_cpr_number']['field'] = 'field_cpr_number';
@@ -141,7 +141,7 @@ function valghalla_user_tools_views_default_views() {
   $handler->display->display_options['fields']['edit_node']['table'] = 'views_entity_node';
   $handler->display->display_options['fields']['edit_node']['field'] = 'edit_node';
   $handler->display->display_options['fields']['edit_node']['label'] = 'Redigér';
-  /* Felt: Felt: Parti */
+  /* Felt: Indhold: Parti */
   $handler->display->display_options['fields']['field_party']['id'] = 'field_party';
   $handler->display->display_options['fields']['field_party']['table'] = 'field_data_field_party';
   $handler->display->display_options['fields']['field_party']['field'] = 'field_party';
@@ -151,7 +151,7 @@ function valghalla_user_tools_views_default_views() {
   $handler->display->display_options['sorts']['created']['table'] = 'node';
   $handler->display->display_options['sorts']['created']['field'] = 'created';
   $handler->display->display_options['sorts']['created']['order'] = 'DESC';
-  /* Kontekstuelt filter: Felt: Parti (field_party) */
+  /* Kontekstuelt filter: Indhold: Parti (field_party) */
   $handler->display->display_options['arguments']['field_party_tid']['id'] = 'field_party_tid';
   $handler->display->display_options['arguments']['field_party_tid']['table'] = 'field_data_field_party';
   $handler->display->display_options['arguments']['field_party_tid']['field'] = 'field_party_tid';
@@ -196,7 +196,7 @@ function valghalla_user_tools_views_default_views() {
     3 => 0,
     4 => 0,
   );
-  /* Filterkriterie: Felt: Parti (field_party) */
+  /* Filterkriterie: Indhold: Parti (field_party) */
   $handler->display->display_options['filters']['field_party_tid']['id'] = 'field_party_tid';
   $handler->display->display_options['filters']['field_party_tid']['table'] = 'field_data_field_party';
   $handler->display->display_options['filters']['field_party_tid']['field'] = 'field_party_tid';
@@ -215,7 +215,7 @@ function valghalla_user_tools_views_default_views() {
   $handler->display->display_options['filters']['field_party_tid']['reduce_duplicates'] = TRUE;
   $handler->display->display_options['filters']['field_party_tid']['type'] = 'select';
   $handler->display->display_options['filters']['field_party_tid']['vocabulary'] = 'partier';
-  /* Filterkriterie: Indhold: CPR Number (field_cpr_number) */
+  /* Filterkriterie: Indhold: CPR Nummer (field_cpr_number) */
   $handler->display->display_options['filters']['field_cpr_number_value']['id'] = 'field_cpr_number_value';
   $handler->display->display_options['filters']['field_cpr_number_value']['table'] = 'field_data_field_cpr_number';
   $handler->display->display_options['filters']['field_cpr_number_value']['field'] = 'field_cpr_number_value';
@@ -557,7 +557,7 @@ function valghalla_user_tools_views_default_views() {
   $handler->display->display_options['fields']['field_role_hours']['id'] = 'field_role_hours';
   $handler->display->display_options['fields']['field_role_hours']['table'] = 'field_data_field_role_hours';
   $handler->display->display_options['fields']['field_role_hours']['field'] = 'field_role_hours';
-  /* Felt: Indhold: Role Rækkefølge */
+  /* Felt: Indhold: Valgsted Rækkefølge */
   $handler->display->display_options['fields']['field_role_weight']['id'] = 'field_role_weight';
   $handler->display->display_options['fields']['field_role_weight']['table'] = 'field_data_field_role_weight';
   $handler->display->display_options['fields']['field_role_weight']['field'] = 'field_role_weight';
@@ -572,7 +572,7 @@ function valghalla_user_tools_views_default_views() {
   $handler->display->display_options['fields']['edit_node']['id'] = 'edit_node';
   $handler->display->display_options['fields']['edit_node']['table'] = 'views_entity_node';
   $handler->display->display_options['fields']['edit_node']['field'] = 'edit_node';
-  /* Sorteringskriterie: Indhold: Role Rækkefølge (field_role_weight) */
+  /* Sorteringskriterie: Indhold: Valgsted Rækkefølge (field_role_weight) */
   $handler->display->display_options['sorts']['field_role_weight_value']['id'] = 'field_role_weight_value';
   $handler->display->display_options['sorts']['field_role_weight_value']['table'] = 'field_data_field_role_weight';
   $handler->display->display_options['sorts']['field_role_weight_value']['field'] = 'field_role_weight_value';
@@ -685,7 +685,7 @@ function valghalla_user_tools_views_default_views() {
   $handler->display->display_options['fields']['entity_id_3']['id'] = 'entity_id_3';
   $handler->display->display_options['fields']['entity_id_3']['table'] = 'field_data_field_contact';
   $handler->display->display_options['fields']['entity_id_3']['field'] = 'field_contact';
-  /* Felt: Felt: Parti */
+  /* Felt: Indhold: Parti */
   $handler->display->display_options['fields']['entity_id_5']['id'] = 'entity_id_5';
   $handler->display->display_options['fields']['entity_id_5']['table'] = 'field_data_field_party';
   $handler->display->display_options['fields']['entity_id_5']['field'] = 'field_party';
@@ -759,7 +759,7 @@ function valghalla_user_tools_views_default_views() {
   $handler->display->display_options['fields']['entity_id_2']['field'] = 'field_chairman';
   $handler->display->display_options['fields']['entity_id_2']['label'] = 'field_chairman';
   $handler->display->display_options['fields']['entity_id_2']['exclude'] = TRUE;
-  /* Felt: Felt: Parti */
+  /* Felt: Indhold: Parti */
   $handler->display->display_options['fields']['entity_id_5']['id'] = 'entity_id_5';
   $handler->display->display_options['fields']['entity_id_5']['table'] = 'field_data_field_party';
   $handler->display->display_options['fields']['entity_id_5']['field'] = 'field_party';
@@ -873,7 +873,7 @@ function valghalla_user_tools_views_default_views() {
   $handler->display->display_options['fields']['entity_id_3']['table'] = 'field_data_field_contact';
   $handler->display->display_options['fields']['entity_id_3']['field'] = 'field_contact';
   $handler->display->display_options['fields']['entity_id_3']['exclude'] = TRUE;
-  /* Felt: Felt: Parti */
+  /* Felt: Indhold: Parti */
   $handler->display->display_options['fields']['entity_id_5']['id'] = 'entity_id_5';
   $handler->display->display_options['fields']['entity_id_5']['table'] = 'field_data_field_party';
   $handler->display->display_options['fields']['entity_id_5']['field'] = 'field_party';
@@ -978,7 +978,7 @@ function valghalla_user_tools_views_default_views() {
   $handler->display->display_options['fields']['entity_id_3']['table'] = 'field_data_field_contact';
   $handler->display->display_options['fields']['entity_id_3']['field'] = 'field_contact';
   $handler->display->display_options['fields']['entity_id_3']['exclude'] = TRUE;
-  /* Felt: Felt: Parti */
+  /* Felt: Indhold: Parti */
   $handler->display->display_options['fields']['entity_id_5']['id'] = 'entity_id_5';
   $handler->display->display_options['fields']['entity_id_5']['table'] = 'field_data_field_party';
   $handler->display->display_options['fields']['entity_id_5']['field'] = 'field_party';
