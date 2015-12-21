@@ -345,7 +345,8 @@ function liste_deltager_get_volunteers($values) {
   if ($party) {
     $volunteer_query->fieldCondition('field_post_party', 'target_id', $party);
   }
-  if ($polling_station) {
+
+  if ($polling_station != 'none') {
     $volunteer_query->fieldCondition('field_vlnt_station', 'target_id', $polling_station);
   }
 
@@ -374,6 +375,13 @@ function liste_deltager_get_volunteers($values) {
     $volunteer_fc = entity_load_single('field_collection_item', $fc_id);
     if (!is_object($volunteer_fc)) {
       continue;
+    }
+
+    // Sort out those who has a station set
+    if ($polling_station == 'none') {
+      if (!empty($volunteer_fc->field_vlnt_station)) {
+        continue;
+      }
     }
 
     $volunteer = $volunteer_fc->hostEntity();
@@ -472,6 +480,7 @@ function _liste_deltager_columns() {
  * Generate list of polling stations.
  */
 function liste_deltager_polling_station_options() {
+
   if (!$election_node = node_load($_SESSION['election_nid'])) {
     return array('Du skal vælge et valg i dropdown menuen øverst.');
   }
@@ -479,9 +488,14 @@ function liste_deltager_polling_station_options() {
   // Use odin_get_polling_stations(), it will return a correctly sorted array
   // of polling stations.
   $polling_station_nids = odin_get_polling_stations($election_node->nid);
+  $options = array();
+
+  // No polling station
+  $options[t('Intet valgsted')] = array('none' => t('Intet valg'));
 
   foreach ($polling_station_nids as $polling_station_nid => $polling_station_title) {
     $polling_station = node_load($polling_station_nid);
+
     if ($constituency_field = field_get_items('node', $polling_station, 'field_constituency')) {
       // We save the data in 2 arrays, and don't populate options yet, as we
       // have to sort the options according to the title of the
@@ -490,6 +504,7 @@ function liste_deltager_polling_station_options() {
       $constituencies[$constituency->nid] = $constituency->title;
       $polling_stations[$constituency->nid][$polling_station->nid] = $polling_station->title;
     }
+
     else {
       $options[$polling_station->nid] = $polling_station->title;
     }
