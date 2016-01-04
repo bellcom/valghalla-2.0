@@ -82,14 +82,14 @@ function valghalla_signup_administration_form() {
     '#title' => t('Roller'),
     '#type' => 'select',
     '#multiple' => TRUE,
-    '#options' => _valghalla_helper_get_roles(),
+    '#options' => odin_get_roles(),
     '#default_value' => variable_get('valghalla_signup_roles', FALSE),
   );
 
   $form['valghalla_signup_party_tid'] = array(
     '#title' => t('Parti'),
     '#type' => 'select',
-    '#options' => _valghalla_helper_get_parties(),
+    '#options' => odin_get_parties(),
     '#default_value' => variable_get('valghalla_signup_party_tid', FALSE),
   );
 

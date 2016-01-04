@@ -53,11 +53,14 @@ function valhalla_blocks_block_view($delta = '') {
     case 'party_status':
     case 'party_constituency_status':
 
-      if ($_SESSION['election_nid']) {
+      $block_cache = '';
+      if (isset($_SESSION['election_nid'])) {
         global $user;
         $cache = cache_get($delta . '_' . $user->uid . '_' . $_SESSION['election_nid']);
 
-        $block_cache = $cache->data;
+        if ($cache) {
+          $block_cache = $cache->data;
+        }
       }
 
       drupal_add_js(drupal_get_path('module', 'valhalla_blocks') . '/js/valhalla_blocks.js', 'file');

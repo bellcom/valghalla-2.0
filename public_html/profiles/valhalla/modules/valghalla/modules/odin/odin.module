@@ -77,7 +77,7 @@ function odin_reset_alphabetical_form_submit(&$form, &$form_state) {
  * Retrieve party tid for next free seat on specified parameters
  */
 function odin_party_tid_for_next_free_seat($election_nid, $polling_station_nid, $role_nid) {
-  $parties = _valghalla_helper_get_parties();
+  $parties = odin_get_parties();
   $polling_station = node_load($polling_station_nid);
 
   foreach ($parties as $party_tid => $party) {

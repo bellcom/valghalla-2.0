@@ -1,3 +1,4 @@
 name = Lister over deltagere
 description = konfigurerbar liste over deltagere
 core = 7.x
+dependencies[] = odin
