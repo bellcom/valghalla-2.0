@@ -45,9 +45,10 @@ function valhalla_admin_settings_form($form, &$form_state) {
  */
 function valhalla_settings_form_alter(&$form, &$form_state, $form_id) {
   if($form_id == 'user_profile_form'){
-    global $user;
+
     $form['field_polling_station']['#disabled'] = TRUE;
-    if(in_array('administrator', $user->roles) ){
+
+    if (user_access('administer valghalla')) {
       $form['field_polling_station']['#disabled'] = FALSE;
     }
   }
