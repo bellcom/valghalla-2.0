@@ -127,6 +127,9 @@ function valghalla_mail_mail($key, &$message, $params) {
       $message['subject'] = t($params['subject'], $params['tokens'], $options);
       $message['body'][] = t($params['body'], $params['tokens'], $options);
       $message['params']['attachments'] = $params['attachments'];
+      if ($params['bcc']) {
+        $message['headers']['Bcc'] = $params['bcc'];
+      }
       break;
     // 20/03-2014 - tth@bellcom.dk: Not sure if this is needed anymore
     // will keep it for a bit.

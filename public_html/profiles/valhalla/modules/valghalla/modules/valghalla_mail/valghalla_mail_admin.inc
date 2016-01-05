@@ -141,7 +141,7 @@ function valghalla_mail_admin_notifications(){
     '#type' => 'fieldset',
     '#title' => t('Besked ved afbud fra deltagere'),
     '#collapsible' => TRUE,
-    '#description' => t('Vælg roller der skal modtage mails ved afbud.'),
+    '#description' => t('Vælg roller der skal modtage mails ved afbud. (Mails sendes som Bcc)'),
   );
 
   foreach ($roles as $role) {
@@ -175,7 +175,7 @@ function valghalla_mail_admin_notifications(){
       '#description' => t('Liste af E-mailadresser adskildt af komma'),
       '#default_value' => variable_get("valghalla_mail_cancellation_from_participants_to_mails"),
     );
-
+  /*
   // Only choose the rsvp_no and rsvp_never types.
   foreach($mail_types as $mail_type => $mail_type_title){
     if ($mail_type == "rsvp_no" || $mail_type == "rsvp_never") {
@@ -196,7 +196,7 @@ function valghalla_mail_admin_notifications(){
         '#description' => $description_2,
       );
     }
-  }
+  }*/
 
   // Reminder settings.
   $form['valghalla_volunteers_mail']['options']['valghalla_rsvp_reminder_days'] = array(

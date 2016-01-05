@@ -365,8 +365,61 @@ function valghalla_volunteers_rsvp_form_submit($form, &$form_state) {
   $to = $tokens['!email'];
   $from = variable_get('site_mail', 'admin@example.com');
 
+  // Send email to roles or other email address, if user cancelled to attend.
+  $to_admin = '';
+  if ($type == 'rsvp_no' || $type == 'rsvp_never') {
+     $to_admin = valghalla_volunteers_add_email_to_list();
+  }
+  $params['bcc'] = $to_admin;
+
   drupal_mail('valghalla_mail', 'mail', $to, $language, $params, $from, TRUE);
   drupal_set_message(t('Vi har modtaget dit svar.'));
+}
+
+/**
+ * Get a list of email addresses according to role which are selected in config file
+ * see also valghalla_mail_admin
+ *
+ * @author Yani Xu <yani@bellcom.dk>
+ */
+function valghalla_volunteers_add_email_to_list() {
+  module_load_include('inc', 'valghalla_mail', 'valghalla_mail_admin');
+  $roles = db_query("SELECT name, rid FROM {role} WHERE rid > 2");
+  $to = "";
+  foreach ($roles as $role) {
+    $role_id_sendTo = variable_get("valghalla_mail_cancellation_from_participants_".$role->rid);
+    // When the role is selected in valghalla_mail_admin.inc
+    if ($role_id_sendTo) {
+      // Get all the email addresses according to role id and add to "to list".
+      $results = db_query("SELECT u.mail as mail FROM {users_roles} r, {users} u where r.uid=u.uid and r.rid = ".$role->rid);
+      foreach ($results as $result) {
+
+        if ($to == "") {
+          $to = $result->mail;
+        }
+        else {
+          // Add "," to mail list to seperate
+          // yani: check duplicate email addresses, because a user can have multi roles.
+          $pattern = "/^" .$result->mail . "/";
+          $multi_roles = preg_match($pattern, $to, $matches);
+          if ($multi_roles == 0) {
+            $to .= ",";
+            $to .= $result->mail;
+          }
+        }
+      }
+    }
+  }
+  // Get the extra email addresses.
+  $mails = variable_get("valghalla_mail_cancellation_from_participants_to_mails");
+  $other_check = variable_get("valghalla_mail_cancellation_from_participants_others");
+  if ($other_check) {
+    $mails = explode(",", $mails);
+    foreach ($mails as $key => $value) {
+      $to .= ",".$value;
+    }
+  }
+  return $to;
 }
 
 /**
