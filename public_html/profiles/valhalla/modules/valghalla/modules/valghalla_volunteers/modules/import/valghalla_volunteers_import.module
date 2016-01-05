@@ -107,7 +107,6 @@ function valghalla_volunteers_import_form_submit($form, &$form_state) {
   if ($user_party_id) {
     $force_party = $user_party_id;
   }
-
   $import = _valghalla_volunteers_parse_csv_import($form_state['file object'], $force_party);
 
   if ($import) {
@@ -141,12 +140,24 @@ function _valghalla_volunteers_parse_csv_import($file_object, $party_forced = FA
         continue;
       }
 
-      if (empty($data[0]) || (count($data) != 5)) {
+      // If users party id is set, file doesn't include party, skip line.
+      if (empty($data[0]) && $party_forced) {
         continue;
       }
 
-      // Extract fields into readable variables.
-      list($party, $cpr, $name, $email, $phone) = $data;
+      // Normal import files
+      if ((count($data) == 5)) {
+        // Extract fields into readable variables.
+        list($party, $cpr, $name, $email, $phone) = $data;
+      }
+      // Exported files included valgsted, status and rolle.
+      else {
+        $party = $data[0];
+        $cpr = $data[1];
+        $name = $data[2];
+        $email = $data[3];
+        $phone = $data[4];
+      }
 
       if ($party_forced) {
         $party = $party_forced;
