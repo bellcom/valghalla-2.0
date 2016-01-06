@@ -17,6 +17,7 @@ dependencies[] = number
 dependencies[] = options
 dependencies[] = taxonomy
 dependencies[] = text
+dependencies[] = odin
 dependencies[] = valghalla_election
 dependencies[] = valghalla_mail
 dependencies[] = valghalla_polling_station

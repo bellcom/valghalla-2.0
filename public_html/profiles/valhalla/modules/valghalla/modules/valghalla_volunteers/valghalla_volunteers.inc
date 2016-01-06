@@ -207,7 +207,7 @@ function _valghalla_helper_get_parties() {
 function _valghalla_helper_get_posts_to_fill($polling_station, $party_tid){
   $posts_to_fill = array();
 
-  $roles = _valghalla_helper_get_roles();
+  $roles = odin_get_roles();
 
   // Loop over roles and fetch count for each role on polling station.
   foreach ($roles as $role_nid => $role_title){

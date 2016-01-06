@@ -1007,7 +1007,7 @@ function valghalla_volunteers_form_volunteers_node_form_alter(&$form, &$form_sta
     $form['roles_id'] = array(
       '#type' => 'select',
       '#title' => t('Rolle'),
-      '#options' => _valghalla_helper_get_roles(),
+      '#options' => odin_get_roles(),
       '#empty_option' => 'Select',
       '#weight' => 10,
     );
@@ -1081,7 +1081,7 @@ function valghalla_volunteers_node_validate($node, $form, &$form_state) {
 
       $role_id = $form_state['values']['roles_id'];
 
-      $roles_array = _valghalla_helper_get_roles();
+      $roles_array = odin_get_roles();
       $form_state['values']['field_label'][$field_language][0]['value'] = strtolower($roles_array[$role_id]);
     }
   }

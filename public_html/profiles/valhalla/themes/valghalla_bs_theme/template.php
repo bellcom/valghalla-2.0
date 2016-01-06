@@ -145,6 +145,9 @@ function valhalla_bs_vol_cpr($node) {
 }
 
 function valhalla_bs_vol_election_info($node) {
+
+  $output = '';
+
   if ($field = field_get_items('node', $node, 'field_electioninfo')) {
 
     foreach ($field as $data) {
@@ -187,6 +190,7 @@ function valhalla_bs_vol_election_info($node) {
       }
 
       // Status.
+      $rsvp = '';
       if ($field = field_get_items('field_collection_item', $fc, 'field_rsvp')) {
         $rsvp_map = array(
           0 => 'Ikke svaret',
@@ -197,6 +201,7 @@ function valhalla_bs_vol_election_info($node) {
         $rsvp = $rsvp_map[$field[0]['value']];
       }
 
+      $rsvp_comment = '';
       if ($field = field_get_items('field_collection_item', $fc, 'field_rsvp_comment')) {
         $rsvp_comment = $field[0]['value'];
       }

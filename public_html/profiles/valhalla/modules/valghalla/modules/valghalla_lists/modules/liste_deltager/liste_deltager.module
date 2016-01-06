@@ -94,7 +94,7 @@ function liste_deltager_form($form, &$form_state) {
   $form['filter']['roles'] = array(
     '#type' => 'checkboxes',
     '#title' => t('Rolle(r)'),
-    '#options' => _valghalla_helper_get_roles(),
+    '#options' => odin_get_roles(),
     '#prefix' => '<div class="col-sm-6 col-md-3">',
     '#suffix' => '<a class="js-select-all" href="#">Vælg alle</a></div>',
   );
@@ -104,7 +104,7 @@ function liste_deltager_form($form, &$form_state) {
     '#title' => t('Parti(er) (plads)'),
     '#prefix' => '<div class="col-sm-6 col-md-3">',
     '#suffix' => '<a class="js-select-all" href="#">Vælg alle</a></div>',
-    '#options' => _valghalla_helper_get_parties(),
+    '#options' => odin_get_parties(),
   );
 
   $form['filter']['rsvp'] = array(
@@ -353,8 +353,8 @@ function liste_deltager_get_volunteers($values) {
   $query_result = $volunteer_query->execute();
   $result       = array_keys(array_shift($query_result));
 
-  $parties = _valghalla_helper_get_parties();
-  $roles_array = _valghalla_helper_get_roles();
+  $parties = odin_get_parties();
+  $roles_array = odin_get_roles();
 
   if (db_table_exists('field_election_roles_diaet')) {
     $diet_rows = db_query("SELECT * FROM {field_election_roles_diaet} r WHERE r.nid = " . $_SESSION['election_nid'])->fetchObject();
