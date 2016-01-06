@@ -326,6 +326,13 @@ function _valhalla_blocks_generate_polling_station_markup($polling_station_nids,
   $markup = '';
 
   foreach ($polling_station_nids as $polling_station_nid => $polling_station_title) {
+
+    // Check if there is no assigned roles to the statation, and total count is zero.
+    if ($polling_station_count[$polling_station_nid]['total_count']['total'] == 0 &&
+        $polling_station_count[$polling_station_nid]['total_count']['assigned'] == 0 ) {
+      continue;
+    }
+
     $markup .= '<tr><td class="column-first"><a href="/volunteers/station/' . $polling_station_nid . '">';
     $markup .= $polling_station_title . '</a></td>';
 
