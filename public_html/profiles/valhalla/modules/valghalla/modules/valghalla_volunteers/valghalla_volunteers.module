@@ -864,10 +864,12 @@ function valghalla_volunteers_add_sub_secretary_form_validate($form, array &$for
 function valghalla_volunteers_add_sub_secretary_form_submit($form, array &$form_state) {
   form_state_values_clean($form_state);
 
+  $secretary_of_party = variable_get('valhalla_settings_party_secretary_role_id', 4);
+
   // setup defaults
   $form_state['values']['pass'] = user_password();
   $form_state['values']['status'] = 1;
-  $form_state['values']['roles'] = array(4 => 4);
+  $form_state['values']['roles'] = array($secretary_of_party => $secretary_of_party);
   $form_state['values']['init'] = $form_state['values']['mail'];
 
   $account = $form['#user'];
