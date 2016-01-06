@@ -1,0 +1,15 @@
+<?php
+
+/**
+ * Try to assign the 'Partisekretær' role automatically in settings.
+ */
+function valhalla_settings_update_7000() {
+  $role = user_role_load_by_name('Partisekretær');
+
+  if ($role) {
+    variable_set('valhalla_settings_party_secretary_role_id', $role->rid);
+  }
+  else {
+    drupal_set_message(t('You MUST manually specify the "Partisekretær" role in settings admin/valghalla/settings'), 'warning');
+  }
+}
