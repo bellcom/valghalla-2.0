@@ -171,7 +171,7 @@ function liste_parti_oversigt_views_default_views() {
   $handler->display->display_options['fields']['title']['field'] = 'title';
   $handler->display->display_options['fields']['title']['label'] = 'Navn';
   $handler->display->display_options['fields']['title']['link_to_node'] = FALSE;
-  /* Felt: Indhold: CPR Number */
+  /* Felt: Indhold: CPR Nummer */
   $handler->display->display_options['fields']['field_cpr_number']['id'] = 'field_cpr_number';
   $handler->display->display_options['fields']['field_cpr_number']['table'] = 'field_data_field_cpr_number';
   $handler->display->display_options['fields']['field_cpr_number']['field'] = 'field_cpr_number';
@@ -195,7 +195,7 @@ function liste_parti_oversigt_views_default_views() {
   $handler->display->display_options['fields']['entity_id']['label'] = 'field_address_door';
   $handler->display->display_options['fields']['entity_id']['exclude'] = TRUE;
   $handler->display->display_options['fields']['entity_id']['hide_empty'] = TRUE;
-  /* Felt: Indhold: Dør / Side */
+  /* Felt: Indhold: Dør / side */
   $handler->display->display_options['fields']['entity_id_1']['id'] = 'entity_id_1';
   $handler->display->display_options['fields']['entity_id_1']['table'] = 'field_data_field_address_door';
   $handler->display->display_options['fields']['entity_id_1']['field'] = 'field_address_door';
@@ -209,21 +209,21 @@ function liste_parti_oversigt_views_default_views() {
   $handler->display->display_options['fields']['entity_id_2']['label'] = 'field_address_floor';
   $handler->display->display_options['fields']['entity_id_2']['exclude'] = TRUE;
   $handler->display->display_options['fields']['entity_id_2']['hide_empty'] = TRUE;
-  /* Felt: Indhold: Vej */
+  /* Felt: Indhold: Adresse */
   $handler->display->display_options['fields']['entity_id_3']['id'] = 'entity_id_3';
   $handler->display->display_options['fields']['entity_id_3']['table'] = 'field_data_field_address_road';
   $handler->display->display_options['fields']['entity_id_3']['field'] = 'field_address_road';
   $handler->display->display_options['fields']['entity_id_3']['label'] = 'field_address_road';
   $handler->display->display_options['fields']['entity_id_3']['exclude'] = TRUE;
   $handler->display->display_options['fields']['entity_id_3']['hide_empty'] = TRUE;
-  /* Felt: Indhold: Nummer */
+  /* Felt: Indhold: Hus nr. */
   $handler->display->display_options['fields']['entity_id_4']['id'] = 'entity_id_4';
   $handler->display->display_options['fields']['entity_id_4']['table'] = 'field_data_field_address_road_no';
   $handler->display->display_options['fields']['entity_id_4']['field'] = 'field_address_road_no';
   $handler->display->display_options['fields']['entity_id_4']['label'] = 'field_address_road_no';
   $handler->display->display_options['fields']['entity_id_4']['exclude'] = TRUE;
   $handler->display->display_options['fields']['entity_id_4']['hide_empty'] = TRUE;
-  /* Felt: Indhold: Postnummer */
+  /* Felt: Indhold: Postnr. */
   $handler->display->display_options['fields']['entity_id_5']['id'] = 'entity_id_5';
   $handler->display->display_options['fields']['entity_id_5']['table'] = 'field_data_field_address_zipcode';
   $handler->display->display_options['fields']['entity_id_5']['field'] = 'field_address_zipcode';
@@ -329,10 +329,8 @@ function liste_parti_oversigt_views_default_views() {
   $handler = $view->new_display('panel_pane', 'Partioversigt', 'panel_pane_4');
   $handler->display->display_options['defaults']['hide_admin_links'] = FALSE;
   $handler->display->display_options['defaults']['access'] = FALSE;
-  $handler->display->display_options['access']['type'] = 'role';
-  $handler->display->display_options['access']['role'] = array(
-    4 => '4',
-  );
+  $handler->display->display_options['access']['type'] = 'perm';
+  $handler->display->display_options['access']['perm'] = 'valghalla view party-overview list';
   $handler->display->display_options['defaults']['style_plugin'] = FALSE;
   $handler->display->display_options['style_plugin'] = 'table';
   $handler->display->display_options['style_options']['columns'] = array(
@@ -520,7 +518,7 @@ function liste_parti_oversigt_views_default_views() {
   $handler->display->display_options['fields']['entity_id']['label'] = 'field_address_door';
   $handler->display->display_options['fields']['entity_id']['exclude'] = TRUE;
   $handler->display->display_options['fields']['entity_id']['hide_empty'] = TRUE;
-  /* Felt: Indhold: Dør / Side */
+  /* Felt: Indhold: Dør / side */
   $handler->display->display_options['fields']['entity_id_1']['id'] = 'entity_id_1';
   $handler->display->display_options['fields']['entity_id_1']['table'] = 'field_data_field_address_door';
   $handler->display->display_options['fields']['entity_id_1']['field'] = 'field_address_door';
@@ -534,21 +532,21 @@ function liste_parti_oversigt_views_default_views() {
   $handler->display->display_options['fields']['entity_id_2']['label'] = 'field_address_floor';
   $handler->display->display_options['fields']['entity_id_2']['exclude'] = TRUE;
   $handler->display->display_options['fields']['entity_id_2']['hide_empty'] = TRUE;
-  /* Felt: Indhold: Vej */
+  /* Felt: Indhold: Adresse */
   $handler->display->display_options['fields']['entity_id_3']['id'] = 'entity_id_3';
   $handler->display->display_options['fields']['entity_id_3']['table'] = 'field_data_field_address_road';
   $handler->display->display_options['fields']['entity_id_3']['field'] = 'field_address_road';
   $handler->display->display_options['fields']['entity_id_3']['label'] = 'field_address_road';
   $handler->display->display_options['fields']['entity_id_3']['exclude'] = TRUE;
   $handler->display->display_options['fields']['entity_id_3']['hide_empty'] = TRUE;
-  /* Felt: Indhold: Nummer */
+  /* Felt: Indhold: Hus nr. */
   $handler->display->display_options['fields']['entity_id_4']['id'] = 'entity_id_4';
   $handler->display->display_options['fields']['entity_id_4']['table'] = 'field_data_field_address_road_no';
   $handler->display->display_options['fields']['entity_id_4']['field'] = 'field_address_road_no';
   $handler->display->display_options['fields']['entity_id_4']['label'] = 'field_address_road_no';
   $handler->display->display_options['fields']['entity_id_4']['exclude'] = TRUE;
   $handler->display->display_options['fields']['entity_id_4']['hide_empty'] = TRUE;
-  /* Felt: Indhold: Postnummer */
+  /* Felt: Indhold: Postnr. */
   $handler->display->display_options['fields']['entity_id_5']['id'] = 'entity_id_5';
   $handler->display->display_options['fields']['entity_id_5']['table'] = 'field_data_field_address_zipcode';
   $handler->display->display_options['fields']['entity_id_5']['field'] = 'field_address_zipcode';
