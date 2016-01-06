@@ -9,4 +9,6 @@ name = valhalla_settings
 description =  Holds functionality to "lock" the "valgsted" content type. 
 
 package = Valghalla
+project = Valghalla
 core = 7.x
+configure = admin/valghalla/settings

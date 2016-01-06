@@ -21,7 +21,6 @@ dependencies[] = date_api
 dependencies[] = date_popup
 dependencies[] = date_tools
 dependencies[] = date_views
-dependencies[] = dblog
 dependencies[] = diff
 dependencies[] = email
 dependencies[] = entity

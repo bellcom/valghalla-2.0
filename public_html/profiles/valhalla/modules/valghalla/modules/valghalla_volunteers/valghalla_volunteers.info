@@ -20,6 +20,7 @@ dependencies[] = text
 dependencies[] = valghalla_election
 dependencies[] = valghalla_mail
 dependencies[] = valghalla_polling_station
+dependencies[] = valhalla_settings
 stylesheets[all][] = valhalla_volunteers.css
 configure = admin/config/valhalla/volunteers
 features[features_api][] = api:2
