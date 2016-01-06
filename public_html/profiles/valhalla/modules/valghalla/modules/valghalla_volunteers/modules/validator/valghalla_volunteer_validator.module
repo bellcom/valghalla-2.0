@@ -115,13 +115,15 @@ function valghalla_volunteer_validator_node_validate($node, $form, &$form_state)
     $validate_result = valghalla_volunteer_validator_validate($node, $message);
     $invalid_text = '';
 
-    foreach ($validate_result as $result) {
-      if (!$result['valid']) {
-        $invalid_text .= $result['text'] . '<br />';
+    if ($validate_result) {
+      foreach ($validate_result as $result) {
+        if (!$result['valid']) {
+          $invalid_text .= $result['text'] . '<br />';
+        }
       }
-    }
-    if ($invalid_text) {
-      form_set_error('field_cpr_number', t('Deltageren kan ikke valideres:') . ' ' . $result['text']);
+      if ($invalid_text) {
+        form_set_error('field_cpr_number', t('Deltageren kan ikke valideres:') . ' ' . $result['text']);
+      }
     }
   }
 }

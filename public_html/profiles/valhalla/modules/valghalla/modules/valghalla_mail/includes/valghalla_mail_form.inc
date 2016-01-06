@@ -421,7 +421,7 @@ function valghalla_mail_form_email_node_form_alter(&$form, &$form_state, $form_i
     );
   }
 
-  if ($form_state['valghalla_sendmail']) {
+  if (array_key_exists('valghalla_sendmail', $form_state)) {
     $form['options']['status']['#default_value'] = 1;
     $form['additional_settings']['#prefix'] = '<div style="display:none;">';
     $form['additional_settings']['#suffix'] = '</div>';

@@ -161,6 +161,7 @@ function valghalla_mail_get_mail($election_nid, $role_nid, $mail_type, $mail_nid
     $body_field = field_get_items('node', $mail_node, 'body');
     $subject_field = field_get_items('node', $mail_node, 'field_subject');
     // yani: add attachment
+    $attachments = array();
     if( $files = field_get_items('node', $mail_node, 'field_valghalla_mail_attachments')) {
       foreach($files as $file_info){
         $file = file_load($file_info['fid']);
