@@ -31,3 +31,5 @@ stylesheets[all][] = css/style.css
 scripts[] = 'bootstrap/js/modal.js'
 scripts[] = 'js/vendor/jquery.tablesorter.min.js'
 scripts[] = 'js/vendor/jquery.tablesorter.widgets.js'
+scripts[] = 'js/valghalla_bs_theme.js'
+scripts[] = 'js/bootstrap-filestyle.js'
