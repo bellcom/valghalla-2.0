@@ -60,7 +60,7 @@ function liste_valghalla_export_views_default_views() {
   $handler->display->display_options['fields']['entity_id_7']['table'] = 'field_data_field_party';
   $handler->display->display_options['fields']['entity_id_7']['field'] = 'field_party';
   $handler->display->display_options['fields']['entity_id_7']['type'] = 'taxonomy_term_reference_plain';
-  /* Felt: Indhold: CPR Number */
+  /* Felt: Indhold: CPR Nummer */
   $handler->display->display_options['fields']['entity_id']['id'] = 'entity_id';
   $handler->display->display_options['fields']['entity_id']['table'] = 'field_data_field_cpr_number';
   $handler->display->display_options['fields']['entity_id']['field'] = 'field_cpr_number';
@@ -81,7 +81,7 @@ function liste_valghalla_export_views_default_views() {
   $handler->display->display_options['fields']['entity_id_3']['table'] = 'field_data_field_polling_station';
   $handler->display->display_options['fields']['entity_id_3']['field'] = 'field_polling_station';
   $handler->display->display_options['fields']['entity_id_3']['label'] = 'valgsted';
-  /* Felt: Indhold: Polling Station post */
+  /* Felt: Indhold: Valgsted placering */
   $handler->display->display_options['fields']['entity_id_4']['id'] = 'entity_id_4';
   $handler->display->display_options['fields']['entity_id_4']['table'] = 'field_data_field_polling_station_post';
   $handler->display->display_options['fields']['entity_id_4']['field'] = 'field_polling_station_post';
@@ -91,12 +91,12 @@ function liste_valghalla_export_views_default_views() {
     'thousand_separator' => '',
     'prefix_suffix' => 0,
   );
-  /* Felt: Felt: Status */
+  /* Felt: Field collection item: Status */
   $handler->display->display_options['fields']['entity_id_5']['id'] = 'entity_id_5';
   $handler->display->display_options['fields']['entity_id_5']['table'] = 'field_data_field_rsvp';
   $handler->display->display_options['fields']['entity_id_5']['field'] = 'field_rsvp';
   $handler->display->display_options['fields']['entity_id_5']['label'] = 'RSVP';
-  /* Felt: Felt: Token */
+  /* Felt: Field collection item: Token */
   $handler->display->display_options['fields']['entity_id_6']['id'] = 'entity_id_6';
   $handler->display->display_options['fields']['entity_id_6']['table'] = 'field_data_field_token';
   $handler->display->display_options['fields']['entity_id_6']['field'] = 'field_token';
@@ -155,6 +155,13 @@ function liste_valghalla_export_views_default_views() {
   $handler->display->display_options['pager']['options']['items_per_page'] = '0';
   $handler->display->display_options['pager']['options']['offset'] = '0';
   $handler->display->display_options['style_plugin'] = 'views_data_export_csv';
+  $handler->display->display_options['style_options']['provide_file'] = 1;
+  $handler->display->display_options['style_options']['parent_sort'] = 0;
+  $handler->display->display_options['style_options']['quote'] = 1;
+  $handler->display->display_options['style_options']['trim'] = 0;
+  $handler->display->display_options['style_options']['replace_newlines'] = 0;
+  $handler->display->display_options['style_options']['header'] = 1;
+  $handler->display->display_options['style_options']['keep_html'] = 0;
   $handler->display->display_options['defaults']['fields'] = FALSE;
   /* Felt: Felt: Parti */
   $handler->display->display_options['fields']['entity_id_7']['id'] = 'entity_id_7';
@@ -163,7 +170,7 @@ function liste_valghalla_export_views_default_views() {
   $handler->display->display_options['fields']['entity_id_7']['label'] = 'partibogstav';
   $handler->display->display_options['fields']['entity_id_7']['hide_alter_empty'] = FALSE;
   $handler->display->display_options['fields']['entity_id_7']['type'] = 'taxonomy_term_reference_plain';
-  /* Felt: Indhold: CPR Number */
+  /* Felt: Indhold: CPR Nummer */
   $handler->display->display_options['fields']['entity_id']['id'] = 'entity_id';
   $handler->display->display_options['fields']['entity_id']['table'] = 'field_data_field_cpr_number';
   $handler->display->display_options['fields']['entity_id']['field'] = 'field_cpr_number';
@@ -201,7 +208,7 @@ function liste_valghalla_export_views_default_views() {
   $handler->display->display_options['fields']['field_vlnt_station']['settings'] = array(
     'link' => 0,
   );
-  /* Felt: Felt: Status */
+  /* Felt: Field collection item: Status */
   $handler->display->display_options['fields']['field_rsvp']['id'] = 'field_rsvp';
   $handler->display->display_options['fields']['field_rsvp']['table'] = 'field_data_field_rsvp';
   $handler->display->display_options['fields']['field_rsvp']['field'] = 'field_rsvp';
@@ -239,7 +246,7 @@ function liste_valghalla_export_views_default_views() {
   $handler->display->display_options['fields']['entity_id_7']['label'] = 'partibogstav';
   $handler->display->display_options['fields']['entity_id_7']['hide_alter_empty'] = FALSE;
   $handler->display->display_options['fields']['entity_id_7']['type'] = 'taxonomy_term_reference_plain';
-  /* Felt: Indhold: CPR Number */
+  /* Felt: Indhold: CPR Nummer */
   $handler->display->display_options['fields']['entity_id']['id'] = 'entity_id';
   $handler->display->display_options['fields']['entity_id']['table'] = 'field_data_field_cpr_number';
   $handler->display->display_options['fields']['entity_id']['field'] = 'field_cpr_number';
@@ -277,7 +284,7 @@ function liste_valghalla_export_views_default_views() {
   $handler->display->display_options['fields']['field_vlnt_station']['settings'] = array(
     'link' => 0,
   );
-  /* Felt: Felt: Status */
+  /* Felt: Field collection item: Status */
   $handler->display->display_options['fields']['field_rsvp']['id'] = 'field_rsvp';
   $handler->display->display_options['fields']['field_rsvp']['table'] = 'field_data_field_rsvp';
   $handler->display->display_options['fields']['field_rsvp']['field'] = 'field_rsvp';
@@ -309,7 +316,7 @@ function liste_valghalla_export_views_default_views() {
     t('field collection item from field_electioninfo'),
     t('Navn'),
     t('Parti'),
-    t('CPR Number'),
+    t('CPR Nummer'),
     t('E-mail'),
     t('Telefon'),
     t('valgsted'),
