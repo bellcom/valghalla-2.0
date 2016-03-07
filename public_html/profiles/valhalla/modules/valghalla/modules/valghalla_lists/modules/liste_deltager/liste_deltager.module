@@ -78,7 +78,7 @@ function liste_deltager_form($form, &$form_state) {
     '#size' => 8,
     '#title' => 'Valgsted',
     '#options' => liste_deltager_polling_station_options(),
-    '#prefix' => '<div class="row"><div class="col-xs-12">',
+    '#prefix' => '<div class="row no-print"><div class="col-xs-12">',
     '#suffix' => '<a class="js-select-all" href="#">Vælg alle</a></div>',
   );
 
@@ -86,7 +86,7 @@ function liste_deltager_form($form, &$form_state) {
   $form['filter']['columns'] = array(
     '#type' => 'checkboxes',
     '#title' => t('Kolonner'),
-    '#prefix' => '<div class="col-sm-6 col-md-3">',
+    '#prefix' => '<div class="col-sm-6 col-md-3 no-print">',
     '#suffix' => '<a class="js-select-all" href="#">Vælg alle</a></div>',
     '#options' => _liste_deltager_columns(),
   );
@@ -156,8 +156,9 @@ function liste_deltager_form($form, &$form_state) {
 
   $form['submit'] = array(
     '#type' => 'submit',
+    '#prefix' => '<div class="no-print">',
     '#value' => t('Opdater'),
-    '#suffix' => '</div>',
+    '#suffix' => '</div></div>',
   );
 
   // If a saved filters is selected. Fill out the forms default values.
