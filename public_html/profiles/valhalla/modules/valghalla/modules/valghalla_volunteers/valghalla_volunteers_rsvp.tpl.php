@@ -18,17 +18,52 @@
 <?php if($rsvp): ?>
 <p> Vi har registreret følgende svar: <strong> <?php print $rsvp_status; ?></strong>.</p>
 <?php endif; ?>
+<br />
 <table>
   <tr>
-    <td>
+    <td class="col-sm-3 col-md-3">
       <b>Funktion:</b><br />
-      <?php print $params['!position']; ?><br />
+    </td>
+    <td class="col-sm-9 col-md-9">
+      <?php if (!empty($params['!position_description'])) : ?>
+        <?php print $params['!position_description']; ?>
+      <?php else: ?>
+        <?php print $params['!position']; ?>
+      <?php endif; ?>
+    </td>
+  </tr>
+  <tr>
+    <td class="col-sm-3 col-md-3">
       <b>Dato:</b><br />
+    </td>
+    <td class="col-sm-9 col-md-9">
       <?php print $params['!election_date']; ?><br />
     </td>
-    <td>
-      <b>Valgsted:</b><br />
+  </tr>
+
+  <tr>
+    <td class="col-sm-3 col-md-3">
+      <b>Tidspunkter:</b><br />
+    </td>
+    <td class="col-sm-9 col-md-9">
+      <?php print $params['!time']; ?><br />
+    </td>
+  </tr>
+  <tr>
+    <br />
+  </tr>
+  <tr>
+    <td class="col-sm-3 col-md-3">
+      <b>Valgsted:</b>
+    </td>
+    <td class="col-sm-9 col-md-9">
       <?php print $params['!polling_station']; ?><br />
+    </td>
+  </tr>
+  <tr>
+    <td class="col-sm-3 col-md-3">
+    </td>
+    <td class="col-sm-9 col-md-9">
       <?php print nl2br($params['!polling_station_address']); ?><br />
       <?php print $polling_station['address2']; ?>
     </td>

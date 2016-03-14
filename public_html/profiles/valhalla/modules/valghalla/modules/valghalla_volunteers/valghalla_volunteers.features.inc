@@ -20,7 +20,7 @@ function valghalla_volunteers_node_info() {
     'volunteers' => array(
       'name' => t('Deltagere'),
       'base' => 'node_content',
-      'description' => t('used to store information on volunteers in the system'),
+      'description' => t('bruges til at gemme oplysninger om deltagere i systemet'),
       'has_title' => '1',
       'title_label' => t('Navn'),
       'help' => '',

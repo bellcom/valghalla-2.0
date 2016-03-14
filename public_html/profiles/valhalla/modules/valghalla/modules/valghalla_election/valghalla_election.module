@@ -68,7 +68,7 @@ function valghalla_election_form_alter(&$form, &$form_state, $form_id) {
         if (db_table_exists('field_election_roles_diaet')) {
           $result = db_query("SELECT * FROM {field_election_roles_diaet} r WHERE r.nid = " .$form['#node']->nid ."")
                     ->fetchObject();
-          if(!is_null($result)) {
+          if($result !== FALSE) {
             $data = unserialize($result->role_diaet_value);
           }
 

@@ -14,10 +14,12 @@
 
 <?php foreach($table as $polling_station => $markup): ?>
   <h5>
-  <?php print $header[$polling_station]['polling_station'];?>; <?php print $header[$polling_station]['adress'];?>
-  <?php if (isset($header[$polling_station]['schoolcode'])) : ?>
-  - Skolekode <?php print $header[$polling_station]['schoolcode'];?>
-  <?php endif; ?>
+    <?php if (isset($header[$polling_station]['polling_station'])): ?>
+      <?php print $header[$polling_station]['polling_station'];?>; <?php print $header[$polling_station]['adress'];?>
+    <?php endif; ?>
+    <?php if (isset($header[$polling_station]['schoolcode'])) : ?>
+      - Skolekode <?php print $header[$polling_station]['schoolcode'];?>
+    <?php endif; ?>
   </h5>
   <h5>
   <?php print $header[$polling_station]['contact_info']; ?>

@@ -78,7 +78,7 @@ function liste_deltager_form($form, &$form_state) {
     '#size' => 8,
     '#title' => 'Valgsted',
     '#options' => liste_deltager_polling_station_options(),
-    '#prefix' => '<div class="row"><div class="col-xs-12">',
+    '#prefix' => '<div class="row no-print"><div class="col-xs-12">',
     '#suffix' => '<a class="js-select-all" href="#">Vælg alle</a></div>',
   );
 
@@ -86,7 +86,7 @@ function liste_deltager_form($form, &$form_state) {
   $form['filter']['columns'] = array(
     '#type' => 'checkboxes',
     '#title' => t('Kolonner'),
-    '#prefix' => '<div class="col-sm-6 col-md-3">',
+    '#prefix' => '<div class="col-sm-6 col-md-3 no-print">',
     '#suffix' => '<a class="js-select-all" href="#">Vælg alle</a></div>',
     '#options' => _liste_deltager_columns(),
   );
@@ -94,7 +94,7 @@ function liste_deltager_form($form, &$form_state) {
   $form['filter']['roles'] = array(
     '#type' => 'checkboxes',
     '#title' => t('Rolle(r)'),
-    '#options' => _valghalla_helper_get_roles(),
+    '#options' => odin_get_roles(),
     '#prefix' => '<div class="col-sm-6 col-md-3">',
     '#suffix' => '<a class="js-select-all" href="#">Vælg alle</a></div>',
   );
@@ -104,7 +104,7 @@ function liste_deltager_form($form, &$form_state) {
     '#title' => t('Parti(er) (plads)'),
     '#prefix' => '<div class="col-sm-6 col-md-3">',
     '#suffix' => '<a class="js-select-all" href="#">Vælg alle</a></div>',
-    '#options' => _valghalla_helper_get_parties(),
+    '#options' => odin_get_parties(),
   );
 
   $form['filter']['rsvp'] = array(
@@ -156,8 +156,9 @@ function liste_deltager_form($form, &$form_state) {
 
   $form['submit'] = array(
     '#type' => 'submit',
+    '#prefix' => '<div class="no-print">',
     '#value' => t('Opdater'),
-    '#suffix' => '</div>',
+    '#suffix' => '</div></div>',
   );
 
   // If a saved filters is selected. Fill out the forms default values.
@@ -324,7 +325,7 @@ function liste_deltager_get_volunteers($values) {
       ->entityCondition('bundle', 'field_electioninfo');
 
   $roles = count($values['roles']) > 0 ? $values['roles'] : FALSE;
-  $party = count($values['party']) > 0 ? $values['party'] : FALSE;
+  $party_selected = $party = count($values['party']) > 0 ? $values['party'] : FALSE;
 
   $rsvp_filter = count($values['rsvp']) > 0 ? $values['rsvp'] : FALSE;
   $polling_station = count($values['polling_station']) > 0 ? $values['polling_station'] : FALSE;
@@ -345,15 +346,16 @@ function liste_deltager_get_volunteers($values) {
   if ($party) {
     $volunteer_query->fieldCondition('field_post_party', 'target_id', $party);
   }
-  if ($polling_station) {
+
+  if ($polling_station != 'none') {
     $volunteer_query->fieldCondition('field_vlnt_station', 'target_id', $polling_station);
   }
-
   $query_result = $volunteer_query->execute();
+
   $result       = array_keys(array_shift($query_result));
 
-  $parties = _valghalla_helper_get_parties();
-  $roles_array = _valghalla_helper_get_roles();
+  $parties = odin_get_parties();
+  $roles_array = odin_get_roles();
 
   if (db_table_exists('field_election_roles_diaet')) {
     $diet_rows = db_query("SELECT * FROM {field_election_roles_diaet} r WHERE r.nid = " . $_SESSION['election_nid'])->fetchObject();
@@ -374,6 +376,12 @@ function liste_deltager_get_volunteers($values) {
     $volunteer_fc = entity_load_single('field_collection_item', $fc_id);
     if (!is_object($volunteer_fc)) {
       continue;
+    }
+    // Sort out those who has a station set
+    if ($polling_station == 'none') {
+      if (!empty($volunteer_fc->field_vlnt_station)) {
+        continue;
+      }
     }
 
     $volunteer = $volunteer_fc->hostEntity();
@@ -420,7 +428,7 @@ function liste_deltager_get_volunteers($values) {
 
     $age = _valghalla_helper_get_age_from_cpr($cpr);
 
-    $values[] = array(
+    $values[$volunteer->nid] = array(
       'name' => $tokens['!name'],
       'role' => $tokens['!position'],
       'mail' => $tokens['!email'],
@@ -434,10 +442,110 @@ function liste_deltager_get_volunteers($values) {
       'sign' => '<div class="sign-col"></div>',
     );
   }
+  // Get a table of people do not have a place.
+  if ($polling_station == 'none') {
 
+    // Add thoes volunteers that does not contains a place in a given election.
+    $volunteer_fc_none_polling = liste_deltager_none_polling_station($_SESSION['election_nid'], $roles, $party_selected);
+    foreach ($volunteer_fc_none_polling as $node) {
+      $cpr_none_field = field_get_items('node', $node, 'field_cpr_number');
+
+      if (user_access('see all psn numbers')) {
+
+        $cpr_none = $cpr_none_field[0]['value'];
+      }
+      else {
+        $cpr_none = substr($cpr_none_field[0]['value'], 0, 6);
+      }
+      $age_none = _valghalla_helper_get_age_from_cpr($cpr_none);
+      $par_field = field_get_items('node', $node, 'field_party');
+      $par_field = $parties[$par_field[0]['tid']];
+
+      if (isset($values[$node->nid])) {
+        continue;
+      }
+      if ($role_field = field_get_items('node', $node, 'field_rolle_id')) {
+        $role_field_value = node_load($role_field[0]['nid'])->title;
+      }
+      $values[$node->nid] = array(
+        'name' => $node->title,
+        'role' => $role_field_value,
+        'mail' => ($email_field = field_get_items('node', $node, 'field_email')) ? $email_field[0]['email'] : '',
+        'phone' => ($telf_field = field_get_items('node', $node, 'field_phone')) ? $telf_field[0]['value'] : '',
+        'rsvp' => '',
+        'cpr' =>  $cpr_none,
+        'age' => $age_none,
+        'party' => $par_field,
+        'party_post' => '',
+        'diet' => '',
+        'sign' => '<div class="sign-col"></div>',
+      );
+    }
+
+  }
   return $values;
 }
+/**
+ * Get all volunteers who do not have a place.
+ */
+function liste_deltager_none_polling_station($election_id, $roles, $party) {
+  $type = "volunteers";
 
+  $nodes = node_load_multiple(array(), array('type' => $type));
+
+  $list = array();
+  foreach($nodes as $node) {
+    $none_polling_station = TRUE;
+    $role_selected = TRUE;
+    $party_selected = TRUE;
+    if ($field = field_get_items('node', $node, 'field_electioninfo')) {
+      foreach ($field as $field_item) {
+        $volunteer_fc = field_collection_item_load($field_item['value']);
+        $election = field_get_items('field_collection_item', $volunteer_fc, 'field_election');
+        $polling_station = field_get_items('field_collection_item', $volunteer_fc, 'field_vlnt_station');
+        $roles_field = field_get_items('field_collection_item', $volunteer_fc, 'field_post_role');
+        $party_field = field_get_items('field_collection_item', $volunteer_fc, 'field_post_party');
+
+        if ($election[0]['target_id'] == $election_id && $polling_station) {
+          $none_polling_station = FALSE;
+        }
+
+        if ($roles_field && array_key_exists($roles_field[0]['target_id'], $roles)
+            && !$roles[$roles_field[0]['target_id']]) {
+          $role_selected = FALSE;
+        }
+
+        if ($party_field && array_key_exists($party_field[0]['target_id'], $party)
+            && !$party[$party_field[0]['target_id']]) {
+          $party_selected = FALSE;
+        }
+      }
+      if ($none_polling_station && $role_selected && $party_selected) {
+        $list[] = $node;
+      }
+    }
+    // Does not contain fc.
+    else {
+      $node_role = field_get_items('node', $node, 'field_rolle_id');
+      $node_party = field_get_items('node', $node, 'field_party');
+
+      if ($node_role && array_key_exists($node_role[0]['nid'], $roles )
+          && !$roles[$node_role[0]['nid']]){
+        $role_selected = FALSE;
+      }
+
+      if ($node_party && array_key_exists($node_party[0]['tid'], $party)
+          && !$party[$node_party[0]['tid']]) {
+        $party_selected = FALSE;
+      }
+
+      if ($none_polling_station && $role_selected && $party_selected) {
+        $list[] = $node;
+      }
+    }
+  }
+  return $list;
+}
 /**
  * Implements hook_theme().
  */
@@ -472,6 +580,7 @@ function _liste_deltager_columns() {
  * Generate list of polling stations.
  */
 function liste_deltager_polling_station_options() {
+
   if (!$election_node = node_load($_SESSION['election_nid'])) {
     return array('Du skal vælge et valg i dropdown menuen øverst.');
   }
@@ -479,9 +588,14 @@ function liste_deltager_polling_station_options() {
   // Use odin_get_polling_stations(), it will return a correctly sorted array
   // of polling stations.
   $polling_station_nids = odin_get_polling_stations($election_node->nid);
+  $options = array();
+
+  // No polling station
+  $options[t('Intet valgsted')] = array('none' => t('Uden tilknytning til et valgsted'));
 
   foreach ($polling_station_nids as $polling_station_nid => $polling_station_title) {
     $polling_station = node_load($polling_station_nid);
+
     if ($constituency_field = field_get_items('node', $polling_station, 'field_constituency')) {
       // We save the data in 2 arrays, and don't populate options yet, as we
       // have to sort the options according to the title of the
@@ -490,6 +604,7 @@ function liste_deltager_polling_station_options() {
       $constituencies[$constituency->nid] = $constituency->title;
       $polling_stations[$constituency->nid][$polling_station->nid] = $polling_station->title;
     }
+
     else {
       $options[$polling_station->nid] = $polling_station->title;
     }

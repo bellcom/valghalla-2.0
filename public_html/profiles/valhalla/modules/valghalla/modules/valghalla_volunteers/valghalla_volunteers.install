@@ -1,0 +1,18 @@
+<?php
+
+/**
+ * Assign permissions to roles.
+ */
+function valghalla_volunteers_update_7000() {
+
+  $roles = array(
+    'admin' => user_role_load_by_name('administrator'),
+    'election_secretary' => user_role_load_by_name('Valgsekretær'),
+  );
+
+  foreach ($roles as $role) {
+    if (is_object($role)) {
+      user_role_grant_permissions($role->rid, array('access entire user profile form'));
+    }
+  }
+}

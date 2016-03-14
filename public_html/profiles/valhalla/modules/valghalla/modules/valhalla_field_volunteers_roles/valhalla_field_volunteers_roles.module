@@ -1,11 +1,12 @@
 <?php
+
 function valhalla_field_volunteers_roles_field_info() {
   return array(
     'volunteers_roles_field' => array(
       'label' => t('Roles of volunteers pr party'),
       'description' => t('Combines the party to the number of required volunteers  for a specific polling station.'),
-     'default_widget' => 'volunteers_roles_standart',
-     'default_formatter' => 'volunteers_roles_default',
+      'default_widget' => 'volunteers_roles_standart',
+      'default_formatter' => 'volunteers_roles_default',
     ),
   );
 }
@@ -19,7 +20,7 @@ function valhalla_field_volunteers_roles_field_schema() {
       'not null' => TRUE,
       'default' => 0,
     ),
-);
+  );
   return array(
     'columns' => $columns,
     // TODO Add indexes.
@@ -31,11 +32,11 @@ function valhalla_field_volunteers_roles_field_widget_info() {
   $widgets['volunteers_roles_standart'] = array(
     'label' => t('Roles of Volunteers'),
     'field types' => array('volunteers_roles_field'),
-      'behaviors' => array(
-                'multiple values' => FIELD_BEHAVIOR_DEFAULT,
-                'default value' => FIELD_BEHAVIOR_DEFAULT,
-            ),
-   );
+    'behaviors' => array(
+      'multiple values' => FIELD_BEHAVIOR_DEFAULT,
+      'default value' => FIELD_BEHAVIOR_DEFAULT,
+    ),
+  );
 
   return $widgets;
 }
@@ -44,28 +45,28 @@ function valhalla_field_volunteers_roles_field_widget_form(&$form, &$form_state,
 
   $settings = $instance['widget']['settings'];
 
-  $fieldname=$instance['field_name'];
-  $name_parts= explode("_", $fieldname);
-  $nid= substr($name_parts[count($name_parts)-1],1);
-  $node=node_load($nid);
-  
-  if(is_object($node)){
+  $fieldname = $instance['field_name'];
+  $name_parts = explode("_", $fieldname);
+  $nid = substr($name_parts[count($name_parts) - 1], 1);
+  $node = node_load($nid);
+
+  if (is_object($node)) {
     $field = field_get_items('node', $node, 'field_description');
 
-    $desc=isset($field[0]['value']) ?"(".$field[0]['value'].")" : '';
+    $desc = isset($field[0]['value']) ? " (" . $field[0]['value'] . ") " : '';
     $number_vo = isset($items[$delta]['number_vo']) ? $items[$delta]['number_vo'] : '0';
 
     if ($instance['widget']['type'] == 'volunteers_roles_standart') {
       $element = array(
-        '#prefix' => '<div class="container-inline"><table><tr><td style="width:470px;"><label>'.$node->title.$desc.' volunteers</label></td>', 
-        '#suffix' => '</tr></table>'
+        '#prefix' => '<div class="container-inline"><table><tr><td style="width:470px;"><label>' . $node->title . $desc . ' Deltagere </label></td>',
+        '#suffix' => '</tr></table>',
       );
- 
+
       $element['number_vo'] = array(
         '#type' => 'textfield',
         '#default_value' => $number_vo ,
         '#prefix' => '<td style="width:70px;">' ,
-        '#suffix' =>'</td>'
+        '#suffix' => '</td>',
       );
     }
   }
@@ -76,33 +77,33 @@ function valhalla_field_volunteers_roles_field_widget_form(&$form, &$form_state,
 function valhalla_field_volunteers_roles_field_formatter_info() {
   return array(
     'volunteers_roles_default' => array(
-      'label' => t('Default'),
+      'label' => t('Standard'),
       'field types' => array('volunteers_roles_field'),
     ),
   );
 }
 
 function valhalla_field_volunteers_roles_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
-  $element = array();  
+  $element = array();
   $settings = $instance['widget']['settings'];
 
-  $fieldname=$instance['field_name'];
-  $name_parts= explode("_", $fieldname);
-  $nid=substr($name_parts[count($name_parts)-1],1);
-  $node=node_load($nid);
+  $fieldname = $instance['field_name'];
+  $name_parts = explode("_", $fieldname);
+  $nid = substr($name_parts[count($name_parts) - 1], 1);
+  $node = node_load($nid);
 
-  if(is_object($node)){
+  if (is_object($node)) {
     switch ($display['type']) {
       case 'volunteers_roles_default':
-        foreach ($items as $delta => $item) {  
-          $element[$delta]['#markup'] = '<div class="container-inline">'.$node->title.'&nbsp;'.t('Volunteers:') .'&nbsp;'. $item['number_vo'].'</div>';
+        foreach ($items as $delta => $item) {
+          $element[$delta]['#markup'] = '<div class="container-inline">' . $node->title . '&nbsp;' . t('Deltagere:') . '&nbsp;' . $item['number_vo'] . '</div>';
         }
-      break;
+        break;
     }
   }
   return $element;
 }
 
 function valhalla_field_volunteers_roles_field_is_empty($item, $field) {
-  return (int)$item['number_vo']==0;
+  return (int) $item['number_vo'] == 0;
 }

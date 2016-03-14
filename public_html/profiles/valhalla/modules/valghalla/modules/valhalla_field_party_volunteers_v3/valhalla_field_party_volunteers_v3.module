@@ -73,7 +73,7 @@ function valhalla_field_party_volunteers_v3_field_widget_form(&$form, &$form_sta
       $options[$item->tid] = $item->name;
     }
 $element=array( 
-        '#suffix' => '<a href="/node/add/roles?destination='.$_SERVER['REQUEST_URI'].'">Add one more role
+        '#suffix' => '<a href="/node/add/roles?destination='.$_SERVER['REQUEST_URI'].'">' . t('Tilføj endnu en rolle') . '
 </a>');
     $element['party_list'] = array(
       '#type' => 'select',

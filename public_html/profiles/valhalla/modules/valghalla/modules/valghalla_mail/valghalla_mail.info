@@ -26,3 +26,4 @@ files[] = includes/valghalla_mail_submit.inc
 files[] = includes/valghalla_mail_form.inc
 files[] = includes/valghalla_mail_navigation.inc
 files[] = includes/valghalla_mail_rsvp_reminder.inc
+mtime = 1452087654

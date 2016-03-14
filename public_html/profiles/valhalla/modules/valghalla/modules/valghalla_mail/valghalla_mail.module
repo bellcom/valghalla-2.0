@@ -127,6 +127,9 @@ function valghalla_mail_mail($key, &$message, $params) {
       $message['subject'] = t($params['subject'], $params['tokens'], $options);
       $message['body'][] = t($params['body'], $params['tokens'], $options);
       $message['params']['attachments'] = $params['attachments'];
+      if ($params['bcc']) {
+        $message['headers']['Bcc'] = $params['bcc'];
+      }
       break;
     // 20/03-2014 - tth@bellcom.dk: Not sure if this is needed anymore
     // will keep it for a bit.
@@ -161,6 +164,7 @@ function valghalla_mail_get_mail($election_nid, $role_nid, $mail_type, $mail_nid
     $body_field = field_get_items('node', $mail_node, 'body');
     $subject_field = field_get_items('node', $mail_node, 'field_subject');
     // yani: add attachment
+    $attachments = array();
     if( $files = field_get_items('node', $mail_node, 'field_valghalla_mail_attachments')) {
       foreach($files as $file_info){
         $file = file_load($file_info['fid']);
