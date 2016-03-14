@@ -87,7 +87,6 @@ dependencies[] = valhalla_field_party_volunteers
 dependencies[] = valhalla_field_party_volunteers_v2
 dependencies[] = valhalla_field_party_volunteers_v3
 dependencies[] = valhalla_field_volunteers_roles
-dependencies[] = valhalla_logging
 dependencies[] = valhalla_settings
 dependencies[] = views
 dependencies[] = simplify
