@@ -60,6 +60,7 @@ function valhalla_logging_install() {
 }
 
 function valhalla_logging_uninstall() {
+  drupal_uninstall_schema('valhalla_logging');
 }
 
 ?>
