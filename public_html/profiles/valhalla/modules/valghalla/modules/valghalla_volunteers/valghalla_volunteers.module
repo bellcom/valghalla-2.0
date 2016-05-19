@@ -1077,7 +1077,6 @@ function valghalla_volunteers_form_volunteers_node_form_alter(&$form, &$form_sta
     foreach ($form['field_electioninfo'][LANGUAGE_NONE] as $key => $itme) {
       if (is_numeric($key)) {
         $form['field_electioninfo'][LANGUAGE_NONE][$key]['field_rsvp'][LANGUAGE_NONE]['#options'] = $rsvp_options;
-        $form['field_electioninfo'][LANGUAGE_NONE][$key]['field_rsvp'][LANGUAGE_NONE]['#default_value'] = 0;
 
       }
     }
