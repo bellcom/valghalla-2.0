@@ -120,7 +120,7 @@ function valghalla_user_tools_views_default_views() {
   $handler->display->display_options['fields']['title']['label'] = '';
   $handler->display->display_options['fields']['title']['alter']['word_boundary'] = FALSE;
   $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
-  /* Felt: Indhold: CPR Number */
+  /* Felt: Indhold: CPR Nummer */
   $handler->display->display_options['fields']['field_cpr_number']['id'] = 'field_cpr_number';
   $handler->display->display_options['fields']['field_cpr_number']['table'] = 'field_data_field_cpr_number';
   $handler->display->display_options['fields']['field_cpr_number']['field'] = 'field_cpr_number';
@@ -215,7 +215,7 @@ function valghalla_user_tools_views_default_views() {
   $handler->display->display_options['filters']['field_party_tid']['reduce_duplicates'] = TRUE;
   $handler->display->display_options['filters']['field_party_tid']['type'] = 'select';
   $handler->display->display_options['filters']['field_party_tid']['vocabulary'] = 'partier';
-  /* Filterkriterie: Indhold: CPR Number (field_cpr_number) */
+  /* Filterkriterie: Indhold: CPR Nummer (field_cpr_number) */
   $handler->display->display_options['filters']['field_cpr_number_value']['id'] = 'field_cpr_number_value';
   $handler->display->display_options['filters']['field_cpr_number_value']['table'] = 'field_data_field_cpr_number';
   $handler->display->display_options['filters']['field_cpr_number_value']['field'] = 'field_cpr_number_value';
@@ -281,7 +281,7 @@ function valghalla_user_tools_views_default_views() {
 
   /* Display: Master */
   $handler = $view->new_display('default', 'Master', 'default');
-  $handler->display->display_options['title'] = 'Mail skabeloner';
+  $handler->display->display_options['title'] = 'Mailskabeloner';
   $handler->display->display_options['use_more_always'] = FALSE;
   $handler->display->display_options['use_more_text'] = 'mere';
   $handler->display->display_options['access']['type'] = 'perm';
@@ -374,7 +374,7 @@ function valghalla_user_tools_views_default_views() {
   $handler->display->display_options['menu']['context'] = 0;
   $translatables['mail_templates'] = array(
     t('Master'),
-    t('Mail skabeloner'),
+    t('Mailskabeloner'),
     t('mere'),
     t('Udfør'),
     t('Gendan'),
@@ -401,7 +401,7 @@ function valghalla_user_tools_views_default_views() {
 
   /* Display: Master */
   $handler = $view->new_display('default', 'Master', 'default');
-  $handler->display->display_options['title'] = 'Parti oversigt';
+  $handler->display->display_options['title'] = 'Partioversigt';
   $handler->display->display_options['use_more_always'] = FALSE;
   $handler->display->display_options['use_more_text'] = 'mere';
   $handler->display->display_options['access']['type'] = 'perm';
@@ -471,7 +471,7 @@ function valghalla_user_tools_views_default_views() {
   $handler->display->display_options['menu']['context'] = 0;
   $translatables['parti_oversigt'] = array(
     t('Master'),
-    t('Parti oversigt'),
+    t('Partioversigt'),
     t('mere'),
     t('Udfør'),
     t('Gendan'),
@@ -497,7 +497,7 @@ function valghalla_user_tools_views_default_views() {
 
   /* Display: Master */
   $handler = $view->new_display('default', 'Master', 'default');
-  $handler->display->display_options['title'] = 'Rolle oversigt';
+  $handler->display->display_options['title'] = 'Rolleoversigt';
   $handler->display->display_options['use_more_always'] = FALSE;
   $handler->display->display_options['use_more_text'] = 'mere';
   $handler->display->display_options['access']['type'] = 'perm';
@@ -544,7 +544,7 @@ function valghalla_user_tools_views_default_views() {
   $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
   $handler->display->display_options['fields']['title']['element_label_colon'] = FALSE;
   $handler->display->display_options['fields']['title']['link_to_node'] = FALSE;
-  /* Felt: Indhold: Description */
+  /* Felt: Indhold: Beskrivelse */
   $handler->display->display_options['fields']['field_description']['id'] = 'field_description';
   $handler->display->display_options['fields']['field_description']['table'] = 'field_data_field_description';
   $handler->display->display_options['fields']['field_description']['field'] = 'field_description';
@@ -605,7 +605,7 @@ function valghalla_user_tools_views_default_views() {
   $handler->display->display_options['menu']['context'] = 0;
   $translatables['roles'] = array(
     t('Master'),
-    t('Rolle oversigt'),
+    t('Rolleoversigt'),
     t('mere'),
     t('Udfør'),
     t('Gendan'),
