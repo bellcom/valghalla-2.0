@@ -1,4 +1,3 @@
-'use strict';
 angular.module("ngLocale", [], ["$provide", function($provide) {
 var PLURAL_CATEGORY = {ZERO: "zero", ONE: "one", TWO: "two", FEW: "few", MANY: "many", OTHER: "other"};
 $provide.value("$locale", {
@@ -55,8 +54,8 @@ $provide.value("$locale", {
     ],
     "fullDate": "y\u5e74M\u6708d\u65e5EEEE",
     "longDate": "y\u5e74M\u6708d\u65e5",
-    "medium": "y\u5e74M\u6708d\u65e5 ah:mm:ss",
-    "mediumDate": "y\u5e74M\u6708d\u65e5",
+    "medium": "yyyy/M/d ah:mm:ss",
+    "mediumDate": "yyyy/M/d",
     "mediumTime": "ah:mm:ss",
     "short": "y/M/d ah:mm",
     "shortDate": "y/M/d",
@@ -70,6 +69,7 @@ $provide.value("$locale", {
       {
         "gSize": 3,
         "lgSize": 3,
+        "macFrac": 0,
         "maxFrac": 3,
         "minFrac": 0,
         "minInt": 1,
@@ -81,6 +81,7 @@ $provide.value("$locale", {
       {
         "gSize": 3,
         "lgSize": 3,
+        "macFrac": 0,
         "maxFrac": 2,
         "minFrac": 2,
         "minInt": 1,
@@ -92,6 +93,6 @@ $provide.value("$locale", {
     ]
   },
   "id": "zh-tw",
-  "pluralCat": function (n, opt_precision) {  return PLURAL_CATEGORY.OTHER;}
+  "pluralCat": function (n) {  return PLURAL_CATEGORY.OTHER;}
 });
 }]);
