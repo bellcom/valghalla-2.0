@@ -50,6 +50,42 @@ function vcv_serviceplatformen_valghalla_volunteer_validator_cpr_service() {
  * Page callback for settings.
  */
 function vcv_serviceplatformen_settings() {
+
+  $cpr = variable_get('test_cpr');
+  $output = '';
+  if ($cpr != '') {
+    $message = vcv_serviceplatformen_get_address($cpr);
+
+    if ($message['status']) {
+      $output = '<div style="font-size: 15px; color : green"><b>' .t('Succeed') . '</b></div>';
+      $output .= '<div> Test CPR nr. ' . $cpr . '<br />';
+      foreach ($message as $key => $item) {
+        if ($key != 'status') {
+          $output .= $key . ': ' . $item . '<br />';
+        }
+      }
+      $output .= '</div>';
+    }
+    else {
+      $output = '<b style = "color : red">Error: ' . $message['text'] . '</b>';
+    }
+    variable_set('test_cpr', '');
+  }
+
+  $form['test_cpr_fieldset'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Test CPR'),
+  );
+  $form['test_cpr_fieldset']['test_cpr'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Test cpr nr.'),
+  );
+
+  $form['test_cpr_fieldset']['test_serviceplatformen_function'] = array(
+    '#type' => 'item',
+    '#markup' => $output,
+  );
+
   $form['stam'] = array(
     '#title' => 'Person stamdata',
     '#type' => 'fieldset',
