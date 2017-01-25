@@ -502,3 +502,60 @@ function _valghalla_helper_get_age_from_cpr($cpr)
 
   return $interval->y;
 }
+
+
+/**
+ * Returns the list of existing tokens (as an array).
+ */
+function _valghalla_helper_get_existing_tokens() {
+  $query = db_select('field_data_field_token', 'ft')
+    ->distinct()
+    ->fields('ft', array('field_token_value'))
+    ->execute()
+    ->fetchAll();
+
+  $tokens_list = array();
+
+  foreach ($query as $q => $v) {
+    $result[] = $v->field_token_value;
+  }
+
+  return $tokens_list;
+}
+
+
+/**
+ * Creates a new unique token.
+ */
+function _valghalla_helper_new_unique_token() {
+  $existing_tokens = _valghalla_helper_get_existing_tokens();
+  $unique_str = '';
+
+  while (true) {
+    $unique_str = _valghalla_helper_get_random_string(10);
+    if (!in_array($unique_str, $existing_tokens)) {
+      break;
+    }
+  }
+
+  return $unique_str;
+}
+
+
+/*
+ * Generates a random string with a certain lenght.
+ */
+function _valghalla_helper_get_random_string($len) {
+  $result = '';
+  $chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  $chars .= 'abcdefghijklmnopqrstuvwxyz';
+  $chars .= '0123456789';
+
+  for ($i = 0; $i < $len; $i++) {
+    $rand_num = (rand(0, strlen($chars) - 1));
+    $result .= $chars[$rand_num];
+  }
+
+  return $result;
+}
+
