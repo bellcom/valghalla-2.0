@@ -517,7 +517,7 @@ function _valghalla_helper_get_existing_tokens() {
   $tokens_list = array();
 
   foreach ($query as $q => $v) {
-    $result[] = $v->field_token_value;
+    $tokens_list[] = $v->field_token_value;
   }
 
   return $tokens_list;
