@@ -179,7 +179,6 @@ function valghalla_volunteers_rsvp() {
   global $language;
 
   $fc = _valghalla_volunteers_validate_key(arg(2));
-  $vlnt_node = $fc->hostEntity();
 
   module_load_include('inc', 'valghalla_volunteers', 'valghalla_volunteers');
   if (!is_object($fc)) {
@@ -187,6 +186,7 @@ function valghalla_volunteers_rsvp() {
     drupal_goto('volunteers/login');
   }
 
+  $vlnt_node = $fc->hostEntity();
   $rsvp = 0;
 
   $rsvp_field = field_get_items('field_collection_item', $fc, 'field_rsvp');
@@ -1077,7 +1077,14 @@ function valghalla_volunteers_form_volunteers_node_form_alter(&$form, &$form_sta
     foreach ($form['field_electioninfo'][LANGUAGE_NONE] as $key => $itme) {
       if (is_numeric($key)) {
         $form['field_electioninfo'][LANGUAGE_NONE][$key]['field_rsvp'][LANGUAGE_NONE]['#options'] = $rsvp_options;
+        $form['field_electioninfo'][LANGUAGE_NONE][$key]['field_token'][LANGUAGE_NONE][$key]['value']['#required'] = true;
 
+        $field_token = $form['field_electioninfo'][LANGUAGE_NONE][$key]['field_token'][LANGUAGE_NONE][$key]['value']['#default_value'];
+
+        if ($field_token == '') {
+          $fresh_token = _valghalla_helper_new_unique_token();
+          $form['field_electioninfo'][LANGUAGE_NONE][$key]['field_token'][LANGUAGE_NONE][$key]['value']['#default_value'] = $fresh_token;
+        }
       }
     }
   }
