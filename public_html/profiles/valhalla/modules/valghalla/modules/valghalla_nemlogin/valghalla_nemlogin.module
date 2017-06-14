@@ -1,0 +1,93 @@
+<?php
+
+define("NEMLOGIN_IS_NOT_KK_SERVER", true);
+
+/**
+ * Implements hook_menu()
+ * @return array
+ */
+function valghalla_nemlogin_menu() {
+  $items = array();
+  $items['nemlogin/handlepost'] = array(
+    'title' => 'Nemlogin handlepost',
+    'page callback' => 'valghalla_nemlogin_handlepost',
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+  );
+  return $items;
+}
+
+function valghalla_nemlogin_handlepost() {
+  $kkLogin = _valghalla_nemlogin_get_instance();
+
+  if (isset($_REQUEST['samlid'])
+    || (NEMLOGIN_IS_NOT_KK_SERVER && $kkLogin->haveCookie()) //only used for testing on non-kk domains. Remove this line on kk server
+    ) {
+    if ($_REQUEST['samlid']) {
+      $kkLogin->updateCookie($_REQUEST['samlid']);
+    }
+
+    //getting user uid
+    $status = $kkLogin->getLoggedInStatus();
+
+    if (!empty($status) && isset($status->pid)) {
+      $uid = db_select('valghalla_nemlogin_user_mapping', 'v')
+        ->fields('v', array('uid'))
+        ->condition('pid', $status->pid)
+        ->execute()->fetchField();
+
+      $form_state = array('uid' => $uid);
+      user_login_submit(array(), $form_state);
+      drupal_goto();
+    }
+  }
+
+  drupal_set_message(t("Kunne ikke godkendes med NemID"), 'warning');
+  drupal_goto();
+}
+
+/**
+ * Factory for class instances
+ *
+ * @return KkLogin
+ *   Kklogin controller object.
+ */
+function _valghalla_nemlogin_get_instance() {
+  $obj = &drupal_static(__FUNCTION__);
+  if (is_object($obj)) {
+    return $obj;
+  }
+  module_load_include('inc', 'valghalla_nemlogin', '/includes/KkLogin.class');
+  return $obj = new KkLogin();
+}
+
+
+function valghalla_nemlogin_form_alter(&$form, &$form_state, $form_id) {
+  if ($form_id == 'user_login') {
+    $kkLogin = _valghalla_nemlogin_get_instance();
+
+    $form['actions']['nemlogin'] = array(
+        '#type' => 'link',
+        '#title' => 'Nemid',
+        '#href' => $kkLogin->getLoginUrl(),
+        '#attributes' => array(
+          'class' => 'btn btn-primary'
+        )
+    );
+
+    if (NEMLOGIN_IS_NOT_KK_SERVER) {
+      $b64Url = base64_encode("https://domain.kk.dk/somePath/handleloginpost.php");
+      $url = 'https://nemlogin-test.kk.dk/nemlogin/login?callbackurl=' . $b64Url;
+
+      $form['actions']['nemlogin_get_samlid'] = array(
+        '#type' => 'link',
+        '#title' => 'Get SAMLID',
+        '#href' => $url,
+        '#attributes' => array(
+          'class' => 'btn'
+        )
+      );
+    }
+  }
+}
+
