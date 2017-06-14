@@ -34,7 +34,8 @@ class KkLogin {
 //  }
 
   public function getLoginUrl() {
-    $b64Url = base64_encode($_SERVER['REQUEST_SCHEME'] . "://" . $_SERVER['HTTP_HOST'] . "/nemlogin/handlepost");
+    global $base_url;
+    $b64Url = base64_encode($base_url . "/nemlogin/handlepost");
     return $this->nemloginUrl . '/nemlogin/login?callbackurl=' . $b64Url;
   }
 
