@@ -52,6 +52,7 @@ function valghalla_init() {
     '/user/reset*',
     '/user/password*',
     '/volunteers/rsvp*',
+    '/nemlogin/handlepost',
   );
 
   drupal_alter('valghalla_allowed_uris', $allowed_uris);
