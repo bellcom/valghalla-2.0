@@ -140,7 +140,13 @@ function valghalla_nemlogin_handlepost() {
  * @param $account
  */
 function valghalla_nemlogin_user_logout($account) {
-  setcookie('valghalla_nemlogin_logout', 1, time() + 3600 * 24, '/');
+  $kkLogin = _valghalla_nemlogin_get_instance();
+  if ($kkLogin->haveCookie()) {
+    setcookie('valghalla_nemlogin_logout', 1, time() + 3600 * 24, '/');
+  }
+  else {
+    setcookie('valghalla_nemlogin_logout', '', time() - 3600, '/');
+  }
 }
 
 /**
