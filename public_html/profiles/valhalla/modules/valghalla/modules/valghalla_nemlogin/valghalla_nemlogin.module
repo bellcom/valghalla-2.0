@@ -1,7 +1,4 @@
 <?php
-
-define("NEMLOGIN_IS_NOT_KK_SERVER", true);
-
 /**
  * Implements hook_menu()
  * @return array
@@ -14,36 +11,152 @@ function valghalla_nemlogin_menu() {
     'access callback' => TRUE,
     'type' => MENU_CALLBACK,
   );
+
+  $items['admin/config/nemlogin'] = array(
+    'title' => 'Valghalla Nemlogin',
+    'description' => 'Valghalla Nemlogin configuration',
+    'access arguments' => array('administer valghalla'),
+    'page callback' => 'system_admin_menu_block_page',
+    'file' => 'system.admin.inc',
+    'file path' => drupal_get_path('module', 'system'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+  $items['admin/config/nemlogin/config'] = array(
+    'title' => 'Valghalla Nemlogin configuration',
+    'description' => 'Configure Nemlogin',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('valghalla_nemlogin_settings_form'),
+    'access arguments' => array('administer valghalla'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+
   return $items;
+}
+
+/**
+ * Form callback for settings
+ */
+function valghalla_nemlogin_settings_form($form, &$form_state) {
+  $form['valghalla_nemlogin_internal_ips'] = array(
+    '#title' => t('Internal IP\'s of KK network'),
+    '#type' => 'textfield',
+    '#description' => t('Comma separated. Ex. 192.168.1.1,192.168.2.1'),
+    '#default_value' => variable_get('valghalla_nemlogin_internal_ips')
+  );
+
+  $form['valghalla_nemlogin_testing_outside_kk'] = array(
+    '#title' => t('Make the solution work outside KK network (development/demo only)'),
+    '#type' => 'checkbox',
+    '#description' => t('Please have it turn off on any KK server'),
+    '#default_value' => variable_get('valghalla_nemlogin_testing_outside_kk', FALSE)
+  );
+
+  return system_settings_form($form);
+}
+
+/**
+ * Implements hook_form_validate().
+ */
+function valghalla_nemlogin_settings_form_validate($form, &$form_state) {
+  if (preg_match("/[^0-9.,]/", $form_state['values']['valghalla_nemlogin_internal_ips'])) {
+    form_set_error('valghalla_nemlogin_internal_ips', 'Invalid format');
+  }
+}
+
+/**
+ * Implements hook_boot().
+ */
+function valghalla_nemlogin_boot() {
+  // Do not run this from CLI.
+  if (php_sapi_name() != 'cli') {
+    require_once(DRUPAL_ROOT . '/includes/common.inc');
+    require_once(DRUPAL_ROOT . '/includes/path.inc');
+
+    $kkLogin = _valghalla_nemlogin_get_instance();
+    $testing_outside_kk = variable_get('valghalla_nemlogin_testing_outside_kk', FALSE);
+
+    //is it logout request?
+    if ($_COOKIE['valghalla_nemlogin_logout']) {
+      setcookie('valghalla_nemlogin_logout', '', time() - 3600, '/');
+      $kkLogin->logout();
+      //prevent from any further execution
+      die();
+    }
+
+    //runs only on non-kk network servers, allows getting the real SAMLID
+    if ($GLOBALS['user']->uid == 0 && $testing_outside_kk && !$kkLogin->haveCookie()) {
+      $b64Url = base64_encode("https://domain.kk.dk/somePath/handleloginpost.php");
+      $url = 'https://nemlogin-test.kk.dk/nemlogin/login?callbackurl=' . $b64Url;
+
+      $kkLogin->updateCookie("random-value");
+      drupal_goto($url);
+    }
+    //runs only on non-kk network servers, allows getting the real SAMLID
+
+    //is anonymous user?
+    if ($GLOBALS['user']->uid == 0) {
+      $internal_ips = explode(',', variable_get('valghalla_nemlogin_internal_ips'));
+      $remote_ip = $_SERVER['REMOTE_ADDR'];
+
+      //is external ip?
+      if (!in_array($remote_ip, $internal_ips)) {
+        //has sessionid and is logged in?
+        if (!$kkLogin->isLoggedIn() && !$testing_outside_kk) {
+          //redirect to nemid login
+          drupal_goto($kkLogin->getLoginUrl());
+        }
+      }
+    }
+  }
 }
 
 function valghalla_nemlogin_handlepost() {
   $kkLogin = _valghalla_nemlogin_get_instance();
 
-  if (isset($_REQUEST['samlid'])
-    || (NEMLOGIN_IS_NOT_KK_SERVER && $kkLogin->haveCookie()) //only used for testing on non-kk domains. Remove this line on kk server
-    ) {
-    if ($_REQUEST['samlid']) {
-      $kkLogin->updateCookie($_REQUEST['samlid']);
-    }
-
+  if (isset($_REQUEST['samlid'])) {
+    $kkLogin->updateCookie($_REQUEST['samlid']);
     //getting user uid
-    $status = $kkLogin->getLoggedInStatus();
-
-    if (!empty($status) && isset($status->pid)) {
-      $uid = db_select('valghalla_nemlogin_user_mapping', 'v')
-        ->fields('v', array('uid'))
-        ->condition('pid', $status->pid)
-        ->execute()->fetchField();
-
-      $form_state = array('uid' => $uid);
-      user_login_submit(array(), $form_state);
-      drupal_goto();
-    }
+//    $status = $kkLogin->getLoggedInStatus();
+//
+//    if (!empty($status) && isset($status->pid)) {
+//      $uid = db_select('valghalla_nemlogin_user_mapping', 'v')
+//        ->fields('v', array('uid'))
+//        ->condition('pid', $status->pid)
+//        ->execute()->fetchField();
+//
+//      $form_state = array('uid' => $uid);
+//      user_login_submit(array(), $form_state);
+//      drupal_goto();
+//    }
   }
 
-  drupal_set_message(t("Kunne ikke godkendes med NemID"), 'warning');
-  drupal_goto();
+//  drupal_set_message(t("Kunne ikke godkendes med NemID"), 'warning');
+//  drupal_goto();
+}
+
+/**
+ * Implement hook_user_logout()
+ * @param $account
+ */
+function valghalla_nemlogin_user_logout($account) {
+  setcookie('valghalla_nemlogin_logout', 1, time() + 3600 * 24, '/');
+}
+
+/**
+ * Implement hook_user_logout()
+ * @param $account
+ */
+function valghalla_nemlogin_user_login(&$edit, $account) {
+  $kkLogin = _valghalla_nemlogin_get_instance();
+  if ($kkLogin->haveCookie() && $kkLogin->isLoggedIn()) {
+    $status = $kkLogin->getLoggedInStatus();
+    watchdog('Valghalla nemlogin', 'User !username [uid: !uid] has logged in via Nemlogin using pid: !pid', array(
+      '!username' => $account->name,
+      '!uid' => $account->uid,
+      '!pid' => $status->pid
+    ), WATCHDOG_DEBUG);
+  }
 }
 
 /**
@@ -53,41 +166,10 @@ function valghalla_nemlogin_handlepost() {
  *   Kklogin controller object.
  */
 function _valghalla_nemlogin_get_instance() {
-  $obj = &drupal_static(__FUNCTION__);
+  $obj = & drupal_static(__FUNCTION__);
   if (is_object($obj)) {
     return $obj;
   }
   module_load_include('inc', 'valghalla_nemlogin', '/includes/KkLogin.class');
   return $obj = new KkLogin();
 }
-
-
-function valghalla_nemlogin_form_alter(&$form, &$form_state, $form_id) {
-  if ($form_id == 'user_login') {
-    $kkLogin = _valghalla_nemlogin_get_instance();
-
-    $form['actions']['nemlogin'] = array(
-        '#type' => 'link',
-        '#title' => 'Nemid',
-        '#href' => $kkLogin->getLoginUrl(),
-        '#attributes' => array(
-          'class' => 'btn btn-primary'
-        )
-    );
-
-    if (NEMLOGIN_IS_NOT_KK_SERVER) {
-      $b64Url = base64_encode("https://domain.kk.dk/somePath/handleloginpost.php");
-      $url = 'https://nemlogin-test.kk.dk/nemlogin/login?callbackurl=' . $b64Url;
-
-      $form['actions']['nemlogin_get_samlid'] = array(
-        '#type' => 'link',
-        '#title' => 'Get SAMLID',
-        '#href' => $url,
-        '#attributes' => array(
-          'class' => 'btn'
-        )
-      );
-    }
-  }
-}
-

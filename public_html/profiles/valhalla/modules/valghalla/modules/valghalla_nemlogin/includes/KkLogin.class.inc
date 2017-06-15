@@ -21,7 +21,7 @@ class KkLogin {
   }
 
   public function updateCookie($samlid) {
-    setcookie('nemloginkk', $samlid, time() + 3600 * 24, '/', $this->getCookieDomain(), true);
+    setcookie('nemloginkk', $samlid, time() + 3600 * 24, '/', $this->getCookieDomain(), TRUE);
   }
 
   public function isLoggedIn() {
@@ -39,14 +39,18 @@ class KkLogin {
     return $this->nemloginUrl . '/nemlogin/login?callbackurl=' . $b64Url;
   }
 
-//  public function logout() {
-//    setcookie("nemloginkk", "", time() - 3600, "/", "." . $this->getSubDomain());
-//    $b64Url = base64_encode("https://domain.kk.dk/somepage.php");
-//    header('Location: ' . $this->nemloginUrl . '/nemlogin/logout?callbacklogout=' . $b64Url);
-//  }
+  public function logout() {
+    setcookie("nemloginkk", "", time() - 3600, "/", "." . $this->getSubDomain());
+    header('Location: ' . $this->getLogoutUrl());
+  }
+
+  public function getLogoutUrl() {
+    $b64Url = base64_encode("http://www.kk.dk");
+    return $this->nemloginUrl . '/nemlogin/logout?callbacklogout=' . $b64Url;
+  }
 
   function getLoggedInStatus() {
-    $response = file_get_contents($this->nemloginUrl  . '/nemlogin/loggedInUserService/' . $this->getCookie());
+    $response = file_get_contents($this->nemloginUrl . '/nemlogin/loggedInUserService/' . $this->getCookie());
     $response = json_decode($response);
 
     return $response;
