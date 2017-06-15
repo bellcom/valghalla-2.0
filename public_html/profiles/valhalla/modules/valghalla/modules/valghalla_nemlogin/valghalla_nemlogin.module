@@ -84,16 +84,6 @@ function valghalla_nemlogin_boot() {
       die();
     }
 
-    //runs only on non-kk network servers, allows getting the real SAMLID
-    if ($GLOBALS['user']->uid == 0 && $testing_outside_kk && !$kkLogin->haveCookie()) {
-      $b64Url = base64_encode("https://domain.kk.dk/somePath/handleloginpost.php");
-      $url = 'https://nemlogin-test.kk.dk/nemlogin/login?callbackurl=' . $b64Url;
-
-      $kkLogin->updateCookie("random-value");
-      drupal_goto($url);
-    }
-    //runs only on non-kk network servers, allows getting the real SAMLID
-
     //is anonymous user?
     if ($GLOBALS['user']->uid == 0) {
       $internal_ips = explode(',', variable_get('valghalla_nemlogin_internal_ips'));
@@ -101,6 +91,16 @@ function valghalla_nemlogin_boot() {
 
       //is external ip?
       if (!in_array($remote_ip, $internal_ips)) {
+        //runs only on non-kk network servers, allows getting the real SAMLID
+        if ($testing_outside_kk && !$kkLogin->haveCookie()) {
+          $b64Url = base64_encode("https://domain.kk.dk/somePath/handleloginpost.php");
+          $url = 'https://nemlogin-test.kk.dk/nemlogin/login?callbackurl=' . $b64Url;
+
+          $kkLogin->updateCookie("random-value");
+          drupal_goto($url);
+        }
+        //runs only on non-kk network servers, allows getting the real SAMLID
+
         //has sessionid and is logged in?
         if (!$kkLogin->isLoggedIn() && !$testing_outside_kk) {
           //redirect to nemid login
