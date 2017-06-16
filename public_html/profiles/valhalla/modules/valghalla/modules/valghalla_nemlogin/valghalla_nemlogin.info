@@ -1,0 +1,4 @@
+name = Valghalla Nemlogin
+core = 7.x
+package = Valghalla
+version = 7.x-1.0
