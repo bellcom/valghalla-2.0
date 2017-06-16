@@ -38,6 +38,20 @@ function valghalla_nemlogin_menu() {
  * Form callback for settings
  */
 function valghalla_nemlogin_settings_form($form, &$form_state) {
+  $form['valghalla_nemlogin_url'] = array(
+    '#title' => t('Nemlogin service URL'),
+    '#type' => 'textfield',
+    '#description' => t('The URL of nemlogin service, e.g. https://nemlogin-test.kk.dk for test. NB! No trailing slahes'),
+    '#default_value' => variable_get('valghalla_nemlogin_url', 'https://nemlogin-test.kk.dk')
+  );
+
+  $form['valghalla_nemlogin_logout_redirect_url'] = array(
+    '#title' => t('Logout redirect URL'),
+    '#type' => 'textfield',
+    '#description' => t('The URL to which user will be redirected after logggin out'),
+    '#default_value' => variable_get('valghalla_nemlogin_logout_redirect_url', 'https://kk.dk')
+  );
+
   $form['valghalla_nemlogin_internal_ips'] = array(
     '#title' => t('Internal IP\'s of KK network'),
     '#type' => 'textfield',
@@ -94,7 +108,7 @@ function valghalla_nemlogin_boot() {
         //runs only on non-kk network servers, allows getting the real SAMLID
         if ($testing_outside_kk && !$kkLogin->haveCookie()) {
           $b64Url = base64_encode("https://domain.kk.dk/somePath/handleloginpost.php");
-          $url = 'https://nemlogin-test.kk.dk/nemlogin/login?callbackurl=' . $b64Url;
+          $url = variable_get('valghalla_nemlogin_url', 'https://nemlogin-test.kk.dk') . '/nemlogin/login?callbackurl=' . $b64Url;
 
           $kkLogin->updateCookie("random-value");
           drupal_goto($url);
@@ -177,5 +191,7 @@ function _valghalla_nemlogin_get_instance() {
     return $obj;
   }
   module_load_include('inc', 'valghalla_nemlogin', '/includes/KkLogin.class');
-  return $obj = new KkLogin();
+  $nemloginUrl = variable_get('valghalla_nemlogin_url', 'https://nemlogin-test.kk.dk');
+  $logoutRedirectUrl = variable_get('valghalla_nemlogin_logout_redirect_url', 'https://kk.dk');
+  return $obj = new KkLogin($nemloginUrl, $logoutRedirectUrl);
 }

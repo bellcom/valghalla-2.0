@@ -1,7 +1,13 @@
 <?php
 
 class KkLogin {
-  private $nemloginUrl = 'https://nemlogin-test.kk.dk';
+  private $nemloginUrl;
+  private $logoutRedirectUrl;
+
+  public function __construct($nemloginUrl, $logoutRedirectUrl) {
+    $this->nemloginUrl = $nemloginUrl;
+    $this->logoutRedirectUrl = $logoutRedirectUrl;
+  }
 
   public function getSubDomain() {
     //return 'domain.kk.dk'; //replace this value for your domain;
@@ -45,7 +51,7 @@ class KkLogin {
   }
 
   public function getLogoutUrl() {
-    $b64Url = base64_encode("http://www.kk.dk");
+    $b64Url = base64_encode($this->logoutRedirectUrl);
     return $this->nemloginUrl . '/nemlogin/logout?callbacklogout=' . $b64Url;
   }
 
