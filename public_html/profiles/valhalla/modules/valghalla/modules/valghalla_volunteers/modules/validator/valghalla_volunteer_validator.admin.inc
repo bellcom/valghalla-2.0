@@ -52,7 +52,7 @@ function valghalla_volunteer_validator_settings(){
   $form['valghalla_volunteer_validator_cpr_service'] = array(
     '#type' => 'tableselect',
     '#header' => $header,
-    '#multiple' => FALSE,
+    '#multiple' => TRUE,
     '#options' => $cpr_service_options,
     '#default_value' => variable_get('valghalla_volunteer_validator_cpr_service'),
     '#empty' => t('Der er ikke installeret nogen cpr services')
