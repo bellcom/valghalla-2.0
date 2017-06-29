@@ -1,4 +1,10 @@
 <?php
+/**
+ * @file
+ * Code for the Valghalla TFA Extension module feature.
+ */
+
+include_once 'valghalla_tfa.features.inc';
 
 /**
  * Implements hook_tfa_api().

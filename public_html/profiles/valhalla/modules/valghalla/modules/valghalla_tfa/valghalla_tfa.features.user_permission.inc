@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * valghalla_tfa1.features.user_permission.inc
+ * valghalla_tfa.features.user_permission.inc
  */
 
 /**
