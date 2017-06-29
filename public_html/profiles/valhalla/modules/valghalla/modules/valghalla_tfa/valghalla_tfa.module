@@ -1,0 +1,69 @@
+<?php
+
+/**
+ * Implements hook_tfa_api().
+ */
+function valghalla_tfa_tfa_api() {
+  return array(
+    'valghalla_tfa_trusted_ip' => array(
+      'class' => 'TfaTrustedIp',
+      'name' => 'Trusted IPs',
+    ),
+  );
+}
+
+/**
+ * Create TfaTrustedBrowser plugin.
+ *
+ * @param array $context
+ * @return TfaTrustedBrowser
+ */
+function valghalla_tfa_trusted_ip_create($context) {
+  return new TfaTrustedIp($context);
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function valghalla_tfa_form_tfa_admin_settings_alter(&$form, &$form_state, $form_id) {
+// Add cookie domain field to TFA admin settings.
+  $form['valghalla_tfa_trusted_ip'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Trusted IP list (bypassed TFA check)'),
+    '#default_value' => variable_get('valghalla_tfa_trusted_ip'),
+    '#description' => t('Comma separated. Ex. 192.168.1.1,192.168.2.1'),
+    '#states' => array(
+      'visible' => array(
+        ':input[name="tfa_login[valghalla_tfa_trusted_ip]"]' => array('checked' => TRUE)
+      )
+    ),
+  );
+
+  $form['#validate'][] = 'valghalla_tfa_admin_form_validate';
+  $form['#submit'][] = 'valghalla_tfa_admin_form_submit';
+}
+
+/**
+ * Validation for TFA admin settings alter.
+ */
+function valghalla_tfa_admin_form_validate($form, &$form_state) {
+  if (preg_match("/[^0-9.,]/", $form_state['values']['valghalla_tfa_trusted_ip'])) {
+    form_set_error('valghalla_tfa_trusted_ip', 'Invalid format');
+  }
+}
+
+/**
+ * Submit for TFA admin settings alter.
+ */
+function valghalla_tfa_admin_form_submit($form, &$form_state) {
+  variable_set('valghalla_tfa_trusted_ip', $form_state['values']['valghalla_tfa_trusted_ip']);
+}
+
+function valghalla_tfa_user_login(&$edit, $account) {
+  $account_data = tfa_basic_get_tfa_data($account);
+  if (empty($account_data) && user_access('setup own tfa')) {
+    drupal_set_message(t('Opret venligst to faktor autentificering indstillinger'));
+    unset($_GET['destination']);
+    drupal_goto('user/' . $account->uid . '/security/tfa');
+  }
+}

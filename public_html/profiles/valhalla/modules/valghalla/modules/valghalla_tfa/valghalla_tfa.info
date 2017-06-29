@@ -1,0 +1,14 @@
+name = "Valghalla TFA Extension module"
+description = "Valghalla module that extends the default functionality of TFA and TFA Basic"
+core = 7.x
+
+package = Valghalla
+version = 7.x-1.0
+project = valghalla_tfa
+dependencies[] = features
+dependencies[] = tfa
+dependencies[] = tfa_basic
+features[features_api][] = api:2
+features[user_permission][] = setup own tfa
+
+files[] = includes/valghalla_tfa_trusted_ip.inc
