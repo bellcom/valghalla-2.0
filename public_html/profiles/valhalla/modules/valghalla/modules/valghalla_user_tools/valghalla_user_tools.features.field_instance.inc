@@ -22,12 +22,12 @@ function valghalla_user_tools_field_default_field_instances() {
         'module' => 'text',
         'settings' => array(),
         'type' => 'text_default',
-        'weight' => 3,
+        'weight' => 1,
       ),
     ),
     'entity_type' => 'user',
     'field_name' => 'field_full_name',
-    'label' => 'Fulde name',
+    'label' => 'Fulde navn',
     'required' => 0,
     'settings' => array(
       'text_processing' => 0,
@@ -40,7 +40,7 @@ function valghalla_user_tools_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 1,
+      'weight' => 0,
     ),
   );
 
@@ -55,7 +55,7 @@ function valghalla_user_tools_field_default_field_instances() {
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 2,
+        'weight' => 5,
       ),
       'full' => array(
         'label' => 'hidden',
@@ -76,7 +76,7 @@ function valghalla_user_tools_field_default_field_instances() {
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_buttons',
-      'weight' => 6,
+      'weight' => 7,
     ),
   );
 
@@ -92,7 +92,7 @@ function valghalla_user_tools_field_default_field_instances() {
         'module' => 'node_reference',
         'settings' => array(),
         'type' => 'node_reference_default',
-        'weight' => 0,
+        'weight' => 3,
       ),
       'full' => array(
         'label' => 'above',
@@ -114,14 +114,14 @@ function valghalla_user_tools_field_default_field_instances() {
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_buttons',
-      'weight' => 7,
+      'weight' => 8,
     ),
   );
 
   // Translatables
   // Included for use with string extractors like potx.
   t('Begræns adgang til følgende valgsteder');
-  t('Fulde name');
+  t('Fulde navn');
   t('Parti');
 
   return $field_instances;
