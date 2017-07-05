@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the userform feature.
+ */
+
+include_once 'userform.features.inc';

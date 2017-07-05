@@ -1,0 +1,14 @@
+name = userform
+core = 7.x
+package = Valghalla
+version = 7.x-1.0
+project = userform
+dependencies[] = ctools
+dependencies[] = ds
+dependencies[] = rel
+features[ctools][] = ds:ds:1
+features[ctools][] = rel:rel:1
+features[ds_layout_settings][] = user|user|form
+features[features_api][] = api:2
+features[rel_builds][] = user_profile_form
+project path = profiles/valhalla/modules/valghalla/modules
