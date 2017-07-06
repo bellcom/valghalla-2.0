@@ -31,7 +31,7 @@ function valghalla_user_tools_field_default_field_instances() {
     'required' => 0,
     'settings' => array(
       'text_processing' => 0,
-      'user_register_form' => 0,
+      'user_register_form' => 1,
     ),
     'widget' => array(
       'active' => 1,
@@ -76,7 +76,7 @@ function valghalla_user_tools_field_default_field_instances() {
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_buttons',
-      'weight' => 7,
+      'weight' => 6,
     ),
   );
 
@@ -114,7 +114,7 @@ function valghalla_user_tools_field_default_field_instances() {
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_buttons',
-      'weight' => 8,
+      'weight' => 7,
     ),
   );
 

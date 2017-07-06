@@ -544,11 +544,10 @@ function valghalla_user_tools_views_default_views() {
   $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
   $handler->display->display_options['fields']['title']['element_label_colon'] = FALSE;
   $handler->display->display_options['fields']['title']['link_to_node'] = FALSE;
-  /* Felt: Indhold: Description */
+  /* Felt: Indhold: Beskrivelse */
   $handler->display->display_options['fields']['field_description']['id'] = 'field_description';
   $handler->display->display_options['fields']['field_description']['table'] = 'field_data_field_description';
   $handler->display->display_options['fields']['field_description']['field'] = 'field_description';
-  $handler->display->display_options['fields']['field_description']['label'] = 'Beskrivelse';
   /* Felt: Indhold: Mødetidspunkt */
   $handler->display->display_options['fields']['field_meetingtime']['id'] = 'field_meetingtime';
   $handler->display->display_options['fields']['field_meetingtime']['table'] = 'field_data_field_meetingtime';
@@ -557,7 +556,7 @@ function valghalla_user_tools_views_default_views() {
   $handler->display->display_options['fields']['field_role_hours']['id'] = 'field_role_hours';
   $handler->display->display_options['fields']['field_role_hours']['table'] = 'field_data_field_role_hours';
   $handler->display->display_options['fields']['field_role_hours']['field'] = 'field_role_hours';
-  /* Felt: Indhold: Role Rækkefølge */
+  /* Felt: Indhold: Valgsted Rækkefølge */
   $handler->display->display_options['fields']['field_role_weight']['id'] = 'field_role_weight';
   $handler->display->display_options['fields']['field_role_weight']['table'] = 'field_data_field_role_weight';
   $handler->display->display_options['fields']['field_role_weight']['field'] = 'field_role_weight';
@@ -572,7 +571,7 @@ function valghalla_user_tools_views_default_views() {
   $handler->display->display_options['fields']['edit_node']['id'] = 'edit_node';
   $handler->display->display_options['fields']['edit_node']['table'] = 'views_entity_node';
   $handler->display->display_options['fields']['edit_node']['field'] = 'edit_node';
-  /* Sorteringskriterie: Indhold: Role Rækkefølge (field_role_weight) */
+  /* Sorteringskriterie: Indhold: Valgsted Rækkefølge (field_role_weight) */
   $handler->display->display_options['sorts']['field_role_weight_value']['id'] = 'field_role_weight_value';
   $handler->display->display_options['sorts']['field_role_weight_value']['table'] = 'field_data_field_role_weight';
   $handler->display->display_options['sorts']['field_role_weight_value']['field'] = 'field_role_weight_value';
@@ -665,7 +664,8 @@ function valghalla_user_tools_views_default_views() {
   $handler->display->display_options['style_options']['columns'] = array(
     'views_bulk_operations' => 'views_bulk_operations',
     'name' => 'name',
-    'mail' => 'name',
+    'field_full_name' => 'field_full_name',
+    'mail' => 'mail',
     'status' => 'status',
     'rid' => 'rid',
     'created' => 'created',
@@ -684,11 +684,18 @@ function valghalla_user_tools_views_default_views() {
       'sortable' => 1,
       'default_sort_order' => 'asc',
       'align' => '',
-      'separator' => '<br />',
+      'separator' => '',
+      'empty_column' => 0,
+    ),
+    'field_full_name' => array(
+      'sortable' => 1,
+      'default_sort_order' => 'asc',
+      'align' => '',
+      'separator' => '',
       'empty_column' => 0,
     ),
     'mail' => array(
-      'sortable' => 0,
+      'sortable' => 1,
       'default_sort_order' => 'asc',
       'align' => '',
       'separator' => '',
@@ -798,9 +805,7 @@ function valghalla_user_tools_views_default_views() {
   $handler->display->display_options['fields']['mail']['id'] = 'mail';
   $handler->display->display_options['fields']['mail']['table'] = 'users';
   $handler->display->display_options['fields']['mail']['field'] = 'mail';
-  $handler->display->display_options['fields']['mail']['label'] = '';
   $handler->display->display_options['fields']['mail']['element_label_colon'] = FALSE;
-  $handler->display->display_options['fields']['mail']['link_to_user'] = '0';
   /* Felt: Bruger: Aktiv */
   $handler->display->display_options['fields']['status']['id'] = 'status';
   $handler->display->display_options['fields']['status']['table'] = 'users';
@@ -919,13 +924,12 @@ function valghalla_user_tools_views_default_views() {
     t('sidste »'),
     t('No users available.'),
     t('- Choose an operation -'),
-    t('Ban IP address of the current user'),
-    t('Delete'),
     t('Change value'),
     t('Change user roles'),
     t('Send e-mail'),
     t('Navn'),
     t('Fulde navn'),
+    t('E-mail'),
     t('Aktiv'),
     t('Roller'),
     t('Medlem i'),

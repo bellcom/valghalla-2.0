@@ -23,4 +23,4 @@ features[views_view][] = roles
 features[views_view][] = valghalla_administration_users
 features[views_view][] = valgsteder
 features_exclude[dependencies][ctools] = ctools
-mtime = 1499153602
+mtime = 1499153950
