@@ -797,6 +797,7 @@ function valghalla_user_tools_views_default_views() {
   $handler->display->display_options['fields']['name']['id'] = 'name';
   $handler->display->display_options['fields']['name']['table'] = 'users';
   $handler->display->display_options['fields']['name']['field'] = 'name';
+  $handler->display->display_options['fields']['name']['label'] = 'Brugernavn';
   /* Felt: Bruger: Fulde navn */
   $handler->display->display_options['fields']['field_full_name']['id'] = 'field_full_name';
   $handler->display->display_options['fields']['field_full_name']['table'] = 'field_data_field_full_name';
@@ -927,7 +928,7 @@ function valghalla_user_tools_views_default_views() {
     t('Change value'),
     t('Change user roles'),
     t('Send e-mail'),
-    t('Navn'),
+    t('Brugernavn'),
     t('Fulde navn'),
     t('E-mail'),
     t('Aktiv'),
