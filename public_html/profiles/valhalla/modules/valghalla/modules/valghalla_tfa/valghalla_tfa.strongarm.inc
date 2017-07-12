@@ -27,6 +27,13 @@ function valghalla_tfa_strongarm() {
   $strongarm = new stdClass();
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
+  $strongarm->name = 'tfa_basic_twilio_message_text';
+  $strongarm->value = 'Verifikationskode: !code';
+  $export['tfa_basic_twilio_message_text'] = $strongarm;
+
+  $strongarm = new stdClass();
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
   $strongarm->name = 'tfa_enabled';
   $strongarm->value = 1;
   $export['tfa_enabled'] = $strongarm;
