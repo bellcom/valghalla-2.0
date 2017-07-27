@@ -218,6 +218,7 @@ function valghalla_volunteer_validator_batch_process($op, $nids, &$context){
           'field_address_zipcode' => 'zipcode',
           'field_address_city' => 'city',
           'field_address_coname' => 'coname',
+          'field_municipality' => 'municipality',
         );
 
         // Set the values on the node.

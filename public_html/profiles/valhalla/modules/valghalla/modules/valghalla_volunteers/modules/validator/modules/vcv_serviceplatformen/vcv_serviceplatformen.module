@@ -288,6 +288,7 @@ function vcv_serviceplatformen_get_address($cpr) {
       'zipcode' => isset($message['postnummer']) ? $message['postnummer'] : '',
       'city' => isset($message['postdistrikt']) ? $message['postdistrikt'] : '',
       'coname' => isset($message['conavn']) ? $message['conavn'] : '',
+      'municipality' => isset($message['kommunekode']) ? $message['kommunekode'] : '',
     );
   }
   else {

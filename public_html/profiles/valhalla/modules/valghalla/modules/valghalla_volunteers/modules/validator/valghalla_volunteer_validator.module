@@ -90,6 +90,7 @@ function valghalla_volunteer_validator_node_validate($node, $form, &$form_state)
           'field_address_zipcode' => 'zipcode',
           'field_address_city' => 'city',
           'field_address_coname' => 'coname',
+          'field_municipality' => 'municipality',
         );
 
         if (variable_get('valghalla_volunteer_validator_get_name')) {
@@ -144,6 +145,7 @@ function valghalla_volunteer_validator_form_volunteers_node_form_alter(&$form, &
       'field_address_zipcode',
       'field_address_city',
       'field_address_coname',
+      'field_municipality',
     );
 
     foreach ($fields as $field) {
