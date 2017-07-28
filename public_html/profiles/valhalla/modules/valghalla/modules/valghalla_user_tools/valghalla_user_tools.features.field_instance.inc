@@ -44,6 +44,40 @@ function valghalla_user_tools_field_default_field_instances() {
     ),
   );
 
+  // Exported field_instance: 'user-user-field_mobile_phone'
+  $field_instances['user-user-field_mobile_phone'] = array(
+    'bundle' => 'user',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => 'eks. +4512345678',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 2,
+      ),
+    ),
+    'entity_type' => 'user',
+    'field_name' => 'field_mobile_phone',
+    'label' => 'Mobiltelefon',
+    'required' => 0,
+    'settings' => array(
+      'text_processing' => 0,
+      'user_register_form' => 0,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'text',
+      'settings' => array(
+        'size' => 60,
+      ),
+      'type' => 'text_textfield',
+      'weight' => 2,
+    ),
+  );
+
   // Exported field_instance: 'user-user-field_party'
   $field_instances['user-user-field_party'] = array(
     'bundle' => 'user',
@@ -76,7 +110,7 @@ function valghalla_user_tools_field_default_field_instances() {
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_buttons',
-      'weight' => 6,
+      'weight' => 7,
     ),
   );
 
@@ -114,7 +148,7 @@ function valghalla_user_tools_field_default_field_instances() {
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_buttons',
-      'weight' => 7,
+      'weight' => 8,
     ),
   );
 
@@ -122,7 +156,9 @@ function valghalla_user_tools_field_default_field_instances() {
   // Included for use with string extractors like potx.
   t('Begræns adgang til følgende valgsteder');
   t('Fulde navn');
+  t('Mobiltelefon');
   t('Parti');
+  t('eks. +4512345678');
 
   return $field_instances;
 }
