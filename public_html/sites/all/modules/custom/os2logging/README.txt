@@ -10,7 +10,7 @@ To use watchdog, enable 'Monolog Logging' module
 SETUP:
 
 Monolog settings    - '/admin/config/development/monolog'
-You could define log filenames
+Set Watchdog chanel profile to watchdog
 
 OS2Logging settings - '/admin/config/os2logging/settings'
 You could define node type to log

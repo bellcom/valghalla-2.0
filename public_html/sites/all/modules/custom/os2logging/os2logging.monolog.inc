@@ -21,7 +21,7 @@ function os2logging_default_monolog_profiles() {
         'label' => 'Rotating File Handler',
         'level' => '200',
         'bubble' => 1,
-        'filepath' => 'private://log/node_acess.log',
+        'filepath' => 'private://log/node_access.log',
         'max_files' => '60',
         'handler' => 'rotating_file',
       ),
