@@ -96,14 +96,14 @@ function os2logging_settings_form($form, $form_state) {
     );
   }
 
-  $form['os2logging-file-path'] = array(
-      '#type' => 'textfield',
-      '#title' => t('Log file path'),
-      '#description' => t('Enter the full path of the file that would store the logs.'),
-      '#prefix' => '<hr /><p>',
-      '#suffix' => '</p>',
-      '#default_value' => variable_get('os2logging_log_file_path'),
-  );
+//  $form['os2logging-file-path'] = array(
+//      '#type' => 'textfield',
+//      '#title' => t('Log file path'),
+//      '#description' => t('Enter the full path of the file that would store the logs.'),
+//      '#prefix' => '<hr /><p>',
+//      '#suffix' => '</p>',
+//      '#default_value' => variable_get('os2logging_log_file_path'),
+//  );
 
   $form['#submit'][] = 'os2logging_settings_form_submit';
   return system_settings_form($form);
@@ -126,4 +126,42 @@ function os2logging_settings_form_submit($form, &$form_state) {
 function _os2logging_node_type_chosen($node_type) {
   $types_list = variable_get('os2logging_chosen_node_types');
   return (is_array($types_list) && in_array($node_type, $types_list));
+}
+/**
+ * Implements hook_help().
+ */
+function os2logging_help($path, $arg) {
+  switch ($path) {
+    case 'admin/help/os2logging':
+
+      $filepath = dirname(__FILE__) . '/README.md';
+      if (file_exists($filepath)) {
+        $readme = file_get_contents($filepath);
+      }
+      else {
+        $filepath = dirname(__FILE__) . '/README.txt';
+        if (file_exists($filepath)) {
+          $readme = file_get_contents($filepath);
+        }
+      }
+      if (!isset($readme)) {
+        return NULL;
+      }
+      if (module_exists('markdown')) {
+        $filters = module_invoke('markdown', 'filter_info');
+        $info = $filters['filter_markdown'];
+    
+        if (function_exists($info['process callback'])) {
+          $output = $info['process callback']($readme, NULL);
+        }
+        else {
+          $output = '<pre>' . $readme . '</pre>';
+        }
+      }
+      else {
+        $output = '<pre>' . $readme . '</pre>';
+      }
+
+      return $output;
+  }
 }
