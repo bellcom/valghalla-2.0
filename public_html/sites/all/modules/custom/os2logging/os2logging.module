@@ -46,6 +46,16 @@ function os2logging_monolog_channel_info() {
       'description' => t('The default channel that os2logging messages are routed through.'),
       'default profile' => 'os2logging',
   );
+  $channels['mytype'] = array(
+      'label' => t('mytype'),
+      'description' => t('The default channel that os2logging messages are routed through.'),
+      'default profile' => 'moduletest',
+  );
+  $channels['php'] = array(
+      'label' => t('mytype'),
+      'description' => t('The default channel that os2logging messages are routed through.'),
+      'default profile' => 'php',
+  );
 
   return $channels;
 }
@@ -61,19 +71,15 @@ function os2logging_node_load($nodes, $types) {
   $logger_file_path = variable_get('os2logging_log_file_path');
   $chosen_node_types = variable_get('os2logging_chosen_node_types');
 
-  //$log = new Logger('os2logging');
-  //$log->pushHandler(new StreamHandler($logger_file_path, Logger::WARNING));
-
+  $logger = monolog('os2logging');
+  $logger->pushProcessor(new \Monolog\Processor\WebProcessor);
   foreach ($nodes as $nid => $node) {
     if ( in_array($node->type, $chosen_node_types) )
       {
-
-      $message = sprintf("node type:%s id:%d was loaded from:%s by user uid:%s \n\r", $node->type, $node->nid, $_SERVER['REMOTE_ADDR'], $user->uid);
-      $logger = monolog('os2logging');
+      $message = sprintf("node type:%s id:%d was loaded by user( uid:%s name:%s  e-mail:%s) \n\r", $node->type, $node->nid, $user->uid, $user->name, $user->email);
       $logger->log(Logger::INFO, $message, array());
 
-      //$log->addWarning(sprintf("node type:%s id:%d was loaded from:%s by user uid:%s \n\r", $node->type, $node->nid, $_SERVER['REMOTE_ADDR'], $user->uid ));
-      //watchdog(basename(__FILE__, '.module'), $message, NULL, WATCHDOG_INFO, NULL);
+      //watchdog('mytype', 'TEST', NULL, WATCHDOG_INFO, NULL);
       }
   }
 }
@@ -95,15 +101,6 @@ function os2logging_settings_form($form, $form_state) {
         '#default_value' => _os2logging_node_type_chosen($nd->type),
     );
   }
-
-//  $form['os2logging-file-path'] = array(
-//      '#type' => 'textfield',
-//      '#title' => t('Log file path'),
-//      '#description' => t('Enter the full path of the file that would store the logs.'),
-//      '#prefix' => '<hr /><p>',
-//      '#suffix' => '</p>',
-//      '#default_value' => variable_get('os2logging_log_file_path'),
-//  );
 
   $form['#submit'][] = 'os2logging_settings_form_submit';
   return system_settings_form($form);
@@ -163,5 +160,47 @@ function os2logging_help($path, $arg) {
       }
 
       return $output;
+  }
+}
+
+/**
+ * Implements hook_watchdog().
+ */
+function os2logging_watchdog(array $log_entry) {
+  try {
+
+    // Perform a partial bootstrap if watchdog is called prior to the
+    // DRUPAL_BOOTSTRAP_FULL phase.
+    if (!function_exists('monolog')) {
+      monolog_logging_bootstrap();
+    }
+
+    // Check whether to use the watchdog type as the channel name.
+    // @see http://drupal.org/node/1990282
+    if (variable_get('monolog_type_as_channel', 1)) {
+
+
+   if (monolog_channel_info_load($log_entry['type']) ) {
+      
+        $logger = monolog($log_entry['type']);
+
+        if ('Psr\Log\NullLogger' != get_class($logger)) {
+          $enabled_contexts = monolog_logging_get_contexts();
+          $context = array_intersect_key($log_entry, $enabled_contexts);
+          if (isset($enabled_contexts['request_id'])) {
+            $context['request_id'] = monolog_request_id();
+          }
+
+          $message = strip_tags(!isset($log_entry['variables']) ? $log_entry['message'] : strtr($log_entry['message'], $log_entry['variables']));
+          $level = monolog_logging_map_severity_level($log_entry['severity']);
+          $logger->log($level, $message, $context);
+        }
+      }
+    }
+  }
+
+  catch (Exception $e) {
+    // Fail silently since we cannot log any messages or do anything that would
+    // trigger another watchdog call.
   }
 }
