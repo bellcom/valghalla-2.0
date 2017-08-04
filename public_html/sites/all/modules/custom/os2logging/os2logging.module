@@ -46,16 +46,6 @@ function os2logging_monolog_channel_info() {
       'description' => t('The default channel that os2logging messages are routed through.'),
       'default profile' => 'os2logging',
   );
-  $channels['mytype'] = array(
-      'label' => t('mytype'),
-      'description' => t('The default channel that os2logging messages are routed through.'),
-      'default profile' => 'moduletest',
-  );
-  $channels['php'] = array(
-      'label' => t('mytype'),
-      'description' => t('The default channel that os2logging messages are routed through.'),
-      'default profile' => 'php',
-  );
 
   return $channels;
 }
