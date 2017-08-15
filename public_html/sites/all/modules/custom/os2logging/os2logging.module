@@ -114,12 +114,13 @@ function _os2logging_node_type_chosen($node_type) {
   $types_list = variable_get('os2logging_chosen_node_types');
   return (is_array($types_list) && in_array($node_type, $types_list));
 }
+
 /**
  * Implements hook_help().
  */
 function os2logging_help($path, $arg) {
   switch ($path) {
-    case 'admin/help/os2logging':
+    case 'admin/help#os2logging':
 
       $filepath = dirname(__FILE__) . '/README.md';
       if (file_exists($filepath)) {
