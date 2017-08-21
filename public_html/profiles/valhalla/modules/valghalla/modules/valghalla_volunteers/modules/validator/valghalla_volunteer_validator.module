@@ -93,6 +93,10 @@ function valghalla_volunteer_validator_node_validate($node, $form, &$form_state)
           'field_municipality' => 'municipality',
         );
 
+        if(FALSE == valghalla_volunteer_validator_commune($message['municipality'])){
+          form_set_error('field_municipality', t('En person er ikke fra vores kommuneEn person er ikke fra vores kommune:') . ' ' . $message['municipality']);
+        }
+        
         if (variable_get('valghalla_volunteer_validator_get_name')) {
           form_set_value($form['title'], $message['name'], $form_state);
         }
@@ -180,6 +184,17 @@ function valghalla_volunteer_validator_validate_format($cpr) {
 function valghalla_volunteer_validator_check_duplicates($cpr) {
   if ($volunteer = _valghalla_helper_get_volunteer_by_cpr($cpr)) {
     return $volunteer->nid;
+  }
+  return FALSE;
+}
+
+/**
+ * Check if the deltagere is from our commune.
+ *
+ */
+function valghalla_volunteer_validator_commune($commune) {
+  if ($commune == variable_get('valhalla_settings_commune', FALSE)) {
+    return TRUE;
   }
   return FALSE;
 }
