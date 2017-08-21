@@ -94,7 +94,7 @@ function valghalla_volunteer_validator_node_validate($node, $form, &$form_state)
         );
 
         if(FALSE == valghalla_volunteer_validator_commune($message['municipality'])){
-          form_set_error('field_municipality', t('En person er ikke fra vores kommuneEn person er ikke fra vores kommune:') . ' ' . $message['municipality']);
+          form_set_error('field_municipality', t('En person er ikke fra vores kommune:') . ' ' . $message['municipality']);
         }
         
         if (variable_get('valghalla_volunteer_validator_get_name')) {
