@@ -184,7 +184,7 @@ function vcv_person_lookup_extended_validate_cpr($cpr){
   if (intval($status['civil_status']) == 90) {
     return array(
       'status' => FALSE,
-      'text' => t('Den angivne CPR-nummer er død'),
+      'text' => t('Personen med angivne CPR-nummer er død'),
     );
   }
 

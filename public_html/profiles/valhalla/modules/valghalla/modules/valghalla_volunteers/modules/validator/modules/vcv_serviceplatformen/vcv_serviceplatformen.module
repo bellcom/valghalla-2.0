@@ -204,7 +204,7 @@ function vcv_serviceplatformen_validate_cpr($cpr) {
     if (strcmp($status['municipality'],variable_get('valhalla_settings_municipality')) != 0) {
       return array(
         'status' => FALSE,
-        'text' => t('Den angivne CPR-nummer er ikke fra udvalgt kommune'),
+        'text' => t('Personen med det angivne CPR-nummer er ikke fra den udvalgte kommune'),
       );
     }
   }
