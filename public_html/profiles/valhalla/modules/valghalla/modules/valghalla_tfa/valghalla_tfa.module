@@ -80,7 +80,7 @@ function valghalla_tfa_admin_form_submit($form, &$form_state) {
 
 function valghalla_tfa_user_login(&$edit, $account) {
   $account_data = tfa_basic_get_tfa_data($account);
-  if (empty($account_data) && user_access('setup own tfa')) {
+  if ((empty($account_data) || !$account_data['status']) && user_access('setup own tfa')) {
     drupal_set_message(t('Opret venligst to faktor autentificering indstillinger'));
     unset($_GET['destination']);
     drupal_goto('user/' . $account->uid . '/security/tfa');
@@ -109,7 +109,7 @@ function valghalla_tfa_boot() {
       //does use have tfa set up?
       $account_data = tfa_basic_get_tfa_data($GLOBALS['user']);
 
-      if (empty($account_data) && user_access('setup own tfa')) {
+      if ((empty($account_data) || !$account_data['status']) && user_access('setup own tfa')) {
         //checking that URL is not already tfa setup or logout
         if (strpos($_GET['q'], 'user/' . $GLOBALS['user']->uid . '/security/tfa') !== 0 && strpos($_GET['q'], 'user/logout') !== 0) {
           drupal_set_message(t('Opret venligst to faktor autentificering indstillinger'));
