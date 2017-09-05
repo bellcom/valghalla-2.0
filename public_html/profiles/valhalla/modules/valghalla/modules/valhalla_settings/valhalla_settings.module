@@ -6,8 +6,8 @@
 
 function valhalla_settings_menu() {
   $items['admin/valghalla/settings'] = array(
-    'title' => 'Settings',
-    'description' => 'General valghalla settings',
+    'title' => t('Settings'),
+    'description' => t('General valghalla settings'),
     'page callback' => 'drupal_get_form',
     'page arguments' => array('valhalla_admin_settings_form'),
     'access arguments' => array('administer valghalla'),
@@ -20,7 +20,7 @@ function valhalla_settings_menu() {
 function valhalla_admin_settings_form($form, &$form_state) {
   $form['valhalla_settings_polling_station_lock'] = array(
     '#type' => 'checkbox',
-    '#title' => 'Lås valgsteds opsætningen',
+    '#title' => t('Lås valgsteds opsætningen'),
     '#default_value' => variable_get('valhalla_settings_polling_station_lock', FALSE),
   );
 
@@ -28,18 +28,18 @@ function valhalla_admin_settings_form($form, &$form_state) {
   // Let the admin select who should see the address fields on the edit form.
   $form['valhalla_settings_hide_address_fields'] = array(
     '#type' => 'radios',
-    '#title' => 'Skjul adresse felter på deltager redigeringsformular.',
+    '#title' => t('Skjul adresse felter på deltager redigeringsformular.'),
     '#options' => array(
-      0 => 'Vis for alle',
-      1 => 'Skjul for alle',
-      2 => 'Vis kun for administrator (roller med tilladelsen "Administerer valghalla")',
+      0 => t('Vis for alle'),
+      1 => t('Skjul for alle'),
+      2 => t('Vis kun for administrator (roller med tilladelsen "Administerer valghalla")'),
     ),
     '#default_value' => variable_get('valhalla_settings_hide_address_fields', 0),
   );
 
   // Chose which role is the 'Partisekretær'
   $form['valhalla_settings_party_secretary_role_id'] = array(
-    '#title' => 'Vælg hvilken rolle, som er "Partisekretær"',
+    '#title' => t('Vælg hvilken rolle, som er "Partisekretær"'),
     '#type' => 'select',
     '#options' => user_roles(TRUE),
     '#default_value' => variable_get('valhalla_settings_party_secretary_role_id'),

@@ -14,7 +14,7 @@ function valhalla_roles_node_insert($node){
     $instance = array(
       'field_name' => 'field_role_n'.$node->nid,
       'entity_type' => 'field_collection_item',
-      'label' => 'Role',
+      'label' => t('Role'),
       'bundle' => 'field_volunteers_pr_party_1',
       // If you don't set the "required" property then the field wont be required by default.
       'required' => TRUE,
