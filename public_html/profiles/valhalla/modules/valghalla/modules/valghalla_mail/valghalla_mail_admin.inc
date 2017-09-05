@@ -51,7 +51,7 @@ function valghalla_mail_admin_valghalla_mails($form, $form_state, $election_nid 
   $form['valghalla_volunteers_mail']['mails'] = array(
     '#type' => 'fieldset',
     '#title' => t('Standard E-Mail skabeloner'),
-    '#description' => '<a href="/node/add/email?destination=' . current_path() . '"><span class="glyphicon glyphicon-plus"></span> Tilføj ny</a>',
+    '#description' => '<a href="/node/add/email?destination=' . current_path() . '"><span class="glyphicon glyphicon-plus"></span> ' . t('Tilføj ny') . '</a>',
   );
 
   $mail_options = valghalla_mail_get_mails();
@@ -63,7 +63,7 @@ function valghalla_mail_admin_valghalla_mails($form, $form_state, $election_nid 
     $mail_nid = variable_get($variable_name, FALSE);
 
     if($mail_nid){
-      $description .= ' <a class="form-submit" href="/node/' . $mail_nid . '/edit?destination=' . current_path() . '">'.t('edit').'</a>';
+      $description .= ' <a class="form-submit" href="/node/' . $mail_nid . '/edit?destination=' . current_path() . '">' . t('edit') . '</a>';
     }
 
     $form['valghalla_volunteers_mail']['mails'][$variable_name] = array(
@@ -202,7 +202,7 @@ function valghalla_mail_admin_notifications(){
   $form['valghalla_volunteers_mail']['options']['valghalla_rsvp_reminder_days'] = array(
       '#type' => 'textfield',
       '#title' => t('Påmindelses dage'),
-      '#description' => 'Liste af dage før valg der skal udsendes påmindelser, adskildt af komma ( , ). f.eks. 14, 7, 5, 3',
+      '#description' => t('Liste af dage før valg der skal udsendes påmindelser, adskildt af komma ( , ). f.eks. 14, 7, 5, 3'),
       '#default_value' => variable_get('valghalla_rsvp_reminder_days', '14, 7, 5, 3'),
   );
 
