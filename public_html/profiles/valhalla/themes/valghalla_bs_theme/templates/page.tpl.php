@@ -118,17 +118,17 @@
             </li>
           <?php endif; ?>
           <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Valghalla Manual<b class="caret"></b></a>
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php print t('Valghalla Manual'); ?><b class="caret"></b></a>
             <ul class="dropdown-menu">
               <li class="first">
-                <a href="http://valghalla.dk/valghalla-manual" class="first leaf" target="_blank">Valghalla Manual</a>
+                <a href="http://valghalla.dk/valghalla-manual" class="first leaf" target="_blank"><?php print t('Valghalla Manual'); ?></a>
               </li>
               <li>
                 <a href="http://valghalla.dk/sites/default/files/valhalla-vejledning-til-valgsekretren.pdf" class="leaf" target="_blank">
-                  Vejledning til valgsekretær</a>
+                  <?php print t('Vejledning til valgsekretær'); ?></a>
               </li>
               <li class="last">
-                <a href="http://valghalla.dk/sites/default/files/kom-godt-i-gang-med-valhalla-partier.pdf" class="last collapsed" target="_blank">Kom godt i gang</a>
+                <a href="http://valghalla.dk/sites/default/files/kom-godt-i-gang-med-valhalla-partier.pdf" class="last collapsed" target="_blank"><?php print t('Kom godt i gang'); ?></a>
               </li>
 </ul>
           </li>

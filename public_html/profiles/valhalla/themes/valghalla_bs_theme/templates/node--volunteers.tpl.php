@@ -1,23 +1,23 @@
 <div id="node-<?php print $node->nid; ?>" class="<?php print $classes; ?> clearfix"<?php print $attributes; ?>>
-  <span class="pull-right">Gemt: <?php print valhalla_bs_last_editor($node) . ' ' . format_date($node->changed); ?></span>
+  <span class="pull-right"><?php print t('Gemt: '); ?><?php print valhalla_bs_last_editor($node) . ' ' . format_date($node->changed); ?></span>
 
   <br />
   <br />
   <table class="table">
     <tr>
-      <td>Adresse:</td>
+      <td><?php print t('Adresse:'); ?></td>
       <td><?php print valhalla_bs_vol_address($node);?></td>
     </tr>
     <tr>
-      <td>Telefon:</td>
+      <td><?php print t('Telefon:'); ?></td>
       <td><?php print valhalla_bs_vol_phone($node);?></td>
     </tr>
     <tr>
-      <td>Email:</td>
+      <td><?php print t('Email:'); ?></td>
       <td><?php print valhalla_bs_vol_mail($node);?></td>
     </tr>
     <tr>
-      <td>Cpr:</td>
+      <td><?php print t('Cpr:'); ?>Cpr:</td>
       <td><?php print valhalla_bs_vol_cpr($node);?></td>
     </tr>
     <tr>
