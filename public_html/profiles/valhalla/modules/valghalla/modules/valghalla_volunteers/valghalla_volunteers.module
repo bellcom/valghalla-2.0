@@ -54,54 +54,54 @@ function valghalla_volunteers_menu() {
 
   $items = array(
     'volunteers/rsvp' => array(
-      'title' => 'Anmodning om svar',
+      'title' => t('Anmodning om svar'),
       'access arguments' => array('volunteers rsvp'),
       'page callback' => 'valghalla_volunteers_rsvp',
       'type' => MENU_CALLBACK,
     ),
     'volunteers/login' => array(
-      'title' => 'Anmodning om svar: Login',
+      'title' => t('Anmodning om svar: Login'),
       'access arguments' => array('volunteers rsvp'),
       'page callback' => 'valghalla_volunteers_login',
       'type' => MENU_CALLBACK,
     ),
     'volunteers/station/%' => array(
-      'title' => 'Håndtér tilforordnede',
+      'title' => t('Håndtér tilforordnede'),
       'access arguments' => array('add volunteer to station'),
       'page callback' => 'valghalla_volunteers_to_polling_station',
       'page arguments' => array(2),
       'type' => MENU_CALLBACK,
     ),
     'volunteers/export' => array(
-      'title' => 'Eksportér tilforordnede',
+      'title' => t('Eksportér tilforordnede'),
       'access arguments' => array('administer volunteers'),
       'page callback' => 'valghalla_volunteers_export',
       'type' => MENU_CALLBACK,
     ),
     'add-sub-secretary' => array(
-      'title' => 'Tilføj underbruger',
+      'title' => t('Tilføj underbruger'),
       'page callback' => 'drupal_get_form',
       'page arguments' => array('valghalla_volunteers_add_sub_secretary_form'),
       'access arguments' => array('administer sub secretaries'),
       'type' => MENU_CALLBACK,
     ),
     'valghalla/change/party/%' => array(
-      'title' => 'Skift parti',
+      'title' => t('Skift parti'),
       'page callback' => 'valghalla_volunteers_change_party',
       'page arguments' => array(3),
       'access arguments' => array('administer valghalla'),
       'type' => MENU_CALLBACK,
     ),
     'volunteers/data/%' => array(
-      'title' => 'test',
+      'title' => t('test'),
       'access arguments' => array('volunteers rsvp'),
       'page callback' => 'valghalla_volunteers_data',
       'page arguments' => array(2),
       'type' => MENU_CALLBACK,
     ),
     'admin/valghalla/valghalla' => array(
-      'title' => 'Overview',
-      'description' => 'blablabla... valghalla election overview.',
+      'title' => t('Overview'),
+      'description' => t('blablabla... valghalla election overview.'),
       'access arguments' => array('administer volunteers'),
       'type' => MENU_DEFAULT_LOCAL_TASK,
       'file' => 'valghalla_volunteers_admin.inc',
@@ -113,7 +113,7 @@ function valghalla_volunteers_menu() {
   // plan is that when an item has been processed og the callback
   // has been updated, the item is moved here.
   $items['valghalla/deltagere'] = array(
-    'title' => 'Deltagere',
+    'title' => t('Deltagere'),
     'file path' => drupal_get_path('module', 'system'),
     'file' => 'system.admin.inc',
     'page callback' => 'system_admin_menu_block_page',
@@ -121,14 +121,14 @@ function valghalla_volunteers_menu() {
   );
 
   $items['valghalla/deltagere/tilfoej'] = array(
-    'title' => 'Tilføj deltager',
+    'title' => t('Tilføj deltager'),
     'access arguments' => array('add volunteers'),
     'page callback' => 'valghalla_volunteers_add',
     'type' => MENU_NORMAL_ITEM,
   );
 
   $items['ajax/volunteers/station/%'] = array(
-    'title' => 'volunteers ajax',
+    'title' => t('volunteers ajax'),
     'access arguments' => array('add volunteer to station'),
     'page callback' => 'valghalla_volunteers_to_polling_station_ajax',
     'page arguments' => array(3),
@@ -214,9 +214,9 @@ function valghalla_volunteers_rsvp() {
 
   $rsvp_map = array(
     0 => '',
-    1 => 'Ja',
-    2 => 'Nej, ikke denne gang',
-    3 => 'Nej, og jeg vil gerne fjernes fra listen',
+    1 => t('Ja'),
+    2 => t('Nej, ikke denne gang'),
+    3 => t('Nej, og jeg vil gerne fjernes fra listen'),
   );
 
   return theme('rsvp', array(
@@ -1069,10 +1069,10 @@ function valghalla_volunteers_form_volunteers_node_form_alter(&$form, &$form_sta
   }
   else {
     $rsvp_options = array(
-      0 => 'Ubesvaret',
-      1 => 'Ja',
-      2 => 'Nej',
-      3 => 'Aldrig',
+      0 => t('Ubesvaret'),
+      1 => t('Ja'),
+      2 => t('Nej'),
+      3 => t('Aldrig'),
     );
     foreach ($form['field_electioninfo'][LANGUAGE_NONE] as $key => $itme) {
       if (is_numeric($key)) {
@@ -1268,13 +1268,13 @@ function valghalla_volunteers_export() {
 function valghalla_volunteers_form_valhalla_admin_settings_form_alter(&$form, &$form_state, $form_id){
   $form['valghalla_allow_rsvp_update'] = array(
     '#type' => 'checkbox',
-    '#title' => 'Tillad den tilforordnede at opdatere sin status',
+    '#title' => t('Tillad den tilforordnede at opdatere sin status'),
     '#default_value' => variable_get('valghalla_allow_rsvp_update'),
   );
 
   $form['valghalla_rsvp_update_message'] = array(
     '#type' => 'textarea',
-    '#title' => 'Besked til deltageren efter svar er afgivet',
+    '#title' => t('Besked til deltageren efter svar er afgivet'),
     '#default_value' => variable_get('valghalla_rsvp_update_message'),
   );
 

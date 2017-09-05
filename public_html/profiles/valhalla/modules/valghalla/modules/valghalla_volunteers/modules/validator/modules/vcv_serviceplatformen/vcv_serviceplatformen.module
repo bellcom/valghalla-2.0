@@ -13,7 +13,7 @@
  */
 function vcv_serviceplatformen_menu() {
   $items['admin/valghalla/validator/vcv_serviceplatformen'] = array(
-    'title' => 'Indstillinger for serviceplatformen.dk',
+    'title' => t('Indstillinger for serviceplatformen.dk'),
     'page callback' => 'drupal_get_form',
     'page arguments' => array('vcv_serviceplatformen_settings'),
     'access arguments' => array('administer valghalla'),
@@ -58,7 +58,7 @@ function vcv_serviceplatformen_settings() {
 
     if ($message['status']) {
       $output = '<div style="font-size: 15px; color : green"><b>' .t('Succeed') . '</b></div>';
-      $output .= '<div> Test CPR nr. ' . $cpr . '<br />';
+      $output .= '<div> ' . t('Test CPR nr. ') . $cpr . '<br />';
       foreach ($message as $key => $item) {
         if ($key != 'status') {
           $output .= $key . ': ' . $item . '<br />';
@@ -67,7 +67,7 @@ function vcv_serviceplatformen_settings() {
       $output .= '</div>';
     }
     else {
-      $output = '<b style = "color : red">Error: ' . $message['text'] . '</b>';
+      $output = '<b style = "color : red">' . t('Error: ') . $message['text'] . '</b>';
     }
     variable_set('test_cpr', '');
   }
@@ -93,26 +93,26 @@ function vcv_serviceplatformen_settings() {
 
   $form['stam']['vcv_serviceplatformen_serviceagreementuuid'] = array(
     '#type' => 'textfield',
-    '#title' => 'Serviceaftale UUID',
+    '#title' => t('Serviceaftale UUID'),
     '#default_value' => variable_get('vcv_serviceplatformen_serviceagreementuuid', ''),
   );
 
   $form['stam']['vcv_serviceplatformen_serviceuuid'] = array(
     '#type' => 'textfield',
-    '#title' => 'Service UUID',
+    '#title' => t('Service UUID'),
     '#default_value' => variable_get('vcv_serviceplatformen_serviceuuid', ''),
   );
 
   $form['stam']['vcv_serviceplatformen_wsdl'] = array(
     '#type' => 'textfield',
-    '#title' => 'Service WSDL location',
+    '#title' => t('Service WSDL location'),
     '#default_value' => variable_get('vcv_serviceplatformen_wsdl', ''),
     '#description' => t('ex. https://exttestwww.serviceplatformen.dk/administration/wsdl/CPRBasicInformationService.wsdl'),
   );
 
   $form['stam']['vcv_serviceplatformen_location'] = array(
     '#type' => 'textfield',
-    '#title' => 'Service location',
+    '#title' => t('Service location'),
     '#default_value' => variable_get('vcv_serviceplatformen_location', ''),
     '#description' => t('ex. https://exttest.serviceplatformen.dk/service/CPRBasicInformation/CPRBasicInformation/1'),
   );
@@ -124,50 +124,50 @@ function vcv_serviceplatformen_settings() {
 
   $form['adrsog']['vcv_serviceplatformen_adrsog_serviceagreementuuid'] = array(
     '#type' => 'textfield',
-    '#title' => 'Serviceaftale UUID',
+    '#title' => t('Serviceaftale UUID'),
     '#default_value' => variable_get('vcv_serviceplatformen_adrsog_serviceagreementuuid', ''),
   );
 
   $form['adrsog']['vcv_serviceplatformen_adrsog_serviceuuid'] = array(
     '#type' => 'textfield',
-    '#title' => 'Service UUID',
+    '#title' => t('Service UUID'),
     '#default_value' => variable_get('vcv_serviceplatformen_adrsog_serviceuuid', ''),
   );
 
   $form['adrsog']['vcv_serviceplatformen_adrsog_location'] = array(
     '#type' => 'textfield',
-    '#title' => 'Service location',
+    '#title' => t('Service location'),
     '#default_value' => variable_get('vcv_serviceplatformen_adrsog_location', ''),
     '#description' => t('ex. https://exttest.serviceplatformen.dk/service/CPRBasicInformation/CPRBasicInformation/1'),
   );
 
   $form['vcv_serviceplatformen_usersystemuuid'] = array(
     '#type' => 'textfield',
-    '#title' => 'System UUID',
+    '#title' => t('System UUID'),
     '#default_value' => variable_get('vcv_serviceplatformen_usersystemuuid', ''),
   );
 
   $form['vcv_serviceplatformen_useruuid'] = array(
     '#type' => 'textfield',
-    '#title' => 'Kommune UUID',
+    '#title' => t('Kommune UUID'),
     '#default_value' => variable_get('vcv_serviceplatformen_useruuid', ''),
   );
 
   $form['vcv_serviceplatformen_accountinginfo'] = array(
     '#type' => 'textfield',
-    '#title' => 'AccountingInfo',
+    '#title' => t('AccountingInfo'),
     '#default_value' => variable_get('vcv_serviceplatformen_accountinginfo', ''),
   );
 
   $form['vcv_serviceplatformen_certfile_passphrase'] = array(
     '#type' => 'password',
-    '#title' => 'Certfile passphrase',
+    '#title' => t('Certfile passphrase'),
     '#default_value' => variable_get('vcv_serviceplatformen_certfile_passphrase', ''),
   );
 
   $form['vcv_serviceplatformen_certfile'] = array(
     '#type' => 'textfield',
-    '#title' => 'Certfile',
+    '#title' => t('Certfile'),
     '#default_value' => variable_get('vcv_serviceplatformen_certfile', ''),
   );
 

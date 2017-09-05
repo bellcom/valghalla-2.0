@@ -16,7 +16,7 @@
       </div>
       <div class="col-xs-6"
       <?php if(isset($existing[$i])):?> style="display:none;" <?php endif;?> >
-        <input type="text" class="form-control" placeholder="Vælg en deltager" />
+        <input type="text" class="form-control" placeholder="<?php print t('Vælg en deltager'); ?>" />
       </div>
     <a data-role_nid="<?php print $post['role_nid']; ?>"
        data-party_tid="<?php print $post['party_tid']; ?>"
