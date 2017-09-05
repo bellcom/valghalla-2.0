@@ -343,7 +343,7 @@ function valghalla_signup_signup_form($form, &$form_state) {
         );
 
         $form['volunteers'][$i]['comment'] = array(
-          '#title' => 'Evt. besked',
+          '#title' => t('Evt. besked'),
           '#type' => 'textarea',
         );
       }

@@ -19,7 +19,7 @@ function valghalla_menu() {
   );
 
   $items['valghalla/administration'] = array(
-    'title' => 'Administration',
+    'title' => t('Administration'),
     'page callback' => 'system_admin_menu_block_page',
     'file path' => drupal_get_path('module', 'system'),
     'file' => 'system.admin.inc',

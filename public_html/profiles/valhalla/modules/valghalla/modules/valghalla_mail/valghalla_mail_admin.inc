@@ -207,7 +207,7 @@ function valghalla_mail_admin_notifications(){
   );
 
   $form['valghalla_volunteers_mail']['mails']['valghalla_mail_send_invitation_on_add'] = array(
-    '#title' => 'Send mail(invitation) til deltager når denne tilføjes på et valgsted.',
+    '#title' => t('Send mail(invitation) til deltager når denne tilføjes på et valgsted.'),
     '#default_value' => variable_get('valghalla_mail_send_invitation_on_add', TRUE),
     '#type' => 'checkbox'
   );

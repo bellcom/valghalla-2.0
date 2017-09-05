@@ -14,7 +14,7 @@ function valghalla_nemlogin_menu() {
 
   $items['admin/config/nemlogin'] = array(
     'title' => t('Valghalla Nemlogin'),
-    'description' => 'Valghalla Nemlogin configuration',
+    'description' => t('Valghalla Nemlogin configuration'),
     'access arguments' => array('administer valghalla'),
     'page callback' => 'system_admin_menu_block_page',
     'file' => 'system.admin.inc',

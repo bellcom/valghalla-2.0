@@ -20,7 +20,7 @@ function valghalla_election_uninstall() {
  */
 function valghalla_election_schema() {
   $schema['field_election_roles_diaet'] = array(
-    'description' => t('Table for storing the individual role diaet of each election.'),
+    'description' => 'Table for storing the individual role diaet of each election.',
     'fields' => array(
       'nid'  => array(
         'type' => 'int',

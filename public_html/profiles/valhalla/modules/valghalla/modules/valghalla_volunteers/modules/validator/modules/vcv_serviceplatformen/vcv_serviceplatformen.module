@@ -87,7 +87,7 @@ function vcv_serviceplatformen_settings() {
   );
 
   $form['stam'] = array(
-    '#title' => 'Person stamdata',
+    '#title' => t('Person stamdata'),
     '#type' => 'fieldset',
   );
 
