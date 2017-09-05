@@ -50,13 +50,13 @@ function valghalla_election_form_alter(&$form, &$form_state, $form_id) {
   if (isset($form['type']) && isset($form['#node']) && $form_id == 'election_node_form') {
     $roles = valghalla_election_get_roles();
     // form fieldset
-    $description = "Roller diæter";
+    $description = t("Roller diæter");
     if (empty($roles)) {
       $description .= " <a href='/node/add/roles?destination=$destination'>Opret roller</a>";
     }
     $form['role_and_diaet'] = array(
       '#type' => 'fieldset',
-      '#title' => 'Diæt',
+      '#title' => t('Diæt'),
       '#weight' => 1,
       '#description' => $description,
     );
