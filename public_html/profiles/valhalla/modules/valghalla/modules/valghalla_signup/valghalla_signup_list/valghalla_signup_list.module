@@ -37,7 +37,7 @@ function valghalla_signup_list_page($form, &$form_state) {
 
   $header = array(
     t('Navn'),
-    t('CPR Nummer)',
+    t('CPR Nummer'),
     t('E-mail'),
     t('Tilmeldingdato'),
     t('CPR status'),
