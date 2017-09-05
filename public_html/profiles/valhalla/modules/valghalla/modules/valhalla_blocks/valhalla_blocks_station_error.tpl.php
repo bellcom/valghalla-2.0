@@ -5,7 +5,7 @@
         <tr>
             <thead>
             <th>
-                Fejl i valgsted
+                <?php print t('Fejl i valgsted'); ?>
             </th>
             </thead>
         </tr>

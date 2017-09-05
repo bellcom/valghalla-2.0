@@ -101,7 +101,7 @@ function valhalla_block_ajax_view($delta = '') {
   $election_node = node_load($_SESSION['election_nid']);
 
   if (!is_object($election_node)) {
-    print 'Der er ikke valgt noget valg';
+    print t('Der er ikke valgt noget valg');
     return;
   }
 
@@ -110,7 +110,7 @@ function valhalla_block_ajax_view($delta = '') {
   $polling_station_nids = odin_get_polling_stations($election_node->nid);
 
   if (empty($polling_station_nids)) {
-    print 'Der er ingen valsteder på dette valg';
+    print t('Der er ingen valsteder på dette valg');
     return;
   }
 
@@ -176,22 +176,22 @@ function _valhalla_blocks_generate_overview_markup($count) {
             </tr>
           </thead>
           <tr>
-            <td><div class="partistatusenhed">Status total</div></td>
+            <td><div class="partistatusenhed">' . t('Status total') . '</div></td>
             <td class="column-count ' . $label . '">' . $count['total_count']['total'] . '/' . $count['total_count']['assigned'] . '</td>
             <td class="column-count">' . ($count['total_count']['assigned'] - $count['total_count']['total']) . '</td>
           </tr>
           <tr>
-            <td>Bekræftede</td>
+            <td>' . t('Bekræftede') . '</td>
             <td class="column-count">' . $count['total_count']['rsvp_ok'] . '</td>
             <td></td>
           </tr>
           <tr>
-            <td>Afviste</td>
+            <td>' . t('Afviste') . '</td>
             <td class="column-count">' . $count['total_count']['rsvp_no'] . '</td>
             <td></td>
           </tr>
           <tr>
-            <td>Afventer svar</td>
+            <td>' . t('Afventer svar') . '</td>
             <td class="column-count">' . ($count['total_count']['total'] - ($count['total_count']['rsvp_ok'] + $count['total_count']['rsvp_no'])) . '</td>
             <td></td>
           </tr>
@@ -201,9 +201,9 @@ function _valhalla_blocks_generate_overview_markup($count) {
   $markup .= '<table class="table">
                 <thead>
                   <tr>
-                    <th>Roller</th>
-                    <th class="column-label">I alt</th>
-                    <th class="column-label">Mangler</th>
+                    <th>' . t('Roller') . '</th>
+                    <th class="column-label">' . t('I alt') . '</th>
+                    <th class="column-label">' . t('Mangler') . '</th>
                   </tr>
                 </thead>';
 
