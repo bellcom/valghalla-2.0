@@ -9,8 +9,8 @@
  */
 function valghalla_volunteer_validator_menu() {
   $items['admin/valghalla/validator'] = array(
-    'title' => 'Deltager validering',
-    'description' => 'Indstillinger for CPR validering',
+    'title' => t('Deltager validering'),
+    'description' => t('Indstillinger for CPR validering'),
     'page callback' => 'drupal_get_form',
     'page arguments' => array('valghalla_volunteer_validator_settings'),
     'access arguments' => array('administer valghalla'),
@@ -19,7 +19,7 @@ function valghalla_volunteer_validator_menu() {
   );
 
   $items['admin/valghalla/validator/batch'] = array(
-    'title' => 'Deltager validering',
+    'title' => t('Deltager validering'),
     'page callback' => 'drupal_get_form',
     'page arguments' => array('valghalla_volunteer_validator_batch'),
     'access arguments' => array('administer valghalla'),

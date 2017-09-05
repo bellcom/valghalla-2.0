@@ -11,7 +11,7 @@ function valghalla_volunteers_import_permission() {
   return array(
     'import volunteers' => array(
       'title' => t('Importer deltagere'),
-      'description' => 'Giv brugeren lov til at importere deltagere fra CSV.',
+      'description' => t('Giv brugeren lov til at importere deltagere fra CSV.'),
     ),
   );
 }
@@ -21,7 +21,7 @@ function valghalla_volunteers_import_permission() {
  */
 function valghalla_volunteers_import_menu() {
   $items['valghalla/deltagere/importer'] = array(
-    'title' => 'Importér deltagere',
+    'title' => t('Importér deltagere'),
     'page callback' => 'drupal_get_form',
     'page arguments' => array('valghalla_volunteers_import_form'),
     'access arguments' => array('import volunteers'),
@@ -56,7 +56,7 @@ A,123223-2242,Fornavn Mellemnavn Efternavn,andenemail@adresse.dk,12314141
 EOL;
 
   $form['pre'] = array(
-    '#markup' => $description,
+    '#markup' => t($description),
   );
 
   $form['import'] = array(

@@ -258,18 +258,18 @@ function valghalla_volunteer_validator_finished_batch($success, $results, $opera
     }
 
     // Messages
-    drupal_set_message('Handlingen blev gennemført');
+    drupal_set_message(t('Handlingen blev gennemført'));
 
     if(strlen($format_errors)){
-      drupal_set_message('Følgende deltagere (id\'er) har ugyldigt CPR-nummer: ' . $format_errors, 'warning');
+      drupal_set_message(t('Følgende deltagere (id\'er) har ugyldigt CPR-nummer: ') . $format_errors, 'warning');
     }
 
     if(strlen($address_errors)){
-      drupal_set_message('Der kunne ikke hentes adresser på følgende deltagere: ' . $address_errors, 'warning');
+      drupal_set_message(t('Der kunne ikke hentes adresser på følgende deltagere: ') . $address_errors, 'warning');
     }
 
     if(strlen($validate_errors)){
-      drupal_set_message('Følgende deltagere kunne ikke valideres:' . '<br>' . $validate_errors, 'warning');
+      drupal_set_message(t('Følgende deltagere kunne ikke valideres:') . '<br>' . $validate_errors, 'warning');
     }
 
     drupal_goto('admin/valghalla/validator');
