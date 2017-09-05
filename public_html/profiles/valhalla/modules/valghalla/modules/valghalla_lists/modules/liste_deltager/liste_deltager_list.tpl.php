@@ -18,7 +18,7 @@
       <?php print $header[$polling_station]['polling_station'];?>; <?php print $header[$polling_station]['adress'];?>
     <?php endif; ?>
     <?php if (isset($header[$polling_station]['schoolcode'])) : ?>
-      - Skolekode <?php print $header[$polling_station]['schoolcode'];?>
+      <?php print t('- Skolekode '); ?> <?php print $header[$polling_station]['schoolcode'];?>
     <?php endif; ?>
   </h5>
   <h5>
