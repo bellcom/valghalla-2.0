@@ -11,7 +11,7 @@ function valghalla_signup_menu() {
   $items = array();
 
   $items['valghalla/administration/signup'] = array(
-    'title' => 'Ekstern tilmelding',
+    'title' => t('Ekstern tilmelding'),
     'description' => '',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('valghalla_signup_administration_form'),
@@ -20,7 +20,7 @@ function valghalla_signup_menu() {
   );
 
   $items['valghalla/signup'] = array(
-    'title' => variable_get('valghalla_signup_page_title', 'Tilmelding som valgtilforordnet'),
+    'title' => variable_get('valghalla_signup_page_title', t('Tilmelding som valgtilforordnet')),
     'description' => '',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('valghalla_signup_signup_form'),
@@ -95,19 +95,19 @@ function valghalla_signup_administration_form() {
 
   $form['valghalla_signup_signup_message'] = array(
     '#type' => 'textarea',
-    '#title' => 'Besked på tilmeldingsside',
+    '#title' => t('Besked på tilmeldingsside'),
     '#default_value' => variable_get('valghalla_signup_signup_message', ''),
   );
 
   $form['valghalla_signup_submit_message'] = array(
     '#type' => 'textarea',
-    '#title' => 'Besked ved endt tilmelding',
+    '#title' => t('Besked ved endt tilmelding'),
     '#default_value' => variable_get('valghalla_signup_submit_message', ''),
   );
 
   $form['valghalla_signup_closed_message'] = array(
     '#type' => 'textarea',
-    '#title' => 'Besked ved lukket tilmelding',
+    '#title' => t('Besked ved lukket tilmelding'),
     '#default_value' => variable_get('valghalla_signup_closed_message', ''),
   );
 
@@ -217,7 +217,7 @@ function valghalla_signup_signup_form($form, &$form_state) {
   }
 
   $form['qty'] = array(
-    '#title' => 'Antal deltagere',
+    '#title' => t('Antal deltagere'),
     '#type' => 'select',
     '#disabled' => $locked,
     '#default_value' => $qty,
@@ -226,7 +226,7 @@ function valghalla_signup_signup_form($form, &$form_state) {
   );
 
   $form['role_nid'] = array(
-    '#title' => 'Rolle',
+    '#title' => t('Rolle'),
     '#type' => 'select',
     '#disabled' => $locked,
     '#default_value' => $role_nid,
@@ -254,7 +254,7 @@ function valghalla_signup_signup_form($form, &$form_state) {
       array_unshift($pollingstations, 'Vælg valgsted');
       $form['pollingstation_nid'] = array(
         '#type' => 'select',
-        '#title' => 'Valgsteder - Med ledige pladser',
+        '#title' => t('Valgsteder - Med ledige pladser'),
         '#options' => $pollingstations,
       );
 
@@ -262,17 +262,17 @@ function valghalla_signup_signup_form($form, &$form_state) {
       for ($i = 1; $i <= $qty; $i++) {
         $form['volunteers'][$i] = array(
           '#type' => 'fieldset',
-          '#title' => 'Deltager nr. ' . $i,
+          '#title' => t('Deltager nr. ') . $i,
           '#tree' => TRUE,
         );
         $form['volunteers'][$i]['name'] = array(
-          '#title' => 'Navn',
+          '#title' => t('Navn'),
           '#type' => 'textfield',
           '#required' => TRUE,
         );
 
         $form['volunteers'][$i]['birthdate'] = array(
-          '#title' => 'Fødselsdato',
+          '#title' => t('Fødselsdato'),
           '#type' => 'date',
           '#required' => TRUE,
           '#date_format' => 'd-m-Y',
@@ -281,14 +281,14 @@ function valghalla_signup_signup_form($form, &$form_state) {
 
         $form['volunteers'][$i]['zipcode'] = array(
           '#required' => TRUE,
-          '#title' => 'Postnummer',
+          '#title' => t('Postnummer'),
           '#type' => 'textfield',
           '#prefix' => '<div class="row"><div class="col-sm-6">',
           '#suffix' => '</div>',
         );
 
         $form['volunteers'][$i]['city'] = array(
-          '#title' => 'By',
+          '#title' => t('By'),
           '#type' => 'textfield',
           '#required' => TRUE,
           '#prefix' => '<div class="col-sm-6">',
@@ -297,7 +297,7 @@ function valghalla_signup_signup_form($form, &$form_state) {
         );
 
         $form['volunteers'][$i]['road'] = array(
-          '#title' => 'Vejnavn',
+          '#title' => t('Vejnavn'),
           '#type' => 'textfield',
           '#required' => TRUE,
           '#prefix' => '<div class="row"><div class="col-sm-6">',
@@ -306,21 +306,21 @@ function valghalla_signup_signup_form($form, &$form_state) {
 
         $form['volunteers'][$i]['road_no'] = array(
           '#required' => TRUE,
-          '#title' => 'Husnummer',
+          '#title' => t('Husnummer'),
           '#type' => 'textfield',
           '#prefix' => '<div class="col-sm-2">',
           '#suffix' => '</div>',
         );
 
         $form['volunteers'][$i]['floor'] = array(
-          '#title' => 'Etage',
+          '#title' => t('Etage'),
           '#type' => 'textfield',
           '#prefix' => '<div class="col-sm-2">',
           '#suffix' => '</div>',
         );
 
         $form['volunteers'][$i]['door'] = array(
-          '#title' => 'Dør/side',
+          '#title' => t('Dør/side'),
           '#type' => 'textfield',
           '#prefix' => '<div class="col-sm-2">',
           '#suffix' => '</div></div>',
@@ -328,7 +328,7 @@ function valghalla_signup_signup_form($form, &$form_state) {
 
         $form['volunteers'][$i]['email'] = array(
           '#required' => TRUE,
-          '#title' => 'E-mail',
+          '#title' => t('E-mail'),
           '#type' => 'textfield',
           '#prefix' => '<div class="row"><div class="col-sm-6">',
           '#suffix' => '</div>',
@@ -336,7 +336,7 @@ function valghalla_signup_signup_form($form, &$form_state) {
 
         $form['volunteers'][$i]['phone'] = array(
           '#required' => TRUE,
-          '#title' => 'Telefon',
+          '#title' => t('Telefon'),
           '#type' => 'textfield',
           '#prefix' => '<div class="col-sm-6">',
           '#suffix' => '</div></div>',
@@ -354,7 +354,7 @@ function valghalla_signup_signup_form($form, &$form_state) {
       );
     }
     else {
-      $form['no_results']['#markup'] = '<div class="no-results">Der findes ingen valgsteder med det antal ledige pladser</div>';
+      $form['no_results']['#markup'] = '<div class="no-results">' . t('Der findes ingen valgsteder med det antal ledige pladser') . '</div>';
 
     }
   }
@@ -443,7 +443,7 @@ function valghalla_signup_signup_form_submit($form, &$form_state) {
     $form_state['submitted'] = TRUE;
   }
   else {
-    drupal_set_message('Pladserne er desværre blevet optaget. Vælg evt. et andet valgsted.', 'warning');
+    drupal_set_message(t('Pladserne er desværre blevet optaget. Vælg evt. et andet valgsted.'), 'warning');
   }
 
   $form_state['rebuild'] = TRUE;

@@ -6,7 +6,7 @@ function valghalla_signup_list_menu(){
   $items = array();
 
   $items['valghalla_lists/external_signup'] = array(
-    'title' => 'Eksterne tilmeldinger',
+    'title' => t('Eksterne tilmeldinger'),
     'type' => MENU_NORMAL_ITEM,
     'page callback' => 'drupal_get_form',
     'page arguments' => array('valghalla_signup_list_page'),
@@ -36,11 +36,11 @@ function valghalla_signup_list_page($form, &$form_state) {
   $rows = valghalla_signup_list_volunteers_rows($volunteer_nids);
 
   $header = array(
-    'Navn',
-    'CPR Nummer',
-    'E-mail',
-    'Tilmeldingdato',
-    'CPR status',
+    t('Navn'),
+    t('CPR Nummer)',
+    t('E-mail'),
+    t('Tilmeldingdato'),
+    t('CPR status'),
     t('Edit'),
   );
 
@@ -140,9 +140,9 @@ function valghalla_signup_list_volunteers_rows($volunteer_nids) {
     $cpr_status_field = field_get_items('node', $volunteer_node, 'field_cpr_status');
     $cpr_status = $cpr_status_field ? $cpr_status_field[0]['value'] : '';
     $cpr_statuses = array(
-      'not found' => 'Ikke fundet',
-      'error' => 'Fejl',
-      'success' => 'Ok',
+      'not found' => t('Ikke fundet'),
+      'error' => t('Fejl'),
+      'success' => t('Ok'),
     );
 
     $email_field = field_get_items('node', $volunteer_node, 'field_email');
