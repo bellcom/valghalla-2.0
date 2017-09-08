@@ -189,7 +189,7 @@ function vcv_person_lookup_extended_validate_cpr($cpr){
   }
 
   //checking citizenship
-  if (strcmp($status['citizenship'], 'Danmark') != 0) {
+  if (strcmp($status['citizenship'], '5100') != 0) {
     return array(
       'status' => FALSE,
       'text' => t('Den angivne CPR-nummer er ikke Dansk borger'),
@@ -270,7 +270,7 @@ function vcv_person_lookup_extended_query($cpr) {
  *  Array
  *  (
  *    [status] => TRUE/FALSE
- *    [citizenship] => Danmark
+ *    [citizenship] => 5100
  *    [civil_status] => number
  *  )
  */
@@ -281,7 +281,7 @@ function vcv_person_lookup_extended_get_status($cpr){
   if ($message['status']) {
     return array(
       'status' => TRUE,
-      'citizenship' => $message['persondata']->statsborgerskab->landekodeMyndighedsnavn,
+      'citizenship' => $message['persondata']->statsborgerskab->landekode,
       'civil_status' => $message['persondata']->status->status
     );
   }
