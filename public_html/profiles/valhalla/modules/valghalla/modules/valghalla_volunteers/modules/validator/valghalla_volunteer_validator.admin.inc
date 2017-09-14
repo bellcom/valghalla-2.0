@@ -187,7 +187,6 @@ function valghalla_volunteer_validator_batch_process($op, $nids, &$context){
         $messages = valghalla_volunteer_validator_query_service('validate_cpr', $cpr);
 
         foreach ($messages as $message) {
-          $context['results']['validate_errors'][$nid] = array();
 
           if($message['status'] === FALSE){
             $context['results']['validate_errors'][$nid]['cpr'] = array('nid' => $nid, 'text' => $message['text']);
