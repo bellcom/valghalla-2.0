@@ -189,7 +189,7 @@ function valghalla_volunteer_validator_batch_process($op, $nids, &$context){
         foreach ($messages as $message) {
           $context['results']['validate_errors'][$nid] = array();
 
-          if(!$message['status']){
+          if($message['status'] === FALSE){
             $context['results']['validate_errors'][$nid]['cpr'] = array('nid' => $nid, 'text' => $message['text']);
             continue;
           }
@@ -207,7 +207,7 @@ function valghalla_volunteer_validator_batch_process($op, $nids, &$context){
 
         foreach ($messages as $message) {
           // If the volunteer is not found in the CPR service, save the error.
-          if(!$message['status']){
+          if($message['status'] === FALSE){
             $context['results']['address_errors'][$nid]['address'] = array('nid' => $nid, 'text' => $message['text']);
             continue;
           }
