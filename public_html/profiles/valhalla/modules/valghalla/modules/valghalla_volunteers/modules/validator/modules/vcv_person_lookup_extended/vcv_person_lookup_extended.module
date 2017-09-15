@@ -59,7 +59,11 @@ function vcv_person_lookup_extended_settings() {
       $output .= '<div> Test CPR nr. ' . $cpr . '<br />';
       foreach ($message as $key => $item) {
         if ($key != 'status') {
+          if($key == 'civil_status'){
+            $output .= $key . ': ' . _vcv_person_lookup_extended_civil_status_2text($item) . '<br />';
+          }else{
           $output .= $key . ': ' . $item . '<br />';
+          }
         }
       }
       $output .= '</div>';
@@ -288,4 +292,25 @@ function vcv_person_lookup_extended_get_status($cpr){
   else {
     return $message;
   }
+}
+
+ function _vcv_person_lookup_extended_civil_status_2text($civil_status) {
+   $status_array('1' => t('Aktiv, bopæl i dansk folkeregister'),
+           '3' => t('Aktiv, speciel vejkode (9900-9999) i dansk folkeregister'),
+           '5' => t('Aktiv, bopæli grønlandsk folkeregister'),
+           '7' => t('Aktiv, speciel vejkode (9900-9999) i grønlandsk folkeregister'),
+           '20' => t('Inaktiv, uden bopæl i dansk/grønlandsk folkeregister men tildelt personnummer af skattehensyn'),
+           '30' => t('Inaktiv, annulleret personummer'),
+           '50' => t('Inaktive, slettet personnummer ved dobbeltnummer'),
+           '60' => t('Inaktiv, ændret personnummer ved ændring af fødselsdato og køn'),
+           '70' => t('Inaktiv, forsundet'),
+           '80' => t('Inaktiv, udrejst'),
+           '90' => t('Inaktiv, død'),
+           );
+   if(isset($status_array[$civil_status])){
+     $output = $status_array[$civil_status];
+   }else{
+     $output = $civil_status;
+   }
+   return $output;
 }
