@@ -295,7 +295,7 @@ function vcv_person_lookup_extended_get_status($cpr){
 }
 
  function _vcv_person_lookup_extended_civil_status_2text($civil_status) {
-   $status_array('1' => t('Aktiv, bopæl i dansk folkeregister'),
+   $status_array = array('1' => t('Aktiv, bopæl i dansk folkeregister'),
            '3' => t('Aktiv, speciel vejkode (9900-9999) i dansk folkeregister'),
            '5' => t('Aktiv, bopæli grønlandsk folkeregister'),
            '7' => t('Aktiv, speciel vejkode (9900-9999) i grønlandsk folkeregister'),
