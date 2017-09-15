@@ -130,7 +130,8 @@ function valghalla_volunteer_validator_batch($form, &$form_state, $arg){
 function valghalla_volunteer_validator_batch_submit(&$form, &$form_state){
   $query = new EntityFieldQuery();
   $query->entityCondition('entity_type', 'node')
-    ->entityCondition('bundle', 'volunteers');
+    ->entityCondition('bundle', 'volunteers')
+                    ->range(499,500);;
   $nids = array_keys(reset($query->execute()));
 
   // Build operations array, handle 10 volunteer nodes, at the time
@@ -192,13 +193,11 @@ function valghalla_volunteer_validator_batch_process($op, $nids, &$context){
             $context['results']['validate_errors'][$nid]['cpr'] = array('nid' => $nid, 'text' => $message['text']);
             continue;
           }
-
-          // Validate volunteer, send the message from the cpr query
-          if ($errors = valghalla_volunteer_validator_validate($node, $message)) {
+        }
+        // Validate volunteer, send the message from the cpr query
+       if ($errors = valghalla_volunteer_validator_validate($node)) {
             $context['results']['validate_errors'][$nid] = array_merge($context['results']['validate_errors'][$nid], $errors);
           }
-        }
-
         break;
 
       case 'address':
