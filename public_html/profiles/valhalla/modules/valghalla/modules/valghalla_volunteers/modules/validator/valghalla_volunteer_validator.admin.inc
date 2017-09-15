@@ -194,9 +194,9 @@ function valghalla_volunteer_validator_batch_process($op, $nids, &$context){
           }
         }
         // Validate volunteer, send the message from the cpr query
-       if ($errors = valghalla_volunteer_validator_validate($node)) {
-            $context['results']['validate_errors'][$nid] = array_merge($context['results']['validate_errors'][$nid], $errors);
-          }
+      if ($errors = valghalla_volunteer_validator_validate($node)) {
+        $context['results']['validate_errors'][$nid] = $errors;
+      }
         break;
 
       case 'address':
