@@ -61,8 +61,10 @@ function vcv_person_lookup_extended_settings() {
         if ($key != 'status') {
           if($key == 'civil_status'){
             $output .= $key . ': ' . _vcv_person_lookup_extended_civil_status_2text($item) . '<br />';
+          }elseif($key == 'citizenship'){
+            $output .= $key . ': ' . _vcv_person_lookup_extended_citizenship_2text($item) . '<br />';
           }else{
-          $output .= $key . ': ' . $item . '<br />';
+            $output .= $key . ': ' . $item . '<br />';
           }
         }
       }
@@ -311,6 +313,15 @@ function vcv_person_lookup_extended_get_status($cpr){
      $output = $status_array[$civil_status];
    }else{
      $output = $civil_status;
+   }
+   return $output;
+}
+
+function _vcv_person_lookup_extended_citizenship_2text($citizenship) {
+   if($citizenship == '5100'){
+     $output =  t('Dansk statsborger');
+   }else{
+     $output = 'Ikke Dansk statsborger';
    }
    return $output;
 }
