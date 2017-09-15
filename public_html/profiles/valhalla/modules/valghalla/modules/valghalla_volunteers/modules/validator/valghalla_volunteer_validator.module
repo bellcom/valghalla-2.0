@@ -118,6 +118,10 @@ function valghalla_volunteer_validator_node_validate($node, $form, &$form_state)
         form_set_error('field_cpr_number', t('Det angivne CPR-nummer kan ikke valideres: @text', array('@text' => $message['text'])));
       }
     }
+
+    if ($errors = valghalla_volunteer_validator_validate($node)) {
+      form_set_error('field_cpr_number', t('Det angivne CPR-nummer kan ikke valideres: @text', array('@text' => $errors['age']['text'])));
+    }
   }
 }
 
