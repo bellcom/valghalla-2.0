@@ -1,100 +1,161 @@
 <?php
+
 /**
  * Page callback for admin settings page
  */
-function valghalla_volunteer_validator_settings(){
+function valghalla_volunteer_validator_settings() {
   ctools_include('plugins');
 
   // CPR validation plugins
   $plugins = ctools_get_plugins('valghalla_volunteer_validator', 'cpr_service');
 
   $services = array(
-    'get_address' => t('Hent adresse'),
-    'validate_cpr' => t('Valider CPR'),
+      'get_address' => t('Hent adresse'),
+      'validate_cpr' => t('Valider CPR'),
   );
 
-  $map_services = function(&$value, $key, $services){
+  $map_services = function(&$value, $key, $services) {
     $value = $services[$value];
   };
 
-  foreach($plugins as $id => $plugin){
+  foreach ($plugins as $id => $plugin) {
     $implements = array_intersect(array_keys($plugin), array_keys($services));
     array_walk($implements, $map_services, $services);
 
     $cpr_service_options[$id] = array(
-      $plugin['label'],
-      $plugin['description'],
-      implode(', ', $implements),
-      l('Indstillinger', $plugin['config']),
+        $plugin['label'],
+        $plugin['description'],
+        implode(', ', $implements),
+        l('Indstillinger', $plugin['config']),
     );
   }
 
   $form['valghalla_volunteer_validator_enable'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Aktiver CPR validering'),
-    '#default_value' => variable_get('valghalla_volunteer_validator_enable', FALSE),
+      '#type' => 'checkbox',
+      '#title' => t('Aktiver CPR validering'),
+      '#default_value' => variable_get('valghalla_volunteer_validator_enable', FALSE),
   );
 
   $form['valghalla_volunteer_validator_get_address'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Aktiver automatisk indhentning af adresse'),
-    '#default_value' => variable_get('valghalla_volunteer_validator_get_address', FALSE),
+      '#type' => 'checkbox',
+      '#title' => t('Aktiver automatisk indhentning af adresse'),
+      '#default_value' => variable_get('valghalla_volunteer_validator_get_address', FALSE),
   );
 
   $form['valghalla_volunteer_validator_get_name'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Hent deltagerens navn fra CPR service. Kræver indhentning af adresse.'),
-    '#default_value' => variable_get('valghalla_volunteer_validator_get_name', FALSE),
+      '#type' => 'checkbox',
+      '#title' => t('Hent deltagerens navn fra CPR service. Kræver indhentning af adresse.'),
+      '#default_value' => variable_get('valghalla_volunteer_validator_get_name', FALSE),
   );
 
   $header = ['CPR service', 'Beskrivelse', 'Understøtter', 'Valgmuligheder'];
 
   $form['valghalla_volunteer_validator_cpr_service'] = array(
-    '#type' => 'tableselect',
-    '#header' => $header,
-    '#multiple' => TRUE,
-    '#options' => $cpr_service_options,
-    '#default_value' => variable_get('valghalla_volunteer_validator_cpr_service'),
-    '#empty' => t('Der er ikke installeret nogen cpr services')
+      '#type' => 'tableselect',
+      '#header' => $header,
+      '#multiple' => TRUE,
+      '#options' => $cpr_service_options,
+      '#default_value' => variable_get('valghalla_volunteer_validator_cpr_service'),
+      '#empty' => t('Der er ikke installeret nogen cpr services')
   );
 
   // "Regular validation plugins"
   $plugins = ctools_get_plugins('valghalla_volunteer_validator', 'validate');
 
   $services = array(
-    'validate' => t('Valider deltager'),
+      'validate' => t('Valider deltager'),
   );
 
-  $map_services = function(&$value, $key, $services){
+  $map_services = function(&$value, $key, $services) {
     $value = $services[$value];
   };
 
-  foreach($plugins as $id => $plugin){
+  foreach ($plugins as $id => $plugin) {
     $implements = array_intersect(array_keys($plugin), array_keys($services));
     array_walk($implements, $map_services, $services);
 
     $service_options[$id] = array(
-      $plugin['label'],
-      $plugin['description'],
-      l('Indstillinger', $plugin['config']),
+        $plugin['label'],
+        $plugin['description'],
+        l('Indstillinger', $plugin['config']),
     );
   }
+
+
+  $form['validate_single'] = array(
+      '#type' => 'item',
+      '#prefix' => t('<div class="validate-single" style="float: left; margin-right:100px;"><b>Check deltagere ved oprettelse</b>'),
+  );
+  
+  $form['validate_single_age'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Valider alder'),
+      '#default_value' => variable_get('validate_single_age', FALSE),
+  );
+  $form['validate_single_munitipallity'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Valider bopæl i kommunen'),
+      '#default_value' => variable_get('validate_single_munitipallity', FALSE),
+  );
+  $form['validate_single_sitizenship'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Valider dansk statsborger'),
+      '#default_value' => variable_get('validate_single_sitizenship', FALSE),
+  );
+  $form['validate_single_civil_status'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Valider om person med personnummerer er levende'),
+      '#default_value' => variable_get('validate_single_civil_status', FALSE),
+  );
+  
+  $form['validate_batch'] = array(
+      '#type' => 'item',
+      '#prefix' => t('</div><div class = "validate-batch"><b>Valder personer i forhold til det aktive valg</b>'),
+  );
+  
+  $form['validate_batch_age'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Valider alder'),
+      '#default_value' => variable_get('validate_batch_age', FALSE),
+  );
+  $form['validate_batch_munitipallity'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Valider bopæl i kommunen'),
+      '#default_value' => variable_get('validate_batch_munitipallity', FALSE),
+  );
+  $form['validate_batch_sitizenship'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Valider dansk statsborger'),
+      '#default_value' => variable_get('validate_batch_sitizenship', FALSE),
+  );
+  $form['validate_batch_civil_status'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Valider om person med personnummerer er levende'),
+      '#default_value' => variable_get('validate_batch_civil_status', FALSE),
+  );
+$form['validate_batch_bottom'] = array(
+      '#type' => 'item',
+      '#prefix' => t('</div>'),
+  );
+
 
   $header = ['Plugin', 'Beskrivelse', 'Valgmuligheder'];
 
   $form['valghalla_volunteer_validator_services'] = array(
-    '#type' => 'tableselect',
-    '#header' => $header,
-    '#multiple' => TRUE,
-    '#options' => $service_options,
-    '#default_value' => variable_get('valghalla_volunteer_validator_services'),
-    '#empty' => t('Der er ikke installeret nogen validerings services')
+      '#type' => 'tableselect',
+      '#header' => $header,
+      '#multiple' => TRUE,
+      '#options' => $service_options,
+      '#default_value' => variable_get('valghalla_volunteer_validator_services'),
+      '#empty' => t('Der er ikke installeret nogen validerings services')
   );
 
+
+
   $form['bottom'] = array(
-    '#type' => 'item',
-    '#prefix' => '<p><a class="btn btn-default" href="/admin/valghalla/validator/batch/validate">Valider alle deltagere</a></p>'
-              .  '<p><a href="/admin/valghalla/validator/batch/address">Opdater alle deltageres adresser</a></p>',
+      '#type' => 'item',
+      '#prefix' => '<p><a class="btn btn-default" href="/admin/valghalla/validator/batch/validate">Valider alle deltagere</a></p>'
+      . '<p><a href="/admin/valghalla/validator/batch/address">Opdater alle deltageres adresser</a></p>',
   );
 
   return system_settings_form($form);
@@ -103,18 +164,18 @@ function valghalla_volunteer_validator_settings(){
 /**
  * Page callback for activating batch operation
  */
-function valghalla_volunteer_validator_batch($form, &$form_state, $arg){
+function valghalla_volunteer_validator_batch($form, &$form_state, $arg) {
   $types = array(
-    'validate' => 'Validere alle deltagere',
-    'address' => 'Hente alle deltageres adresser'
+      'validate' => 'Validere alle deltagere',
+      'address' => 'Hente alle deltageres adresser'
   );
 
-  if(!in_array($arg, array_keys($types))){
+  if ( !in_array($arg, array_keys($types)) ) {
     drupal_goto('admin/valghalla/validator');
   }
   $form['operation'] = array(
-    '#type' => 'hidden',
-    '#value' => $arg,
+      '#type' => 'hidden',
+      '#value' => $arg,
   );
 
   $form['#submit'][] = 'valghalla_volunteer_validator_batch_submit';
@@ -127,54 +188,54 @@ function valghalla_volunteer_validator_batch($form, &$form_state, $arg){
 /**
  * Implements hook_FORM_ID_submit()
  */
-function valghalla_volunteer_validator_batch_submit(&$form, &$form_state){
+function valghalla_volunteer_validator_batch_submit(&$form, &$form_state) {
   $query = new EntityFieldQuery();
   $query->entityCondition('entity_type', 'node')
-    ->entityCondition('bundle', 'volunteers');
+          ->entityCondition('bundle', 'volunteers')->range(0,10);
   $nids = array_keys(reset($query->execute()));
 
   // Build operations array, handle 10 volunteer nodes, at the time
   $nid_chunks = array_chunk($nids, 10);
-  foreach($nid_chunks as $batch_nids){
+  foreach ($nid_chunks as $batch_nids) {
     $operations[] = array(
-      'valghalla_volunteer_validator_batch_process', array($form_state['values']['operation'], $batch_nids)
+        'valghalla_volunteer_validator_batch_process', array($form_state['values']['operation'], $batch_nids)
     );
   }
 
   // Start batch
   batch_set(
-    array(
-      'title' => t('Behandler deltagere...'),
-      'operations' => $operations,
-      'finished' => 'valghalla_volunteer_validator_finished_batch',
-      'file' => drupal_get_path('module', 'valghalla_volunteer_validator') .'/valghalla_volunteer_validator.admin.inc',
-    )
+          array(
+              'title' => t('Behandler deltagere...'),
+              'operations' => $operations,
+              'finished' => 'valghalla_volunteer_validator_finished_batch',
+              'file' => drupal_get_path('module', 'valghalla_volunteer_validator') . '/valghalla_volunteer_validator.admin.inc',
+          )
   );
 }
 
 /**
  * Batch callback
  */
-function valghalla_volunteer_validator_batch_process($op, $nids, &$context){
+function valghalla_volunteer_validator_batch_process($op, $nids, &$context) {
   // Loop over nids in this batch
-  foreach($nids as $nid){
+  foreach ($nids as $nid) {
     $node = node_load($nid);
 
     $cpr = FALSE;
 
-    if($cpr_field = field_get_items('node', $node, 'field_cpr_number')){
+    if ( $cpr_field = field_get_items('node', $node, 'field_cpr_number') ) {
       $cpr = $cpr_field[0]['value'];
     }
 
     $format_errors = array();
-    if(!valghalla_volunteer_validator_validate_format($cpr)){
-      if(strlen($cpr) == 10){
+    if ( !valghalla_volunteer_validator_validate_format($cpr) ) {
+      if ( strlen($cpr) == 10 ) {
         $reformatted = implode('-', str_split($cpr, 6));
-        if(valghalla_volunteer_validator_validate_format($reformatted)){
+        if ( valghalla_volunteer_validator_validate_format($reformatted) ) {
           $cpr = $reformatted;
           $node->field_cpr_number[$node->language][0]['value'] = $cpr;
-        }
-        else {
+        } else {
+          
         }
       }
       $context['results']['format_errors'][$nid] = array('nid' => $nid);
@@ -182,21 +243,21 @@ function valghalla_volunteer_validator_batch_process($op, $nids, &$context){
     }
 
     // Reset what the user has chosen $op
-    switch($op){
+    switch ($op) {
       case 'validate':
-        $messages = valghalla_volunteer_validator_query_service('validate_cpr', $cpr);
+        $messages = valghalla_volunteer_validator_query_service('validate_cpr', $cpr, 'batch');
 
         foreach ($messages as $message) {
 
-          if($message['status'] === FALSE){
+          if ( $message['status'] === FALSE ) {
             $context['results']['validate_errors'][$nid]['cpr'] = array('nid' => $nid, 'text' => $message['text']);
             continue;
           }
         }
         // Validate volunteer, send the message from the cpr query
-      if ($errors = valghalla_volunteer_validator_validate($node)) {
-        $context['results']['validate_errors'][$nid] = $errors;
-      }
+        if ( $errors = valghalla_volunteer_validator_validate($node, 'batch') ) {
+          $context['results']['validate_errors'][$nid] = $errors;
+        }
         break;
 
       case 'address':
@@ -204,21 +265,21 @@ function valghalla_volunteer_validator_batch_process($op, $nids, &$context){
 
         foreach ($messages as $message) {
           // If the volunteer is not found in the CPR service, save the error.
-          if($message['status'] === FALSE){
+          if ( $message['status'] === FALSE ) {
             $context['results']['address_errors'][$nid]['address'] = array('nid' => $nid, 'text' => $message['text']);
             continue;
           }
 
           // Map of volunteer fields and indexes on the message array.
           $field_map = array(
-            'field_address_road' => 'road',
-            'field_address_road_no' => 'road_no',
-            'field_address_floor' => 'floor',
-            'field_address_door' => 'door',
-            'field_address_zipcode' => 'zipcode',
-            'field_address_city' => 'city',
-            'field_address_coname' => 'coname',
-            'field_municipality' => 'municipality',
+              'field_address_road' => 'road',
+              'field_address_road_no' => 'road_no',
+              'field_address_floor' => 'floor',
+              'field_address_door' => 'door',
+              'field_address_zipcode' => 'zipcode',
+              'field_address_city' => 'city',
+              'field_address_coname' => 'coname',
+              'field_municipality' => 'municipality',
           );
 
           // Set the values on the node.
@@ -238,22 +299,22 @@ function valghalla_volunteer_validator_batch_process($op, $nids, &$context){
  *
  * @author Thomas Thune Hansen <tth@bellcom.dk>
  */
-function valghalla_volunteer_validator_finished_batch($success, $results, $operations){
-  if($success){
+function valghalla_volunteer_validator_finished_batch($success, $results, $operations) {
+  if ( $success ) {
 
     $format_errors = '';
 
-    foreach($results['format_errors'] as $error){
+    foreach ($results['format_errors'] as $error) {
       $format_errors .= '<a target="_blank" href="/node/' . $error['nid'] . '/edit">' . $error['nid'] . '</a>, ';
     }
 
     $address_errors = '';
-    foreach($results['address_errors'] as $error){
+    foreach ($results['address_errors'] as $error) {
       $address_errors .= '<a target="_blank" href="/node/' . $error['nid'] . '/edit">' . $error['nid'] . '</a>: ' . $error['text'] . '<br>';
     }
 
     $validate_errors = '';
-    foreach($results['validate_errors'] as $nid => $errors){
+    foreach ($results['validate_errors'] as $nid => $errors) {
       foreach ($errors as $error) {
         $validate_errors .= '<a target="_blank" href="/node/' . $nid . '/edit">' . $nid . '</a>: ' . $error['text'] . '<br>';
       }
@@ -262,15 +323,15 @@ function valghalla_volunteer_validator_finished_batch($success, $results, $opera
     // Messages
     drupal_set_message('Handlingen blev gennemført');
 
-    if(strlen($format_errors)){
+    if ( strlen($format_errors) ) {
       drupal_set_message('Følgende deltagere (id\'er) har ugyldigt CPR-nummer: ' . $format_errors, 'warning');
     }
 
-    if(strlen($address_errors)){
+    if ( strlen($address_errors) ) {
       drupal_set_message('Der kunne ikke hentes adresser på følgende deltagere: ' . $address_errors, 'warning');
     }
 
-    if(strlen($validate_errors)){
+    if ( strlen($validate_errors) ) {
       drupal_set_message('Følgende deltagere kunne ikke valideres:' . '<br>' . $validate_errors, 'warning');
     }
 

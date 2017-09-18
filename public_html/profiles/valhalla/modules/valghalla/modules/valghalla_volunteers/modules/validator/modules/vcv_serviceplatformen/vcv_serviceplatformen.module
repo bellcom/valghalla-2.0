@@ -200,17 +200,20 @@ function vcv_serviceplatformen_settings_submit(&$form, &$form_state) {
  *   [status] => TRUE/FALSE
  *   [text] => Descriptive text shown when CPR doesn't validate
  */
-function vcv_serviceplatformen_validate_cpr($cpr) {
+function vcv_serviceplatformen_validate_cpr($cpr, $process ) {
   $status = vcv_serviceplatformen_get_address($cpr);
 
   //checking for municipality
-  if (variable_get('valhalla_settings_municipality', FALSE)) {
+  if ( ($process == 'single' AND variable_get('validate_single_munitipallity', FALSE)) 
+          OR ( $process == 'batch' AND variable_get('validate_batch_munitipallity', FALSE) )) {
     if (strcmp($status['municipality'],variable_get('valhalla_settings_municipality')) != 0) {
       return array(
         'status' => FALSE,
         'text' => t('Personen med det angivne CPR-nummer er ikke fra den udvalgte kommune'),
       );
     }
+  }else{
+// we do not validate if disable
   }
 }
 
