@@ -93,7 +93,7 @@ function valghalla_volunteer_validator_settings(){
 
   $form['bottom'] = array(
     '#type' => 'item',
-    '#prefix' => '<p><a href="/admin/valghalla/validator/batch/validate">Valider alle deltagere</a></p>'
+    '#prefix' => '<p><a class="btn btn-default" href="/admin/valghalla/validator/batch/validate">Valider alle deltagere</a></p>'
               .  '<p><a href="/admin/valghalla/validator/batch/address">Opdater alle deltageres adresser</a></p>',
   );
 
