@@ -191,7 +191,7 @@ function valghalla_volunteer_validator_batch($form, &$form_state, $arg) {
 function valghalla_volunteer_validator_batch_submit(&$form, &$form_state) {
   $query = new EntityFieldQuery();
   $query->entityCondition('entity_type', 'node')
-          ->entityCondition('bundle', 'volunteers')->range(500,9999);
+          ->entityCondition('bundle', 'volunteers');
   $nids = array_keys(reset($query->execute()));
 
   // Build operations array, handle 10 volunteer nodes, at the time
