@@ -191,7 +191,7 @@ function valghalla_volunteer_validator_batch($form, &$form_state, $arg) {
 function valghalla_volunteer_validator_batch_submit(&$form, &$form_state) {
   $query = new EntityFieldQuery();
   $query->entityCondition('entity_type', 'node')
-          ->entityCondition('bundle', 'volunteers');
+          ->entityCondition('bundle', 'volunteers')->range(500,9999);
   $nids = array_keys(reset($query->execute()));
 
   // Build operations array, handle 10 volunteer nodes, at the time
@@ -309,8 +309,10 @@ function valghalla_volunteer_validator_finished_batch($success, $results, $opera
     }
 
     $address_errors = '';
-    foreach ($results['address_errors'] as $error) {
-      $address_errors .= '<a target="_blank" href="/node/' . $error['nid'] . '/edit">' . $error['nid'] . '</a>: ' . $error['text'] . '<br>';
+    foreach ($results['address_errors'] as $nid => $errors) {
+      foreach ($errors as $error) {
+        $address_errors .= '<a target="_blank" href="/node/' . $error['nid'] . '/edit">' . $error['nid'] . '</a>: ' . $error['text'] . '<br>';
+      }
     }
 
     $validate_errors = '';
@@ -328,7 +330,7 @@ function valghalla_volunteer_validator_finished_batch($success, $results, $opera
     }
 
     if ( strlen($address_errors) ) {
-      drupal_set_message('Der kunne ikke hentes adresser på følgende deltagere: ' . $address_errors, 'warning');
+      drupal_set_message('Der kunne ikke hentes adresser på følgende deltagere:' . '<br>' . $address_errors, 'warning');
     }
 
     if ( strlen($validate_errors) ) {
