@@ -709,7 +709,7 @@ function valghalla_volunteers_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 17,
+      'weight' => 18,
     ),
   );
 
@@ -1072,7 +1072,7 @@ function valghalla_volunteers_field_default_field_instances() {
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_select',
-      'weight' => 25,
+      'weight' => 26,
     ),
   );
 
@@ -1127,7 +1127,7 @@ function valghalla_volunteers_field_default_field_instances() {
         'year_range' => '-3:+3',
       ),
       'type' => 'date_select',
-      'weight' => 24,
+      'weight' => 25,
     ),
   );
 
@@ -1177,7 +1177,7 @@ function valghalla_volunteers_field_default_field_instances() {
       'module' => 'number',
       'settings' => array(),
       'type' => 'number',
-      'weight' => 18,
+      'weight' => 19,
     ),
   );
 
@@ -1220,7 +1220,7 @@ function valghalla_volunteers_field_default_field_instances() {
       'module' => 'field_collection',
       'settings' => array(),
       'type' => 'field_collection_embed',
-      'weight' => 19,
+      'weight' => 20,
     ),
   );
 
@@ -1302,7 +1302,7 @@ function valghalla_volunteers_field_default_field_instances() {
         'display_label' => 1,
       ),
       'type' => 'options_onoff',
-      'weight' => 21,
+      'weight' => 22,
     ),
   );
 
@@ -1378,7 +1378,44 @@ function valghalla_volunteers_field_default_field_instances() {
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_select',
-      'weight' => 20,
+      'weight' => 21,
+    ),
+  );
+
+  // Exported field_instance: 'node-volunteers-field_municipality'
+  $field_instances['node-volunteers-field_municipality'] = array(
+    'bundle' => 'volunteers',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'list',
+        'settings' => array(),
+        'type' => 'list_default',
+        'weight' => 36,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_municipality',
+    'label' => 'Municipality',
+    'required' => 0,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'options',
+      'settings' => array(),
+      'type' => 'options_select',
+      'weight' => 17,
     ),
   );
 
@@ -1421,7 +1458,7 @@ function valghalla_volunteers_field_default_field_instances() {
         'display_label' => 1,
       ),
       'type' => 'options_onoff',
-      'weight' => 26,
+      'weight' => 27,
     ),
   );
 
@@ -1692,7 +1729,7 @@ function valghalla_volunteers_field_default_field_instances() {
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_select',
-      'weight' => 23,
+      'weight' => 24,
     ),
   );
 
@@ -1746,7 +1783,7 @@ function valghalla_volunteers_field_default_field_instances() {
         'year_range' => '-3:+3',
       ),
       'type' => 'date_select',
-      'weight' => 22,
+      'weight' => 23,
     ),
   );
 
@@ -1769,10 +1806,12 @@ function valghalla_volunteers_field_default_field_instances() {
   t('Hus nr.');
   t('Invitation');
   t('Label');
+  t('Municipality');
   t('Mødetid');
   t('Mødetidspunkt');
   t('Parti');
   t('Parti plads');
+  t('Polling Station post');
   t('Postnr.');
   t('Påmindelse');
   t('RSVP - Aldrig');

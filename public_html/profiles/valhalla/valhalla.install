@@ -133,7 +133,5 @@ function valhalla_install() {
     $edit->vid = $vid;
     taxonomy_term_save($edit);
   };
-  
-  // Set active version of AngularJS
-  variable_set('angularjs_version', '1.3.4');
+  features_revert_module('valghalla_mail');
 }

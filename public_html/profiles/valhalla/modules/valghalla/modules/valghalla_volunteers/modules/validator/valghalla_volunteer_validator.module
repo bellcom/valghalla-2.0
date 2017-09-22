@@ -9,8 +9,8 @@
  */
 function valghalla_volunteer_validator_menu() {
   $items['admin/valghalla/validator'] = array(
-    'title' => t('Deltager validering'),
-    'description' => t('Indstillinger for CPR validering'),
+    'title' => 'Deltager validering',
+    'description' => 'Indstillinger for CPR validering',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('valghalla_volunteer_validator_settings'),
     'access arguments' => array('administer valghalla'),
@@ -19,7 +19,7 @@ function valghalla_volunteer_validator_menu() {
   );
 
   $items['admin/valghalla/validator/batch'] = array(
-    'title' => t('Deltager validering'),
+    'title' => 'Deltager validering',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('valghalla_volunteer_validator_batch'),
     'access arguments' => array('administer valghalla'),
@@ -111,12 +111,16 @@ function valghalla_volunteer_validator_node_validate($node, $form, &$form_state)
     }
 
     //run validator
-    $messages = valghalla_volunteer_validator_query_service('validate_cpr', $cpr);
+    $messages = valghalla_volunteer_validator_query_service('validate_cpr', $cpr, 'single');
 
     foreach ($messages as $message) {
       if ($message['status'] === FALSE) {
         form_set_error('field_cpr_number', t('Det angivne CPR-nummer kan ikke valideres: @text', array('@text' => $message['text'])));
       }
+    }
+
+    if ($errors = valghalla_volunteer_validator_validate($node, 'single')) {
+      form_set_error('field_cpr_number', t('Det angivne CPR-nummer kan ikke valideres: @text', array('@text' => $errors['age']['text'])));
     }
   }
 }
@@ -179,7 +183,7 @@ function valghalla_volunteer_validator_check_duplicates($cpr) {
 /**
  * Query cpr service.
  */
-function valghalla_volunteer_validator_query_service($action, $cpr) {
+function valghalla_volunteer_validator_query_service($action, $cpr, $process = 'unkown') {
   $messages = array();
   ctools_include('plugins');
 
@@ -188,7 +192,7 @@ function valghalla_volunteer_validator_query_service($action, $cpr) {
 
   foreach($plugins as $plugin_key => $plugin) {
     if ($enabled_services[$plugin_key] && isset($plugin[$action]) && function_exists($plugin[$action])) {
-      $message = call_user_func($plugin[$action], $cpr);
+      $message = call_user_func($plugin[$action], $cpr, $process);
       $messages[] = $message;
     }
   }

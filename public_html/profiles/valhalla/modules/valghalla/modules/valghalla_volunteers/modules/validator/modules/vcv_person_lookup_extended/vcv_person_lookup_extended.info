@@ -1,0 +1,4 @@
+name=Valghalla CPR Validator service: Personlookup extended
+description=provides CPR service Personlookup extended
+core=7.x
+package = Valghalla
