@@ -109,7 +109,7 @@ function valghalla_mail_mail($key, &$message, $params) {
   switch ($key) {
     // "default" case for sending mail.
     case 'mail':
-            $params += array('tokens' => '');
+            $params += array('tokens' => array());
 
       // Html mail
       if(strstr($params['format'], 'html')){
