@@ -11,7 +11,8 @@ $volunters =  db_query('SELECT f.field_electioninfo_value from {field_data_field
 foreach ($volunters as $field_election){
 
 $fc = array_shift(entity_load('field_collection_item', array($field_election->field_electioninfo_value)));
-$fc->field_rsvp[LANGUAGE_NONE][0]['value'] = 0;
-$fc->save();
-
+if (!isset($fc->field_rsvp[LANGUAGE_NONE][0])) {
+  $fc->field_rsvp[LANGUAGE_NONE][0]['value'] = 0;
+  $fc->save();
+}
 }
