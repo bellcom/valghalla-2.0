@@ -623,8 +623,10 @@ function valghalla_volunteers_to_polling_station_roles($polling_station, $party_
     if(!empty($result)){
       foreach($result as $fcid => $fc){
         $fc = entity_load_single('field_collection_item', $fcid);
-        $nid = $fc->hostEntity()->nid;
-        $volunteers[$value['role_title']][$nid] = array('nid' => $nid, 'fcid' => $fcid);
+        //check if has host entity
+        if ($nid = $fc->hostEntity()->nid ) {
+          $volunteers[$value['role_title']][$nid] = array('nid' => $nid, 'fcid' => $fcid);
+        }
       }
     }
   }
