@@ -48,6 +48,11 @@ function valghalla_signup_administration_form() {
     '#type' => 'checkbox',
     '#default_value' => variable_get('valghalla_signup_enable', FALSE),
   );
+   $form['valghalla_signup_addrss_validation_disable'] = array(
+    '#title' => t('Disables address field validation'),
+    '#type' => 'checkbox',
+    '#default_value' => variable_get('valghalla_signup_addrss_validation_disable', FALSE),
+  );
 
   $form['valghalla_signup_page_title'] = array(
     '#title' => t('Titel på tilmeldingside'),
@@ -159,7 +164,9 @@ function valghalla_signup_signup_page() {
 function valghalla_signup_init() {
   if (current_path() == 'valghalla/signup') {
     drupal_add_library('system', 'ui.autocomplete');
-    drupal_add_js(drupal_get_path('module', 'valghalla_signup') . '/js/address.js');
+    if (!variable_get('valghalla_signup_addrss_validation_disable', FALSE)) {
+      drupal_add_js(drupal_get_path('module', 'valghalla_signup') . '/js/address.js');
+    }
   }
 }
 
@@ -293,7 +300,7 @@ function valghalla_signup_signup_form($form, &$form_state) {
           '#required' => TRUE,
           '#prefix' => '<div class="col-sm-6">',
           '#suffix' => '</div></div>',
-          '#attributes' => array('readonly' => 'readonly'),
+          '#attributes' => (!variable_get('valghalla_signup_addrss_validation_disable', FALSE)) ? array('readonly' => 'readonly') : array(),
         );
 
         $form['volunteers'][$i]['road'] = array(
@@ -381,7 +388,7 @@ function _valghalla_signup_birthdate_pre_render($element) {
 /**
  * Validation for signup form.
  */
-function valghalla_signup_signup_form_validate($form, &$form_state) {
+function valghalla_signup_signup_form_validate($form, &$form_state) {  
   if (isset($form_state['values']['volunteers'])) {
     if ($form_state['values']['pollingstation_nid'] <= 0) {
       form_set_error('pollingstation_nid', 'Du skal vælge et valgsted.');
@@ -400,15 +407,16 @@ function valghalla_signup_signup_form_validate($form, &$form_state) {
       if (strlen((int) $volunteer['road_no']) < 1 || $volunteer['road_no'] == 0) {
         form_set_error('volunteers][' . $id . '][road_no', 'Ikke gyldigt husnummer.');
       }
+      if (!variable_get('valghalla_signup_addrss_validation_disable', FALSE)) {
+        $url = 'https://dawa.aws.dk/adresser?vejnavn=' . urlencode($volunteer['road']) . '&husnr=' . $volunteer['road_no'] . '&postnr=' . $volunteer['zipcode'];
 
-      $url = 'https://dawa.aws.dk/adresser?vejnavn=' . urlencode($volunteer['road']) . '&husnr=' . $volunteer['road_no'] . '&postnr=' . $volunteer['zipcode'];
+        $response = file_get_contents($url);
 
-      $response = file_get_contents($url);
+        $response_array = json_decode($response);
 
-      $response_array = json_decode($response);
-
-      if (count($response_array) < 1) {
-        form_set_error('volunteers][' . $id . '][road', 'Ikke gyldig adresse.');
+        if (count($response_array) < 1) {
+          form_set_error('volunteers][' . $id . '][road', 'Ikke gyldig adresse.');
+        }
       }
     }
   }
