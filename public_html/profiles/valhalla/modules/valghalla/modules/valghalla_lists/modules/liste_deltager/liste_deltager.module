@@ -385,6 +385,7 @@ function liste_deltager_get_volunteers($values) {
     }
 
     $volunteer = $volunteer_fc->hostEntity();
+    if (!isset($volunteer)) continue;
 
     $party_post_field = field_get_items('field_collection_item', $volunteer_fc, 'field_post_party');
     $party_post = $parties[$party_post_field[0]['target_id']];
