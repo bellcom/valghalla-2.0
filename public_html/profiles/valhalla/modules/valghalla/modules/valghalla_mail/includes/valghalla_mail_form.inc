@@ -373,7 +373,7 @@ function valghalla_mail_sendmail_get_recipients($values) {
 
   foreach (entity_load('field_collection_item', $result) as $volunteer_item) {
     $volunteer_node = $volunteer_item->hostEntity();
-
+    if (!isset($volunteer_node)) continue;
     if (!valghalla_mail_volunteer_no_mail($volunteer_node)) {
       $volunteer_fcids[] = $volunteer_item->item_id;
     }
