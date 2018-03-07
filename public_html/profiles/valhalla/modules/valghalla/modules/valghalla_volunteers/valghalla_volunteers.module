@@ -44,6 +44,9 @@ function valghalla_volunteers_permission() {
     'access entire user profile form' => array(
       'title' => t('Tilgå hele brugerprofilformularen'),
     ),
+    'view polling station' => array(
+      'title' => t('View polling station'),
+    ),
   );
 }
 
@@ -67,7 +70,7 @@ function valghalla_volunteers_menu() {
     ),
     'volunteers/station/%' => array(
       'title' => t('Håndtér tilforordnede'),
-      'access arguments' => array('add volunteer to station'),
+      'access arguments' => array('view polling station'),
       'page callback' => 'valghalla_volunteers_to_polling_station',
       'page arguments' => array(2),
       'type' => MENU_CALLBACK,
