@@ -46,7 +46,7 @@ function _valghalla_helper_wrap_name($node, $container = 'p', $fcid = null) {
 
   $reply_link = '';
 
-  if ($rsvp == 0 || variable_get('valghalla_volunteers_always_show_rsvp_link', FALSE)) {
+  if (user_access('add volunteer to station') && ($rsvp == 0 || variable_get('valghalla_volunteers_always_show_rsvp_link', FALSE))) {
     $field_token = field_get_items('field_collection_item', $fc, 'field_token');
     $reply_link = '<a title="Svar for denne tilforordnede" class="reply edit" href="/volunteers/rsvp/'  . $field_token[0]['value'] . '"><span class="glyphicon glyphicon-comment"></span></a>';
   }
