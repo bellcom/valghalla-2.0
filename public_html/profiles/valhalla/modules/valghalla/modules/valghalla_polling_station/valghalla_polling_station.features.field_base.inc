@@ -10,7 +10,7 @@
 function valghalla_polling_station_field_default_field_bases() {
   $field_bases = array();
 
-  // Exported field_base: 'body'
+  // Exported field_base: 'body'.
   $field_bases['body'] = array(
     'active' => 1,
     'cardinality' => 1,
@@ -19,14 +19,6 @@ function valghalla_polling_station_field_default_field_bases() {
       0 => 'node',
     ),
     'field_name' => 'body',
-    'foreign keys' => array(
-      'format' => array(
-        'columns' => array(
-          'format' => 'format',
-        ),
-        'table' => 'filter_format',
-      ),
-    ),
     'indexes' => array(
       'format' => array(
         0 => 'format',
@@ -39,21 +31,13 @@ function valghalla_polling_station_field_default_field_bases() {
     'type' => 'text_with_summary',
   );
 
-  // Exported field_base: 'field_address_city'
+  // Exported field_base: 'field_address_city'.
   $field_bases['field_address_city'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_address_city',
-    'foreign keys' => array(
-      'format' => array(
-        'columns' => array(
-          'format' => 'format',
-        ),
-        'table' => 'filter_format',
-      ),
-    ),
     'indexes' => array(
       'format' => array(
         0 => 'format',
@@ -68,21 +52,13 @@ function valghalla_polling_station_field_default_field_bases() {
     'type' => 'text',
   );
 
-  // Exported field_base: 'field_address_door'
+  // Exported field_base: 'field_address_door'.
   $field_bases['field_address_door'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_address_door',
-    'foreign keys' => array(
-      'format' => array(
-        'columns' => array(
-          'format' => 'format',
-        ),
-        'table' => 'filter_format',
-      ),
-    ),
     'indexes' => array(
       'format' => array(
         0 => 'format',
@@ -97,21 +73,13 @@ function valghalla_polling_station_field_default_field_bases() {
     'type' => 'text',
   );
 
-  // Exported field_base: 'field_address_floor'
+  // Exported field_base: 'field_address_floor'.
   $field_bases['field_address_floor'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_address_floor',
-    'foreign keys' => array(
-      'format' => array(
-        'columns' => array(
-          'format' => 'format',
-        ),
-        'table' => 'filter_format',
-      ),
-    ),
     'indexes' => array(
       'format' => array(
         0 => 'format',
@@ -126,21 +94,13 @@ function valghalla_polling_station_field_default_field_bases() {
     'type' => 'text',
   );
 
-  // Exported field_base: 'field_address_road'
+  // Exported field_base: 'field_address_road'.
   $field_bases['field_address_road'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_address_road',
-    'foreign keys' => array(
-      'format' => array(
-        'columns' => array(
-          'format' => 'format',
-        ),
-        'table' => 'filter_format',
-      ),
-    ),
     'indexes' => array(
       'format' => array(
         0 => 'format',
@@ -155,21 +115,13 @@ function valghalla_polling_station_field_default_field_bases() {
     'type' => 'text',
   );
 
-  // Exported field_base: 'field_address_road2'
+  // Exported field_base: 'field_address_road2'.
   $field_bases['field_address_road2'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_address_road2',
-    'foreign keys' => array(
-      'format' => array(
-        'columns' => array(
-          'format' => 'format',
-        ),
-        'table' => 'filter_format',
-      ),
-    ),
     'indexes' => array(
       'format' => array(
         0 => 'format',
@@ -184,21 +136,13 @@ function valghalla_polling_station_field_default_field_bases() {
     'type' => 'text',
   );
 
-  // Exported field_base: 'field_address_road_no'
+  // Exported field_base: 'field_address_road_no'.
   $field_bases['field_address_road_no'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_address_road_no',
-    'foreign keys' => array(
-      'format' => array(
-        'columns' => array(
-          'format' => 'format',
-        ),
-        'table' => 'filter_format',
-      ),
-    ),
     'indexes' => array(
       'format' => array(
         0 => 'format',
@@ -213,14 +157,13 @@ function valghalla_polling_station_field_default_field_bases() {
     'type' => 'text',
   );
 
-  // Exported field_base: 'field_address_zipcode'
+  // Exported field_base: 'field_address_zipcode'.
   $field_bases['field_address_zipcode'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_address_zipcode',
-    'foreign keys' => array(),
     'indexes' => array(),
     'locked' => 0,
     'module' => 'number',
@@ -229,21 +172,13 @@ function valghalla_polling_station_field_default_field_bases() {
     'type' => 'number_integer',
   );
 
-  // Exported field_base: 'field_constituency'
+  // Exported field_base: 'field_constituency'.
   $field_bases['field_constituency'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_constituency',
-    'foreign keys' => array(
-      'nid' => array(
-        'columns' => array(
-          'nid' => 'nid',
-        ),
-        'table' => 'node',
-      ),
-    ),
     'indexes' => array(
       'nid' => array(
         0 => 'nid',
@@ -273,21 +208,13 @@ function valghalla_polling_station_field_default_field_bases() {
     'type' => 'node_reference',
   );
 
-  // Exported field_base: 'field_contact'
+  // Exported field_base: 'field_contact'.
   $field_bases['field_contact'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_contact',
-    'foreign keys' => array(
-      'format' => array(
-        'columns' => array(
-          'format' => 'format',
-        ),
-        'table' => 'filter_format',
-      ),
-    ),
     'indexes' => array(
       'format' => array(
         0 => 'format',
@@ -302,14 +229,13 @@ function valghalla_polling_station_field_default_field_bases() {
     'type' => 'text',
   );
 
-  // Exported field_base: 'field_digital_election_list'
+  // Exported field_base: 'field_digital_election_list'.
   $field_bases['field_digital_election_list'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_digital_election_list',
-    'foreign keys' => array(),
     'indexes' => array(
       'value' => array(
         0 => 'value',
@@ -328,21 +254,13 @@ function valghalla_polling_station_field_default_field_bases() {
     'type' => 'list_boolean',
   );
 
-  // Exported field_base: 'field_interntal_name'
+  // Exported field_base: 'field_interntal_name'.
   $field_bases['field_interntal_name'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_interntal_name',
-    'foreign keys' => array(
-      'format' => array(
-        'columns' => array(
-          'format' => 'format',
-        ),
-        'table' => 'filter_format',
-      ),
-    ),
     'indexes' => array(
       'format' => array(
         0 => 'format',
@@ -357,14 +275,13 @@ function valghalla_polling_station_field_default_field_bases() {
     'type' => 'text',
   );
 
-  // Exported field_base: 'field_party_list'
+  // Exported field_base: 'field_party_list'.
   $field_bases['field_party_list'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_party_list',
-    'foreign keys' => array(),
     'indexes' => array(),
     'locked' => 0,
     'module' => 'valhalla_field_party_volunteers_v3',
@@ -373,14 +290,13 @@ function valghalla_polling_station_field_default_field_bases() {
     'type' => 'party_volunteers_field_v3',
   );
 
-  // Exported field_base: 'field_role_n2522'
+  // Exported field_base: 'field_role_n2522'.
   $field_bases['field_role_n2522'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_role_n2522',
-    'foreign keys' => array(),
     'indexes' => array(),
     'locked' => 0,
     'module' => 'valhalla_field_volunteers_roles',
@@ -389,14 +305,13 @@ function valghalla_polling_station_field_default_field_bases() {
     'type' => 'volunteers_roles_field',
   );
 
-  // Exported field_base: 'field_role_n2523'
+  // Exported field_base: 'field_role_n2523'.
   $field_bases['field_role_n2523'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_role_n2523',
-    'foreign keys' => array(),
     'indexes' => array(),
     'locked' => 0,
     'module' => 'valhalla_field_volunteers_roles',
@@ -405,14 +320,13 @@ function valghalla_polling_station_field_default_field_bases() {
     'type' => 'volunteers_roles_field',
   );
 
-  // Exported field_base: 'field_role_n2524'
+  // Exported field_base: 'field_role_n2524'.
   $field_bases['field_role_n2524'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_role_n2524',
-    'foreign keys' => array(),
     'indexes' => array(),
     'locked' => 0,
     'module' => 'valhalla_field_volunteers_roles',
@@ -421,14 +335,13 @@ function valghalla_polling_station_field_default_field_bases() {
     'type' => 'volunteers_roles_field',
   );
 
-  // Exported field_base: 'field_role_n2525'
+  // Exported field_base: 'field_role_n2525'.
   $field_bases['field_role_n2525'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_role_n2525',
-    'foreign keys' => array(),
     'indexes' => array(),
     'locked' => 0,
     'module' => 'valhalla_field_volunteers_roles',
@@ -437,14 +350,13 @@ function valghalla_polling_station_field_default_field_bases() {
     'type' => 'volunteers_roles_field',
   );
 
-  // Exported field_base: 'field_role_n2526'
+  // Exported field_base: 'field_role_n2526'.
   $field_bases['field_role_n2526'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_role_n2526',
-    'foreign keys' => array(),
     'indexes' => array(),
     'locked' => 0,
     'module' => 'valhalla_field_volunteers_roles',
@@ -453,14 +365,13 @@ function valghalla_polling_station_field_default_field_bases() {
     'type' => 'volunteers_roles_field',
   );
 
-  // Exported field_base: 'field_role_n2527'
+  // Exported field_base: 'field_role_n2527'.
   $field_bases['field_role_n2527'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_role_n2527',
-    'foreign keys' => array(),
     'indexes' => array(),
     'locked' => 0,
     'module' => 'valhalla_field_volunteers_roles',
@@ -469,14 +380,13 @@ function valghalla_polling_station_field_default_field_bases() {
     'type' => 'volunteers_roles_field',
   );
 
-  // Exported field_base: 'field_role_n2528'
+  // Exported field_base: 'field_role_n2528'.
   $field_bases['field_role_n2528'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_role_n2528',
-    'foreign keys' => array(),
     'indexes' => array(),
     'locked' => 0,
     'module' => 'valhalla_field_volunteers_roles',
@@ -485,14 +395,13 @@ function valghalla_polling_station_field_default_field_bases() {
     'type' => 'volunteers_roles_field',
   );
 
-  // Exported field_base: 'field_role_n2529'
+  // Exported field_base: 'field_role_n2529'.
   $field_bases['field_role_n2529'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_role_n2529',
-    'foreign keys' => array(),
     'indexes' => array(),
     'locked' => 0,
     'module' => 'valhalla_field_volunteers_roles',
@@ -501,14 +410,13 @@ function valghalla_polling_station_field_default_field_bases() {
     'type' => 'volunteers_roles_field',
   );
 
-  // Exported field_base: 'field_role_n2530'
+  // Exported field_base: 'field_role_n2530'.
   $field_bases['field_role_n2530'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_role_n2530',
-    'foreign keys' => array(),
     'indexes' => array(),
     'locked' => 0,
     'module' => 'valhalla_field_volunteers_roles',
@@ -517,14 +425,13 @@ function valghalla_polling_station_field_default_field_bases() {
     'type' => 'volunteers_roles_field',
   );
 
-  // Exported field_base: 'field_venue_bespisning_1'
+  // Exported field_base: 'field_venue_bespisning_1'.
   $field_bases['field_venue_bespisning_1'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_venue_bespisning_1',
-    'foreign keys' => array(),
     'indexes' => array(),
     'locked' => 0,
     'module' => 'number',
@@ -537,14 +444,13 @@ function valghalla_polling_station_field_default_field_bases() {
     'type' => 'number_decimal',
   );
 
-  // Exported field_base: 'field_venue_bespisning_2'
+  // Exported field_base: 'field_venue_bespisning_2'.
   $field_bases['field_venue_bespisning_2'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_venue_bespisning_2',
-    'foreign keys' => array(),
     'indexes' => array(),
     'locked' => 0,
     'module' => 'number',
@@ -557,14 +463,13 @@ function valghalla_polling_station_field_default_field_bases() {
     'type' => 'number_decimal',
   );
 
-  // Exported field_base: 'field_venue_booth_sides'
+  // Exported field_base: 'field_venue_booth_sides'.
   $field_bases['field_venue_booth_sides'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_venue_booth_sides',
-    'foreign keys' => array(),
     'indexes' => array(),
     'locked' => 0,
     'module' => 'number',
@@ -577,14 +482,13 @@ function valghalla_polling_station_field_default_field_bases() {
     'type' => 'number_decimal',
   );
 
-  // Exported field_base: 'field_venue_booths'
+  // Exported field_base: 'field_venue_booths'.
   $field_bases['field_venue_booths'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_venue_booths',
-    'foreign keys' => array(),
     'indexes' => array(),
     'locked' => 0,
     'module' => 'number',
@@ -597,21 +501,13 @@ function valghalla_polling_station_field_default_field_bases() {
     'type' => 'number_decimal',
   );
 
-  // Exported field_base: 'field_venue_contact'
+  // Exported field_base: 'field_venue_contact'.
   $field_bases['field_venue_contact'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_venue_contact',
-    'foreign keys' => array(
-      'format' => array(
-        'columns' => array(
-          'format' => 'format',
-        ),
-        'table' => 'filter_format',
-      ),
-    ),
     'indexes' => array(
       'format' => array(
         0 => 'format',
@@ -626,21 +522,13 @@ function valghalla_polling_station_field_default_field_bases() {
     'type' => 'text',
   );
 
-  // Exported field_base: 'field_venue_contact_name'
+  // Exported field_base: 'field_venue_contact_name'.
   $field_bases['field_venue_contact_name'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_venue_contact_name',
-    'foreign keys' => array(
-      'format' => array(
-        'columns' => array(
-          'format' => 'format',
-        ),
-        'table' => 'filter_format',
-      ),
-    ),
     'indexes' => array(
       'format' => array(
         0 => 'format',
@@ -655,21 +543,13 @@ function valghalla_polling_station_field_default_field_bases() {
     'type' => 'text',
   );
 
-  // Exported field_base: 'field_venue_skolekode'
+  // Exported field_base: 'field_venue_skolekode'.
   $field_bases['field_venue_skolekode'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_venue_skolekode',
-    'foreign keys' => array(
-      'format' => array(
-        'columns' => array(
-          'format' => 'format',
-        ),
-        'table' => 'filter_format',
-      ),
-    ),
     'indexes' => array(
       'format' => array(
         0 => 'format',
@@ -684,14 +564,13 @@ function valghalla_polling_station_field_default_field_bases() {
     'type' => 'text',
   );
 
-  // Exported field_base: 'field_venue_team_members'
+  // Exported field_base: 'field_venue_team_members'.
   $field_bases['field_venue_team_members'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_venue_team_members',
-    'foreign keys' => array(),
     'indexes' => array(),
     'locked' => 0,
     'module' => 'number',
@@ -700,14 +579,13 @@ function valghalla_polling_station_field_default_field_bases() {
     'type' => 'number_integer',
   );
 
-  // Exported field_base: 'field_venue_teams'
+  // Exported field_base: 'field_venue_teams'.
   $field_bases['field_venue_teams'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_venue_teams',
-    'foreign keys' => array(),
     'indexes' => array(),
     'locked' => 0,
     'module' => 'number',
@@ -716,19 +594,26 @@ function valghalla_polling_station_field_default_field_bases() {
     'type' => 'number_integer',
   );
 
-  // Exported field_base: 'field_volunteers_pr_party_1'
+  // Exported field_base: 'field_volunteers_pr_party_1'.
   $field_bases['field_volunteers_pr_party_1'] = array(
     'active' => 1,
     'cardinality' => -1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_volunteers_pr_party_1',
-    'foreign keys' => array(),
-    'indexes' => array(),
+    'indexes' => array(
+      'revision_id' => array(
+        0 => 'revision_id',
+      ),
+      'value' => array(
+        0 => 'value',
+      ),
+    ),
     'locked' => 0,
     'module' => 'field_collection',
     'settings' => array(
       'hide_blank_items' => 1,
+      'hide_initial_item' => FALSE,
       'path' => '',
     ),
     'translatable' => 0,

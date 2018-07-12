@@ -10,7 +10,8 @@
 function valghalla_polling_station_field_default_field_instances() {
   $field_instances = array();
 
-  // Exported field_instance: 'field_collection_item-field_volunteers_pr_party_1-field_party_list'
+  // Exported field_instance:
+  // 'field_collection_item-field_volunteers_pr_party_1-field_party_list'.
   $field_instances['field_collection_item-field_volunteers_pr_party_1-field_party_list'] = array(
     'bundle' => 'field_volunteers_pr_party_1',
     'default_value' => NULL,
@@ -50,7 +51,8 @@ function valghalla_polling_station_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'field_collection_item-field_volunteers_pr_party_1-field_role_n2522'
+  // Exported field_instance:
+  // 'field_collection_item-field_volunteers_pr_party_1-field_role_n2522'.
   $field_instances['field_collection_item-field_volunteers_pr_party_1-field_role_n2522'] = array(
     'bundle' => 'field_volunteers_pr_party_1',
     'default_value' => NULL,
@@ -86,7 +88,8 @@ function valghalla_polling_station_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'field_collection_item-field_volunteers_pr_party_1-field_role_n2523'
+  // Exported field_instance:
+  // 'field_collection_item-field_volunteers_pr_party_1-field_role_n2523'.
   $field_instances['field_collection_item-field_volunteers_pr_party_1-field_role_n2523'] = array(
     'bundle' => 'field_volunteers_pr_party_1',
     'default_value' => NULL,
@@ -122,7 +125,8 @@ function valghalla_polling_station_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'field_collection_item-field_volunteers_pr_party_1-field_role_n2524'
+  // Exported field_instance:
+  // 'field_collection_item-field_volunteers_pr_party_1-field_role_n2524'.
   $field_instances['field_collection_item-field_volunteers_pr_party_1-field_role_n2524'] = array(
     'bundle' => 'field_volunteers_pr_party_1',
     'default_value' => NULL,
@@ -158,7 +162,8 @@ function valghalla_polling_station_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'field_collection_item-field_volunteers_pr_party_1-field_role_n2525'
+  // Exported field_instance:
+  // 'field_collection_item-field_volunteers_pr_party_1-field_role_n2525'.
   $field_instances['field_collection_item-field_volunteers_pr_party_1-field_role_n2525'] = array(
     'bundle' => 'field_volunteers_pr_party_1',
     'default_value' => NULL,
@@ -194,7 +199,8 @@ function valghalla_polling_station_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'field_collection_item-field_volunteers_pr_party_1-field_role_n2526'
+  // Exported field_instance:
+  // 'field_collection_item-field_volunteers_pr_party_1-field_role_n2526'.
   $field_instances['field_collection_item-field_volunteers_pr_party_1-field_role_n2526'] = array(
     'bundle' => 'field_volunteers_pr_party_1',
     'default_value' => NULL,
@@ -230,7 +236,8 @@ function valghalla_polling_station_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'field_collection_item-field_volunteers_pr_party_1-field_role_n2527'
+  // Exported field_instance:
+  // 'field_collection_item-field_volunteers_pr_party_1-field_role_n2527'.
   $field_instances['field_collection_item-field_volunteers_pr_party_1-field_role_n2527'] = array(
     'bundle' => 'field_volunteers_pr_party_1',
     'default_value' => NULL,
@@ -266,7 +273,8 @@ function valghalla_polling_station_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'field_collection_item-field_volunteers_pr_party_1-field_role_n2528'
+  // Exported field_instance:
+  // 'field_collection_item-field_volunteers_pr_party_1-field_role_n2528'.
   $field_instances['field_collection_item-field_volunteers_pr_party_1-field_role_n2528'] = array(
     'bundle' => 'field_volunteers_pr_party_1',
     'default_value' => NULL,
@@ -302,7 +310,8 @@ function valghalla_polling_station_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'field_collection_item-field_volunteers_pr_party_1-field_role_n2529'
+  // Exported field_instance:
+  // 'field_collection_item-field_volunteers_pr_party_1-field_role_n2529'.
   $field_instances['field_collection_item-field_volunteers_pr_party_1-field_role_n2529'] = array(
     'bundle' => 'field_volunteers_pr_party_1',
     'default_value' => NULL,
@@ -338,7 +347,8 @@ function valghalla_polling_station_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'field_collection_item-field_volunteers_pr_party_1-field_role_n2530'
+  // Exported field_instance:
+  // 'field_collection_item-field_volunteers_pr_party_1-field_role_n2530'.
   $field_instances['field_collection_item-field_volunteers_pr_party_1-field_role_n2530'] = array(
     'bundle' => 'field_volunteers_pr_party_1',
     'default_value' => NULL,
@@ -374,7 +384,53 @@ function valghalla_polling_station_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-polling_station-field_address_city'
+  // Exported field_instance: 'node-polling_station-body'.
+  $field_instances['node-polling_station-body'] = array(
+    'bundle' => 'polling_station',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'hidden',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 0,
+      ),
+      'teaser' => array(
+        'label' => 'hidden',
+        'module' => 'text',
+        'settings' => array(
+          'trim_length' => 600,
+        ),
+        'type' => 'text_summary_or_trimmed',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'body',
+    'label' => 'Beskrivelse',
+    'required' => 0,
+    'settings' => array(
+      'display_summary' => 1,
+      'text_processing' => 1,
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'text',
+      'settings' => array(
+        'rows' => 20,
+        'summary_rows' => 5,
+      ),
+      'type' => 'text_textarea_with_summary',
+      'weight' => 4,
+    ),
+    'widget_type' => 'text_textarea_with_summary',
+  );
+
+  // Exported field_instance: 'node-polling_station-field_address_city'.
   $field_instances['node-polling_station-field_address_city'] = array(
     'bundle' => 'polling_station',
     'default_value' => NULL,
@@ -414,7 +470,7 @@ function valghalla_polling_station_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-polling_station-field_address_door'
+  // Exported field_instance: 'node-polling_station-field_address_door'.
   $field_instances['node-polling_station-field_address_door'] = array(
     'bundle' => 'polling_station',
     'default_value' => NULL,
@@ -454,7 +510,7 @@ function valghalla_polling_station_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-polling_station-field_address_floor'
+  // Exported field_instance: 'node-polling_station-field_address_floor'.
   $field_instances['node-polling_station-field_address_floor'] = array(
     'bundle' => 'polling_station',
     'default_value' => NULL,
@@ -494,7 +550,7 @@ function valghalla_polling_station_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-polling_station-field_address_road'
+  // Exported field_instance: 'node-polling_station-field_address_road'.
   $field_instances['node-polling_station-field_address_road'] = array(
     'bundle' => 'polling_station',
     'default_value' => NULL,
@@ -534,7 +590,7 @@ function valghalla_polling_station_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-polling_station-field_address_road2'
+  // Exported field_instance: 'node-polling_station-field_address_road2'.
   $field_instances['node-polling_station-field_address_road2'] = array(
     'bundle' => 'polling_station',
     'default_value' => NULL,
@@ -574,7 +630,7 @@ function valghalla_polling_station_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-polling_station-field_address_road_no'
+  // Exported field_instance: 'node-polling_station-field_address_road_no'.
   $field_instances['node-polling_station-field_address_road_no'] = array(
     'bundle' => 'polling_station',
     'default_value' => NULL,
@@ -614,7 +670,7 @@ function valghalla_polling_station_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-polling_station-field_address_zipcode'
+  // Exported field_instance: 'node-polling_station-field_address_zipcode'.
   $field_instances['node-polling_station-field_address_zipcode'] = array(
     'bundle' => 'polling_station',
     'default_value' => NULL,
@@ -655,7 +711,7 @@ function valghalla_polling_station_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-polling_station-field_constituency'
+  // Exported field_instance: 'node-polling_station-field_constituency'.
   $field_instances['node-polling_station-field_constituency'] = array(
     'bundle' => 'polling_station',
     'default_value' => array(
@@ -696,7 +752,7 @@ function valghalla_polling_station_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-polling_station-field_contact'
+  // Exported field_instance: 'node-polling_station-field_contact'.
   $field_instances['node-polling_station-field_contact'] = array(
     'bundle' => 'polling_station',
     'default_value' => NULL,
@@ -736,7 +792,8 @@ function valghalla_polling_station_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-polling_station-field_digital_election_list'
+  // Exported field_instance:
+  // 'node-polling_station-field_digital_election_list'.
   $field_instances['node-polling_station-field_digital_election_list'] = array(
     'bundle' => 'polling_station',
     'default_value' => array(
@@ -779,7 +836,7 @@ function valghalla_polling_station_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-polling_station-field_interntal_name'
+  // Exported field_instance: 'node-polling_station-field_interntal_name'.
   $field_instances['node-polling_station-field_interntal_name'] = array(
     'bundle' => 'polling_station',
     'default_value' => NULL,
@@ -819,7 +876,7 @@ function valghalla_polling_station_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-polling_station-field_role_weight'
+  // Exported field_instance: 'node-polling_station-field_role_weight'.
   $field_instances['node-polling_station-field_role_weight'] = array(
     'bundle' => 'polling_station',
     'default_value' => NULL,
@@ -858,7 +915,7 @@ function valghalla_polling_station_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-polling_station-field_venue_bespisning_1'
+  // Exported field_instance: 'node-polling_station-field_venue_bespisning_1'.
   $field_instances['node-polling_station-field_venue_bespisning_1'] = array(
     'bundle' => 'polling_station',
     'default_value' => NULL,
@@ -904,7 +961,7 @@ function valghalla_polling_station_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-polling_station-field_venue_bespisning_2'
+  // Exported field_instance: 'node-polling_station-field_venue_bespisning_2'.
   $field_instances['node-polling_station-field_venue_bespisning_2'] = array(
     'bundle' => 'polling_station',
     'default_value' => NULL,
@@ -950,7 +1007,7 @@ function valghalla_polling_station_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-polling_station-field_venue_booth_sides'
+  // Exported field_instance: 'node-polling_station-field_venue_booth_sides'.
   $field_instances['node-polling_station-field_venue_booth_sides'] = array(
     'bundle' => 'polling_station',
     'default_value' => NULL,
@@ -996,7 +1053,7 @@ function valghalla_polling_station_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-polling_station-field_venue_booths'
+  // Exported field_instance: 'node-polling_station-field_venue_booths'.
   $field_instances['node-polling_station-field_venue_booths'] = array(
     'bundle' => 'polling_station',
     'default_value' => NULL,
@@ -1042,7 +1099,7 @@ function valghalla_polling_station_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-polling_station-field_venue_contact'
+  // Exported field_instance: 'node-polling_station-field_venue_contact'.
   $field_instances['node-polling_station-field_venue_contact'] = array(
     'bundle' => 'polling_station',
     'default_value' => NULL,
@@ -1082,7 +1139,7 @@ function valghalla_polling_station_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-polling_station-field_venue_contact_name'
+  // Exported field_instance: 'node-polling_station-field_venue_contact_name'.
   $field_instances['node-polling_station-field_venue_contact_name'] = array(
     'bundle' => 'polling_station',
     'default_value' => NULL,
@@ -1122,7 +1179,7 @@ function valghalla_polling_station_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-polling_station-field_venue_skolekode'
+  // Exported field_instance: 'node-polling_station-field_venue_skolekode'.
   $field_instances['node-polling_station-field_venue_skolekode'] = array(
     'bundle' => 'polling_station',
     'default_value' => NULL,
@@ -1162,7 +1219,7 @@ function valghalla_polling_station_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-polling_station-field_venue_team_members'
+  // Exported field_instance: 'node-polling_station-field_venue_team_members'.
   $field_instances['node-polling_station-field_venue_team_members'] = array(
     'bundle' => 'polling_station',
     'default_value' => array(
@@ -1207,7 +1264,7 @@ function valghalla_polling_station_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-polling_station-field_venue_teams'
+  // Exported field_instance: 'node-polling_station-field_venue_teams'.
   $field_instances['node-polling_station-field_venue_teams'] = array(
     'bundle' => 'polling_station',
     'default_value' => array(
@@ -1252,7 +1309,8 @@ function valghalla_polling_station_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-polling_station-field_volunteers_pr_party_1'
+  // Exported field_instance:
+  // 'node-polling_station-field_volunteers_pr_party_1'.
   $field_instances['node-polling_station-field_volunteers_pr_party_1'] = array(
     'bundle' => 'polling_station',
     'default_value' => NULL,
@@ -1298,13 +1356,14 @@ function valghalla_polling_station_field_default_field_instances() {
   // Translatables
   // Included for use with string extractors like potx.
   t('Andre kontaktoplysninger');
+  t('Beskrivelse');
   t('Bespisning 1');
   t('Bespisning 2');
   t('Borde');
   t('By');
+  t('Deltagere pr. parti');
   t('Digital valgliste');
   t('Dør / Side');
-  t('Deltagere pr. parti');
   t('Internt navn');
   t('Kontaktperson for valgets afvilking på selve valgdagen(e). Kan benyttes som flettefelt i mailskabeloner.');
   t('Lokalekontakt');
