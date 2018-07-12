@@ -10,7 +10,7 @@
 function valghalla_user_tools_field_default_field_instances() {
   $field_instances = array();
 
-  // Exported field_instance: 'user-user-field_full_name'
+  // Exported field_instance: 'user-user-field_full_name'.
   $field_instances['user-user-field_full_name'] = array(
     'bundle' => 'user',
     'default_value' => NULL,
@@ -44,7 +44,7 @@ function valghalla_user_tools_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'user-user-field_mobile_phone'
+  // Exported field_instance: 'user-user-field_mobile_phone'.
   $field_instances['user-user-field_mobile_phone'] = array(
     'bundle' => 'user',
     'default_value' => NULL,
@@ -78,7 +78,7 @@ function valghalla_user_tools_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'user-user-field_party'
+  // Exported field_instance: 'user-user-field_party'.
   $field_instances['user-user-field_party'] = array(
     'bundle' => 'user',
     'default_value' => NULL,
@@ -114,7 +114,7 @@ function valghalla_user_tools_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'user-user-field_polling_station'
+  // Exported field_instance: 'user-user-field_polling_station'.
   $field_instances['user-user-field_polling_station'] = array(
     'bundle' => 'user',
     'default_value' => NULL,

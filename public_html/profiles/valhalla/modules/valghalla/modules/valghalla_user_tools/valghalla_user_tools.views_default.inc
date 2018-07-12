@@ -996,7 +996,7 @@ function valghalla_user_tools_views_default_views() {
   $handler->display->display_options['fields']['entity_id']['table'] = 'field_data_body';
   $handler->display->display_options['fields']['entity_id']['field'] = 'body';
   $handler->display->display_options['fields']['entity_id']['label'] = 'indhold';
-  /* Felt: Handler mangler eller er i stykker */
+  /* Felt: : field_chairman */
   $handler->display->display_options['fields']['entity_id_2']['id'] = 'entity_id_2';
   $handler->display->display_options['fields']['entity_id_2']['table'] = 'field_data_field_chairman';
   $handler->display->display_options['fields']['entity_id_2']['field'] = 'field_chairman';
@@ -1072,11 +1072,10 @@ function valghalla_user_tools_views_default_views() {
   $handler->display->display_options['fields']['nid']['element_type'] = 'h4';
   $handler->display->display_options['fields']['nid']['element_label_type'] = '0';
   $handler->display->display_options['fields']['nid']['element_wrapper_type'] = '0';
-  /* Felt: Handler mangler eller er i stykker */
+  /* Felt: : field_chairman */
   $handler->display->display_options['fields']['entity_id_2']['id'] = 'entity_id_2';
   $handler->display->display_options['fields']['entity_id_2']['table'] = 'field_data_field_chairman';
   $handler->display->display_options['fields']['entity_id_2']['field'] = 'field_chairman';
-  $handler->display->display_options['fields']['entity_id_2']['label'] = 'field_chairman';
   $handler->display->display_options['fields']['entity_id_2']['exclude'] = TRUE;
   /* Felt: Felt: Parti */
   $handler->display->display_options['fields']['entity_id_5']['id'] = 'entity_id_5';
@@ -1183,7 +1182,7 @@ function valghalla_user_tools_views_default_views() {
   $handler->display->display_options['fields']['entity_id']['field'] = 'body';
   $handler->display->display_options['fields']['entity_id']['label'] = 'indhold';
   $handler->display->display_options['fields']['entity_id']['exclude'] = TRUE;
-  /* Felt: Handler mangler eller er i stykker */
+  /* Felt: : field_chairman */
   $handler->display->display_options['fields']['entity_id_2']['id'] = 'entity_id_2';
   $handler->display->display_options['fields']['entity_id_2']['table'] = 'field_data_field_chairman';
   $handler->display->display_options['fields']['entity_id_2']['field'] = 'field_chairman';
@@ -1288,7 +1287,7 @@ function valghalla_user_tools_views_default_views() {
   $handler->display->display_options['fields']['entity_id']['field'] = 'body';
   $handler->display->display_options['fields']['entity_id']['label'] = 'indhold';
   $handler->display->display_options['fields']['entity_id']['exclude'] = TRUE;
-  /* Felt: Handler mangler eller er i stykker */
+  /* Felt: : field_chairman */
   $handler->display->display_options['fields']['entity_id_2']['id'] = 'entity_id_2';
   $handler->display->display_options['fields']['entity_id_2']['table'] = 'field_data_field_chairman';
   $handler->display->display_options['fields']['entity_id_2']['field'] = 'field_chairman';
@@ -1339,7 +1338,7 @@ function valghalla_user_tools_views_default_views() {
     t('næste ›'),
     t('sidste »'),
     t('indhold'),
-    t('Handler i stykker field_data_field_chairman.field_chairman'),
+    t('field_chairman'),
     t('Valgkontakt'),
     t('Parti'),
     t('Andre kontaktoplysninger'),
@@ -1350,7 +1349,6 @@ function valghalla_user_tools_views_default_views() {
     t('Alle'),
     t('Block'),
     t('Nid'),
-    t('field_chairman'),
     t('field_party'),
     t('Digital valgliste'),
     t('Side m  CPR'),

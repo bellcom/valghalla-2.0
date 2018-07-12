@@ -56,7 +56,7 @@ function valghalla_polling_station_views_default_views() {
   $handler->display->display_options['fields']['field_interntal_name']['field'] = 'field_interntal_name';
   $handler->display->display_options['fields']['field_interntal_name']['label'] = '';
   $handler->display->display_options['fields']['field_interntal_name']['element_label_colon'] = FALSE;
-  /* Sorteringskriterie: Indhold: Role Rækkefølge (field_role_weight) */
+  /* Sorteringskriterie: Indhold: Valgsted Rækkefølge (field_role_weight) */
   $handler->display->display_options['sorts']['field_role_weight_value']['id'] = 'field_role_weight_value';
   $handler->display->display_options['sorts']['field_role_weight_value']['table'] = 'field_data_field_role_weight';
   $handler->display->display_options['sorts']['field_role_weight_value']['field'] = 'field_role_weight_value';
@@ -138,7 +138,7 @@ function valghalla_polling_station_views_default_views() {
   $handler->display->display_options['fields']['field_interntal_name']['table'] = 'field_data_field_interntal_name';
   $handler->display->display_options['fields']['field_interntal_name']['field'] = 'field_interntal_name';
   $handler->display->display_options['fields']['field_interntal_name']['element_label_colon'] = FALSE;
-  /* Felt: Indhold: Role Rækkefølge */
+  /* Felt: Indhold: Valgsted Rækkefølge */
   $handler->display->display_options['fields']['field_role_weight']['id'] = 'field_role_weight';
   $handler->display->display_options['fields']['field_role_weight']['table'] = 'field_data_field_role_weight';
   $handler->display->display_options['fields']['field_role_weight']['field'] = 'field_role_weight';

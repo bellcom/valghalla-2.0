@@ -10,7 +10,7 @@
 function valghalla_mail_field_default_field_instances() {
   $field_instances = array();
 
-  // Exported field_instance: 'node-email-body'
+  // Exported field_instance: 'node-email-body'.
   $field_instances['node-email-body'] = array(
     'bundle' => 'email',
     'default_value' => NULL,
@@ -56,7 +56,7 @@ function valghalla_mail_field_default_field_instances() {
     'widget_type' => 'text_textarea_with_summary',
   );
 
-  // Exported field_instance: 'node-email-field_subject'
+  // Exported field_instance: 'node-email-field_subject'.
   $field_instances['node-email-field_subject'] = array(
     'bundle' => 'email',
     'default_value' => NULL,
@@ -96,7 +96,7 @@ function valghalla_mail_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-email-field_valghalla_mail_attachments'
+  // Exported field_instance: 'node-email-field_valghalla_mail_attachments'.
   $field_instances['node-email-field_valghalla_mail_attachments'] = array(
     'bundle' => 'email',
     'deleted' => 0,

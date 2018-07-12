@@ -135,5 +135,4 @@ features_exclude[taxonomy][partier] = partier
 files[] = valhalla_volunteers.module
 files[] = valhalla_volunteers.inc
 files[] = valhalla_volunteers_admin.inc
-mtime = 1452082417
 no autodetect = 1

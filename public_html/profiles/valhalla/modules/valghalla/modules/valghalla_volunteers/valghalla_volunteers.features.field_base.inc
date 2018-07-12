@@ -10,21 +10,13 @@
 function valghalla_volunteers_field_default_field_bases() {
   $field_bases = array();
 
-  // Exported field_base: 'field_address_bnummer'
+  // Exported field_base: 'field_address_bnummer'.
   $field_bases['field_address_bnummer'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_address_bnummer',
-    'foreign keys' => array(
-      'format' => array(
-        'columns' => array(
-          'format' => 'format',
-        ),
-        'table' => 'filter_format',
-      ),
-    ),
     'indexes' => array(
       'format' => array(
         0 => 'format',
@@ -39,21 +31,13 @@ function valghalla_volunteers_field_default_field_bases() {
     'type' => 'text',
   );
 
-  // Exported field_base: 'field_address_coname'
+  // Exported field_base: 'field_address_coname'.
   $field_bases['field_address_coname'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_address_coname',
-    'foreign keys' => array(
-      'format' => array(
-        'columns' => array(
-          'format' => 'format',
-        ),
-        'table' => 'filter_format',
-      ),
-    ),
     'indexes' => array(
       'format' => array(
         0 => 'format',
@@ -68,21 +52,13 @@ function valghalla_volunteers_field_default_field_bases() {
     'type' => 'text',
   );
 
-  // Exported field_base: 'field_cpr_number'
+  // Exported field_base: 'field_cpr_number'.
   $field_bases['field_cpr_number'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_cpr_number',
-    'foreign keys' => array(
-      'format' => array(
-        'columns' => array(
-          'format' => 'format',
-        ),
-        'table' => 'filter_format',
-      ),
-    ),
     'indexes' => array(
       'format' => array(
         0 => 'format',
@@ -97,14 +73,13 @@ function valghalla_volunteers_field_default_field_bases() {
     'type' => 'text',
   );
 
-  // Exported field_base: 'field_cpr_status'
+  // Exported field_base: 'field_cpr_status'.
   $field_bases['field_cpr_status'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_cpr_status',
-    'foreign keys' => array(),
     'indexes' => array(
       'value' => array(
         0 => 'value',
@@ -124,14 +99,13 @@ function valghalla_volunteers_field_default_field_bases() {
     'type' => 'list_text',
   );
 
-  // Exported field_base: 'field_cpr_valid_date'
+  // Exported field_base: 'field_cpr_valid_date'.
   $field_bases['field_cpr_valid_date'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_cpr_valid_date',
-    'foreign keys' => array(),
     'indexes' => array(),
     'locked' => 0,
     'module' => 'date',
@@ -155,21 +129,13 @@ function valghalla_volunteers_field_default_field_bases() {
     'type' => 'date',
   );
 
-  // Exported field_base: 'field_description'
+  // Exported field_base: 'field_description'.
   $field_bases['field_description'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_description',
-    'foreign keys' => array(
-      'format' => array(
-        'columns' => array(
-          'format' => 'format',
-        ),
-        'table' => 'filter_format',
-      ),
-    ),
     'indexes' => array(
       'format' => array(
         0 => 'format',
@@ -184,14 +150,13 @@ function valghalla_volunteers_field_default_field_bases() {
     'type' => 'text',
   );
 
-  // Exported field_base: 'field_diaet'
+  // Exported field_base: 'field_diaet'.
   $field_bases['field_diaet'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_diaet',
-    'foreign keys' => array(),
     'indexes' => array(),
     'locked' => 0,
     'module' => 'number',
@@ -200,21 +165,13 @@ function valghalla_volunteers_field_default_field_bases() {
     'type' => 'number_integer',
   );
 
-  // Exported field_base: 'field_election'
+  // Exported field_base: 'field_election'.
   $field_bases['field_election'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_election',
-    'foreign keys' => array(
-      'node' => array(
-        'columns' => array(
-          'target_id' => 'nid',
-        ),
-        'table' => 'node',
-      ),
-    ),
     'indexes' => array(
       'target_id' => array(
         0 => 'target_id',
@@ -243,37 +200,39 @@ function valghalla_volunteers_field_default_field_bases() {
     'type' => 'entityreference',
   );
 
-  // Exported field_base: 'field_electioninfo'
+  // Exported field_base: 'field_electioninfo'.
   $field_bases['field_electioninfo'] = array(
     'active' => 1,
     'cardinality' => -1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_electioninfo',
-    'foreign keys' => array(),
     'indexes' => array(
       'revision_id' => array(
         0 => 'revision_id',
+      ),
+      'value' => array(
+        0 => 'value',
       ),
     ),
     'locked' => 0,
     'module' => 'field_collection',
     'settings' => array(
       'hide_blank_items' => 1,
+      'hide_initial_item' => FALSE,
       'path' => '',
     ),
     'translatable' => 0,
     'type' => 'field_collection',
   );
 
-  // Exported field_base: 'field_email'
+  // Exported field_base: 'field_email'.
   $field_bases['field_email'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_email',
-    'foreign keys' => array(),
     'indexes' => array(),
     'locked' => 0,
     'module' => 'email',
@@ -282,14 +241,13 @@ function valghalla_volunteers_field_default_field_bases() {
     'type' => 'email',
   );
 
-  // Exported field_base: 'field_external_signup'
+  // Exported field_base: 'field_external_signup'.
   $field_bases['field_external_signup'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_external_signup',
-    'foreign keys' => array(),
     'indexes' => array(
       'value' => array(
         0 => 'value',
@@ -308,21 +266,13 @@ function valghalla_volunteers_field_default_field_bases() {
     'type' => 'list_boolean',
   );
 
-  // Exported field_base: 'field_invitation'
+  // Exported field_base: 'field_invitation'.
   $field_bases['field_invitation'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_invitation',
-    'foreign keys' => array(
-      'node' => array(
-        'columns' => array(
-          'target_id' => 'nid',
-        ),
-        'table' => 'node',
-      ),
-    ),
     'indexes' => array(
       'target_id' => array(
         0 => 'target_id',
@@ -351,21 +301,13 @@ function valghalla_volunteers_field_default_field_bases() {
     'type' => 'entityreference',
   );
 
-  // Exported field_base: 'field_label'
+  // Exported field_base: 'field_label'.
   $field_bases['field_label'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_label',
-    'foreign keys' => array(
-      'format' => array(
-        'columns' => array(
-          'format' => 'format',
-        ),
-        'table' => 'filter_format',
-      ),
-    ),
     'indexes' => array(
       'format' => array(
         0 => 'format',
@@ -380,21 +322,13 @@ function valghalla_volunteers_field_default_field_bases() {
     'type' => 'text',
   );
 
-  // Exported field_base: 'field_meeting_time'
+  // Exported field_base: 'field_meeting_time'.
   $field_bases['field_meeting_time'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_meeting_time',
-    'foreign keys' => array(
-      'tid' => array(
-        'columns' => array(
-          'tid' => 'tid',
-        ),
-        'table' => 'taxonomy_term_data',
-      ),
-    ),
     'indexes' => array(
       'tid' => array(
         0 => 'tid',
@@ -414,21 +348,13 @@ function valghalla_volunteers_field_default_field_bases() {
     'type' => 'taxonomy_term_reference',
   );
 
-  // Exported field_base: 'field_meetingtime'
+  // Exported field_base: 'field_meetingtime'.
   $field_bases['field_meetingtime'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_meetingtime',
-    'foreign keys' => array(
-      'format' => array(
-        'columns' => array(
-          'format' => 'format',
-        ),
-        'table' => 'filter_format',
-      ),
-    ),
     'indexes' => array(
       'format' => array(
         0 => 'format',
@@ -443,14 +369,13 @@ function valghalla_volunteers_field_default_field_bases() {
     'type' => 'text',
   );
 
-  // Exported field_base: 'field_municipality'
+  // Exported field_base: 'field_municipality'.
   $field_bases['field_municipality'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_municipality',
-    'foreign keys' => array(),
     'indexes' => array(
       'value' => array(
         0 => 'value',
@@ -565,14 +490,13 @@ function valghalla_volunteers_field_default_field_bases() {
     'type' => 'list_integer',
   );
 
-  // Exported field_base: 'field_no_mail'
+  // Exported field_base: 'field_no_mail'.
   $field_bases['field_no_mail'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_no_mail',
-    'foreign keys' => array(),
     'indexes' => array(
       'value' => array(
         0 => 'value',
@@ -591,21 +515,13 @@ function valghalla_volunteers_field_default_field_bases() {
     'type' => 'list_boolean',
   );
 
-  // Exported field_base: 'field_party'
+  // Exported field_base: 'field_party'.
   $field_bases['field_party'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_party',
-    'foreign keys' => array(
-      'tid' => array(
-        'columns' => array(
-          'tid' => 'tid',
-        ),
-        'table' => 'taxonomy_term_data',
-      ),
-    ),
     'indexes' => array(
       'tid' => array(
         0 => 'tid',
@@ -625,21 +541,13 @@ function valghalla_volunteers_field_default_field_bases() {
     'type' => 'taxonomy_term_reference',
   );
 
-  // Exported field_base: 'field_phone'
+  // Exported field_base: 'field_phone'.
   $field_bases['field_phone'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_phone',
-    'foreign keys' => array(
-      'format' => array(
-        'columns' => array(
-          'format' => 'format',
-        ),
-        'table' => 'filter_format',
-      ),
-    ),
     'indexes' => array(
       'format' => array(
         0 => 'format',
@@ -654,21 +562,13 @@ function valghalla_volunteers_field_default_field_bases() {
     'type' => 'text',
   );
 
-  // Exported field_base: 'field_phone2'
+  // Exported field_base: 'field_phone2'.
   $field_bases['field_phone2'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_phone2',
-    'foreign keys' => array(
-      'format' => array(
-        'columns' => array(
-          'format' => 'format',
-        ),
-        'table' => 'filter_format',
-      ),
-    ),
     'indexes' => array(
       'format' => array(
         0 => 'format',
@@ -683,21 +583,13 @@ function valghalla_volunteers_field_default_field_bases() {
     'type' => 'text',
   );
 
-  // Exported field_base: 'field_polling_station'
+  // Exported field_base: 'field_polling_station'.
   $field_bases['field_polling_station'] = array(
     'active' => 1,
     'cardinality' => -1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_polling_station',
-    'foreign keys' => array(
-      'nid' => array(
-        'columns' => array(
-          'nid' => 'nid',
-        ),
-        'table' => 'node',
-      ),
-    ),
     'indexes' => array(
       'nid' => array(
         0 => 'nid',
@@ -728,14 +620,13 @@ function valghalla_volunteers_field_default_field_bases() {
     'type' => 'node_reference',
   );
 
-  // Exported field_base: 'field_polling_station_post'
+  // Exported field_base: 'field_polling_station_post'.
   $field_bases['field_polling_station_post'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_polling_station_post',
-    'foreign keys' => array(),
     'indexes' => array(),
     'locked' => 0,
     'module' => 'number',
@@ -744,21 +635,13 @@ function valghalla_volunteers_field_default_field_bases() {
     'type' => 'number_integer',
   );
 
-  // Exported field_base: 'field_post_party'
+  // Exported field_base: 'field_post_party'.
   $field_bases['field_post_party'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_post_party',
-    'foreign keys' => array(
-      'taxonomy_term_data' => array(
-        'columns' => array(
-          'target_id' => 'tid',
-        ),
-        'table' => 'taxonomy_term_data',
-      ),
-    ),
     'indexes' => array(
       'target_id' => array(
         0 => 'target_id',
@@ -787,21 +670,13 @@ function valghalla_volunteers_field_default_field_bases() {
     'type' => 'entityreference',
   );
 
-  // Exported field_base: 'field_post_role'
+  // Exported field_base: 'field_post_role'.
   $field_bases['field_post_role'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_post_role',
-    'foreign keys' => array(
-      'node' => array(
-        'columns' => array(
-          'target_id' => 'nid',
-        ),
-        'table' => 'node',
-      ),
-    ),
     'indexes' => array(
       'target_id' => array(
         0 => 'target_id',
@@ -830,21 +705,13 @@ function valghalla_volunteers_field_default_field_bases() {
     'type' => 'entityreference',
   );
 
-  // Exported field_base: 'field_reminder'
+  // Exported field_base: 'field_reminder'.
   $field_bases['field_reminder'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_reminder',
-    'foreign keys' => array(
-      'node' => array(
-        'columns' => array(
-          'target_id' => 'nid',
-        ),
-        'table' => 'node',
-      ),
-    ),
     'indexes' => array(
       'target_id' => array(
         0 => 'target_id',
@@ -873,21 +740,13 @@ function valghalla_volunteers_field_default_field_bases() {
     'type' => 'entityreference',
   );
 
-  // Exported field_base: 'field_role_hours'
+  // Exported field_base: 'field_role_hours'.
   $field_bases['field_role_hours'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_role_hours',
-    'foreign keys' => array(
-      'format' => array(
-        'columns' => array(
-          'format' => 'format',
-        ),
-        'table' => 'filter_format',
-      ),
-    ),
     'indexes' => array(
       'format' => array(
         0 => 'format',
@@ -902,14 +761,13 @@ function valghalla_volunteers_field_default_field_bases() {
     'type' => 'text',
   );
 
-  // Exported field_base: 'field_role_weight'
+  // Exported field_base: 'field_role_weight'.
   $field_bases['field_role_weight'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_role_weight',
-    'foreign keys' => array(),
     'indexes' => array(),
     'locked' => 0,
     'module' => 'number',
@@ -922,21 +780,13 @@ function valghalla_volunteers_field_default_field_bases() {
     'type' => 'number_decimal',
   );
 
-  // Exported field_base: 'field_rolle_id'
+  // Exported field_base: 'field_rolle_id'.
   $field_bases['field_rolle_id'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_rolle_id',
-    'foreign keys' => array(
-      'nid' => array(
-        'columns' => array(
-          'nid' => 'nid',
-        ),
-        'table' => 'node',
-      ),
-    ),
     'indexes' => array(
       'nid' => array(
         0 => 'nid',
@@ -967,14 +817,13 @@ function valghalla_volunteers_field_default_field_bases() {
     'type' => 'node_reference',
   );
 
-  // Exported field_base: 'field_rsvp'
+  // Exported field_base: 'field_rsvp'.
   $field_bases['field_rsvp'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_rsvp',
-    'foreign keys' => array(),
     'indexes' => array(
       'value' => array(
         0 => 'value',
@@ -994,21 +843,13 @@ function valghalla_volunteers_field_default_field_bases() {
     'type' => 'list_text',
   );
 
-  // Exported field_base: 'field_rsvp_comment'
+  // Exported field_base: 'field_rsvp_comment'.
   $field_bases['field_rsvp_comment'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_rsvp_comment',
-    'foreign keys' => array(
-      'format' => array(
-        'columns' => array(
-          'format' => 'format',
-        ),
-        'table' => 'filter_format',
-      ),
-    ),
     'indexes' => array(
       'format' => array(
         0 => 'format',
@@ -1023,21 +864,13 @@ function valghalla_volunteers_field_default_field_bases() {
     'type' => 'text',
   );
 
-  // Exported field_base: 'field_rsvp_never'
+  // Exported field_base: 'field_rsvp_never'.
   $field_bases['field_rsvp_never'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_rsvp_never',
-    'foreign keys' => array(
-      'node' => array(
-        'columns' => array(
-          'target_id' => 'nid',
-        ),
-        'table' => 'node',
-      ),
-    ),
     'indexes' => array(
       'target_id' => array(
         0 => 'target_id',
@@ -1066,21 +899,13 @@ function valghalla_volunteers_field_default_field_bases() {
     'type' => 'entityreference',
   );
 
-  // Exported field_base: 'field_rsvp_no'
+  // Exported field_base: 'field_rsvp_no'.
   $field_bases['field_rsvp_no'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_rsvp_no',
-    'foreign keys' => array(
-      'node' => array(
-        'columns' => array(
-          'target_id' => 'nid',
-        ),
-        'table' => 'node',
-      ),
-    ),
     'indexes' => array(
       'target_id' => array(
         0 => 'target_id',
@@ -1109,21 +934,13 @@ function valghalla_volunteers_field_default_field_bases() {
     'type' => 'entityreference',
   );
 
-  // Exported field_base: 'field_rsvp_yes'
+  // Exported field_base: 'field_rsvp_yes'.
   $field_bases['field_rsvp_yes'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_rsvp_yes',
-    'foreign keys' => array(
-      'node' => array(
-        'columns' => array(
-          'target_id' => 'nid',
-        ),
-        'table' => 'node',
-      ),
-    ),
     'indexes' => array(
       'target_id' => array(
         0 => 'target_id',
@@ -1152,21 +969,13 @@ function valghalla_volunteers_field_default_field_bases() {
     'type' => 'entityreference',
   );
 
-  // Exported field_base: 'field_token'
+  // Exported field_base: 'field_token'.
   $field_bases['field_token'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_token',
-    'foreign keys' => array(
-      'format' => array(
-        'columns' => array(
-          'format' => 'format',
-        ),
-        'table' => 'filter_format',
-      ),
-    ),
     'indexes' => array(
       'format' => array(
         0 => 'format',
@@ -1181,14 +990,13 @@ function valghalla_volunteers_field_default_field_bases() {
     'type' => 'text',
   );
 
-  // Exported field_base: 'field_valid_state'
+  // Exported field_base: 'field_valid_state'.
   $field_bases['field_valid_state'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_valid_state',
-    'foreign keys' => array(),
     'indexes' => array(
       'value' => array(
         0 => 'value',
@@ -1207,21 +1015,13 @@ function valghalla_volunteers_field_default_field_bases() {
     'type' => 'list_text',
   );
 
-  // Exported field_base: 'field_vlnt_station'
+  // Exported field_base: 'field_vlnt_station'.
   $field_bases['field_vlnt_station'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_vlnt_station',
-    'foreign keys' => array(
-      'node' => array(
-        'columns' => array(
-          'target_id' => 'nid',
-        ),
-        'table' => 'node',
-      ),
-    ),
     'indexes' => array(
       'target_id' => array(
         0 => 'target_id',
@@ -1250,14 +1050,13 @@ function valghalla_volunteers_field_default_field_bases() {
     'type' => 'entityreference',
   );
 
-  // Exported field_base: 'field_volunteer_valid_date'
+  // Exported field_base: 'field_volunteer_valid_date'.
   $field_bases['field_volunteer_valid_date'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
     'field_name' => 'field_volunteer_valid_date',
-    'foreign keys' => array(),
     'indexes' => array(),
     'locked' => 0,
     'module' => 'date',
