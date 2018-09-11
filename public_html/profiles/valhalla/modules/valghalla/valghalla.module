@@ -110,7 +110,7 @@ function valghalla_change_election_party_form() {
   global $user;
 
   // Election form options and default value.
-  $elections = node_load_multiple(array(), array('type' => 'election'));
+  $elections = node_load_multiple(array(), array('type' => 'election', 'status' => NODE_PUBLISHED));
 
   $election_options[0] = t('Vælg valg');
 
