@@ -48,8 +48,8 @@ function valghalla_election_set_election($action, $election_nid = false){
 function valghalla_election_form_alter(&$form, &$form_state, $form_id) {
   $destination = current_path();
   if (isset($form['type']) && isset($form['#node']) && $form_id == 'election_node_form') {
+    // Adding role_and_diaet field.
     $roles = valghalla_election_get_roles();
-    // form fieldset
     $description = t("Roller diæter");
     if (empty($roles)) {
       $description .= " <a href='/node/add/roles?destination=$destination'>Opret roller</a>";
@@ -62,7 +62,6 @@ function valghalla_election_form_alter(&$form, &$form_state, $form_id) {
     );
 
     foreach ($roles as $key =>$role) {
-
       if (isset($form['#node']->nid)) {
         // get value form table field_election_roles_diaet.
         if (db_table_exists('field_election_roles_diaet')) {
@@ -89,6 +88,18 @@ function valghalla_election_form_alter(&$form, &$form_state, $form_id) {
         );
       }
     }
+    $form['#group_children']['role_and_diaet'] = 'group_diaet';
+
+    // Hiding add/remove fields from field_volunteers_pr_pol_st_party, and making some fields disabled.
+    $form['field_volunteers_pr_pol_st_party']['und']['add_more']['#access'] = FALSE;
+    foreach($form['field_volunteers_pr_pol_st_party']['und'] as $key => $element) {
+      if ($element['#entity_type'] === 'field_collection_item') {
+        $form['field_volunteers_pr_pol_st_party']['und'][$key]['remove_button']['#access'] = FALSE;
+        $form['field_volunteers_pr_pol_st_party']['und'][$key]['field_ppsp_polling_station']['#disabled'] = TRUE;
+        $form['field_volunteers_pr_pol_st_party']['und'][$key]['field_ppsp_party']['#disabled'] = TRUE;
+      }
+    }
+
     $form['actions']['submit']['#submit'][] = 'valghalla_election_form_submit';
   }
 }
@@ -122,6 +133,58 @@ function valghalla_election_form_submit($form, &$form_state) {
         'role_diaet_value' => serialize($data),
         ))
        ->execute();
+  }
+}
+
+/**
+ * Implements hook_node_presave().
+ *
+ * Managing field_volunteers_pr_pol_st_party fields.
+ */
+function valghalla_election_node_presave($node) {
+  if ($node->type == 'election') {
+    $pollingStations = field_get_items('node', $node, 'field_polling_stations');
+    $pollingStationsIds = array();
+    $createVPPSPForPollingIds = array();
+
+    foreach($pollingStations as $ps) {
+      $pollingStationsIds[$ps['target_id']] = $ps['target_id'];
+      $createVPPSPForPollingIds[$ps['target_id']] = $ps['target_id'];
+    }
+
+    // Deleting the field collections that are not relevant anymore.
+    if (!$node->is_new) {
+      $VPPSPIdsToDelete = array();
+      foreach ($node->field_volunteers_pr_pol_st_party['und'] as $key => $value) {
+        $vppsp = entity_load_single('field_collection_item', $value['value']);
+        $vppspPollingStationId = $vppsp->field_ppsp_polling_station['und'][0]['nid'];
+
+        if (!in_array($vppspPollingStationId, $pollingStationsIds)) {
+          // Add to array for deletion.
+          $VPPSPIdsToDelete[] = $vppsp->item_id;
+          // Unset them from node.
+          unset($node->field_volunteers_pr_pol_st_party[LANGUAGE_NONE][$key]);
+        }
+
+        // Unset polling station for the list.
+        unset($createVPPSPForPollingIds[$vppspPollingStationId]);
+      }
+
+      // Delete field collection items.
+      entity_delete_multiple('field_collection_item', $VPPSPIdsToDelete);
+    }
+
+    // Adding new field collections.
+    foreach($createVPPSPForPollingIds as $createVPPSPForPollingId) {
+      foreach(odin_get_parties() as $party_tid => $party_name) {
+        $fc = entity_create('field_collection_item', array('field_name' => 'field_volunteers_pr_pol_st_party'));
+        $fc->setHostEntity('node', $node);
+        $fc->field_ppsp_polling_station[LANGUAGE_NONE][0]['nid'] = $createVPPSPForPollingId;
+        $fc->field_ppsp_party[LANGUAGE_NONE][0]['tid'] = $party_tid;
+        // It's save to use $skip_host_save = TRUE  , since we are in the preprocess hook, node will be updated automatically
+        $fc->save(TRUE);
+      }
+    }
   }
 }
 
@@ -175,4 +238,92 @@ function valghalla_election_update_7100() {
     );
     db_create_table('field_election_roles_diaet', $schema['field_election_roles_diaet']);
   }
+}
+
+/**
+ * Migrate binding on the seats from polling_station to the election.
+ *
+ */
+function valghalla_election_update_7101() {
+  // Field creation and field instance creation
+  $roles = valghalla_election_get_roles();
+
+  foreach ($roles as $role) {
+    if (!field_info_field('field_role_n' . $role->nid)) {
+      // Create the field base.
+      $field = array(
+        'field_name' => 'field_role_n' . $role->nid,
+        'type' => 'volunteers_roles_field',
+      );
+      field_create_field($field);
+    }
+
+    // Initiate field instance.
+    $instance = array(
+      'field_name' => 'field_role_n' . $role->nid,
+      'entity_type' => 'field_collection_item',
+      'label' => t('Role'),
+      'bundle' => 'field_volunteers_pr_pol_st_party',
+      // If you don't set the "required" property then the field wont be required by default.
+      'required' => TRUE,
+      'widget' => array(
+        'type' => 'custom_type',
+      ),
+    );
+
+    // Create the field instance on the bundle, if does not exist yet.
+    if (!field_read_instance($instance['entity_type'], $instance['field_name'], $instance['bundle'])) {
+      field_create_instance($instance);
+    }
+  }
+
+  // Field content creation
+
+  // 1. Load all elections
+  $query = new EntityFieldQuery();
+  $result = $query->entityCondition('entity_type', 'node')
+    ->entityCondition('bundle', 'election')
+    ->execute();
+
+  $elections = node_load_multiple(array_keys($result['node']));
+
+  // 2. Load all polling station used in election
+  foreach ($elections as $election) {
+    $pollingStations = field_get_items('node', $election, 'field_polling_stations');
+
+    if (is_array($pollingStations)) {
+      // 3. Load polling station field_volunteers_pr_party_1 field collections
+      foreach ($pollingStations as $pollingStation) {
+        $pollingStation = node_load($pollingStation['target_id']);
+
+        $fieldVolunteerPrParty = field_get_items('node', $pollingStation, 'field_volunteers_pr_party_1');
+        if (is_array($fieldVolunteerPrParty)) {
+          foreach ($fieldVolunteerPrParty as $volPrParty) {
+            $volPrPartyLoaded = entity_load_single('field_collection_item', $volPrParty['value']);
+
+            // 4. Create the new field collection and add it to election
+            $fc = entity_create('field_collection_item', array('field_name' => 'field_volunteers_pr_pol_st_party'));
+
+            $fc->setHostEntity('node', $election);
+            $fc->field_ppsp_polling_station[LANGUAGE_NONE][0]['nid'] = $pollingStation->nid;
+            $fc->field_ppsp_party[LANGUAGE_NONE][0]['tid'] = $volPrPartyLoaded->field_party_list['und'][0]['party_list'];
+
+            // 4.1 Find and fill all role fields
+            $allFields = field_info_instances('field_collection_item', 'field_volunteers_pr_party_1');
+            foreach ($allFields as $field) {
+              if (substr($field['field_name'], 0, 12) === 'field_role_n') {
+                if (!empty($volPrPartyLoaded->{$field['field_name']})) {
+                  $fc->{$field['field_name']}[LANGUAGE_NONE][0]['number_vo'] = $volPrPartyLoaded->{$field['field_name']}['und'][0]['number_vo'];
+                }
+              }
+            }
+
+            // 5. Saving the new field collection
+            $fc->save();
+          }
+        }
+      }
+    }
+  }
+
 }
