@@ -41,6 +41,32 @@ function valghalla_election_field_group_info() {
   $field_group = new stdClass();
   $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
   $field_group->api_version = 1;
+  $field_group->identifier = 'group_diaet|node|election|form';
+  $field_group->group_name = 'group_diaet';
+  $field_group->entity_type = 'node';
+  $field_group->bundle = 'election';
+  $field_group->mode = 'form';
+  $field_group->parent_name = 'group_election_tabs';
+  $field_group->data = array(
+    'label' => 'Diæt',
+    'weight' => '7',
+    'children' => array(),
+    'format_type' => 'htab',
+    'format_settings' => array(
+      'label' => 'Diæt',
+      'instance_settings' => array(
+        'required_fields' => 1,
+        'classes' => '',
+        'description' => '',
+      ),
+      'formatter' => 'open',
+    ),
+  );
+  $field_groups['group_diaet|node|election|form'] = $field_group;
+
+  $field_group = new stdClass();
+  $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
+  $field_group->api_version = 1;
   $field_group->identifier = 'group_election_tabs|node|election|form';
   $field_group->group_name = 'group_election_tabs';
   $field_group->entity_type = 'node';
@@ -102,6 +128,7 @@ function valghalla_election_field_group_info() {
   // Translatables
   // Included for use with string extractors like potx.
   t('Deltagere pr. valgsted');
+  t('Diæt');
   t('Generelt');
   t('Valg');
 

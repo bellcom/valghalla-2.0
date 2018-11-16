@@ -101,6 +101,9 @@ function valghalla_election_form_alter(&$form, &$form_state, $form_id) {
     }
 
     $form['actions']['submit']['#submit'][] = 'valghalla_election_form_submit';
+
+    // Add extra validation handler for polling station node.
+    $form['#validate'][] = 'valghalla_election_node_form_validate';
   }
 }
 
@@ -142,6 +145,10 @@ function valghalla_election_form_submit($form, &$form_state) {
  * Managing field_volunteers_pr_pol_st_party fields.
  */
 function valghalla_election_node_presave($node) {
+  // We don't want this logic to be executed as drush.
+  if (drupal_is_cli()) {
+    return;
+  }
   if ($node->type == 'election') {
     $pollingStations = field_get_items('node', $node, 'field_polling_stations');
     $pollingStationsIds = array();
@@ -209,6 +216,72 @@ function valghalla_election_node_delete($node) {
     db_delete('field_election_roles_diaet')
         ->condition('nid', $node->nid)
         ->execute();
+  }
+}
+
+/**
+ * Validation handler for election node form.
+ */
+function valghalla_election_node_form_validate($form, $form_state) {
+  // Only validate if editing an existing node.
+  if (is_numeric(arg(1))) {
+    foreach ($form_state['values']['field_volunteers_pr_pol_st_party'][LANGUAGE_NONE] as $delta => $value) {
+      if (is_numeric($delta)) {
+        foreach ($value as $field_name => $field_value) {
+          // Extract polling station nid tid.
+          if ($field_name == 'field_ppsp_polling_station') {
+            $polling_station_nid = $field_value[LANGUAGE_NONE][0]['nid'];
+          }
+
+          // Extract party tid.
+          if ($field_name == 'field_ppsp_party') {
+            $party_tid = $field_value[LANGUAGE_NONE][0]['tid'];
+          }
+
+          if (strpos($field_name, 'field_role_n') !== FALSE) {
+            $role_nid = str_replace('field_role_n', '', $field_name);
+            $count = $field_value[LANGUAGE_NONE][0]['number_vo'];
+
+          }
+          if ($polling_station_nid && $party_tid && $role_nid) {
+            $map[$polling_station_nid][$party_tid][$role_nid] = $count;
+          }
+        }
+      }
+    }
+
+    $polling_stations = odin_get_polling_stations(arg(1));
+    $roles = odin_get_roles();
+    $parties = odin_get_parties();
+
+    if ($_SESSION['election_nid']) {
+      // Loop through all combinations and find out if any of the input values
+      // are lower than the already allocated count.
+      foreach($map as $polling_station_nid => $parties_map) {
+        foreach ($parties_map as $party_tid => $roles_map) {
+          foreach ($roles_map as $role_nid => $count) {
+            $volunteer_query = new EntityFieldQuery();
+            $volunteer_query->entityCondition('entity_type', 'field_collection_item')
+              ->entityCondition('bundle', 'field_electioninfo')
+              ->fieldCondition('field_election', 'target_id', $_SESSION['election_nid'])
+              ->fieldCondition('field_post_role', 'target_id', $role_nid)
+              ->fieldCondition('field_post_party', 'target_id', $party_tid)
+              ->fieldCondition('field_vlnt_station', 'target_id', $polling_station_nid);
+
+            $query_result = $volunteer_query->execute();
+            $result       = array_keys(array_shift($query_result));
+
+            if ($result) {
+              $allocated = count($result);
+
+              if ($allocated > $count) {
+                form_set_error('field_role_n' . $role_nid, 'Deltagere - Det indtastede antal er mindre end antallet af tilføjede deltagere. Valgsted: ' . $polling_stations[$polling_station_nid] . ', Parti: ' . $parties[$party_tid] . ', Rolle: ' . $roles[$role_nid] . ', antal: ' . $allocated . ', indtastet: ' . $count);
+              }
+            }
+          }
+        }
+      }
+    }
   }
 }
 
