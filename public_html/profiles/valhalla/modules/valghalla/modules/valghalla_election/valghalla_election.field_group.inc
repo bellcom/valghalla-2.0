@@ -13,34 +13,6 @@ function valghalla_election_field_group_info() {
   $field_group = new stdClass();
   $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
   $field_group->api_version = 1;
-  $field_group->identifier = 'group_deltagere|node|election|form';
-  $field_group->group_name = 'group_deltagere';
-  $field_group->entity_type = 'node';
-  $field_group->bundle = 'election';
-  $field_group->mode = 'form';
-  $field_group->parent_name = 'group_election_tabs';
-  $field_group->data = array(
-    'label' => 'Deltagere pr. valgsted',
-    'weight' => '8',
-    'children' => array(
-      0 => 'field_volunteers_pr_pol_st_party',
-    ),
-    'format_type' => 'htab',
-    'format_settings' => array(
-      'label' => 'Deltagere pr. valgsted',
-      'instance_settings' => array(
-        'required_fields' => 1,
-        'classes' => '',
-        'description' => '',
-      ),
-      'formatter' => 'open',
-    ),
-  );
-  $field_groups['group_deltagere|node|election|form'] = $field_group;
-
-  $field_group = new stdClass();
-  $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
-  $field_group->api_version = 1;
   $field_group->identifier = 'group_diaet|node|election|form';
   $field_group->group_name = 'group_diaet';
   $field_group->entity_type = 'node';
@@ -77,9 +49,9 @@ function valghalla_election_field_group_info() {
     'label' => 'Valg',
     'weight' => '5',
     'children' => array(
-      0 => 'group_deltagere',
-      1 => 'group_general',
-      2 => 'group_diaet',
+      0 => 'field_volunteers_pr_pol_st_party',
+      1 => 'group_diaet',
+      2 => 'group_general',
     ),
     'format_type' => 'htabs',
     'format_settings' => array(
@@ -127,7 +99,6 @@ function valghalla_election_field_group_info() {
 
   // Translatables
   // Included for use with string extractors like potx.
-  t('Deltagere pr. valgsted');
   t('Diæt');
   t('Generelt');
   t('Valg');

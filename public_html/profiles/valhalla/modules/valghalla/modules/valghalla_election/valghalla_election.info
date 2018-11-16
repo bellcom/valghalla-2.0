@@ -35,7 +35,6 @@ features[field_base][] = field_ppsp_party
 features[field_base][] = field_ppsp_polling_station
 features[field_base][] = field_secretary
 features[field_base][] = field_volunteers_pr_pol_st_party
-features[field_group][] = group_deltagere|node|election|form
 features[field_group][] = group_diaet|node|election|form
 features[field_group][] = group_election_tabs|node|election|form
 features[field_group][] = group_general|node|election|form

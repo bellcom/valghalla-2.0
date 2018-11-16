@@ -351,7 +351,7 @@ function valghalla_election_field_default_field_instances() {
           'add' => '',
           'delete' => '',
           'description' => 1,
-          'edit' => '',
+          'edit' => 'Redigér',
           'view_mode' => 'full',
         ),
         'type' => 'field_collection_view',
@@ -375,8 +375,8 @@ function valghalla_election_field_default_field_instances() {
       'active' => 0,
       'module' => 'field_collection',
       'settings' => array(),
-      'type' => 'field_collection_embed',
-      'weight' => 2,
+      'type' => 'field_collection_hidden',
+      'weight' => 9,
     ),
   );
 
