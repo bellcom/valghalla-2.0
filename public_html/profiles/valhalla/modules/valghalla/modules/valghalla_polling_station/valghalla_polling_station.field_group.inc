@@ -76,34 +76,6 @@ function valghalla_polling_station_field_group_info() {
   $field_group = new stdClass();
   $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
   $field_group->api_version = 1;
-  $field_group->identifier = 'group_deltagere|node|polling_station|form';
-  $field_group->group_name = 'group_deltagere';
-  $field_group->entity_type = 'node';
-  $field_group->bundle = 'polling_station';
-  $field_group->mode = 'form';
-  $field_group->parent_name = 'group_valgsted';
-  $field_group->data = array(
-    'label' => 'Deltagere',
-    'weight' => '21',
-    'children' => array(
-      0 => 'field_volunteers_pr_party_1',
-    ),
-    'format_type' => 'htab',
-    'format_settings' => array(
-      'label' => 'Deltagere',
-      'instance_settings' => array(
-        'required_fields' => 1,
-        'classes' => 'group-deltagere field-group-htab',
-        'description' => '',
-      ),
-      'formatter' => 'open',
-    ),
-  );
-  $field_groups['group_deltagere|node|polling_station|form'] = $field_group;
-
-  $field_group = new stdClass();
-  $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
-  $field_group->api_version = 1;
   $field_group->identifier = 'group_kontakter|node|polling_station|form';
   $field_group->group_name = 'group_kontakter';
   $field_group->entity_type = 'node';
@@ -227,7 +199,6 @@ function valghalla_polling_station_field_group_info() {
   // Included for use with string extractors like potx.
   t('Adresse');
   t('Andet');
-  t('Deltagere');
   t('Kontaktpersoner');
   t('Ressourcer');
   t('Valgsted');

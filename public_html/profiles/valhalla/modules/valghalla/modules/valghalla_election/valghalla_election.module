@@ -399,4 +399,16 @@ function valghalla_election_update_7101() {
     }
   }
 
+  // Remove old field and field instances of field_volunteers_pr_party_1
+  $query = new EntityFieldQuery();
+  $query->entityCondition('entity_type', 'field_collection_item')
+    ->entityCondition('bundle', 'field_volunteers_pr_party_1');
+
+  $result = $query->execute();
+
+  if ($result['field_collection_item']) {
+    entity_delete_multiple('field_collection_item', array_keys($result['field_collection_item']));
+  }
+
+  field_delete_field('field_volunteers_pr_party_1');
 }
