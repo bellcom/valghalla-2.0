@@ -51,7 +51,7 @@ function valghalla_polling_station_field_default_field_instances() {
         'summary_rows' => 5,
       ),
       'type' => 'text_textarea_with_summary',
-      'weight' => 4,
+      'weight' => 19,
     ),
     'widget_type' => 'text_textarea_with_summary',
   );
@@ -92,7 +92,7 @@ function valghalla_polling_station_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 23,
+      'weight' => 24,
     ),
   );
 
@@ -374,7 +374,7 @@ function valghalla_polling_station_field_default_field_instances() {
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_select',
-      'weight' => 2,
+      'weight' => 16,
     ),
   );
 
@@ -458,7 +458,7 @@ function valghalla_polling_station_field_default_field_instances() {
         'display_label' => 1,
       ),
       'type' => 'options_onoff',
-      'weight' => 8,
+      'weight' => 18,
     ),
   );
 
@@ -498,7 +498,7 @@ function valghalla_polling_station_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 1,
+      'weight' => 15,
     ),
   );
 
@@ -537,7 +537,7 @@ function valghalla_polling_station_field_default_field_instances() {
       'module' => 'number',
       'settings' => array(),
       'type' => 'number',
-      'weight' => 3,
+      'weight' => 14,
     ),
   );
 
@@ -583,7 +583,7 @@ function valghalla_polling_station_field_default_field_instances() {
       'module' => 'number',
       'settings' => array(),
       'type' => 'number',
-      'weight' => 15,
+      'weight' => 16,
     ),
   );
 
@@ -629,7 +629,7 @@ function valghalla_polling_station_field_default_field_instances() {
       'module' => 'number',
       'settings' => array(),
       'type' => 'number',
-      'weight' => 16,
+      'weight' => 17,
     ),
   );
 
@@ -675,7 +675,7 @@ function valghalla_polling_station_field_default_field_instances() {
       'module' => 'number',
       'settings' => array(),
       'type' => 'number',
-      'weight' => 14,
+      'weight' => 15,
     ),
   );
 
@@ -721,7 +721,7 @@ function valghalla_polling_station_field_default_field_instances() {
       'module' => 'number',
       'settings' => array(),
       'type' => 'number',
-      'weight' => 13,
+      'weight' => 14,
     ),
   );
 
@@ -789,7 +789,7 @@ function valghalla_polling_station_field_default_field_instances() {
     'entity_type' => 'node',
     'field_name' => 'field_venue_contact_name',
     'label' => 'Lokalekontakt',
-    'required' => 1,
+    'required' => 0,
     'settings' => array(
       'text_processing' => 0,
       'user_register_form' => FALSE,
@@ -841,7 +841,7 @@ function valghalla_polling_station_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 7,
+      'weight' => 17,
     ),
   );
 

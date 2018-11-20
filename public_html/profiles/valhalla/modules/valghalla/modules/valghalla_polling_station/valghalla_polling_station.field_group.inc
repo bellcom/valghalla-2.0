@@ -27,9 +27,9 @@ function valghalla_polling_station_field_group_info() {
       1 => 'field_address_door',
       2 => 'field_address_floor',
       3 => 'field_address_road',
-      4 => 'field_address_road_no',
-      5 => 'field_address_zipcode',
-      6 => 'field_address_road2',
+      4 => 'field_address_road2',
+      5 => 'field_address_road_no',
+      6 => 'field_address_zipcode',
     ),
     'format_type' => 'htab',
     'format_settings' => array(
@@ -57,8 +57,12 @@ function valghalla_polling_station_field_group_info() {
     'label' => 'Andet',
     'weight' => '25',
     'children' => array(
-      0 => 'field_digital_election_list',
-      1 => 'field_venue_skolekode',
+      0 => 'body',
+      1 => 'field_constituency',
+      2 => 'field_digital_election_list',
+      3 => 'field_interntal_name',
+      4 => 'field_role_weight',
+      5 => 'field_venue_skolekode',
     ),
     'format_type' => 'htab',
     'format_settings' => array(
@@ -116,12 +120,12 @@ function valghalla_polling_station_field_group_info() {
     'label' => 'Ressourcer',
     'weight' => '23',
     'children' => array(
-      0 => 'field_venue_team_members',
-      1 => 'field_venue_teams',
-      2 => 'field_venue_bespisning_1',
-      3 => 'field_venue_bespisning_2',
-      4 => 'field_venue_booth_sides',
-      5 => 'field_venue_booths',
+      0 => 'field_venue_bespisning_1',
+      1 => 'field_venue_bespisning_2',
+      2 => 'field_venue_booth_sides',
+      3 => 'field_venue_booths',
+      4 => 'field_venue_team_members',
+      5 => 'field_venue_teams',
     ),
     'format_type' => 'htab',
     'format_settings' => array(
@@ -137,7 +141,7 @@ function valghalla_polling_station_field_group_info() {
   $field_groups['group_ressourcer|node|polling_station|form'] = $field_group;
 
   $field_group = new stdClass();
-  $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
+  $field_group->disabled = TRUE; /* Edit this to true to make a default field_group disabled initially */
   $field_group->api_version = 1;
   $field_group->identifier = 'group_valgsteder|node|polling_station|form';
   $field_group->group_name = 'group_valgsteder';
@@ -179,10 +183,8 @@ function valghalla_polling_station_field_group_info() {
     'children' => array(
       0 => 'group_adresse',
       1 => 'group_andet',
-      2 => 'group_deltagere',
-      3 => 'group_kontakter',
-      4 => 'group_ressourcer',
-      5 => 'group_valgsteder',
+      2 => 'group_kontakter',
+      3 => 'group_ressourcer',
     ),
     'format_type' => 'htabs',
     'format_settings' => array(
