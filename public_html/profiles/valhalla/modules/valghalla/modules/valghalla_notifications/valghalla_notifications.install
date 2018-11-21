@@ -1,0 +1,43 @@
+<?php
+/**
+ * @file
+ * Contains install function for Valghalla notifications module
+ */
+
+/**
+ * Implements hook_install().
+ */
+function valghalla_notifications_install() {
+  // Copy values from email notification.
+  $election_nodes = node_load_multiple(array(), array('type' => 'election'));
+  $role_nodes = node_load_multiple(array(), array('type' => 'roles'));
+  $types = valghalla_notifications_get_types();
+
+  if (empty($election_nodes) || empty($role_nodes)) {
+    return;
+  }
+
+  foreach ($election_nodes as $election) {
+    foreach ($types as $type => $type_title) {
+      if (!empty($tpl_nid = variable_get('valghalla_mail_' . $election->nid . '_' . $type, FALSE))) {
+        if ($tpl_nid == 1) {
+          $tpl_nid = '-1';
+        }
+        variable_set('valghalla_notifications_' . $election->nid . '_' . $type . '_mail', $tpl_nid);
+        variable_set('valghalla_notifications_' . $election->nid . '_' . $type . '_gateway_id', 'mail');
+      }
+    }
+
+    foreach ($role_nodes as $role_node) {
+      foreach ($types as $type => $type_title) {
+        if (!empty($tpl_nid = variable_get('valghalla_mail_' . $election->nid . '_' . $role_node->nid . '_' . $type, 0))) {
+          if ($tpl_nid == 1) {
+            $tpl_nid = '-1';
+          }
+          variable_set('valghalla_notifications_' . $election->nid . '_' . $role_node->nid . '_' . $type . '_mail', $tpl_nid);
+          variable_set('valghalla_notifications_' . $election->nid . '_' . $role_node->nid . '_' . $type . '_gateway_id', 'mail');
+        }
+      }
+    }
+  }
+}

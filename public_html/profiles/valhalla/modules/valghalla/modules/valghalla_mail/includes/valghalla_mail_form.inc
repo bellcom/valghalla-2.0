@@ -382,54 +382,6 @@ function valghalla_mail_sendmail_get_recipients($values) {
   return $volunteer_fcids;
 }
 
-/**
- * Implements hook_form_FORM_ID_alter().
- *
- * Insert info block with tokens, below body field.
- *
- * @author Thomas Thune Hansen <tth@bellcom.dk>
- */
-function valghalla_mail_form_email_node_form_alter(&$form, &$form_state, $form_id) {
-  $form['body'] += array('#suffix' => '');
-  $form['body']['#suffix'] = _valghalla_helper_get_volunteer_info_params('info') . $form['body']['#suffix'];
-  $url = current_path();
-
-  $form['title']['#description'] = 'E-mailens interne navn i Valghalla, dette er ikke emnefeltet.';
-
-  if ($url == "valghalla/administration/sendmail") {
-    $form_state['valghalla_sendmail'] = TRUE;
-
-    $emails = db_select('node', 'n')
-          ->distinct()
-          ->fields('n', array('nid', 'title'))
-          ->condition('n.type', 'email')
-          ->execute()->fetchAllKeyed();
-
-    $form['header'] = valghalla_mail_sendmail_get_header();
-    $form['header']['#weight'] = -100;
-
-    $form['resend'] = array(
-      '#type' => 'select',
-      '#weight' => -100,
-      '#options' => $emails,
-      '#title' => t('Vælg en mailskabelon her:'),
-      '#suffix' => '<p><b>Eller opret en ny herunder:</b></p>',
-      '#empty_option' => t('- None -'),
-      '#ajax' => array(
-        'callback' => 'valghalla_mail_resend_ajax',
-      ),
-    );
-  }
-
-  if (array_key_exists('valghalla_sendmail', $form_state)) {
-    $form['options']['status']['#default_value'] = 1;
-    $form['additional_settings']['#prefix'] = '<div style="display:none;">';
-    $form['additional_settings']['#suffix'] = '</div>';
-    $form['actions']['submit']['#submit'][] = 'valghalla_mail_sendmail_form_step';
-    $form['actions']['submit']['#value'] = t('Next');
-    hide($form['actions']['preview']);
-  }
-}
 
 /**
  * Redirect the user to the send form for the relevant mail.

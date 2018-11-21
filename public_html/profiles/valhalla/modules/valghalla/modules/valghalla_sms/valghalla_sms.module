@@ -1,0 +1,60 @@
+<?php
+/**
+ * @file
+ * Valghalla sms module.
+ */
+
+/**
+ * Code for the Valghalla sms. feature.
+ */
+include_once 'valghalla_sms.features.inc';
+
+/**
+ * Implements hook_notifications_info().
+ */
+function valghalla_sms_notifications_info() {
+  return array(
+    'sms' => array(
+      'name' => 'SMS',
+      'node_type' => 'sms',
+      'get_message_callback' => 'valghalla_sms_get_message',
+      'send_message_callback' => 'valghalla_sms_send_message',
+      'send_to_callback' => 'valghalla_sms_send_to',
+    ),
+  );
+}
+
+/**
+ * Get message callback.
+ */
+function valghalla_sms_get_message($template_node) {
+  $body_field = field_get_items('node', $template_node, 'body');
+
+  $body = $body_field[0]['value'];
+  $format = 'plain_text';
+  return array(
+    'body' => $body,
+    'format' => $format,
+  );
+}
+
+/**
+ * Send message callback.
+ */
+function valghalla_sms_send_message($to, $params, $multistep_values) {
+  $language = language_default();
+  $from = variable_get('valghalla_sms_from', FALSE);
+
+  // @TODO Seng sms gateway implementing.
+  return TRUE;
+}
+
+/**
+ * Get send to data callback.
+ */
+function valghalla_sms_send_to($entity) {
+  if ($field = field_get_items('node', $entity, 'field_phone')) {
+    return $field[0]['value'];
+  }
+  return FALSE;
+}

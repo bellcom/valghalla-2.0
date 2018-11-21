@@ -463,7 +463,7 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
       $value = ($arg1 == "TRUE");
 
       if ($node = node_load($this->attendeeNid)) {
-        $noMail = (bool)valghalla_mail_volunteer_no_mail($node);
+        $noMail = (bool)valghalla_notifications_volunteer_no_notification($node);
         if ($noMail !== $value) {
           throw new \Exception("valghalla_mail_volunteer_no_mail() returned other than expected \"$arg1\"");
         }

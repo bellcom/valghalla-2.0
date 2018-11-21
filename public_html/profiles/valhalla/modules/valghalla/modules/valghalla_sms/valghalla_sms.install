@@ -1,0 +1,11 @@
+<?php
+/**
+ * @file valghalla_sms.install
+ * Valghalla sms module.
+ */
+
+/**
+ * Implements hook_install()
+ */
+function valghalla_sms_install(){
+}
