@@ -13,3 +13,4 @@ virtualhost.conf
 cert
 
 public_html/sites/all/translations/*.po
+.DS_Store
