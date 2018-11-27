@@ -72,7 +72,7 @@ function valhalla_blocks_block_view($delta = '') {
             </div>
           </div>
           <div class="content">' . $block_cache . '</div>
-        </div><script>valhalla_blocks.loadOverview("' . $delta . '");</script>';
+        </div>';
 
       return array("content" => $output);
   }
