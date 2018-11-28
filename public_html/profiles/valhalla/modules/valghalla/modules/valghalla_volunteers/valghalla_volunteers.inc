@@ -428,7 +428,7 @@ function _valghalla_helper_get_token_values($entity) {
  * @author Thomas Thune Hansen <tth@bellcom.dk>
  */
 function _valghalla_helper_get_volunteer_info_params($node) {
-  return "<p><b>Erstatningstokens til brug i emne- og indholdsfeltet:</b></p>
+  return "<p><strong>Erstatningstokens til brug i emne- og indholdsfeltet:</strong></p>
           <ul>
           <li><em>!name</em>" . t(' vil blive erstattet af modtagerens navn') . "</li>
           <li><em>!email</em>" . t(' vil blive erstattet af modtagerens email adresse') . "</li>

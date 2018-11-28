@@ -84,7 +84,7 @@ function valghalla_volunteer_validator_settings() {
 
   $form['validate_single'] = array(
       '#type' => 'item',
-      '#prefix' => t('<div class="validate-single" style="float: left; margin-right:100px;"><b>Check deltagere ved oprettelse</b>'),
+      '#prefix' => t('<div class="validate-single" style="float: left; margin-right:100px;"><strong>Check deltagere ved oprettelse</strong>'),
   );
   
   $form['validate_single_age'] = array(
@@ -110,7 +110,7 @@ function valghalla_volunteer_validator_settings() {
   
   $form['validate_batch'] = array(
       '#type' => 'item',
-      '#prefix' => t('</div><div class = "validate-batch"><b>Valder personer i forhold til det aktive valg</b>'),
+      '#prefix' => t('</div><div class = "validate-batch"><strong>Valder personer i forhold til det aktive valg</strong>'),
   );
   
   $form['validate_batch_age'] = array(
@@ -150,12 +150,10 @@ $form['validate_batch_bottom'] = array(
       '#empty' => t('Der er ikke installeret nogen validerings services')
   );
 
-
-
   $form['bottom'] = array(
       '#type' => 'item',
-      '#prefix' => '<p><a class="btn btn-default" href="/admin/valghalla/validator/batch/validate">Valider alle deltagere</a></p>'
-      . '<p><a href="/admin/valghalla/validator/batch/address">Opdater alle deltageres adresser</a></p>',
+      '#prefix' => '<div><a class="btn btn-default" href="/admin/valghalla/validator/batch/validate">Valider alle deltagere</a>'
+      . '<a class="btn btn-link" href="/admin/valghalla/validator/batch/address">Opdater alle deltageres adresser</a></div>',
   );
 
   return system_settings_form($form);

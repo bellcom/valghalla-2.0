@@ -57,7 +57,7 @@ function vcv_serviceplatformen_settings() {
     $message = vcv_serviceplatformen_get_address($cpr);
 
     if ($message['status']) {
-      $output = '<div style="font-size: 15px; color : green"><b>' .t('Succeed') . '</b></div>';
+      $output = '<div style="font-size: 15px; color : green"><strong>' .t('Succeed') . '</strong></div>';
       $output .= '<div> ' . t('Test CPR nr. ') . $cpr . '<br />';
       foreach ($message as $key => $item) {
         if ($key != 'status') {

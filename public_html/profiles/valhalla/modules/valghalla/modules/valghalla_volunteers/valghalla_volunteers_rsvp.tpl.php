@@ -22,7 +22,7 @@
 <table>
   <tr>
     <td class="col-sm-3 col-md-3">
-      <b><?php print t('Funktion:'); ?></b><br />
+      <strong><?php print t('Funktion:'); ?></strong><br />
     </td>
     <td class="col-sm-9 col-md-9">
       <?php if (!empty($params['!position_description'])) : ?>
@@ -34,7 +34,7 @@
   </tr>
   <tr>
     <td class="col-sm-3 col-md-3">
-      <b>Dato:</b><br />
+      <strong>Dato:</strong><br />
     </td>
     <td class="col-sm-9 col-md-9">
       <?php print $params['!election_date']; ?><br />
@@ -43,7 +43,7 @@
 
   <tr>
     <td class="col-sm-3 col-md-3">
-      <b><?php print t('Tidspunkter:'); ?></b><br />
+      <strong><?php print t('Tidspunkter:'); ?></strong><br />
     </td>
     <td class="col-sm-9 col-md-9">
       <?php print $params['!time']; ?><br />
@@ -54,7 +54,7 @@
   </tr>
   <tr>
     <td class="col-sm-3 col-md-3">
-      <b><?php print t('Valgsted:'); ?></b>
+      <strong><?php print t('Valgsted:'); ?></strong>
     </td>
     <td class="col-sm-9 col-md-9">
       <?php print $params['!polling_station']; ?><br />

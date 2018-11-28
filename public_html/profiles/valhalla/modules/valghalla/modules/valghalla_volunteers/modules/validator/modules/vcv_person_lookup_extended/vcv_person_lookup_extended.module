@@ -56,7 +56,7 @@ function vcv_person_lookup_extended_settings() {
     $message = vcv_person_lookup_extended_get_status($cpr);
 
     if ($message['status']) {
-      $output = '<div style="font-size: 15px; color : green"><b>' .t('Succeed') . '</b></div>';
+      $output = '<div style="color : green"><strong>' .t('Succeed') . '</strong></div>';
       $output .= '<div> Test CPR nr. ' . $cpr . '<br />';
       foreach ($message as $key => $item) {
         if ($key != 'status') {

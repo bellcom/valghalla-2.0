@@ -29,7 +29,7 @@ function valghalla_mail_sendmail_get_header($form, &$form_state) {
     3 => array('data' => t('3. Send mail')),
   );
 
-  $stages[$current_step]['data'] = '<b>' . $stages[$current_step]['data'] . '</b>';
+  $stages[$current_step]['data'] = '<strong>' . $stages[$current_step]['data'] . '</strong>';
 
   $stages_list = theme('item_list', array('items' => $stages));
 

@@ -413,7 +413,7 @@ function valghalla_mail_form_email_node_form_alter(&$form, &$form_state, $form_i
       '#weight' => -100,
       '#options' => $emails,
       '#title' => t('Vælg en mailskabelon her:'),
-      '#suffix' => '<p><b>Eller opret en ny herunder:</b></p>',
+      '#suffix' => '<p><strong>Eller opret en ny herunder:</strong></p>',
       '#empty_option' => t('- None -'),
       '#ajax' => array(
         'callback' => 'valghalla_mail_resend_ajax',
