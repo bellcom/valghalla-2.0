@@ -8,6 +8,8 @@
  */
 
 /**
+ * @deprecated Moved to valghalla_notifications module.
+ *
  * Page callback for valghalla mails admin page
  *
  * @author Thomas Thune Hansen <tth@bellcom.dk>

@@ -69,7 +69,7 @@ function valghalla_pages_admin_valghalla() {
         }
       }
 
-      $actions[] = '<a href="/valghalla/administration/valg/mails/' . $election->nid . '">E-mail skabeloner</a>';
+      $actions[] = l('Notifikationer skabeloner', 'valghalla/administration/valg/notifications/' . $election->nid);
 
       $action_links = implode(' | ', $actions);
 

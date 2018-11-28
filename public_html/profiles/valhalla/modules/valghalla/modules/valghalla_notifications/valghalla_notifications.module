@@ -1,0 +1,327 @@
+<?php
+/**
+ * @file Contaion main functional code for Valghalla notifications.
+ */
+
+module_load_include('inc', 'valghalla_notifications', 'includes/valghalla_notifications_navigation');
+module_load_include('inc', 'valghalla_notifications', 'includes/valghalla_notifications_form');
+module_load_include('inc', 'valghalla_notifications', 'includes/valghalla_notifications_submit');
+
+/**
+ * Implements hook_menu().
+ */
+function valghalla_notifications_menu() {
+  $items['valghalla/administration/send-message'] = array(
+    'title' => 'Send besked til deltagere',
+    'description' => 'Her kan der udsendes besked til alle, eller udvalgte segmenter, af deltagere.',
+    'page callback' => 'valghalla_notifications_menu_block_page',
+    'access arguments' => array('administer valghalla'),
+    'type' => MENU_NORMAL_ITEM,
+    'weight' => -5,
+  );
+
+  $items['valghalla/administration/valg/notifications'] = array(
+    'title' => 'Notifikationer indstillinger',
+    'description' => 'Tilretning af standard notifikationer.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('valghalla_notifications_settings'),
+    'access arguments' => array('administer valghalla'),
+    'file' => 'valghalla_notifications_admin.inc',
+    'type' => MENU_NORMAL_ITEM,
+    'weight' => -4,
+  );
+
+  $items['valghalla/administration/sendto/%'] = array(
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('valghalla_notifications_send_message_form', 3),
+    'access arguments' => array('administer valghalla'),
+    'file' => 'includes/valghalla_notifications_form.inc',
+  );
+
+  $items['valghalla_notifications/ajax/view/%/%'] = array(
+    'page callback' => 'valghalla_notifications_ajax_view',
+    'access arguments' => array('administer valghalla'),
+    'page arguments' => array(3, 4),
+  );
+
+  $items['valghalla/administration/sendinvitation'] = array(
+    'title' => 'Send invitationer',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('valghalla_notifications_send_invitation_form', 3),
+    'access arguments' => array('administer valghalla'),
+    'file' => 'includes/valghalla_notifications_form.inc',
+    'type' => MENU_LOCAL_TASK,
+  );
+
+  foreach (valghalla_notifications_gateways() as $gateway_id => $gateway) {
+    $id_url_str = str_replace('_', '-', $gateway_id);
+    $items['valghalla/administration/send-message/' . $id_url_str] = array(
+      'title' => $gateway['name'],
+      'title callback' => 'check_plain',
+      'page callback' => 'valghalla_notifications_send_create_template_node',
+      'page arguments' => array($gateway_id),
+      'access arguments' => array('administer valghalla'),
+      'file' => 'includes/valghalla_notifications_form.inc',
+      'type' => MENU_NORMAL_ITEM,
+      'weight' => -5,
+    );
+
+    $items['valghalla/administration/notifications/add/' . $id_url_str] = array(
+      'title' => $gateway['name'],
+      'title callback' => 'check_plain',
+      'page callback' => 'valghalla_notifications_send_create_template_node',
+      'page arguments' => array($id_url_str),
+      'access arguments' => array('administer valghalla'),
+      'type' => MENU_NORMAL_ITEM,
+      'weight' => -5,
+    );
+  }
+
+  $items['valghalla/administration/notifications'] = array(
+    'title' => 'Messages notifikationer',
+    'description' => 'Tilretning af mail notifikationer.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('valghalla_notifications_admin_settings'),
+    'access arguments' => array('administer valghalla'),
+    'file' => 'valghalla_notifications_admin.inc',
+    'type' => MENU_NORMAL_ITEM,
+    'weight' => -4,
+  );
+
+  $items['valghalla/administration/notifications/add'] = array(
+    'title' => 'Tilføj kommunikation skabelon',
+    'page callback' => 'valghalla_notifications_menu_block_page',
+    'access arguments' => array('administer valghalla'),
+    'file' => 'valghalla_notifications_admin.inc',
+    'type' => MENU_NORMAL_ITEM,
+    'weight' => -4,
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_hook_info().
+ */
+function valghalla_notifications_hook_info() {
+  $hooks['notifications_info'] = array(
+    'group' => 'info',
+  );
+  $hooks['notifications_info_alter'] = array(
+    'group' => 'info',
+  );
+  return $hooks;
+}
+
+/**
+ * Implements hook_theme().
+ */
+function valghalla_notifications_theme() {
+  return array(
+    'valghalla_notifications_message_preview' => array(
+      'variables' => array(
+        'subject' => FALSE,
+        'body' => FALSE,
+      ),
+      'path' => drupal_get_path('module', 'valghalla_notifications') . '/templates',
+      'template' => 'message-preview',
+    ),
+  );
+}
+
+/**
+ * Callback function for available items block page.
+ */
+function valghalla_notifications_menu_block_page() {
+  module_load_include('inc', 'system', 'system.admin');
+  $item = menu_get_item();
+  if ($content = system_admin_menu_block($item)) {
+    foreach ($content as &$item) {
+      $item['localized_options']['query'] = drupal_get_destination();
+    }
+    $output = theme('admin_block_content', array('content' => $content));
+  }
+  else {
+    $output = t('You do not have any administrative items.');
+  }
+  return $output;
+}
+
+/**
+ * Callback function for available items block page.
+ */
+function valghalla_notifications_add_callback($type) {
+  drupal_goto('node/add/' . $type, array('query' => drupal_get_destination()));
+}
+
+/**
+ * Valghalla notifications types.
+ */
+function valghalla_notifications_get_types() {
+  return array(
+    'invitation' => t('Invitation'),
+    'confirmed' => t('Bekræftet (tak for din tilmeldelse)'),
+    'reminder' => t('Påmindelse'),
+    'rsvp_yes' => t('RSVP Ja'),
+    'rsvp_no' => t('RSVP Nej'),
+    'rsvp_never' => t('RSVP Aldrig'),
+    'remove' => t('Slet fra pladsen'),
+  );
+}
+
+/**
+ * Available template select options.
+ */
+function valghalla_notifications_generate_options($gateway_id, $options = array()) {
+  $gateway = valghalla_notifications_gateway($gateway_id);
+  if (empty($gateway)) {
+    return $options;
+  }
+
+  $nodes = node_load_multiple(array(), array('type' => $gateway['node_type']));
+  // Populate array with template options for general notifications.
+  $options[''] = t('None');
+  foreach ($nodes as $node) {
+    $options[$node->nid] = $node->title;
+  }
+  return $options;
+}
+
+/**
+ * Gets gateways list.
+ */
+function valghalla_notifications_gateways() {
+  $gateways =& drupal_static(__FUNCTION__);
+  if (!isset($gateways)) {
+    $keys = array(
+      'name',
+      'node_type',
+      'get_message_callback',
+      'send_message_callback',
+      'send_to_callback',
+    );
+    $gateways_info = module_invoke_all('notifications_info');
+    foreach ($gateways_info as $id => &$gateway) {
+      $valid = TRUE;
+
+      // Validate amount of required keys for gateway.
+      if (count(array_intersect($keys, array_keys($gateway))) != count($keys)) {
+        watchdog('valghalla_notifications', 'Not valid definition for gateway %gateway', array('%gateway' => $id));
+        $valid = FALSE;
+      }
+
+      // Validate callback functions.
+      foreach (preg_grep('/callback/i', $keys) as $index => $key) {
+        if (empty($gateway[$key]) || !function_exists($gateway[$key])) {
+          $valid = FALSE;
+        }
+      }
+
+      if (!$valid) {
+        continue;
+      }
+
+      $gateways[$id] = array('id' => $id) + $gateway;
+    }
+    drupal_alter('notifications_info', $gateways);
+  }
+
+  return $gateways;
+}
+
+/**
+ * Get gateway.
+ */
+function valghalla_notifications_gateway($gateway_id) {
+  $gateways = valghalla_notifications_gateways();
+  return isset($gateways[$gateway_id]) ? $gateways[$gateway_id] : FALSE;
+}
+
+/**
+ * Message preview AJAX page callback.
+ *
+ * Prints the message with the tokens replaced. As it would
+ * look in the message.
+ */
+function valghalla_notifications_ajax_view($template_nid, $fc_id, $election_nid = FALSE) {
+  $options = array();
+  $volunteer_fc = entity_load_single('field_collection_item', $fc_id);
+
+  $tokens = _valghalla_helper_get_token_values($volunteer_fc);
+
+  if ($template_nid == 'invite') {
+    $template_nid = valghalla_notifications_get_template(variable_get('valghalla_notifications_invitation_gateway', 'mail'), $election_nid, $tokens['!position_nid'], 'invitation');
+  }
+
+  if (empty($params = valghalla_notifications_get_message_by_nid($template_nid))) {
+    print t('Skabelon blev fundet ikke.');
+    return;
+  }
+
+  $body = !empty($params['body']) ? format_string($params['body'], $tokens) : '';
+  if (!empty($params['format']) && !strstr($params['format'], 'html')) {
+    $body = nl2br($body);
+  }
+
+  $subject = !empty($params['subject']) ? format_string($params['subject'], $tokens, $options) : '';
+  print theme('valghalla_notifications_message_preview', array(
+    'subject' => $subject,
+    'body' => $body,
+  ));
+}
+
+/**
+ * Fetch message subject and body for given role, notification type.
+ */
+function valghalla_notifications_get_template($gateway_id, $election_nid, $role_nid, $type, $template_nid = FALSE) {
+  if ($type) {
+    $variable_name = 'valghalla_notifications_' . $election_nid . '_' . $role_nid . '_' . $type . '_' . $gateway_id;
+    $template_nid = variable_get($variable_name, 0);
+  }
+
+  // If it doesn't exist, get the standard.
+  if (empty($template_nid)) {
+    $template_nid = variable_get('valghalla_notifications_' . $election_nid . '_' . $type . '_' . $gateway_id, FALSE);
+  }
+
+  if ($template_nid == '-1') {
+    return FALSE;
+  }
+
+  return $template_nid;
+}
+
+/**
+ * Fetch message subject and body by nid.
+ */
+function valghalla_notifications_get_message_by_nid($template_nid) {
+  if (empty($template_node = node_load($template_nid))) {
+    return FALSE;
+  }
+
+  $template_gateway = NULL;
+  foreach (valghalla_notifications_gateways() as $gateway) {
+    if ($gateway['node_type'] == $template_node->type) {
+      $template_gateway = $gateway;
+      break;
+    }
+  }
+
+  if (empty($template_gateway)) {
+    return FALSE;
+  }
+
+  $message = call_user_func($template_gateway['get_message_callback'], $template_node);
+  return !is_array($message) ? FALSE : $message;
+}
+
+/**
+ * Check if the user should recieve notification.
+ */
+function valghalla_notifications_volunteer_no_notification($volunteer_node) {
+  if ($field = field_get_items('node', $volunteer_node, 'field_no_mail')) {
+    return $field[0]['value'] == 1;
+  }
+
+  return FALSE;
+}

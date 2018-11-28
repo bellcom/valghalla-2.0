@@ -1,0 +1,17 @@
+name = Valghalla notifications
+description =  Core functionality for notification system.
+
+package = Valghalla
+project = Valghalla
+core = 7.x
+
+dependencies[] = list
+dependencies[] = node
+dependencies[] = valghalla_polling_station
+dependencies[] = valghalla_volunteers
+dependencies[] = valghalla_election
+
+files[] = valghalla_notifications_admin.inc
+files[] = includes/valghalla_notifications_form.inc
+files[] = includes/valghalla_notifications_navigation.inc
+files[] = includes/valghalla_notifications_submit.inc

@@ -810,6 +810,7 @@ function valghalla_volunteers_remove_volunteer_from_post($fcid){
  * Notify volunteer of post change
  */
 function valghalla_volunteers_notify_volunteer($election_nid, $role_nid, $fc, $type){
+  module_invoke_all('');
   $election_node = node_load($election_nid);
   $field_status = field_get_items('node', $election_node, 'field_election_status');
   $active = $field_status ? $field_status[0]['value'] : FALSE;

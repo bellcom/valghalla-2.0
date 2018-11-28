@@ -1,0 +1,13 @@
+<?php
+/**
+ * @file valghalla_eboks.install
+ * Valghalla eboks module
+ */
+
+/**
+ * Implements hook_install()
+ *
+ * @author Thomas Thune Hansen <tth@bellcom.dk>
+ */
+function valghalla_eboks_install(){
+}

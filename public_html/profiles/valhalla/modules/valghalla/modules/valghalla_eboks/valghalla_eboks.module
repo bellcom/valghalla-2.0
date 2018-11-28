@@ -1,0 +1,62 @@
+<?php
+/**
+ * @file
+ * Valghalla eboks module.
+ */
+
+/**
+ * Code for the Valghalla eboks. feature.
+ */
+include_once 'valghalla_eboks.features.inc';
+
+/**
+ * Implements hook_notifications_info().
+ */
+function valghalla_eboks_notifications_info() {
+  return array(
+    'eboks' => array(
+      'name' => 'eBoks',
+      'node_type' => 'eboks',
+      'get_message_callback' => 'valghalla_eboks_get_message',
+      'send_message_callback' => 'valghalla_eboks_send_message',
+      'send_to_callback' => 'valghalla_eboks_send_to',
+    ),
+  );
+}
+
+/**
+ * Get message callback.
+ */
+function valghalla_eboks_get_message($template_node) {
+  $body_field = field_get_items('node', $template_node, 'body');
+  $subject_field = field_get_items('node', $template_node, 'field_eboks_subject');
+
+  $body = $body_field[0]['value'];
+  $format = $body_field[0]['format'];
+  $subject = $subject_field[0]['value'];
+  return array(
+    'subject' => $subject,
+    'body' => $body,
+    'format' => $format,
+  );
+}
+
+/**
+ * Send message callback.
+ */
+function valghalla_eboks_send_message($to, $params, $multistep_values) {
+  $language = language_default();
+
+  // @TODO Seng eboks gateway implementing.
+  return TRUE;
+}
+
+/**
+ * Get send to data callback.
+ */
+function valghalla_eboks_send_to($entity) {
+  if ($field = field_get_items('node', $entity, 'field_cpr_number')) {
+    return $field[0]['value'];
+  }
+  return FALSE;
+}
