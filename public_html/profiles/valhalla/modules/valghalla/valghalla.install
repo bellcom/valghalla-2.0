@@ -1,0 +1,18 @@
+<?php
+/**
+ * @file
+ * This file install the Valhalla profile.
+ */
+
+/**
+ * Implements hook_update_N().
+ *
+ * Enable modules for notifications.
+ */
+function valghalla_update_7101() {
+  module_enable(array(
+    'valghalla_notifications',
+    'valghalla_eboks',
+    'valghalla_sms',
+  ));
+}
