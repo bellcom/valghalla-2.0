@@ -19,7 +19,8 @@ function valghalla_notifications_install() {
 
   foreach ($election_nodes as $election) {
     foreach ($types as $type => $type_title) {
-      if (!empty($tpl_nid = variable_get('valghalla_mail_' . $election->nid . '_' . $type, FALSE))) {
+      $tpl_nid = variable_get('valghalla_mail_' . $election->nid . '_' . $type, FALSE);
+      if (!empty($tpl_nid)) {
         if ($tpl_nid == 1) {
           $tpl_nid = '-1';
         }
@@ -30,7 +31,8 @@ function valghalla_notifications_install() {
 
     foreach ($role_nodes as $role_node) {
       foreach ($types as $type => $type_title) {
-        if (!empty($tpl_nid = variable_get('valghalla_mail_' . $election->nid . '_' . $role_node->nid . '_' . $type, 0))) {
+        $tpl_nid = variable_get('valghalla_mail_' . $election->nid . '_' . $role_node->nid . '_' . $type, 0);
+        if (!empty($tpl_nid)) {
           if ($tpl_nid == 1) {
             $tpl_nid = '-1';
           }
