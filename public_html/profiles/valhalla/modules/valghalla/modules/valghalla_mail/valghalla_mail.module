@@ -278,7 +278,8 @@ function valghalla_mail_get_message($template_node) {
   $subject_field = field_get_items('node', $template_node, 'field_subject');
 
   $attachments = array();
-  if (!empty($files = field_get_items('node', $template_node, 'field_valghalla_mail_attachments'))) {
+  $files = field_get_items('node', $template_node, 'field_valghalla_mail_attachments');
+  if (!empty($files)) {
     foreach ($files as $file_info) {
       $file = file_load($file_info['fid']);
       $uri = drupal_realpath($file->uri);
