@@ -14,7 +14,6 @@ base theme = 'bellcom'
 
 regions[help] = 'Help'
 regions[content] = 'Content'
-regions[footer__menu] = 'Footer - menu'
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Stylesheets
