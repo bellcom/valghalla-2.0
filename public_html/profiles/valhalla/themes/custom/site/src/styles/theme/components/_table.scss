@@ -33,6 +33,13 @@
 
     background-color: $brand-primary;
   }
+
+  tr {
+
+    &.selected {
+      background-color: $body-bg-quaternary !important;
+    }
+  }
 }
 
 .table-striped {
