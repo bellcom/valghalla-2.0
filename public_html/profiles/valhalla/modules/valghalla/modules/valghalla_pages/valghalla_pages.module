@@ -21,10 +21,12 @@ function valghalla_pages_menu(){
 }
 
 function valghalla_pages_status(){
+  $page = '<div class="row">';
   $block = module_invoke('valhalla_blocks', 'block_view', 'party_status');
-  $page = '<div class="col-md-4">' . render($block['content']) . '</div>';
+  $page .= '<div class="col-md-4">' . render($block['content']) . '</div>';
 
   $block = module_invoke('valhalla_blocks', 'block_view', 'party_constituency_status');
   $page .= '<div class="col-md-8">' . render($block['content']) . '</div>';
+  $page .= '</div>';
   return $page;
 }
