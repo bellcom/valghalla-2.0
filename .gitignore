@@ -1,5 +1,4 @@
 logs
-site
 sessions
 tmp
 sites/default/files
@@ -13,3 +12,9 @@ virtualhost.conf
 cert
 
 public_html/sites/all/translations/*.po
+
+.idea
+private
+public_html/vendor
+public_html/sites/all/vendor/
+.DS_Store

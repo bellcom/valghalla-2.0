@@ -1,0 +1,11 @@
+name = Valghalla GDPR dump
+description = Settings for GDPR dump module to get anonymized db dump
+core = 7.x
+package = Valghalla
+dependencies[] = ctools
+dependencies[] = gdpr_dump
+dependencies[] = strongarm
+features[ctools][] = strongarm:strongarm:1
+features[features_api][] = api:2
+features[variable][] = gdpr_dump_empty_tables
+features[variable][] = gdpr_dump_table_map
