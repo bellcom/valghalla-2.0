@@ -61,36 +61,22 @@ function valghalla_mail_menu() {
       'weight' => -4,
   );
 
-  $items['valghalla/administration/sendmail'] = array(
-      'title' => t('Send mails til deltagere'),
-      'description' => t('Her kan der udsendes mails til alle, eller udvalgte segmenter, af deltagere.'),
-      'page callback' => 'valghalla_mail_sendmail_create_email_node', // Step 1 create an email node
-      'access arguments' => array('administer valghalla'),
-      'file' =>'includes/valghalla_mail_form.inc',
-      'type' => MENU_NORMAL_ITEM,
-      'weight' => -5,
-  );
-  $items['valghalla/administration/sendinvitation'] = array(
-      'title' => t('Send invitationer'),
-      'page callback' => 'drupal_get_form',
-      'page arguments' => array('valghalla_mail_sendinvitation_form', 3), // Step 2 get mail addresses.
-      'access arguments' => array('administer valghalla'),
-      'file' =>'includes/valghalla_mail_form.inc',
-      'type' => MENU_LOCAL_TASK,
-    );
-  $items['valghalla/administration/sendto/%'] = array(
-      'page callback' => 'drupal_get_form',
-      'page arguments' => array('valghalla_mail_sendmail_form', 3), // Step 2 get mail addresses.
-      'access arguments' => array('administer valghalla'),
-      'file' =>'includes/valghalla_mail_form.inc',
-  );
-  $items['valghalla_mail/ajax/view/%/%'] = array(
-    'page callback' => 'valghalla_mail_ajax_view',
-    'access arguments' => array('administer valghalla'),
-    'page arguments' => array(3,4),
-
-  );
   return $items;
+}
+
+/**
+ * Implements hook_notifications_info().
+ */
+function valghalla_mail_notifications_info() {
+  return array(
+    'mail' => array(
+      'name' => 'E-mail',
+      'node_type' => 'email',
+      'send_to_callback' => 'valghalla_mail_send_to',
+      'get_message_callback' => 'valghalla_mail_get_message',
+      'send_message_callback' => 'valghalla_mail_send_message',
+    ),
+  );
 }
 
 /**
@@ -112,7 +98,7 @@ function valghalla_mail_mail($key, &$message, $params) {
             $params += array('tokens' => array());
 
       // Html mail
-      if(strstr($params['format'], 'html')){
+      if (strstr($params['format'], 'html')) {
         $headers = array(
           'MIME-Version' => '1.0',
           'Content-Type' => 'text/html; charset=UTF-8; format=flowed',
@@ -127,7 +113,7 @@ function valghalla_mail_mail($key, &$message, $params) {
       $message['subject'] = t($params['subject'], $params['tokens'], $options);
       $message['body'][] = t($params['body'], $params['tokens'], $options);
       $message['params']['attachments'] = $params['attachments'];
-      if ($params['bcc']) {
+      if (!empty($params['bcc'])) {
         $message['headers']['Bcc'] = $params['bcc'];
       }
       break;
@@ -218,18 +204,12 @@ function valghalla_mail_ajax_view($mail_nid, $fc_id, $election_nid = FALSE) {
 }
 
 /**
- * Valghalla mail types
+ * @deprecated Moved to valghalla_notifications module.
+ *
+ * Valghalla mail types.
  */
 function valghalla_mail_get_mail_types(){
-  return array(
-    'invitation' => t('Invitation'),
-    'confirmed' => t('Bekræftet (tak for din tilmeldelse)'),
-    'reminder' => t('Påmindelse'),
-    'rsvp_yes' => t('RSVP Ja'),
-    'rsvp_no' => t('RSVP Nej'),
-    'rsvp_never' => t('RSVP Aldrig'),
-    'remove' => t('Slet fra pladsen'),
-  );
+  return valghalla_notifications_get_types();
 }
 
 /**
@@ -254,5 +234,95 @@ function valghalla_mail_volunteer_no_mail($volunteer_node) {
     return $field[0]['value'] == 1;
   }
 
+  return FALSE;
+}
+
+/**
+ * Implements hook_notifications_recipients_form_alter().
+ *
+ * @see valghalla_notifications_recipients_form()
+ */
+function valghalla_mail_notifications_mail_recipients_form_alter(&$form, &$form_state) {
+  $values = isset($form_state['multistep_values']['get_recipients']) ? $form_state['multistep_values']['get_recipients'] : array();
+
+  $form['sender'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Afsender'),
+  );
+
+  $form['sender']['email_sender'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('brug min egen mail'),
+    '#description' => t('Denne vil også bruges som svar-til email, så svar fra modtageren sendes til den pågældende e-mailadresse.'),
+    '#default_value' => isset($values['email_sender']) ? $values['email_sender'] : 0,
+  );
+
+  global $user;
+  $form['sender']['user_email'] = array(
+    '#type' => 'hidden',
+    '#default_value' => $user->mail,
+  );
+}
+
+/**
+ * Get message callback.
+ *
+ * @param object $template_node
+ *   Node template object.
+ *
+ * @return array
+ *   Array with message params.
+ */
+function valghalla_mail_get_message($template_node) {
+  $body_field = field_get_items('node', $template_node, 'body');
+  $subject_field = field_get_items('node', $template_node, 'field_subject');
+
+  $attachments = array();
+  $files = field_get_items('node', $template_node, 'field_valghalla_mail_attachments');
+  if (!empty($files)) {
+    foreach ($files as $file_info) {
+      $file = file_load($file_info['fid']);
+      $uri = drupal_realpath($file->uri);
+      $attachments[] = array(
+        'filecontent' => $uri,
+        'filename' => $file->filename,
+        'filemime' => $file->filemime,
+      );
+    }
+  }
+  $body = $body_field[0]['value'];
+  $format = $body_field[0]['format'];
+  $subject = $subject_field[0]['value'];
+  return array(
+    'subject' => $subject,
+    'body' => $body,
+    'format' => $format,
+    'attachments' => $attachments
+  );
+}
+
+/**
+ * Send message callback.
+ */
+function valghalla_mail_send_message($to, $params, $multistep_values) {
+  $language = language_default();
+  $mail_sender = $multistep_values['get_recipients']['email_sender'];
+  if ($mail_sender) {
+    $from = $multistep_values['get_recipients']['user_email'];
+  }
+  else {
+    $from = variable_get('site_mail', 'admin@example.com');
+  }
+  $result = drupal_mail('valghalla_mail', 'mail', $to, $language, $params, $from, TRUE);
+  return $result['result'];
+}
+
+/**
+ * Get send to data callback.
+ */
+function valghalla_mail_send_to($entity) {
+  if ($email_field = field_get_items('node', $entity, 'field_email')) {
+    return $email_field[0]['email'];
+  }
   return FALSE;
 }

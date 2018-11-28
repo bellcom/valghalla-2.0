@@ -1,0 +1,16 @@
+name = Valghalla sms
+description = Extension for notification module for sending out sms messages to volunteers.
+core = 7.x
+package = valghalla
+version = 7.x-1.2
+project = valghalla_sms
+dependencies[] = valghalla_notifications
+dependencies[] = features
+dependencies[] = list
+dependencies[] = node
+dependencies[] = options
+dependencies[] = text
+features[features_api][] = api:2
+features[field_instance][] = node-sms-body
+features[node][] = sms
+files[] = valghalla_sms.module
