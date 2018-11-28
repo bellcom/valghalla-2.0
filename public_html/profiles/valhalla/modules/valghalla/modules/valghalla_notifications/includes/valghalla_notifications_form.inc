@@ -8,7 +8,8 @@
  * Form for Step 1 create_template_node step.
  */
 function valghalla_notifications_send_create_template_node($gateway_id) {
-  if (empty($gateway = valghalla_notifications_gateway($gateway_id))) {
+  $gateway = valghalla_notifications_gateway($gateway_id);
+  if (empty($gateway)) {
     drupal_set_message('Sending gateway @gateway_id not found', array('@gateway_id' => $gateway_id));
     drupal_not_found();
   }

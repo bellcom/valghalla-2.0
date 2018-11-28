@@ -122,14 +122,15 @@ function valghalla_notifications_send_batch(array $recipients, array $form_state
       $template_nid = valghalla_notifications_get_template($gateway['id'], $election_nid, $tokens['!position_nid'], 'invitation');
     }
 
-    if (empty($params = valghalla_notifications_get_message_by_nid($template_nid))) {
+    $params = valghalla_notifications_get_message_by_nid($template_nid);
+    if (empty($params)) {
       watchdog('valghalla_notifications', 'Template not found to send message to volunteer %name via %gateway', $placeholders);
       continue;
     }
 
     $params = array_merge(array('tokens' => $tokens), $params);
-
-    if (empty($to = call_user_func($gateway['send_to_callback'], $volunteer_fc->hostEntity()))) {
+    $to = call_user_func($gateway['send_to_callback'], $volunteer_fc->hostEntity());
+    if (empty($to)) {
       watchdog('valghalla_mail', 'Empty email for recipient with name %name', array('%name' => $params['tokens']['!name']), WATCHDOG_ERROR);
       continue;
     }

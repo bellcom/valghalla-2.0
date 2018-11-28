@@ -253,7 +253,8 @@ function valghalla_notifications_ajax_view($template_nid, $fc_id, $election_nid 
     $template_nid = valghalla_notifications_get_template(variable_get('valghalla_notifications_invitation_gateway', 'mail'), $election_nid, $tokens['!position_nid'], 'invitation');
   }
 
-  if (empty($params = valghalla_notifications_get_message_by_nid($template_nid))) {
+  $params = valghalla_notifications_get_message_by_nid($template_nid);
+  if (empty($params)) {
     print t('Skabelon blev fundet ikke.');
     return;
   }
@@ -295,7 +296,8 @@ function valghalla_notifications_get_template($gateway_id, $election_nid, $role_
  * Fetch message subject and body by nid.
  */
 function valghalla_notifications_get_message_by_nid($template_nid) {
-  if (empty($template_node = node_load($template_nid))) {
+  $template_node = node_load($template_nid);
+  if (empty($template_node)) {
     return FALSE;
   }
 
