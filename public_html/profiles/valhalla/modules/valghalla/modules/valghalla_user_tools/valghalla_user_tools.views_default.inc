@@ -274,14 +274,14 @@ function valghalla_user_tools_views_default_views() {
   $view->description = '';
   $view->tag = 'default';
   $view->base_table = 'node';
-  $view->human_name = 'Mail skabeloner';
+  $view->human_name = 'Notifikations skabeloner';
   $view->core = 7;
   $view->api_version = '3.0';
   $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
 
   /* Display: Master */
   $handler = $view->new_display('default', 'Master', 'default');
-  $handler->display->display_options['title'] = 'Mailskabeloner';
+  $handler->display->display_options['title'] = 'Notifikations skabeloner';
   $handler->display->display_options['use_more_always'] = FALSE;
   $handler->display->display_options['use_more_text'] = 'mere';
   $handler->display->display_options['access']['type'] = 'perm';
@@ -315,7 +315,7 @@ function valghalla_user_tools_views_default_views() {
   $handler->display->display_options['header']['area']['table'] = 'views';
   $handler->display->display_options['header']['area']['field'] = 'area';
   $handler->display->display_options['header']['area']['empty'] = TRUE;
-  $handler->display->display_options['header']['area']['content'] = '<a class="btn btn-success" href="/node/add/email">+ Tilføj skabelon</a>';
+  $handler->display->display_options['header']['area']['content'] = '<a class="btn btn-success" href="/valghalla/administration/notifications/add?destination=valghalla/administration/mail-skabeloner">+ Tilføj skabelon</a>';
   $handler->display->display_options['header']['area']['format'] = 'full_html';
   /* Felt: Indhold: Titel */
   $handler->display->display_options['fields']['title']['id'] = 'title';
@@ -363,6 +363,8 @@ function valghalla_user_tools_views_default_views() {
   $handler->display->display_options['filters']['type']['field'] = 'type';
   $handler->display->display_options['filters']['type']['value'] = array(
     'email' => 'email',
+    'sms' => 'sms',
+    'eboks' => 'eboks',
   );
 
   /* Display: Page */
@@ -374,14 +376,14 @@ function valghalla_user_tools_views_default_views() {
   $handler->display->display_options['menu']['context'] = 0;
   $translatables['mail_templates'] = array(
     t('Master'),
-    t('Mailskabeloner'),
+    t('Notifikations skabeloner'),
     t('mere'),
     t('Udfør'),
     t('Gendan'),
     t('Sortér efter'),
     t('Stigende'),
     t('Faldende'),
-    t('<a class="btn btn-success" href="/node/add/email">+ Tilføj skabelon</a>'),
+    t('<a class="btn btn-success" href="/valghalla/administration/notifications/add?destination=valghalla/administration/mail-skabeloner">+ Tilføj skabelon</a>'),
     t('Emne'),
     t('Brødtekst'),
     t('Redigér-link'),
@@ -1338,7 +1340,7 @@ function valghalla_user_tools_views_default_views() {
     t('næste ›'),
     t('sidste »'),
     t('indhold'),
-    t('field_chairman'),
+    t('Handler i stykker field_data_field_chairman.field_chairman'),
     t('Valgkontakt'),
     t('Parti'),
     t('Andre kontaktoplysninger'),
