@@ -15,6 +15,8 @@ function valghalla_update_7101() {
     'valghalla_eboks',
     'valghalla_sms',
   ));
+
+  features_revert(array('valghalla_user_tools' => array('views_view')));
 }
 
 /**
