@@ -106,7 +106,7 @@ function valghalla_notifications_menu() {
 function valghalla_notifications_cron() {
   module_load_include('inc', 'valghalla_notifications', 'includes/valghalla_notifications_rsvp_reminder');
 
-  $last_run_ts = variable_get('valghalla_notifications_last_run', REQUEST_TIME);
+  $last_run_ts = variable_get('valghalla_notifications_last_run');
   valghalla_notifications_rsvp_reminder($last_run_ts);
   variable_set('valghalla_notifications_last_run', REQUEST_TIME);
 }
@@ -351,7 +351,7 @@ function valghalla_notifications_notify_volunteer($election_nid, $role_nid, $fc,
   $no_mail = valghalla_notifications_volunteer_no_notification($fc->hostEntity());
   $election_node = node_load($election_nid);
   $field_status = field_get_items('node', $election_node, 'field_election_status');
-  if (!$no_mail || empty($field_status)) {
+  if ($no_mail || empty($field_status)) {
     return FALSE;
   }
 
