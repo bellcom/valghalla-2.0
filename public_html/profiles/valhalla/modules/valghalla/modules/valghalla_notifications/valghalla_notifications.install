@@ -26,6 +26,8 @@ function valghalla_notifications_install() {
         }
         variable_set('valghalla_notifications_' . $election->nid . '_' . $type . '_mail', $tpl_nid);
         variable_set('valghalla_notifications_' . $election->nid . '_' . $type . '_gateway_id', 'mail');
+        // Cleanup old variable.
+        variable_del('valghalla_mail_' . $election->nid . '_' . $type);
       }
     }
 
@@ -38,8 +40,43 @@ function valghalla_notifications_install() {
           }
           variable_set('valghalla_notifications_' . $election->nid . '_' . $role_node->nid . '_' . $type . '_mail', $tpl_nid);
           variable_set('valghalla_notifications_' . $election->nid . '_' . $role_node->nid . '_' . $type . '_gateway_id', 'mail');
+          // Cleanup old variable.
+          variable_del('valghalla_mail_' . $election->nid . '_' . $role_node->nid . '_' . $type);
         }
       }
+    }
+  }
+
+  $roles = db_query("SELECT name, rid FROM {role} WHERE rid > 2");
+  foreach ($roles as $role) {
+    if ($role->name == 'Valgsekretær') {
+      continue;
+    }
+
+    $cancellation_from_participants_by_role = variable_get('valghalla_mail_cancellation_from_participants_' . $role->rid);
+    if (!empty($cancellation_from_participants_by_role)) {
+      variable_set('valghalla_notifications_cancellation_from_participants_' . $role->rid, $cancellation_from_participants_by_role);
+      // Cleanup old variable.
+      variable_del('valghalla_mail_cancellation_from_participants_' . $role->rid);
+    }
+  }
+
+  $mail_variables = array(
+    'cancellation_from_participants_',
+    'cancellation_from_participants_mail_rsvp_never',
+    'cancellation_from_participants_mail_rsvp_no',
+    'cancellation_from_participants_others',
+    'cancellation_from_participants_to_mails',
+    'invitation',
+    'last_run',
+    'send_invitation_on_add',
+  );
+  foreach ($mail_variables as $var_suff) {
+    $var_value = variable_get('valghalla_mail_' . $var_suff);
+    if (!empty($var_value)) {
+      variable_set('valghalla_notifications_' . $var_suff, $var_value);
+      // Cleanup old variable.
+      variable_del('valghalla_mail_' . $var_suff);
     }
   }
 }

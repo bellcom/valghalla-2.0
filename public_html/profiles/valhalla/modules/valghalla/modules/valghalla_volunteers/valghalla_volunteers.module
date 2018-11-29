@@ -350,59 +350,45 @@ function valghalla_volunteers_rsvp_form_submit($form, &$form_state) {watchdog('d
   $election_node = node_load($election_nid);
 
   //sending mail if 'Sæt igang' is enabled in current election node
-  if ( $election_node AND $election_node->field_election_status['da'][0]['value'] == TRUE){
+  if ($election_node AND $election_node->field_election_status['da'][0]['value'] == TRUE) {
 
-  switch ($form_state['values']['rsvp']) {
-    case 1:
-      $type = 'rsvp_yes';
-      break;
+    switch ($form_state['values']['rsvp']) {
+      case 1:
+        $type = 'rsvp_yes';
+        break;
 
-    case 2:
-      $type = 'rsvp_no';
-      break;
+      case 2:
+        $type = 'rsvp_no';
+        break;
 
-    case 3:
-      $type = 'rsvp_never';
-      break;
-  }
-
-  $role_field = field_get_items('field_collection_item', $fc, 'field_post_role');
-    $role_nid = $role_field[0]['target_id'];
-
-    $mail = valghalla_mail_get_mail($election_nid, $role_nid, $type);
-    $tokens = _valghalla_helper_get_token_values($fc);
-
-    $params = array_merge(array('tokens' => $tokens), $mail);
-    $to = $tokens['!email'];
-    $from = variable_get('site_mail', 'admin@example.com');
-
-    // Send email to roles or other email address, if user cancelled to attend.
-    $to_admin = '';
-    if ($type == 'rsvp_no' || $type == 'rsvp_never') {
-       $to_admin = valghalla_volunteers_add_email_to_list();
+      case 3:
+        $type = 'rsvp_never';
+        break;
     }
-    $params['bcc'] = $to_admin;
 
-    drupal_mail('valghalla_mail', 'mail', $to, $language, $params, $from, TRUE);
+    $role_field = field_get_items('field_collection_item', $fc, 'field_post_role');
+    $role_nid = $role_field[0]['target_id'];
+    valghalla_notifications_notify_volunteer($election_nid, $role_nid, $fc, $type);
     drupal_set_message(t('Vi har modtaget dit svar.'));
-  }else{
+  }
+  else {
     //Do not need to send email. 'Sæt igang' is disabled in current election node
   }
 }
 
 /**
  * Get a list of email addresses according to role which are selected in config file
- * see also valghalla_mail_admin
+ * see also valghalla_notification_admin
  *
  * @author Yani Xu <yani@bellcom.dk>
  */
 function valghalla_volunteers_add_email_to_list() {
-  module_load_include('inc', 'valghalla_mail', 'valghalla_mail_admin');
+  module_load_include('inc', 'valghalla_notifications', 'valghalla_notifications_admin');
   $roles = db_query("SELECT name, rid FROM {role} WHERE rid > 2");
   $to = "";
   foreach ($roles as $role) {
-    $role_id_sendTo = variable_get("valghalla_mail_cancellation_from_participants_".$role->rid);
-    // When the role is selected in valghalla_mail_admin.inc
+    $role_id_sendTo = variable_get("valghalla_notifications_cancellation_from_participants_".$role->rid);
+    // When the role is selected in valghalla_notifications_admin.inc
     if ($role_id_sendTo) {
       // Get all the email addresses according to role id and add to "to list".
       $results = db_query("SELECT u.mail as mail FROM {users_roles} r, {users} u where r.uid=u.uid and r.rid = ".$role->rid);
@@ -425,8 +411,8 @@ function valghalla_volunteers_add_email_to_list() {
     }
   }
   // Get the extra email addresses.
-  $mails = variable_get("valghalla_mail_cancellation_from_participants_to_mails");
-  $other_check = variable_get("valghalla_mail_cancellation_from_participants_others");
+  $mails = variable_get("valghalla_notifications_cancellation_from_participants_to_mails");
+  $other_check = variable_get("valghalla_notifications_cancellation_from_participants_others");
   if ($other_check) {
     $mails = explode(",", $mails);
     foreach ($mails as $key => $value) {
@@ -773,7 +759,7 @@ function valghalla_volunteers_add_volunteer_to_post($volunteer_nid, $pollingstat
   $fc->field_token[LANGUAGE_NONE][0]['value'] = user_password(10);
   $fc->save();
 
-  if(variable_get('valghalla_mail_send_invitation_on_add', TRUE) && !$confirmed){
+  if (variable_get('valghalla_notifications_send_invitation_on_add', TRUE) && !$confirmed) {
     valghalla_volunteers_notify_volunteer($election_nid, $role_nid, $fc, 'invitation');
   }
   else if ($confirmed) {
@@ -807,24 +793,10 @@ function valghalla_volunteers_remove_volunteer_from_post($fcid){
 }
 
 /**
- * Notify volunteer of post change
+ * Notify volunteer of post change.
  */
 function valghalla_volunteers_notify_volunteer($election_nid, $role_nid, $fc, $type){
-  module_invoke_all('');
-  $election_node = node_load($election_nid);
-  $field_status = field_get_items('node', $election_node, 'field_election_status');
-  $active = $field_status ? $field_status[0]['value'] : FALSE;
-
-  $mail = valghalla_mail_get_mail($election_nid, $role_nid, $type);
-  $no_mail = valghalla_mail_volunteer_no_mail($fc->hostEntity());
-
-  if (($active && is_array($mail)) && !$no_mail) {
-    $tokens = _valghalla_helper_get_token_values($fc);
-    $params = array_merge(array('tokens' => $tokens), $mail);
-    $to = $tokens['!email'];
-    $from = variable_get('site_mail', 'admin@example.com');
-    drupal_mail('valghalla_mail', 'mail', $to, $language, $params, $from, TRUE);
-  }
+  valghalla_notifications_notify_volunteer($election_nid, $role_nid, $fc, $type);
 }
 
 /**

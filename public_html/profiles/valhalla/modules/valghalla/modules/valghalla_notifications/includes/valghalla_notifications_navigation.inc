@@ -27,7 +27,7 @@ function valghalla_notifications_get_navigation_header(&$form, &$form_state) {
     3 => array('data' => t('3. Send besked')),
   );
 
-  $stages[$current_step]['data'] = '<b>' . $stages[$current_step]['data'] . '</b>';
+  $stages[$current_step]['data'] = '<strong>' . $stages[$current_step]['data'] . '</strong>';
 
   $stages_list = theme('item_list', array('items' => $stages));
 

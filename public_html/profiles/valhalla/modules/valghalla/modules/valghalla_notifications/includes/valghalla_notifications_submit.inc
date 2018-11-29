@@ -131,7 +131,7 @@ function valghalla_notifications_send_batch(array $recipients, array $form_state
     $params = array_merge(array('tokens' => $tokens), $params);
     $to = call_user_func($gateway['send_to_callback'], $volunteer_fc->hostEntity());
     if (empty($to)) {
-      watchdog('valghalla_mail', 'Empty email for recipient with name %name', array('%name' => $params['tokens']['!name']), WATCHDOG_ERROR);
+      watchdog('valghalla_notifications', 'Empty email for recipient with name %name', array('%name' => $params['tokens']['!name']), WATCHDOG_ERROR);
       continue;
     }
 

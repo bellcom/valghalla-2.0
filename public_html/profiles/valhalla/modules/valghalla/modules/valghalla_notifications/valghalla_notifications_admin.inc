@@ -153,65 +153,60 @@ function valghalla_notifications_settings($form, $form_state, $election_nid = FA
  */
 function valghalla_notifications_admin_settings() {
   // @TODO.
-  $gateways = valghalla_notifications_gateways();
-  foreach ($gateways as $gateway) {
+  // Cancellation from participants mail settings.
+  $roles = db_query('SELECT name, rid FROM {role} WHERE rid > 2');
+  $form['valghalla_volunteers_mail']['valghalla_notifications_cancel'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Besked ved afbud fra deltagere'),
+    '#collapsible' => TRUE,
+    '#description' => t('Vælg roller der skal modtage mails ved afbud. (Mails sendes som Bcc)'),
+  );
 
-    // Cancellation from participants mail settings.
-    $roles = db_query("SELECT name, rid FROM {role} WHERE rid > 2");
-    $form['valghalla_volunteers_mail']['valghalla_mail_cancel'] = array(
-      '#type' => 'fieldset',
-      '#title' => t('Besked ved afbud fra deltagere'),
-      '#collapsible' => TRUE,
-      '#description' => t('Vælg roller der skal modtage mails ved afbud. (Mails sendes som Bcc)'),
-    );
-
-    foreach ($roles as $role) {
-      if ($role->name == 'Valgsekretær') {
-        $form['valghalla_volunteers_mail']['valghalla_mail_cancel']["valghalla_mail_cancellation_from_participants_" . $role->rid] = array(
-          '#type' => 'checkbox',
-          '#title' => $role->name,
-          '#default_value' => variable_get("valghalla_mail_cancellation_from_participants_" . $role->rid),
-        );
-      }
+  foreach ($roles as $role) {
+    if ($role->name == 'Valgsekretær') {
+      $form['valghalla_volunteers_mail']['valghalla_notifications_cancel']['valghalla_notifications_cancellation_from_participants_' . $role->rid] = array(
+        '#type' => 'checkbox',
+        '#title' => $role->name,
+        '#default_value' => variable_get('valghalla_notifications_cancellation_from_participants_' . $role->rid),
+      );
     }
-
-    $other_mails = variable_get('valghalla_mail_cancellation_from_participants_to_mails');
-    $other_check = variable_get('valghalla_mail_cancellation_from_participants_others');
-
-    if (!empty($other_mails) && empty($other_check)) {
-      variable_set('valghalla_mail_cancellation_from_participants_others', 0);
-      variable_set('valghalla_mail_cancellation_from_participants_to_mails', '');
-    }
-    elseif (empty($other_mails) && $other_check) {
-      variable_set("valghalla_mail_cancellation_from_participants_others", 0);
-    }
-
-    $form['valghalla_volunteers_mail']['valghalla_mail_cancel']['valghalla_mail_cancellation_from_participants_others'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Andre (udfyld tekstfeltet herunder):'),
-      '#default_value' => variable_get("valghalla_mail_cancellation_from_participants_others"),
-    );
-    $form['valghalla_volunteers_mail']['valghalla_mail_cancel']['valghalla_mail_cancellation_from_participants_to_mails'] = array(
-      '#type' => 'textfield',
-      '#description' => t('Liste af E-mailadresser adskildt af komma'),
-      '#default_value' => variable_get("valghalla_mail_cancellation_from_participants_to_mails"),
-    );
-
-    // Reminder settings.
-    $form['valghalla_volunteers_mail']['options']['valghalla_rsvp_reminder_days'] = array(
-      '#type' => 'textfield',
-      '#title' => t('Påmindelses dage'),
-      '#description' => t('Liste af dage før valg der skal udsendes påmindelser, adskildt af komma ( , ). f.eks. 14, 7, 5, 3'),
-      '#default_value' => variable_get('valghalla_rsvp_reminder_days', '14, 7, 5, 3'),
-    );
-
-    $form['valghalla_volunteers_mail']['mails']['valghalla_mail_send_invitation_on_add'] = array(
-      '#title' => t('Send mail(invitation) til deltager når denne tilføjes på et valgsted.'),
-      '#default_value' => variable_get('valghalla_mail_send_invitation_on_add', TRUE),
-      '#type' => 'checkbox',
-    );
   }
 
+  $other_mails = variable_get('valghalla_notifications_cancellation_from_participants_to_mails');
+  $other_check = variable_get('valghalla_notifications_cancellation_from_participants_others');
+
+  if (!empty($other_mails) && empty($other_check)) {
+    variable_set('valghalla_notifications_cancellation_from_participants_others', 0);
+    variable_set('valghalla_notifications_cancellation_from_participants_to_mails', '');
+  }
+  elseif (empty($other_mails) && $other_check) {
+    variable_set('valghalla_notifications_cancellation_from_participants_others', 0);
+  }
+
+  $form['valghalla_volunteers_mail']['valghalla_notifications_cancel']['valghalla_notifications_cancellation_from_participants_others'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Andre (udfyld tekstfeltet herunder):'),
+    '#default_value' => variable_get('valghalla_notifications_cancellation_from_participants_others'),
+  );
+  $form['valghalla_volunteers_mail']['valghalla_notifications_cancel']['valghalla_notifications_cancellation_from_participants_to_mails'] = array(
+    '#type' => 'textfield',
+    '#description' => t('Liste af E-mailadresser adskildt af komma'),
+    '#default_value' => variable_get('valghalla_notifications_cancellation_from_participants_to_mails'),
+  );
+
+  // Reminder settings.
+  $form['valghalla_volunteers_mail']['options']['valghalla_rsvp_reminder_days'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Påmindelses dage'),
+    '#description' => t('Liste af dage før valg der skal udsendes påmindelser, adskildt af komma ( , ). f.eks. 14, 7, 5, 3'),
+    '#default_value' => variable_get('valghalla_rsvp_reminder_days', '14, 7, 5, 3'),
+  );
+
+  $form['valghalla_volunteers_mail']['mails']['valghalla_notifications_send_invitation_on_add'] = array(
+    '#title' => t('Send besked(invitation) til deltager når denne tilføjes på et valgsted.'),
+    '#default_value' => variable_get('valghalla_notification_send_invitation_on_add', TRUE),
+    '#type' => 'checkbox',
+  );
 
   return system_settings_form($form);
 }
@@ -221,7 +216,7 @@ function valghalla_notifications_admin_settings() {
  */
 function valghalla_notifications_settings_validate(&$elements, &$form_state, $form_id = NULL) {
   if (preg_match('/[^\d|,| ]/', $form_state['values']['valghalla_rsvp_reminder_days'])) {
-    // Found illigal chars in the form
+    // Found illigal chars in the form.
     form_set_error('valghalla_rsvp_reminder_days', 'Dette felt skal være en komma-separeret liste af hele tal.');
   }
 }

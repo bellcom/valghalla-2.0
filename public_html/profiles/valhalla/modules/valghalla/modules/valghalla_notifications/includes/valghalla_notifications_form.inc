@@ -49,7 +49,7 @@ function valghalla_notifications_form_alter(&$form, &$form_state) {
       '#weight' => -100,
       '#options' => valghalla_notifications_generate_options($gateway['id']),
       '#title' => t('Vælg en besked skabelon her:'),
-      '#suffix' => '<p><b>Eller opret en ny herunder:</b></p>',
+      '#suffix' => '<p><strong>Eller opret en ny herunder:</strong></p>',
     );
   }
 
