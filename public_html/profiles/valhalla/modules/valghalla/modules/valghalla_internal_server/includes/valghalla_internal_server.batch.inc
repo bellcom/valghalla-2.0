@@ -69,16 +69,12 @@ function valghalla_internal_server_batch_clone_op($uuid, $operation_details, &$c
       $nid = reset($import['nids']);
       $node = node_load($nid);
 
-      // Remove the item from the queue, we don't want to push it after the update.
-      valghalla_synch_queue_remove_item($node->uuid);
-
       // Fetch name and address
       valghalla_internal_server_volunteer_update_name_and_address($node);
 
       // Handle validation.
       $validationStatus = valghalla_internal_server_validate_volunteer($node);
 
-      //$validationStatus['valid'] = TRUE;//TODO: remove
       if ($validationStatus['valid']) {
         $context['results'][] = array(
           'message' => t('Node "@title" imported into <a href="@link">@title</a>.', array(
@@ -94,7 +90,7 @@ function valghalla_internal_server_batch_clone_op($uuid, $operation_details, &$c
         valghalla_internal_server_mark_invalid($node, $validationStatus['errors']);
 
         $context['results'][] = array(
-          'message' => t('Node "@title" imported into <a href="@link">@title</a>. But failed validation. Messages: @messages', array(
+          'message' => t('Node "@title" imported into <a href="@link">@title</a>. But failed validation, seat will be freed. Messages: @messages', array(
             '@title' => $node->title,
             '@link' => url('node/' . $nid),
             '@messages' => implode('; ', $validationStatus['errors'])
@@ -102,8 +98,30 @@ function valghalla_internal_server_batch_clone_op($uuid, $operation_details, &$c
           'type' => 'status'
         );
 
-        //TODO: free seat
+        // Freeing the seed and pushing node.
+        valghalla_internal_server_free_last_selected_seat($node);
+
+        // Exporting with serialize formatter.
+        $export = node_export(intval($node->nid), 'serialize');
+        $data = $export['output'];
+
+        // Pushing the node.
+        $result = $ws->pushNodeSerialized($data);
+
+        // Operation was unsuccessful.
+        if (!$result->nid) {
+          $context['results'][] = array(
+            'message' => t('Could not free seat for "@title" push failed, message: @message', array(
+              '@title' => $node->title,
+              '@message' => implode(' ', $result)
+            )),
+            'type' => 'warning'
+          );
+        }
       }
+
+      // Delete the item from queue server.
+      valghalla_synch_queue_remove_item($node->uuid);
 
       // Delete the item from queue on the external server.
       $ws->removeFromQueueByUuid($uuid);
@@ -262,9 +280,6 @@ function valghalla_internal_server_batch_push_op($item, $operation_details, &$co
     } elseif ($item->type == 'node') {
       // Report progress.
       $context['message'] = t('Pushing node @title', array('@title' => $existingItem->title));
-
-      // Anonymize the content.
-      $existingItem = valghalla_internal_server_anonymize_node($existingItem);
 
       // Exporting with serialize formatter.
       $export = node_export(intval($existingItem->nid), 'serialize');

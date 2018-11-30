@@ -114,3 +114,13 @@ function valghalla_internal_server_anonymize_node($node) {
   }
   return $node;
 }
+
+function valghalla_internal_server_free_last_selected_seat($volunteer) {
+  if (!empty($volunteer->field_electioninfo) && is_array($volunteer->field_electioninfo)) {
+    $fc_field = end($volunteer->field_electioninfo['und']);
+    if ($fc_field['value']) {
+      $fc = entity_load_single('field_collection_item', $fc_field['value']);
+      $fc->delete();
+    }
+  }
+}
