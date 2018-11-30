@@ -168,7 +168,7 @@ function valghalla_resource_export_node_create($params) {
  *   Boolean.
  */
 function _valghalla_resource_export_resource_delete($uuid) {
-  valghalla_synche_queue_remove_item($uuid);
+  valghalla_synch_queue_remove_item($uuid);
   return TRUE;
 }
 
