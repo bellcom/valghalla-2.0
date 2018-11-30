@@ -235,6 +235,69 @@ function valghalla_election_field_default_field_bases() {
     'type' => 'entityreference',
   );
 
+  // Exported field_base: 'field_ppsp_party'.
+  $field_bases['field_ppsp_party'] = array(
+    'active' => 1,
+    'cardinality' => 1,
+    'deleted' => 0,
+    'entity_types' => array(),
+    'field_name' => 'field_ppsp_party',
+    'indexes' => array(
+      'tid' => array(
+        0 => 'tid',
+      ),
+    ),
+    'locked' => 0,
+    'module' => 'taxonomy',
+    'settings' => array(
+      'allowed_values' => array(
+        0 => array(
+          'vocabulary' => 'partier',
+          'parent' => 0,
+        ),
+      ),
+    ),
+    'translatable' => 0,
+    'type' => 'taxonomy_term_reference',
+  );
+
+  // Exported field_base: 'field_ppsp_polling_station'.
+  $field_bases['field_ppsp_polling_station'] = array(
+    'active' => 1,
+    'cardinality' => 1,
+    'deleted' => 0,
+    'entity_types' => array(),
+    'field_name' => 'field_ppsp_polling_station',
+    'indexes' => array(
+      'nid' => array(
+        0 => 'nid',
+      ),
+    ),
+    'locked' => 0,
+    'module' => 'node_reference',
+    'settings' => array(
+      'referenceable_types' => array(
+        'absentee_ballot' => 0,
+        'article' => 0,
+        'constituency' => 0,
+        'election' => 0,
+        'email' => 0,
+        'page' => 0,
+        'panel' => 0,
+        'polling_station' => 'polling_station',
+        'roles' => 0,
+        'volunteers' => 0,
+      ),
+      'view' => array(
+        'args' => array(),
+        'display_name' => '',
+        'view_name' => '',
+      ),
+    ),
+    'translatable' => 0,
+    'type' => 'node_reference',
+  );
+
   // Exported field_base: 'field_secretary'.
   $field_bases['field_secretary'] = array(
     'active' => 1,
@@ -269,6 +332,32 @@ function valghalla_election_field_default_field_bases() {
     ),
     'translatable' => 1,
     'type' => 'user_reference',
+  );
+
+  // Exported field_base: 'field_volunteers_pr_pol_st_party'.
+  $field_bases['field_volunteers_pr_pol_st_party'] = array(
+    'active' => 1,
+    'cardinality' => -1,
+    'deleted' => 0,
+    'entity_types' => array(),
+    'field_name' => 'field_volunteers_pr_pol_st_party',
+    'indexes' => array(
+      'revision_id' => array(
+        0 => 'revision_id',
+      ),
+      'value' => array(
+        0 => 'value',
+      ),
+    ),
+    'locked' => 0,
+    'module' => 'field_collection',
+    'settings' => array(
+      'hide_blank_items' => 1,
+      'hide_initial_item' => 0,
+      'path' => '',
+    ),
+    'translatable' => 0,
+    'type' => 'field_collection',
   );
 
   return $field_bases;

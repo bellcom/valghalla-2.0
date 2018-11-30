@@ -10,6 +10,70 @@
 function valghalla_election_field_default_field_instances() {
   $field_instances = array();
 
+  // Exported field_instance:
+  // 'field_collection_item-field_volunteers_pr_pol_st_party-field_ppsp_party'.
+  $field_instances['field_collection_item-field_volunteers_pr_pol_st_party-field_ppsp_party'] = array(
+    'bundle' => 'field_volunteers_pr_pol_st_party',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'taxonomy',
+        'settings' => array(),
+        'type' => 'taxonomy_term_reference_link',
+        'weight' => 1,
+      ),
+    ),
+    'entity_type' => 'field_collection_item',
+    'field_name' => 'field_ppsp_party',
+    'label' => 'Party',
+    'required' => 1,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'options',
+      'settings' => array(),
+      'type' => 'options_select',
+      'weight' => 1,
+    ),
+  );
+
+  // Exported field_instance:
+  // 'field_collection_item-field_volunteers_pr_pol_st_party-field_ppsp_polling_station'.
+  $field_instances['field_collection_item-field_volunteers_pr_pol_st_party-field_ppsp_polling_station'] = array(
+    'bundle' => 'field_volunteers_pr_pol_st_party',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'node_reference',
+        'settings' => array(),
+        'type' => 'node_reference_default',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'field_collection_item',
+    'field_name' => 'field_ppsp_polling_station',
+    'label' => 'Polling Station',
+    'required' => 1,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'options',
+      'settings' => array(),
+      'type' => 'options_select',
+      'weight' => 0,
+    ),
+  );
+
   // Exported field_instance: 'node-constituency-body'.
   $field_instances['node-constituency-body'] = array(
     'bundle' => 'constituency',
@@ -71,7 +135,6 @@ function valghalla_election_field_default_field_instances() {
           'multiple_number' => '',
           'multiple_to' => '',
           'show_remaining_days' => FALSE,
-          'show_repeat_rule' => 'show',
         ),
         'type' => 'date_default',
         'weight' => 1,
@@ -107,7 +170,7 @@ function valghalla_election_field_default_field_instances() {
         'year_range' => '-3:+3',
       ),
       'type' => 'date_popup',
-      'weight' => -3,
+      'weight' => -4,
     ),
   );
 
@@ -150,7 +213,7 @@ function valghalla_election_field_default_field_instances() {
         'display_label' => 1,
       ),
       'type' => 'options_onoff',
-      'weight' => 0,
+      'weight' => -1,
     ),
   );
 
@@ -193,7 +256,7 @@ function valghalla_election_field_default_field_instances() {
         'display_label' => 1,
       ),
       'type' => 'options_onoff',
-      'weight' => -1,
+      'weight' => -2,
     ),
   );
 
@@ -230,7 +293,7 @@ function valghalla_election_field_default_field_instances() {
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_select',
-      'weight' => -2,
+      'weight' => -3,
     ),
   );
 
@@ -270,7 +333,50 @@ function valghalla_election_field_default_field_instances() {
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_buttons',
-      'weight' => 1,
+      'weight' => 0,
+    ),
+  );
+
+  // Exported field_instance: 'node-election-field_volunteers_pr_pol_st_party'.
+  $field_instances['node-election-field_volunteers_pr_pol_st_party'] = array(
+    'bundle' => 'election',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'field_collection',
+        'settings' => array(
+          'add' => '',
+          'delete' => '',
+          'description' => 1,
+          'edit' => 'Redigér',
+          'view_mode' => 'full',
+        ),
+        'type' => 'field_collection_view',
+        'weight' => 6,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_volunteers_pr_pol_st_party',
+    'label' => 'Deltagere pr. parti',
+    'required' => 0,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 0,
+      'module' => 'field_collection',
+      'settings' => array(),
+      'type' => 'field_collection_hidden',
+      'weight' => 9,
     ),
   );
 
@@ -456,10 +562,13 @@ function valghalla_election_field_default_field_instances() {
   t('Body');
   t('Bogstav');
   t('Dato');
+  t('Deltagere pr. parti');
   t('Emails sendt');
   t('Fuldt partinavn');
   t('Logo');
   t('Partisekretær');
+  t('Party');
+  t('Polling Station');
   t('Sæt igang');
   t('Type');
   t('Valgsteder');
