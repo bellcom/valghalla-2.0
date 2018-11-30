@@ -1,1 +1,11 @@
 <?php
+
+/**
+ * Implements hook_install.
+ *
+ * Sets node_export_dependency_attach_nodes to FALSE.
+ */
+function valghalla_external_server_install() {
+  // Module requires this variable to be FALSE.
+  variable_set('node_export_dependency_attach_nodes', FALSE);
+}
