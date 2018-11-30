@@ -119,7 +119,7 @@ function _valghalla_resource_export_resource_definition() {
 }
 
 /**
- * Creates a new node based on submitted values.
+ * Creates or updates a node based on submitted values.
  *
  * Note that this function uses drupal_execute() to create new nodes,
  * which may require very specific formatting. The full implications of this
@@ -139,7 +139,7 @@ function valghalla_resource_export_node_create($params) {
 
   $nid = NULL;
 
-  // Prepare and create a new node.
+  // Prepare and create/update a new node.
   $import = node_export_import($params['node_export_data']);
 
   if ($import['success']) {
@@ -149,6 +149,10 @@ function valghalla_resource_export_node_create($params) {
 
   // Return the node that was created.
   if ($nid) {
+    $node = node_load($nid);
+    // Remove the item from the queue, we don't want to be in the queue of pending changes.
+    valghalla_synch_queue_remove_item($node->uuid);
+
     return _node_resource_retrieve($nid);
   } else {
     return $import['output'];

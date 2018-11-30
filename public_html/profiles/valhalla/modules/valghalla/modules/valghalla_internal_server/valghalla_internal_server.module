@@ -49,19 +49,19 @@ function valghalla_internal_server_taxonomy_term_update($term) {
  * Implements hook_cron().
  */
 function valghalla_internal_server_cron() {
-//  os2forms_webform_sharing_repo_clear_users();
-//  os2forms_webform_sharing_fetch_users();
-//  os2forms_webform_sharing_repo_clear_webforms();
-//  os2forms_webform_sharing_fetch_webforms();
-//  os2forms_webform_sharing_reset_readonly_webforms();
   valghalla_internal_server_clone_updated_content();
   valghalla_internal_server_push_updated_content();
-  //for each content, get the full content information (as node_export) and save it locally
 
   variable_set('valgalla_internal_server_last_synch', time());
+  if (drupal_is_cli() && function_exists('drush_main')) {
+    drush_backend_batch_process();
+  }
+  else {
+    batch_process(current_path());
+  }
 }
 
-function valghalla_internal_server_clone_updated_content() {
+function valghalla_internal_server_clone_updated_content($forceStart = FALSE) {
   $updatedContent = array();
 
   $ws = new ExternalWebservice();
@@ -87,26 +87,34 @@ function valghalla_internal_server_clone_updated_content() {
   // Using batch to do the heavy operations.
   $batch = valghalla_internal_server_batch_clone($uuids);
   batch_set($batch);
-  if (drupal_is_cli() && function_exists('drush_main')) {
-    drush_backend_batch_process();
-  }
-  else {
-    batch_process(current_path());
+
+  // If batch is not force started, it must be started manually.
+  if ($forceStart) {
+    if (drupal_is_cli() && function_exists('drush_main')) {
+      drush_backend_batch_process();
+    }
+    else {
+      batch_process(current_path());
+    }
   }
 }
 
-function valghalla_internal_server_push_updated_content() {
+function valghalla_internal_server_push_updated_content($forceStart = FALSE) {
   // Getting items ordered according by the position the have to be pushed.
   $queueItems = valghalla_synch_queue_get_items_ordered();
 
   // Using batch to do the heavy operations.
   $batch = valghalla_internal_server_batch_push($queueItems);
   batch_set($batch);
-  if (drupal_is_cli() && function_exists('drush_main')) {
-    drush_backend_batch_process();
-  }
-  else {
-    batch_process(current_path());
+
+  // If batch is not force started, it must be started manually.
+  if ($forceStart) {
+    if (drupal_is_cli() && function_exists('drush_main')) {
+      drush_backend_batch_process();
+    }
+    else {
+      batch_process(current_path());
+    }
   }
 }
 

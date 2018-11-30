@@ -69,6 +69,9 @@ function valghalla_internal_server_batch_clone_op($uuid, $operation_details, &$c
       $nid = reset($import['nids']);
       $node = node_load($nid);
 
+      // Remove the item from the queue, we don't want to push it after the update.
+      valghalla_synch_queue_remove_item($node->uuid);
+
       // Handle validation.
       $validationStatus = valghalla_internal_server_validate_volunteer($node);
       //$validationStatus['valid'] = TRUE;//TODO: remove
@@ -243,7 +246,7 @@ function valghalla_internal_server_batch_push_op($item, $operation_details, &$co
           )),
           'type' => 'status'
         );
-        
+
         valghalla_synch_queue_remove_item($existingItem->uuid);
       } else {
         $context['results'][] = array(
