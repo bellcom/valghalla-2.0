@@ -125,6 +125,7 @@ function valghalla_bs_theme_navbarmenu($path) {
   $items = array();
 
   foreach ($tree_output as $item_id => $item_data) {
+
     if (is_numeric($item_id) && is_array($item_data)) {
       $items[] = array(
         'class' => 'flexy-navigation__item__dropdown-menu__item',
