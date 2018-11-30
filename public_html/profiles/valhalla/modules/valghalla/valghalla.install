@@ -29,3 +29,15 @@ function valghalla_update_7102() {
     'adminimal_admin_menu',
   ));
 }
+
+/**
+ * Implements hook_update_N().
+ *
+ * Enable valghalla_internal_server.
+ */
+function valghalla_update_7103() {
+  module_enable(array(
+    'valghalla_internal_server',
+  ));
+}
+

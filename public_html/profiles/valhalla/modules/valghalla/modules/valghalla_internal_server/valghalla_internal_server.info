@@ -1,0 +1,10 @@
+name = Valghalla Internal server
+description = Provides funtionality Valghalla internal server
+package = Valghalla - Internal Server
+dependencies[] = uuid
+dependencies[] = node_export
+dependencies[] = node_export_dependency
+dependencies[] = valghalla_synch_queue
+
+version = "7.x-1.0"
+core = "7.x"

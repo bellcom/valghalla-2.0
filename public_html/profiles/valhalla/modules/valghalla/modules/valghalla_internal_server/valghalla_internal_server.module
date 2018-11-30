@@ -1,0 +1,128 @@
+<?php
+
+define("VALGHALLA_INTERNAL_SERVER_MAX_SUBSEQ_WS_REQUESTS", 10);
+
+//module_load_include('inc', 'os2forms_webform_sharing', 'includes/os2forms_webform_sharing.webservice');
+module_load_include('php', 'valghalla_internal_server', 'includes/ExternalWebservice.class');
+module_load_include('inc', 'valghalla_internal_server', 'includes/valghalla_internal_server.pages');
+module_load_include('inc', 'valghalla_internal_server', 'includes/valghalla_internal_server.batch');
+module_load_include('inc', 'valghalla_internal_server', 'includes/valghalla_internal_server.utils');
+module_load_include('inc', 'valghalla_internal_server', 'includes/valghalla_internal_server.queue');
+
+/**
+ * Implement hook_node_insert().
+ */
+function valghalla_internal_server_node_insert($node) {
+  if (in_array($node->type, array('volunteers', 'roles', 'election', 'constituency', 'polling_station'))) {
+    valghalla_synch_queue_add_item($node);
+  }
+}
+
+/**
+ * Implement hook_node_update().
+ */
+function valghalla_internal_server_node_update($node) {
+  if (in_array($node->type, array('volunteers', 'roles', 'election', 'constituency', 'polling_station'))) {
+    valghalla_synch_queue_add_item($node);
+  }
+}
+
+/**
+ * Implements hook_taxonomy_term_insert().
+ */
+function valghalla_internal_server_taxonomy_term_insert($term) {
+  //TODO: add term filter
+  //TODO: do we need to synch terms back?
+  valghalla_synch_queue_add_item($term);
+}
+
+/**
+ * Implements hook_taxonomy_term_update().
+ */
+function valghalla_internal_server_taxonomy_term_update($term) {
+  //TODO: add term filter
+  //TODO: do we need to synch terms back?
+  valghalla_synch_queue_add_item($term);
+}
+
+/**
+ * Implements hook_cron().
+ */
+function valghalla_internal_server_cron() {
+//  os2forms_webform_sharing_repo_clear_users();
+//  os2forms_webform_sharing_fetch_users();
+//  os2forms_webform_sharing_repo_clear_webforms();
+//  os2forms_webform_sharing_fetch_webforms();
+//  os2forms_webform_sharing_reset_readonly_webforms();
+  valghalla_internal_server_clone_updated_content();
+  valghalla_internal_server_push_updated_content();
+  //for each content, get the full content information (as node_export) and save it locally
+
+  variable_set('valgalla_internal_server_last_synch', time());
+}
+
+function valghalla_internal_server_clone_updated_content() {
+  $updatedContent = array();
+
+  $ws = new ExternalWebservice();
+
+  // Allowing to get limited number of nodes. Limit = VALGHALLA_INTERNAL_SERVER_MAX_SUBSEQ_WS_REQUESTS * pageSize (default to 20).
+  for ($i = 0; $i < VALGHALLA_INTERNAL_SERVER_MAX_SUBSEQ_WS_REQUESTS; $i++) {
+    $currentPageContent = $ws->fetchContent($i);
+
+    // If this page returned no results, no need to proceed further.
+    if (empty($currentPageContent)) {
+      break;
+    }
+
+    $updatedContent = array_merge($updatedContent, $currentPageContent);
+  }
+
+  // Making list of uuids.
+  $uuids = array();
+  foreach($updatedContent as $content) {
+    $uuids[] = $content->uuid;
+  }
+
+  // Using batch to do the heavy operations.
+  $batch = valghalla_internal_server_batch_clone($uuids);
+  batch_set($batch);
+  if (drupal_is_cli() && function_exists('drush_main')) {
+    drush_backend_batch_process();
+  }
+  else {
+    batch_process(current_path());
+  }
+}
+
+function valghalla_internal_server_push_updated_content() {
+  // Getting items ordered according by the position the have to be pushed.
+  $queueItems = valghalla_synch_queue_get_items_ordered();
+
+  // Using batch to do the heavy operations.
+  $batch = valghalla_internal_server_batch_push($queueItems);
+  batch_set($batch);
+  if (drupal_is_cli() && function_exists('drush_main')) {
+    drush_backend_batch_process();
+  }
+  else {
+    batch_process(current_path());
+  }
+}
+
+/**
+ * Implements hook_node_export_dependency_alter().
+ *
+ */
+function valghalla_internal_server_node_export_dependency_field_alter(&$handled, &$node, $dependency) {
+  // Adding parent uuid.
+  $handled[0]['parent_uuid'] = $dependency->uuid;
+}
+
+/**
+ * Implements hook_node_export_node_alter().
+ *
+ */
+function valghalla_internal_server_node_export_node_alter(&$node, $original_node) {
+  $node = valghalla_internal_server_anonymize_node($node);
+}
