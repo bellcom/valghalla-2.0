@@ -192,7 +192,7 @@
 
             </div>
             <div class="col-xs-12 col-md-6">
-              <div class="hidden-xs text-right text-sm-left">
+              <div class="hidden-xs text-right text-sm-left breadcrumb__wrapper">
                 <?php print $breadcrumb; ?>
               </div>
             </div>

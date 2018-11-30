@@ -15,28 +15,15 @@
  *    wherever.
  */
 
-/**
- * Implements hook_block_info().
- */
-function valhalla_blocks_block_info() {
-  return array(
-    'party_status' => array(
-      'info' => t('Parti status'),
-      'cache' => DRUPAL_NO_CACHE,
-    ),
-    'party_constituency_status' => array(
-      'info' => t('Valgkredsstatus'),
-      'cache' => DRUPAL_NO_CACHE,
-    ),
-  );
-}
+Use Mpdf\Mpdf;
 
 /**
  * Implements hook_menu().
  */
-function valhalla_blocks_menu() {
-  $items['valhalla_blocks/ajax/view'] = array(
-    'page callback' => 'valhalla_block_ajax_view',
+function valghalla_status_report_menu() {
+  $items['valghalla/report'] = array(
+    'title' => t('Status rapport'),
+    'page callback' => 'valghalla_status_report_generator',
     'access callback' => 'user_is_logged_in',
   );
 
@@ -44,128 +31,31 @@ function valhalla_blocks_menu() {
 }
 
 /**
- * Implements hook_block_view().
+ * Generates a PDF report
  */
-function valhalla_blocks_block_view($delta = '') {
-  switch ($delta) {
-    // The other blocks are fetched with AJAX. this is just simple markup to
-    // fill.
-    case 'party_status':
-    case 'party_constituency_status':
+function valghalla_status_report_generator() {
+  $mpdf = new Mpdf();
 
-      $block_cache = '';
-      if (isset($_SESSION['election_nid'])) {
-        global $user;
-        $cache = cache_get($delta . '_' . $user->uid . '_' . $_SESSION['election_nid']);
-
-        if ($cache) {
-          $block_cache = $cache->data;
-        }
-      }
-
-      drupal_add_js(drupal_get_path('module', 'valhalla_blocks') . '/js/valhalla_blocks.js', 'file');
-
-      $output = '<div id="valhalla_block-' . $delta . '" >
-        <div class="progress progress-striped active">
-          <div class="progress-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
-            <span>Opdaterer</span>
-            </div>
-          </div>
-          <div class="content">' . $block_cache . '</div>
-        </div>';
-
-      return array("content" => $output);
-  }
-}
-/**
- * AJAX block view.
- *
- * Renders markup for the AJAX'ed blocks.
- */
-function valhalla_block_ajax_view($delta = '') {
-  $markup = '';
-  global $user;
-
-  $user_entity = user_load($user->uid);
-  $user_party_id = empty($user_entity->field_party[LANGUAGE_NONE][0]['tid']) ? FALSE : $user_entity->field_party[LANGUAGE_NONE][0]['tid'];
-
-  // Get polling stations user is allowed to see.
-  $restrict_polling_stations = array();
-  if (!empty ($user_entity->field_polling_station[LANGUAGE_NONE])) {
-    foreach ($user_entity->field_polling_station[LANGUAGE_NONE] as $station) {
-      $restrict_polling_stations[] = $station['nid'];
-    }
+  // Attach stylesheet.
+  $stylesheet = __DIR__ . '/css/pdf.css';
+  if (file_exists($stylesheet)) {
+    $mpdf->WriteHTML(file_get_contents($stylesheet), 1);
   }
 
-  // Users selected election is in $_SESSION['election_nid'].
-  $election_node = node_load($_SESSION['election_nid']);
+  // Generate PDF.
+  $content = _generate_pdf_content();
+  $mpdf->writeHTML(t('<h1>Valghalla status report</h1>'));
+  $mpdf->WriteHTML($content);
 
-  if (!is_object($election_node)) {
-    print t('Der er ikke valgt noget valg');
-    return;
-  }
-
-  // We need to know what polling stations are active in this
-  // election.
-  $polling_station_nids = odin_get_polling_stations($election_node->nid);
-
-  if (empty($polling_station_nids)) {
-    print t('Der er ingen valgsteder på dette valg');
-    return;
-  }
-
-  // We also need the roles.
-  $roles = odin_get_roles();
-
-  switch ($delta) {
-    //
-    // Party status (Overall).
-    //
-    case 'party_status':
-      $count = odin_get_volunteers_count($_SESSION['election_nid'],
-                                          array_keys($polling_station_nids),
-                                          $roles,
-                                          $user_party_id);
-      $markup .= _valhalla_blocks_generate_overview_markup($count);
-      break;
-
-    //
-    // Polling station status.
-    //
-    case 'party_constituency_status':
-      // We need info on the polling station nodes (constituency)
-      // So we just load them all.
-      foreach ($polling_station_nids as $polling_station_nid => $polling_station_title) {
-        // If the array of restricting stations is not empty we only let the
-        // user see the polling stations in this array.
-        if (!empty($restrict_polling_stations) &&
-           !in_array($polling_station_nid, $restrict_polling_stations)) {
-          continue;
-        }
-
-        $polling_station_count[$polling_station_nid] = odin_get_volunteers_count(
-                                                                          $_SESSION['election_nid'],
-                                                                          array($polling_station_nid),
-                                                                          $roles,
-                                                                          $user_party_id);
-      }
-      $constituency_nids = odin_get_constituencies($_SESSION['election_nid']);
-      $markup .= _valhalla_blocks_generate_constituency_markup($constituency_nids, $polling_station_count);
-
-      break;
-  }
-
-  global $user;
-  cache_set($delta . '_' . $user->uid . '_' . $_SESSION['election_nid'], $markup);
-
-  print $markup;
+  // Sent PDF to the browser.
+  $mpdf->Output();
 }
 
 /**
  * Generate overview markup.
  */
-function _valhalla_blocks_generate_overview_markup($count) {
-  $label = _valhalla_blocks_get_label($count['total_count']);
+function _valghalla_status_report_generate_overview_markup($count) {
+  $label = _valghalla_status_report_get_label($count['total_count']);
   $markup = '
         <table class="table">
           <thead>
@@ -215,7 +105,7 @@ function _valhalla_blocks_generate_overview_markup($count) {
       continue;
     }
 
-    $label = _valhalla_blocks_get_label($role_count);
+    $label = _valghalla_status_report_get_label($role_count);
     $markup .= '
         <tr>
           <td class="column-first">' . $roles[$role_nid] . '</td>
@@ -234,7 +124,7 @@ function _valhalla_blocks_generate_overview_markup($count) {
 /**
  * Generates table markup for constituency.
  */
-function _valhalla_blocks_generate_constituency_markup($constituency_nids, $polling_station_count) {
+function _valghalla_status_report_generate_constituency_markup($constituency_nids, $polling_station_count) {
   $roles = odin_get_roles();
 
   $constituencies = array();
@@ -285,7 +175,7 @@ function _valhalla_blocks_generate_constituency_markup($constituency_nids, $poll
       $header_markup .= '<th class="column-label">' . $role_title . '</th>';
 
       // Generate bottom totals row.
-      $label = _valhalla_blocks_get_label($constituency_total['role_count'][$role_nid]);
+      $label = _valghalla_status_report_get_label($constituency_total['role_count'][$role_nid]);
 
       $bottom_markup .= '<td class="total column-count ' . $label . ' ">' . $constituency_total['role_count'][$role_nid]['total'];
       $bottom_markup .= '/' . $constituency_total['role_count'][$role_nid]['assigned'] . '</td>';
@@ -296,13 +186,13 @@ function _valhalla_blocks_generate_constituency_markup($constituency_nids, $poll
     $markup .= $header_markup;
     $markup .= '<th class="column-label">I alt</th>';
     $markup .= '</tr></thead>';
-    $markup .= _valhalla_blocks_generate_polling_station_markup($polling_station_nids,
+    $markup .= _valghalla_status_report_generate_polling_station_markup($polling_station_nids,
                                                                 $polling_station_count);
 
     $markup .= '<tr><td class="total">I alt</td>';
     $markup .= $bottom_markup;
 
-    $label = _valhalla_blocks_get_label($constituency_total['total_count']);
+    $label = _valghalla_status_report_get_label($constituency_total['total_count']);
 
     $markup .= '<td class="total column-count ' . $label . ' ">' . $constituency_total['total_count']['total'];
     $markup .= '/' . $constituency_total['total_count']['assigned'] . '</td>';
@@ -322,7 +212,7 @@ function _valhalla_blocks_generate_constituency_markup($constituency_nids, $poll
 /**
  * Generates row markup for overview page.
  */
-function _valhalla_blocks_generate_polling_station_markup($polling_station_nids, $polling_station_count) {
+function _valghalla_status_report_generate_polling_station_markup($polling_station_nids, $polling_station_count) {
   $markup = '';
 
   foreach ($polling_station_nids as $polling_station_nid => $polling_station_title) {
@@ -333,16 +223,15 @@ function _valhalla_blocks_generate_polling_station_markup($polling_station_nids,
       continue;
     }
 
-    $markup .= '<tr><td class="column-first"><a href="/volunteers/station/' . $polling_station_nid . '">';
-    $markup .= $polling_station_title . '</a></td>';
+    $markup .= '<tr><td class="column-first">' . $polling_station_title . '</td>';
 
     foreach ($polling_station_count[$polling_station_nid]['role_count'] as $role_nid => $role_count) {
-      $label = _valhalla_blocks_get_label($role_count);
+      $label = _valghalla_status_report_get_label($role_count);
 
       $markup .= '<td class="column-count ' . $label . '">'  .    $role_count['total'] . '/' . $role_count['assigned'] . '</td>';
     }
 
-    $label = _valhalla_blocks_get_label($polling_station_count[$polling_station_nid]['total_count']);
+    $label = _valghalla_status_report_get_label($polling_station_count[$polling_station_nid]['total_count']);
 
     $markup .= '<td class="column-count ' . $label . '">'  .  $polling_station_count[$polling_station_nid]['total_count']['total'];
     $markup .= '/' . $polling_station_count[$polling_station_nid]['total_count']['assigned'] . '</td>';
@@ -355,7 +244,7 @@ function _valhalla_blocks_generate_polling_station_markup($polling_station_nids,
 /**
  * Helper, find status label.
  */
-function _valhalla_blocks_get_label($count) {
+function _valghalla_status_report_get_label($count) {
   $label = '';
   if ($count['total'] == $count['assigned']) {
     $label = 'warning';
@@ -367,4 +256,101 @@ function _valhalla_blocks_get_label($count) {
     $label = 'danger';
   }
   return $label;
+}
+
+/**
+ * Generate PDF content.
+ */
+function _generate_pdf_content() {
+  $markup = '';
+  $election_node = node_load($_SESSION['election_nid']);
+
+  // We need to know what polling stations are active in this
+  // election.
+  $polling_station_nids = odin_get_polling_stations($election_node->nid);
+
+  if (empty($polling_station_nids)) {
+    return t('Der er ingen valgsteder på dette valg');
+  }
+  if (!is_object($election_node)) {
+    return t('Der er ikke valgt noget valg');
+  }
+
+  $markup .= _generate_pdf_content__party_status($polling_station_nids);
+  $markup .= _generate_pdf_content__party_constituency_status($polling_station_nids);
+
+  return $markup;
+}
+
+/**
+ * Generate content for party status.
+ */
+function _generate_pdf_content__party_status($polling_station_nids) {
+  $markup = '';
+  global $user;
+
+  $user_entity = user_load($user->uid);
+  $user_party_id = empty($user_entity->field_party[LANGUAGE_NONE][0]['tid']) ? FALSE : $user_entity->field_party[LANGUAGE_NONE][0]['tid'];
+
+  // Get polling stations user is allowed to see.
+  $restrict_polling_stations = array();
+  if (!empty ($user_entity->field_polling_station[LANGUAGE_NONE])) {
+    foreach ($user_entity->field_polling_station[LANGUAGE_NONE] as $station) {
+      $restrict_polling_stations[] = $station['nid'];
+    }
+  }
+
+  // We also need the roles.
+  $roles = odin_get_roles();
+
+  $count = odin_get_volunteers_count($_SESSION['election_nid'],
+    array_keys($polling_station_nids),
+    $roles,
+    $user_party_id);
+  $markup .= _valghalla_status_report_generate_overview_markup($count);
+
+  return $markup;
+}
+
+/**
+ * Generate content for party constituency status.
+ */
+function _generate_pdf_content__party_constituency_status($polling_station_nids) {
+  $markup = '';
+  global $user;
+
+  $user_entity = user_load($user->uid);
+  $user_party_id = empty($user_entity->field_party[LANGUAGE_NONE][0]['tid']) ? FALSE : $user_entity->field_party[LANGUAGE_NONE][0]['tid'];
+
+  // Get polling stations user is allowed to see.
+  $restrict_polling_stations = array();
+  if (!empty ($user_entity->field_polling_station[LANGUAGE_NONE])) {
+    foreach ($user_entity->field_polling_station[LANGUAGE_NONE] as $station) {
+      $restrict_polling_stations[] = $station['nid'];
+    }
+  }
+
+  // We also need the roles.
+  $roles = odin_get_roles();
+
+  // We need info on the polling station nodes (constituency)
+  // So we just load them all.
+  foreach ($polling_station_nids as $polling_station_nid => $polling_station_title) {
+    // If the array of restricting stations is not empty we only let the
+    // user see the polling stations in this array.
+    if (!empty($restrict_polling_stations) &&
+        !in_array($polling_station_nid, $restrict_polling_stations)) {
+      continue;
+    }
+
+    $polling_station_count[$polling_station_nid] = odin_get_volunteers_count(
+      $_SESSION['election_nid'],
+      array($polling_station_nid),
+      $roles,
+      $user_party_id);
+  }
+  $constituency_nids = odin_get_constituencies($_SESSION['election_nid']);
+  $markup .= _valghalla_status_report_generate_constituency_markup($constituency_nids, $polling_station_count);
+
+  return $markup;
 }
