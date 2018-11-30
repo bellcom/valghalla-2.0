@@ -218,6 +218,49 @@ function valghalla_election_field_default_field_instances() {
     ),
   );
 
+  // Exported field_instance: 'node-election-field_election_report_broadcast'.
+  $field_instances['node-election-field_election_report_broadcast'] = array(
+    'bundle' => 'election',
+    'default_value' => array(
+      0 => array(
+        'value' => 0,
+      ),
+    ),
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'list',
+        'settings' => array(),
+        'type' => 'list_default',
+        'weight' => 7,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_election_report_broadcast',
+    'label' => 'Udsend PDF rapport til partier',
+    'required' => 1,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'options',
+      'settings' => array(
+        'display_label' => 0,
+      ),
+      'type' => 'options_buttons',
+      'weight' => 9,
+    ),
+  );
+
   // Exported field_instance: 'node-election-field_election_status'.
   $field_instances['node-election-field_election_status'] = array(
     'bundle' => 'election',
@@ -377,7 +420,7 @@ function valghalla_election_field_default_field_instances() {
       'module' => 'field_collection',
       'settings' => array(),
       'type' => 'field_collection_hidden',
-      'weight' => 9,
+      'weight' => 8,
     ),
   );
 
@@ -541,6 +584,7 @@ function valghalla_election_field_default_field_instances() {
   t('Polling Station');
   t('Sæt igang');
   t('Type');
+  t('Udsend PDF rapport til partier');
   t('Valgsteder');
 
   return $field_instances;
