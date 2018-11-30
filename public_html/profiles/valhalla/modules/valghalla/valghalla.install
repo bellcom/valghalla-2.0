@@ -29,3 +29,11 @@ function valghalla_update_7102() {
     'adminimal_admin_menu',
   ));
 }
+
+/**
+ * Update version of jQuery used and set default theme to "site".
+ */
+function valghalla_update_7103() {
+  variable_set('jquery_update_jquery_version', '1.10');
+  variable_set('theme_default', 'site');
+}
