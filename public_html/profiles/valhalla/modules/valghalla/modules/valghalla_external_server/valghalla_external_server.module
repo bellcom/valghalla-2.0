@@ -1,0 +1,79 @@
+<?php
+
+module_load_include('inc', 'valghalla_external_server', 'includes/valghalla_external_server.utils');
+module_load_include('inc', 'valghalla_external_server', 'includes/valghalla_external_server.queue');
+
+/**
+ * Implement hook_node_insert().
+ */
+function valghalla_external_server_node_insert($node) {
+  if (in_array($node->type, array('volunteers'))) {
+    valghalla_synch_queue_add_item($node);
+  }
+}
+
+/**
+ * Implement hook_node_update().
+ */
+function valghalla_external_server_node_update($node) {
+  if (in_array($node->type, array('volunteers'))) {
+    valghalla_synch_queue_add_item($node);
+  }
+}
+
+/**
+ * Implements hook_taxonomy_term_insert().
+ */
+function valghalla_external_server_taxonomy_term_insert($term) {
+  //TODO: add term filter
+  //TODO: do we need to synch terms back?
+  valghalla_synch_queue_add_item($term);
+}
+
+/**
+ * Implements hook_taxonomy_term_update().
+ */
+function valghalla_external_server_taxonomy_term_update($term) {
+  //TODO: add term filter
+  //TODO: do we need to synch terms back?
+  valghalla_synch_queue_add_item($term);
+}
+
+/**
+ * Implements hook_node_export_import_alter().
+ *
+ * Updates the references inside $node->node_export_dependency to the local created objects.
+ */
+function valghalla_external_server_node_export_import_alter(&$nodes, $format, $save) {
+  foreach ($nodes as $node) {
+    if (isset($node->node_export_dependency)) {
+      $field_collection_items = array();
+      // Find all field_collection_items.
+      foreach ($node->node_export_dependency as $dep_key => $dependency) {
+        if (strcmp($dependency['type'], 'field_collection_item') === 0) {
+          $field_collection_items['uuid'] = $dep_key;
+        }
+      }
+
+      foreach ($node->node_export_dependency as $dep_key => $dependency) {
+        // If element has a different parent uuid than node. This means it's not node's direct child.
+        if (strcmp($dependency['parent_uuid'], $node->uuid) !== 0) {
+          unset($node->node_export_dependency[$dep_key]);
+
+          // Try to find a parent.
+          $parent_dep_key = $field_collection_items[$dependency['parent_uuid']];
+          if (isset($parent_dep_key)) {
+            // Find if that entity exists already.
+            $entity_ids = entity_get_id_by_uuid($dependency['type'], array($dependency['uuid']));
+            $entity_id = $entity_ids ? reset($entity_ids) : FALSE;
+
+            // Finally set the value.
+            if ($entity_id) {
+              $node->node_export_dependency[$parent_dep_key]['node_export_field_collection_data'][$dependency['field_name']][$dependency['langcode']][$dependency['delta']][$dependency['property']] = $entity_id;
+            }
+          }
+        }
+      }
+    }
+  }
+}
