@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * valghalla_election.features.field_instance.inc
@@ -523,37 +524,6 @@ function valghalla_election_field_default_field_instances() {
       ),
       'type' => 'text_textfield',
       'weight' => 5,
-    ),
-  );
-
-  // Exported field_instance: 'taxonomy_term-partier-field_secretary'.
-  $field_instances['taxonomy_term-partier-field_secretary'] = array(
-    'bundle' => 'partier',
-    'default_value' => NULL,
-    'deleted' => 0,
-    'description' => '',
-    'display' => array(
-      'default' => array(
-        'label' => 'above',
-        'module' => 'user_reference',
-        'settings' => array(),
-        'type' => 'user_reference_default',
-        'weight' => 3,
-      ),
-    ),
-    'entity_type' => 'taxonomy_term',
-    'field_name' => 'field_secretary',
-    'label' => 'Partisekretær',
-    'required' => 0,
-    'settings' => array(
-      'user_register_form' => FALSE,
-    ),
-    'widget' => array(
-      'active' => 1,
-      'module' => 'options',
-      'settings' => array(),
-      'type' => 'options_select',
-      'weight' => 6,
     ),
   );
 

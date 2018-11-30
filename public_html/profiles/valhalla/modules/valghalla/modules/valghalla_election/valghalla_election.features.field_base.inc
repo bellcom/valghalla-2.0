@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * valghalla_election.features.field_base.inc
@@ -296,42 +297,6 @@ function valghalla_election_field_default_field_bases() {
     ),
     'translatable' => 0,
     'type' => 'node_reference',
-  );
-
-  // Exported field_base: 'field_secretary'.
-  $field_bases['field_secretary'] = array(
-    'active' => 1,
-    'cardinality' => 1,
-    'deleted' => 0,
-    'entity_types' => array(),
-    'field_name' => 'field_secretary',
-    'indexes' => array(
-      'uid' => array(
-        0 => 'uid',
-      ),
-    ),
-    'locked' => 0,
-    'module' => 'user_reference',
-    'settings' => array(
-      'referenceable_roles' => array(
-        2 => 0,
-        3 => 0,
-        4 => 4,
-        5 => 0,
-        6 => 0,
-      ),
-      'referenceable_status' => array(
-        0 => 0,
-        1 => 1,
-      ),
-      'view' => array(
-        'args' => array(),
-        'display_name' => '',
-        'view_name' => '',
-      ),
-    ),
-    'translatable' => 1,
-    'type' => 'user_reference',
   );
 
   // Exported field_base: 'field_volunteers_pr_pol_st_party'.
