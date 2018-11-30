@@ -101,7 +101,7 @@ function valghalla_internal_server_batch_clone_op($uuid, $operation_details, &$c
       }
 
       // Delete the item from queue on the external server.
-      //$ws->removeFromQueueByUuid($uuid);//TODO: uncomment
+      $ws->removeFromQueueByUuid($uuid);
     }
   }
   else {
@@ -234,6 +234,8 @@ function valghalla_internal_server_batch_push_op($item, $operation_details, &$co
           )),
           'type' => 'status'
         );
+
+        valghalla_synch_queue_remove_item($existingItem->uuid);
       } elseif ($result === 2) {
         $context['results'][] = array(
           'message' => t('Term "@title" is successfully pushed and updated on external server', array(
@@ -241,6 +243,8 @@ function valghalla_internal_server_batch_push_op($item, $operation_details, &$co
           )),
           'type' => 'status'
         );
+        
+        valghalla_synch_queue_remove_item($existingItem->uuid);
       } else {
         $context['results'][] = array(
           'message' => t('Term "@title" push failed, message: @message', array(
@@ -273,6 +277,8 @@ function valghalla_internal_server_batch_push_op($item, $operation_details, &$co
           )),
           'type' => 'status'
         );
+
+        valghalla_synch_queue_remove_item($existingItem->uuid);
       }
       else {
         $context['results'][] = array(

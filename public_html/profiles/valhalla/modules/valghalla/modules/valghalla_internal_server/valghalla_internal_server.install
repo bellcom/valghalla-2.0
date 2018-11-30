@@ -5,11 +5,12 @@ module_load_include('install', 'uuid', 'uuid');
 /**
  * Implements hook_install.
  *
- * Sets node_export_dependency_attach_nodes to FALSE.
+ * Sets required variables.
  */
 function valghalla_internal_server_install() {
   // Module requires this variable to be FALSE.
   variable_set('node_export_dependency_attach_nodes', FALSE);
+  variable_set('node_export_existing', 'revision');
 }
 
 /**
