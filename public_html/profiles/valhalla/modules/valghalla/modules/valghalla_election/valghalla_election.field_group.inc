@@ -22,7 +22,7 @@ function valghalla_election_field_group_info() {
   $field_group->parent_name = 'group_election_tabs';
   $field_group->data = array(
     'label' => 'Diæt',
-    'weight' => '7',
+    'weight' => '8',
     'children' => array(),
     'format_type' => 'htab',
     'format_settings' => array(
@@ -84,7 +84,8 @@ function valghalla_election_field_group_info() {
       2 => 'field_election_status',
       3 => 'field_election_type',
       4 => 'field_polling_stations',
-      5 => 'title',
+      5 => 'field_election_report_broadcast',
+      6 => 'title',
     ),
     'format_type' => 'htab',
     'format_settings' => array(
@@ -100,7 +101,7 @@ function valghalla_election_field_group_info() {
   $field_groups['group_general|node|election|form'] = $field_group;
 
   $field_group = new stdClass();
-  $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
+  $field_group->disabled = TRUE; /* Edit this to true to make a default field_group disabled initially */
   $field_group->api_version = 1;
   $field_group->identifier = 'group_settings|node|election|form';
   $field_group->group_name = 'group_settings';

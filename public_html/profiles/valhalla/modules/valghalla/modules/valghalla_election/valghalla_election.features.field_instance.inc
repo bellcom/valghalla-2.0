@@ -223,7 +223,7 @@ function valghalla_election_field_default_field_instances() {
     'bundle' => 'election',
     'default_value' => array(
       0 => array(
-        'value' => 0,
+        'value' => 1,
       ),
     ),
     'deleted' => 0,
@@ -253,11 +253,9 @@ function valghalla_election_field_default_field_instances() {
     'widget' => array(
       'active' => 1,
       'module' => 'options',
-      'settings' => array(
-        'display_label' => 0,
-      ),
+      'settings' => array(),
       'type' => 'options_buttons',
-      'weight' => 9,
+      'weight' => 0,
     ),
   );
 
@@ -377,7 +375,7 @@ function valghalla_election_field_default_field_instances() {
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_buttons',
-      'weight' => 0,
+      'weight' => 1,
     ),
   );
 
@@ -420,7 +418,7 @@ function valghalla_election_field_default_field_instances() {
       'module' => 'field_collection',
       'settings' => array(),
       'type' => 'field_collection_hidden',
-      'weight' => 8,
+      'weight' => 9,
     ),
   );
 
