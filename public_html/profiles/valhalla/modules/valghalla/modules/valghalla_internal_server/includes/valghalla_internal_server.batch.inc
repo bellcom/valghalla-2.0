@@ -72,8 +72,12 @@ function valghalla_internal_server_batch_clone_op($uuid, $operation_details, &$c
       // Remove the item from the queue, we don't want to push it after the update.
       valghalla_synch_queue_remove_item($node->uuid);
 
+      // Fetch name and address
+      valghalla_internal_server_volunteer_update_name_and_address($node);
+
       // Handle validation.
       $validationStatus = valghalla_internal_server_validate_volunteer($node);
+
       //$validationStatus['valid'] = TRUE;//TODO: remove
       if ($validationStatus['valid']) {
         $context['results'][] = array(
@@ -83,8 +87,6 @@ function valghalla_internal_server_batch_clone_op($uuid, $operation_details, &$c
           )),
           'type' => 'status'
         );
-
-        valghalla_internal_server_volunteer_update_name_and_address($node);
 
         //TODO: notify volunteer
       }
