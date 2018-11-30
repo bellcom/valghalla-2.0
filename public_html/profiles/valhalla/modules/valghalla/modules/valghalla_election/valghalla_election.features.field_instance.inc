@@ -458,6 +458,73 @@ function valghalla_election_field_default_field_instances() {
     ),
   );
 
+  // Exported field_instance: 'taxonomy_term-partier-field_cvr_number'.
+  $field_instances['taxonomy_term-partier-field_cvr_number'] = array(
+    'bundle' => 'partier',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 5,
+      ),
+    ),
+    'entity_type' => 'taxonomy_term',
+    'field_name' => 'field_cvr_number',
+    'label' => 'CVR nummer',
+    'required' => 0,
+    'settings' => array(
+      'text_processing' => 0,
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'text',
+      'settings' => array(
+        'size' => 60,
+      ),
+      'type' => 'text_textfield',
+      'weight' => 6,
+    ),
+  );
+
+  // Exported field_instance: 'taxonomy_term-partier-field_email_address'.
+  $field_instances['taxonomy_term-partier-field_email_address'] = array(
+    'bundle' => 'partier',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'email',
+        'settings' => array(),
+        'type' => 'email_default',
+        'weight' => 6,
+      ),
+    ),
+    'entity_type' => 'taxonomy_term',
+    'field_name' => 'field_email_address',
+    'label' => 'E-mail adresse',
+    'required' => 0,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'email',
+      'settings' => array(
+        'size' => 60,
+      ),
+      'type' => 'email_textfield',
+      'weight' => 7,
+    ),
+  );
+
   // Exported field_instance: 'taxonomy_term-partier-field_logo'.
   $field_instances['taxonomy_term-partier-field_logo'] = array(
     'bundle' => 'partier',
@@ -574,8 +641,10 @@ function valghalla_election_field_default_field_instances() {
   // Included for use with string extractors like potx.
   t('Body');
   t('Bogstav');
+  t('CVR nummer');
   t('Dato');
   t('Deltagere pr. parti');
+  t('E-mail adresse');
   t('Emails sendt');
   t('Fuldt partinavn');
   t('Logo');
