@@ -1,10 +1,13 @@
 <?php
+
 /**
  * @file
- * Code for the OS2Logging feature.
+ * Valghalla_internal_server.inc.
  */
 
 include_once 'valghalla_internal_server.features.inc';
+
+use ValghallaInternalServer\ExternalWebservice;
 
 define("VALGHALLA_INTERNAL_SERVER_MAX_SUBSEQ_WS_REQUESTS", 10);
 
@@ -16,19 +19,35 @@ module_load_include('inc', 'valghalla_internal_server', 'includes/valghalla_inte
 module_load_include('inc', 'valghalla_internal_server', 'includes/valghalla_internal_server.queue');
 
 /**
- * Implement hook_node_insert().
+ * Implements hook_node_insert().
  */
 function valghalla_internal_server_node_insert($node) {
-  if (in_array($node->type, array('volunteers', 'roles', 'election', 'constituency', 'polling_station'))) {
+  if (in_array($node->type,
+    array(
+      'volunteers',
+      'roles',
+      'election',
+      'constituency',
+      'polling_station',
+    ))
+  ) {
     valghalla_synch_queue_add_item($node);
   }
 }
 
 /**
- * Implement hook_node_update().
+ * Implements hook_node_update().
  */
 function valghalla_internal_server_node_update($node) {
-  if (in_array($node->type, array('volunteers', 'roles', 'election', 'constituency', 'polling_station'))) {
+  if (in_array($node->type,
+    array(
+      'volunteers',
+      'roles',
+      'election',
+      'constituency',
+      'polling_station',
+    ))
+  ) {
     valghalla_synch_queue_add_item($node);
   }
 }
@@ -62,12 +81,20 @@ function valghalla_internal_server_cron() {
   }
 }
 
+/**
+ * Function to execute clone batch.
+ *
+ * @param bool $forceStart
+ *   If the batch has to be started right away.
+ */
 function valghalla_internal_server_clone_updated_content($forceStart = FALSE) {
   $updatedContent = array();
 
-  $ws = new \ValghallaInternalServer\ExternalWebservice();
+  $ws = new ExternalWebservice();
 
-  // Allowing to get limited number of nodes. Limit = VALGHALLA_INTERNAL_SERVER_MAX_SUBSEQ_WS_REQUESTS * pageSize (default to 20).
+  // Allowing to get limited number of nodes.
+  // Limit = VALGHALLA_INTERNAL_SERVER_MAX_SUBSEQ_WS_REQUESTS * pageSize
+  // (default to 20).
   for ($i = 0; $i < VALGHALLA_INTERNAL_SERVER_MAX_SUBSEQ_WS_REQUESTS; $i++) {
     $currentPageContent = $ws->fetchContent($i);
 
@@ -81,7 +108,7 @@ function valghalla_internal_server_clone_updated_content($forceStart = FALSE) {
 
   // Making list of uuids.
   $uuids = array();
-  foreach($updatedContent as $content) {
+  foreach ($updatedContent as $content) {
     $uuids[] = $content->uuid;
   }
 
@@ -100,6 +127,12 @@ function valghalla_internal_server_clone_updated_content($forceStart = FALSE) {
   }
 }
 
+/**
+ * Function to execute push batch.
+ *
+ * @param bool $forceStart
+ *   If the batch has to be started right away.
+ */
 function valghalla_internal_server_push_updated_content($forceStart = FALSE) {
   // Getting items ordered according by the position the have to be pushed.
   $queueItems = valghalla_synch_queue_get_items_ordered();
@@ -121,13 +154,12 @@ function valghalla_internal_server_push_updated_content($forceStart = FALSE) {
 
 /**
  * Implements hook_node_export_node_alter().
- *
  */
 function valghalla_internal_server_node_export_node_alter(&$node, $original_node) {
   $node = valghalla_internal_server_anonymize_node($node);
 }
 
-/*
+/**
  * Implements hook_monolog_channel_info().
  */
 function valghalla_internal_server_monolog_channel_info() {
@@ -141,4 +173,3 @@ function valghalla_internal_server_monolog_channel_info() {
 
   return $channels;
 }
-

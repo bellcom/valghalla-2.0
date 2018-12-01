@@ -1,5 +1,16 @@
 <?php
 
+/**
+ * @file
+ * Valghalla_synch_queue.utils.inc.
+ */
+
+/**
+ * Adds item to queue.
+ *
+ * @param mixed $resource
+ *   Term or node to add.
+ */
 function valghalla_synch_queue_add_item($resource) {
   $data = array();
   if ($resource->nid) {
@@ -30,13 +41,27 @@ function valghalla_synch_queue_add_item($resource) {
   }
 }
 
+/**
+ * Removes item from queueu.
+ *
+ * @param string $uuid
+ *   UUID of an entity to remove.
+ */
 function valghalla_synch_queue_remove_item($uuid) {
   db_delete('valghalla_synch_queue')
     ->condition('target_uuid', $uuid)
     ->execute();
 }
 
-
+/**
+ * Returns the queue items.
+ *
+ * Safe orders the by the used relationships,
+ * so that they can be safely pushed to other servers.
+ *
+ * @return array
+ *   List of items to push.
+ */
 function valghalla_synch_queue_get_items_ordered() {
   $itemsOrdered = array();
 
@@ -47,10 +72,17 @@ function valghalla_synch_queue_get_items_ordered() {
   $taxonomy_terms = $query->execute()->fetchAll();
   $itemsOrdered = array_merge($itemsOrdered, $taxonomy_terms);
 
-  // Correct node order is: Role, Constituency, Polling station, Election, Volunteer
-  $contentTypes = array('roles', 'constituency', 'polling_station', 'election', 'volunteers');
+  // Correct node order is: Role, Constituency,
+  // Polling station, Election, Volunteer.
+  $contentTypes = array(
+    'roles',
+    'constituency',
+    'polling_station',
+    'election',
+    'volunteers',
+  );
 
-  foreach($contentTypes as $type) {
+  foreach ($contentTypes as $type) {
     $query = db_select('valghalla_synch_queue', 'v')
       ->fields('v');
 
@@ -68,9 +100,12 @@ function valghalla_synch_queue_get_items_ordered() {
 /**
  * Loads queue item from local table.
  *
- * @param $uuid
+ * @param string $uuid
+ *   Uuid of the item.
  *
  * @return mixed
+ *   Loaded queue item.
+ *
  * @see valghalla_synch_queue_load_items
  */
 function valghalla_synch_queue_load_item($uuid) {
@@ -84,11 +119,14 @@ function valghalla_synch_queue_load_item($uuid) {
  * Loads queue item from local table.
  *
  * @param array $uuids
+ *   Array of UUID to load.
  * @param array $conditions
+ *   Array of conditions for loading.
  *
  * @return mixed
+ *   Queue items.
  */
-function valghalla_synch_queue_load_items($uuids = array(), $conditions = array()) {
+function valghalla_synch_queue_load_items(array $uuids = array(), array $conditions = array()) {
   $query = db_select('valghalla_synch_queue', 'v')
     ->fields('v');
 

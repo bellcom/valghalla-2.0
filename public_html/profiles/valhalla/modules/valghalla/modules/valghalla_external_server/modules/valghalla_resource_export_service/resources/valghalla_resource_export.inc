@@ -1,14 +1,20 @@
 <?php
+
+/**
+ * @file
+ * Valghalla_resource_export.inc.
+ */
+
 /**
  * The Valghalla resource definition.
  *
- * @return array
+ * @return mixed
+ *   Resource definition.
  */
-
 function _valghalla_resource_export_resource_definition() {
   $resources['valghalla_resource_export'] = array(
     'operations' => array(
-      // Retrieves the actual content based on uuid (node only). //TODO: add support for taxonomy_terms
+      // Retrieves the actual content based on uuid (node only).
       'retrieve' => array(
         'callback' => 'valghalla_resource_export_service_node_get_serialized',
         'args' => array(
@@ -20,13 +26,18 @@ function _valghalla_resource_export_resource_definition() {
             'description' => 'The uuid of the node to get',
           ),
         ),
-        'access callback' => 'valghalla_resource_export_service_resource_access',//TODO: add custom permission
+      // TODO: add custom permission.
+        'access callback' => 'valghalla_resource_export_service_resource_access',
         'access arguments' => array('view'),
         'access arguments append' => TRUE,
       ),
       // Creates the actual content (node only).
       'create' => array(
-        'file' => array('type' => 'inc', 'module' => 'valghalla_resource_export_service', 'name' => 'resources/valghalla_resource_export'),
+        'file' => array(
+          'type' => 'inc',
+          'module' => 'valghalla_resource_export_service',
+          'name' => 'resources/valghalla_resource_export',
+        ),
         'callback' => 'valghalla_resource_export_node_create',
         'args' => array(
           array(
@@ -42,12 +53,13 @@ function _valghalla_resource_export_resource_definition() {
         'access arguments' => array('create'),
         'access arguments append' => TRUE,
       ),
-      // Deletes the queue item only that represents the the actual content (node or taxonomy_term).
+      // Deletes the queue item only that represents the the actual
+      // content (node or taxonomy_term).
       'delete' => array(
         'file' => array(
           'type' => 'inc',
           'module' => 'valghalla_resource_export_service',
-          'name' => 'resources/valghalla_resource_export'
+          'name' => 'resources/valghalla_resource_export',
         ),
         'callback' => '_valghalla_resource_export_resource_delete',
         'args' => array(
@@ -58,13 +70,19 @@ function _valghalla_resource_export_resource_definition() {
             'type' => 'string',
           ),
         ),
-        'access callback' => 'valghalla_resource_export_service_resource_access',//TODO: add custom permission
+      // TODO: add custom permission.
+        'access callback' => 'valghalla_resource_export_service_resource_access',
         'access arguments' => array('delete'),
         'access arguments append' => TRUE,
       ),
-      // Indexes the queue items that represent the actual content (node or taxonomy_term).
+      // Indexes the queue items that represent the actual content
+      // (node or taxonomy_term).
       'index' => array(
-        'file' => array('type' => 'inc', 'module' => 'valghalla_resource_export_service', 'name' => 'resources/valghalla_resource_export'),
+        'file' => array(
+          'type' => 'inc',
+          'module' => 'valghalla_resource_export_service',
+          'name' => 'resources/valghalla_resource_export',
+        ),
         'help' => t('Return all Valghalla resources.'),
         'callback' => '_valghalla_resource_export_resource_index',
         'args' => array(
@@ -109,7 +127,8 @@ function _valghalla_resource_export_resource_definition() {
             'source' => array('param' => 'options'),
           ),
         ),
-        'access arguments' => array('access content'),//TODO: add custom permission
+      // TODO: add custom permission.
+        'access arguments' => array('access content'),
       ),
     ),
   );
@@ -125,12 +144,13 @@ function _valghalla_resource_export_resource_definition() {
  * which may require very specific formatting. The full implications of this
  * are beyond the scope of this comment block. The Googles are your friend.
  *
- * @param $params
+ * @param mixed $params
  *   Array or params:
  *     $params['node_export_data'] = Node export data in string (any format).
- * @return
- *   An associative array contained the new node's nid and, if applicable,
- *   the fully qualified URI to this resource.
+ *
+ * @return array
+ *   Contains an array of
+ *   translated strings to be shown to the user as messages
  *
  * @see node_export_import()
  */
@@ -144,17 +164,19 @@ function valghalla_resource_export_node_create($params) {
 
   if ($import['success']) {
     // We expect only one node to be imported.
-    $nid  = reset($import['nids']);
+    $nid = reset($import['nids']);
   }
 
   // Return the node that was created.
   if ($nid) {
     $node = node_load($nid);
-    // Remove the item from the queue, we don't want to be in the queue of pending changes.
+    // Remove the item from the queue, we don't want to be in the
+    // queue of pending changes.
     valghalla_synch_queue_remove_item($node->uuid);
 
     return _node_resource_retrieve($nid);
-  } else {
+  }
+  else {
     return $import['output'];
   }
 }
@@ -162,10 +184,11 @@ function valghalla_resource_export_node_create($params) {
 /**
  * Delete a resource given its uuid.
  *
- * @param $uuid
+ * @param string $uuid
  *   UUID of the resource we're deleting.
- * @return
- *   Boolean.
+ *
+ * @return bool
+ *   Always TRUE.
  */
 function _valghalla_resource_export_resource_delete($uuid) {
   valghalla_synch_queue_remove_item($uuid);
@@ -175,28 +198,29 @@ function _valghalla_resource_export_resource_delete($uuid) {
 /**
  * Return an array of optionally paged nids based on a set of criteria.
  *
- * An example request might look like
+ * An example request might look like.
  *
  * http://domain/endpoint/node?fields=nid,vid&parameters[nid]=7&parameters[uid]=1
  *
  * This would return an array of objects with only nid and vid defined, where
  * nid = 7 and uid = 1.
  *
- * @param $page
+ * @param int $page
  *   Page number of results to return (in pages of 20).
- * @param $fields
+ * @param mixed $fields
  *   The fields you want returned.
- * @param $parameters
+ * @param mixed $parameters
  *   An array containing fields and values used to build a sql WHERE clause
  *   indicating items to retrieve.
- * @param $page_size
+ * @param int $page_size
  *   Integer number of items to be returned.
- * @param $options
+ * @param mixed $options
  *   Additional query options.
- * @return
+ *
+ * @return array
  *   An array of node objects.
  *
- * @see _node_resource_index().
+ * @see _node_resource_index()
  */
 function _valghalla_resource_export_resource_index($page, $fields, $parameters, $page_size, $options = array()) {
   // Nodes.

@@ -1,7 +1,8 @@
 <?php
+
 /**
  * @file
- * valghalla_internal_server.monolog.inc
+ * Valghalla_internal_server.monolog.inc.
  */
 
 /**
@@ -32,5 +33,3 @@ function valghalla_internal_server_default_monolog_profiles() {
 
   return $export;
 }
-
-

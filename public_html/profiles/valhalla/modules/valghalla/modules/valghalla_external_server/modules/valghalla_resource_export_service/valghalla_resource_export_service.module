@@ -1,11 +1,16 @@
 <?php
 
-/*
+/**
+ * @file
+ * Valghalla_resource_export_service.module.
+ */
+
+/**
  * Implements hook_services_resources().
  */
 function valghalla_resource_export_service_services_resources() {
   // Include our resources.
-  require_once("resources/valghalla_resource_export.inc");
+  require_once "resources/valghalla_resource_export.inc";
 
   // Add the resources.
   $resources = array();
@@ -13,31 +18,29 @@ function valghalla_resource_export_service_services_resources() {
   return $resources;
 }
 
-
 /**
  * Determine whether the current user can access a node resource.
  *
- * @param $op
+ * @param string $op
  *   One of view, update, create, delete per node_access().
- * @param $args
+ * @param mixed $args
  *   Resource arguments passed through from the original request.
- * @param $load_node
- *   Function that loads the node.
  *
  * @return bool
+ *   TRUE or FALSE.
  *
  * @see node_access()
  */
 function valghalla_resource_export_service_resource_access($op = 'view', $args = array()) {
-  $node = null;
+  $node = NULL;
 
   if (empty($args[0])) {
     return services_error(t('Must provide a uuid.'), 404);
   }
-  else if (is_array($args[0]) || is_object($args[0])) {
-    $node = (object)$args[0];
+  elseif (is_array($args[0]) || is_object($args[0])) {
+    $node = (object) $args[0];
   }
-  else if (in_array(gettype($args[0]), array('string', 'integer'))) {
+  elseif (in_array(gettype($args[0]), array('string', 'integer'))) {
     $node = valghalla_resource_export_service_resource_load($args[0]);
   }
 
@@ -55,7 +58,7 @@ function valghalla_resource_export_service_resource_access($op = 'view', $args =
 
     return _node_resource_access($op, array($node));
   }
-  //TODO: add code for taxonomy
+  // TODO: add code for taxonomy.
   else {
     // Return a 404.
     return services_error(t('Resource with @uuid could not be found', array('@uuid' => $args[0])), 404);
@@ -65,9 +68,10 @@ function valghalla_resource_export_service_resource_access($op = 'view', $args =
 /**
  * Returns a single node resource as exported node with serialize format.
  *
- * @param $entity
+ * @param mixed $entity
  *   UUID or the whole object of the media we want to return.
- * @return
+ *
+ * @return string
  *   Serialized node object or empty array.
  *
  * @see node_export()
@@ -93,8 +97,11 @@ function valghalla_resource_export_service_node_get_serialized($entity) {
 /**
  * Load a resource provided its uuid.  Much like node_load, but with uuid's...
  *
- * @param type $uuid
- * @return type
+ * @param mixed $uuid
+ *   Uuid of the resource.
+ *
+ * @return mixed
+ *   Loaded node or NULL if nothing is found.
  */
 function valghalla_resource_export_service_resource_load($uuid, $reset = FALSE) {
   $nodes = &drupal_static(__FUNCTION__);

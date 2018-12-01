@@ -1,10 +1,12 @@
 <?php
 
-module_load_include('inc', 'valghalla_external_server', 'includes/valghalla_external_server.utils');
-module_load_include('inc', 'valghalla_external_server', 'includes/valghalla_external_server.queue');
+/**
+ * @file
+ * Valghalla_external_server.module.
+ */
 
 /**
- * Implement hook_node_insert().
+ * Implements hook_node_insert().
  */
 function valghalla_external_server_node_insert($node) {
   if (in_array($node->type, array('volunteers'))) {
@@ -13,7 +15,7 @@ function valghalla_external_server_node_insert($node) {
 }
 
 /**
- * Implement hook_node_update().
+ * Implements hook_node_update().
  */
 function valghalla_external_server_node_update($node) {
   if (in_array($node->type, array('volunteers'))) {

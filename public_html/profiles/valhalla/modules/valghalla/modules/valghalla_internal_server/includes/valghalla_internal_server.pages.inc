@@ -1,19 +1,24 @@
 <?php
 
 /**
+ * @file
+ * Valghalla_internal_server_pages.inc.
+ */
+
+/**
  * Implements hook_form_alter().
  */
 function valghalla_internal_server_form_alter(&$form, &$form_state, $form_id) {
   if ($form_id === 'valhalla_admin_settings_form') {
-    //TODO: activate
-//    // Attempt the webservice request.
-//    if (os2forms_webform_sharing_get_webform_node_export() !== NULL) {
-//      drupal_set_message(t('Sharing repository set up correctly'));
-//    }
-//    else {
-//      drupal_set_message(t('Could not connect to the repository. Check connection credentials'), 'error', FALSE);
-//    }
-//
+    // TODO: activate
+    //    // Attempt the webservice request.
+    //    if (os2forms_webform_sharing_get_webform_node_export() !== NULL) {
+    //      drupal_set_message(t('Sharing repository set up correctly'));
+    //    }
+    //    else {
+    //      drupal_set_message(t('Could not connect to the repository. Check connection credentials'), 'error', FALSE);
+    //    }
+    //
     // Do synch, if asked.
     if (isset($form_state['triggering_element']) && $form_state['triggering_element']['#id'] == 'edit-synch-now') {
       valghalla_internal_server_cron();
@@ -23,7 +28,7 @@ function valghalla_internal_server_form_alter(&$form, &$form_state, $form_id) {
       '#type' => 'checkbox',
       '#title' => t('Valghalla intern server aktiv'),
       '#default_value' => variable_get('valghalla_internal_server_enable', FALSE),
-      '#weight' => 10
+      '#weight' => 10,
     );
 
     $form['valghalla_internal_server_fs'] = array(
@@ -75,7 +80,7 @@ function valghalla_internal_server_form_alter(&$form, &$form_state, $form_id) {
 
     $form['valghalla_internal_server_fs']['valghalla_external_server_synch_now_fs'][] = array(
       '#markup' => '<div>' . t('Last pulled: @datetime', array('@datetime' => format_date(variable_get('valgalla_internal_server_last_pull_timestamp')))) . '</div>'
-      . '<div>' . t('Last pushed: @datetime', array('@datetime' => format_date(variable_get('valgalla_internal_server_last_push_timestamp')))) . '</div>'
+      . '<div>' . t('Last pushed: @datetime', array('@datetime' => format_date(variable_get('valgalla_internal_server_last_push_timestamp')))) . '</div>',
     );
 
     $form = system_settings_form($form);
@@ -84,11 +89,14 @@ function valghalla_internal_server_form_alter(&$form, &$form_state, $form_id) {
 }
 
 /**
- * Additional os2forms_webform_sharing_page_settings form submit handler.
+ * Additional valghalla_internal_server_settings form submit handler.
+ *
  * Unsetting password on form submit if password is empty.
  *
- * @param $form
- * @param $form_state
+ * @param mixed $form
+ *   Form.
+ * @param mixed $form_state
+ *   Form state.
  */
 function valghalla_internal_server_settings_form_submit($form, &$form_state) {
   if ($form_state['values']['valghalla_external_server_password'] == '') {

@@ -1,9 +1,14 @@
 <?php
 
+/**
+ * @file
+ * Valghalla_internal_server.install.
+ */
+
 module_load_include('install', 'uuid', 'uuid');
 
 /**
- * Implements hook_install.
+ * Implements hook_install().
  *
  * Sets required variables.
  */
@@ -18,7 +23,7 @@ function valghalla_internal_server_install() {
  */
 function valghalla_internal_server_schema() {
   $schema['valghalla_internal_server_logs'] = array(
-    'description' => t('Table to store the log messages of synching'),
+    'description' => 'Table to store the log messages of synching',
     'fields' => array(
       'id' => array(
         'description' => 'The primary identifier for a log message',
@@ -34,7 +39,7 @@ function valghalla_internal_server_schema() {
         'not null' => TRUE,
       ),
       'message' => array(
-        'description' => t('The actual log message'),
+        'description' => 'The actual log message',
         'type' => 'text',
       ),
       'timestamp' => array(

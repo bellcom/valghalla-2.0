@@ -1,8 +1,12 @@
 <?php
 
 /**
+ * @file
+ * Valghalla_synch_node_export.module.
+ */
+
+/**
  * Implements hook_node_export_dependency_alter().
- *
  */
 function valghalla_synch_node_export_node_export_dependency_field_alter(&$handled, &$node, $dependency) {
   // Adding parent uuid.
@@ -12,7 +16,8 @@ function valghalla_synch_node_export_node_export_dependency_field_alter(&$handle
 /**
  * Implements hook_node_export_import_alter().
  *
- * Updates the references inside $node->node_export_dependency to the local created objects.
+ * Updates the references inside $node->node_export_dependency
+ * to the local created objects.
  */
 function valghalla_synch_node_export_node_export_import_alter(&$nodes, $format, $save) {
   foreach ($nodes as $node) {
@@ -26,7 +31,8 @@ function valghalla_synch_node_export_node_export_import_alter(&$nodes, $format, 
       }
 
       foreach ($node->node_export_dependency as $dep_key => $dependency) {
-        // If element has a different parent uuid than node. This means it's not node's direct child.
+        // If element has a different parent uuid than node.
+        // This means it's not node's direct child.
         if (strcmp($dependency['parent_uuid'], $node->uuid) !== 0) {
           unset($node->node_export_dependency[$dep_key]);
 

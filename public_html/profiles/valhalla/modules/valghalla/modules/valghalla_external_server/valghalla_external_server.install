@@ -1,7 +1,12 @@
 <?php
 
 /**
- * Implements hook_install.
+ * @file
+ * Valghalla_external_server.install.
+ */
+
+/**
+ * Implements hook_install().
  *
  * Sets required variables.
  */

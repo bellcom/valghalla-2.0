@@ -2,18 +2,24 @@
 
 namespace ValghallaInternalServer;
 
+/**
+ * Handles the connection to external server webservice.
+ */
 class ExternalWebservice {
   private $endpoint;
   private $authToken;
 
-  function __construct() {
+  /**
+   * Fetches the endpoint URL and puts it into a variable.
+   */
+  public function __construct() {
     $this->endpoint = variable_get('valghalla_external_server_endpoint');
   }
 
   /**
-   * Calling webservice endpoint: /valghalla_resource_export
+   * Calling webservice endpoint: /valghalla_resource_export.
    */
-  function fetchContent($page = 0) {
+  public function fetchContent($page = 0) {
     $getParams = http_build_query(
       array(
         'page' => $page,
@@ -25,16 +31,19 @@ class ExternalWebservice {
   }
 
   /**
-   * Calling webservice endpoint : POST /valghalla_resource_export
-   * @return object
+   * Calling webservice endpoint : POST /valghalla_resource_export.
+   *
+   * @return array
+   *   Contains an array of
+   *   translated strings to be shown to the user as messages
    */
-  function pushNodeSerialized($data) {
+  public function pushNodeSerialized($data) {
     $requestUrl = $this->endpoint . '/valghalla_resource_export.json';
 
     $options = array();
     $options['method'] = 'POST';
     $options['data'] = json_encode(array(
-      'node_export_data' => $data
+      'node_export_data' => $data,
     ));
 
     $result = $this->requestWrapper($requestUrl, $options);
@@ -42,25 +51,27 @@ class ExternalWebservice {
   }
 
   /**
-   * Calling webservice endpoint : POST /taxonomy_term
+   * Calling webservice endpoint : POST /taxonomy_term.
    *
-   * Also checks if the term with the same uuid is already present in the system, then it will be updated.
-   * If not - new term will be created.
+   * Also checks if the term with the same uuid is already present in the
+   * system, then it will be updated. If not - new term will be created.
    *
-   * @return object
+   * @return int
+   *   1 - is term was created, 2 - term was updated.
    */
-  function pushTerm($term) {
+  public function pushTerm($term) {
     // Check if the term exists on external server.
     $remoteTerm = $this->getTermByUuid($term->uuid);
     if ($remoteTerm) {
       // There is the same term on remote server, update it.
       $term->tid = $remoteTerm->tid;
-    } else {
+    }
+    else {
       // No term on remote server with the same uuid, create a new one.
       unset($term->tid);
     }
 
-   $json = valghalla_internal_server_term_to_json($term);
+    $json = valghalla_internal_server_term_to_json($term);
 
     $requestUrl = $this->endpoint . '/taxonomy_term.json';
 
@@ -75,14 +86,16 @@ class ExternalWebservice {
   }
 
   /**
-   * Calling webservice endpoint : GET /taxonomy_term
-   * @return object
+   * Calling webservice endpoint : GET /taxonomy_term.
+   *
+   * @return string
+   *   Taxonomy term as json string.
    */
-  function getTermByUuid($uuid) {
+  public function getTermByUuid($uuid) {
     $params = http_build_query(array(
       'parameters' => array(
-        'uuid' => $uuid
-      )
+        'uuid' => $uuid,
+      ),
     ));
 
     $requestUrl = $this->endpoint . '/taxonomy_term.json?' . $params;
@@ -94,10 +107,12 @@ class ExternalWebservice {
   }
 
   /**
-   * Calling webservice endpoint : GET /valghalla_resource_export/uuid
-   * @return object
+   * Calling webservice endpoint : GET /valghalla_resource_export/uuid.
+   *
+   * @return string
+   *   Serialized object formatted as string.
    */
-  function exportByUuid($uuid) {
+  public function exportByUuid($uuid) {
     $requestUrl = $this->endpoint . '/valghalla_resource_export/' . $uuid . '.json';
     $result = $this->requestWrapper($requestUrl);
 
@@ -107,10 +122,12 @@ class ExternalWebservice {
   }
 
   /**
-   * Calling webservice endpoint : DELETE /valghalla_resource_export/uuid
-   * @return object
+   * Calling webservice endpoint : DELETE /valghalla_resource_export/uuid.
+   *
+   * @return bool
+   *   Always TRUE.
    */
-  function removeFromQueueByUuid($uuid) {
+  public function removeFromQueueByUuid($uuid) {
     $requestUrl = $this->endpoint . '/valghalla_resource_export/' . $uuid . '.json';
 
     $result = $this->requestWrapper($requestUrl, array('method' => 'DELETE'));
@@ -120,6 +137,12 @@ class ExternalWebservice {
     }
   }
 
+  /**
+   * Helper function.
+   *
+   * Wraps the request, adds authorization string and performs
+   * an HTTP request call.
+   */
   private function requestWrapper($requestUrl, $options = array()) {
     if (!$this->authToken) {
       $user = variable_get('valghalla_external_server_user');
@@ -136,55 +159,5 @@ class ExternalWebservice {
       return json_decode($result->data);
     }
   }
+
 }
-
-///**
-// * Calling webservice endpoint : GET /webform_node_export
-// *
-// * @param $page
-// *
-// * @return mixed
-// */
-//function os2forms_webform_sharing_get_webform_node_export($page = 0) {
-//  $getParams = http_build_query(
-//    array(
-//      'page' => $page,
-//      'options' => array(
-//        'orderby' => array(
-//          'changed' => 'DESC'
-//        )
-//      )
-//    )
-//  );
-//  $repoUrl = variable_get('os2forms_webform_sharing_repo_endpoint') . '/webform_node_export.json?'. $getParams;
-//
-//  $options['headers']['Authorization'] = os2forms_webform_sharing_basic_auth();
-//
-//  $result = drupal_http_request($repoUrl, $options);
-//  if ($result->code == 200) {
-//    return json_decode($result->data);
-//  }
-//}
-//
-
-
-///**
-// * Calling webservice endpoint : POST /webform_node_export
-// * @return object
-// */
-//function os2forms_webform_sharing_post_webform_node_export($data) {
-//  $repoUrl = variable_get('os2forms_webform_sharing_repo_endpoint') . '/webform_node_export.json';
-//
-//  $options['headers']['Authorization'] = os2forms_webform_sharing_basic_auth();
-//  $options['headers']['Content-Type'] = 'application/json';
-//  $options['method'] = 'POST';
-//  $options['data'] = json_encode(array(
-//    'node_export_data' => $data
-//  ));
-//
-//  $result = drupal_http_request($repoUrl, $options);
-//  if ($result->code == 200) {
-//    return json_decode($result->data);
-//  }
-//}
-//
