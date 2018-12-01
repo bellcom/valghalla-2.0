@@ -1,0 +1,17 @@
+name = Valghalla Internal server
+description = Provides funtionality Valghalla internal server
+package = Valghalla - Synch
+project = valghalla_internal_server
+dependencies[] = ctools
+dependencies[] = uuid
+dependencies[] = node_export
+dependencies[] = node_export_dependency
+dependencies[] = monolog
+dependencies[] = valghalla_synch_node_export
+dependencies[] = valghalla_synch_queue
+features[ctools][] = monolog:monolog:1
+features[features_api][] = api:2
+features[monolog_profile][] = valghalla_internal_server_profile
+
+version = "7.x-1.0"
+core = "7.x"

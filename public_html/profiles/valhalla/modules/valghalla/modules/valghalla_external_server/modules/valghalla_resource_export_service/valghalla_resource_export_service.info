@@ -1,0 +1,11 @@
+name = Valghalla Synch Resource Export Service
+description = Provides resource for the Valghalla resource
+package = Valghalla - External server
+dependencies[] = services
+dependencies[] = ctools
+dependencies[] = uuid
+dependencies[] = valghalla_synch_queue
+
+version = "7.x-1.0"
+core = "7.x"
+project = "valghalla_resource_export_service"

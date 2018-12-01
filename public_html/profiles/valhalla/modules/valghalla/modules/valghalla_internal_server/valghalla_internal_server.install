@@ -1,0 +1,56 @@
+<?php
+
+/**
+ * @file
+ * Valghalla_internal_server.install.
+ */
+
+module_load_include('install', 'uuid', 'uuid');
+
+/**
+ * Implements hook_install().
+ *
+ * Sets required variables.
+ */
+function valghalla_internal_server_install() {
+  // Module requires this variable to be FALSE.
+  variable_set('node_export_dependency_attach_nodes', FALSE);
+  variable_set('node_export_existing', 'revision');
+}
+
+/**
+ * Implements hook_schema().
+ */
+function valghalla_internal_server_schema() {
+  $schema['valghalla_internal_server_logs'] = array(
+    'description' => 'Table to store the log messages of synching',
+    'fields' => array(
+      'id' => array(
+        'description' => 'The primary identifier for a log message',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'target_uuid' => uuid_schema_field_definition(),
+      'target_id' => array(
+        'description' => 'The primary identifier for a node or taxonomy_term',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'message' => array(
+        'description' => 'The actual log message',
+        'type' => 'text',
+      ),
+      'timestamp' => array(
+        'description' => 'The Unix timestamp when the log was saved.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+    ),
+    'primary key' => array('id'),
+  );
+
+  return $schema;
+}

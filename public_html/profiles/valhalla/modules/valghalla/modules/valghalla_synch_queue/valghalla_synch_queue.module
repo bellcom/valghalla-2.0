@@ -1,0 +1,8 @@
+<?php
+
+/**
+ * @file
+ * Valghalla_synch_queue.module.
+ */
+
+module_load_include('inc', 'valghalla_synch_queue', 'includes/valghalla_synch_queue.utils');
