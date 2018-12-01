@@ -6,6 +6,7 @@ dependencies[] = node_export_dependency
 dependencies[] = valghalla_external_server_rest
 dependencies[] = valghalla_external_server_rest
 dependencies[] = valghalla_resource_export_service
+dependencies[] = valghalla_synch_node_export
 dependencies[] = valghalla_synch_queue
 dependencies[] = uuid
 
