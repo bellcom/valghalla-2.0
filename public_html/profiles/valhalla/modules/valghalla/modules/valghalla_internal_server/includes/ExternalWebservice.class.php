@@ -1,5 +1,7 @@
 <?php
 
+namespace ValghallaInternalServer;
+
 class ExternalWebservice {
   private $endpoint;
   private $authToken;

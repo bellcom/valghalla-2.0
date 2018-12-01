@@ -1,6 +1,6 @@
 name = Valghalla External Server
 description = Provides functionality so that Valghalla installation is behaving as external server
-package = Valghalla - External server
+package = Valghalla - Synch
 dependencies[] = node_export
 dependencies[] = node_export_dependency
 dependencies[] = valghalla_external_server_rest

@@ -19,7 +19,6 @@ function valghalla_internal_server_form_alter(&$form, &$form_state, $form_id) {
       valghalla_internal_server_cron();
     }
 
-
     $form['valghalla_internal_server_enable'] = array(
       '#type' => 'checkbox',
       '#title' => t('Valghalla intern server aktiv'),
@@ -75,7 +74,8 @@ function valghalla_internal_server_form_alter(&$form, &$form_state, $form_id) {
     );
 
     $form['valghalla_internal_server_fs']['valghalla_external_server_synch_now_fs'][] = array(
-      '#markup' => '<div>' . t('Last synched: @datetime', array('@datetime' => format_date(variable_get('valgalla_internal_server_last_synch', 0)))) . '</div>'
+      '#markup' => '<div>' . t('Last pulled: @datetime', array('@datetime' => format_date(variable_get('valgalla_internal_server_last_pull_timestamp')))) . '</div>'
+      . '<div>' . t('Last pushed: @datetime', array('@datetime' => format_date(variable_get('valgalla_internal_server_last_push_timestamp')))) . '</div>'
     );
 
     $form = system_settings_form($form);

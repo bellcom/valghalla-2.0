@@ -1,9 +1,15 @@
 <?php
+/**
+ * @file
+ * Code for the OS2Logging feature.
+ */
+
+include_once 'valghalla_internal_server.features.inc';
 
 define("VALGHALLA_INTERNAL_SERVER_MAX_SUBSEQ_WS_REQUESTS", 10);
 
-//module_load_include('inc', 'os2forms_webform_sharing', 'includes/os2forms_webform_sharing.webservice');
 module_load_include('php', 'valghalla_internal_server', 'includes/ExternalWebservice.class');
+module_load_include('php', 'valghalla_internal_server', 'includes/ValghallaLogger.class');
 module_load_include('inc', 'valghalla_internal_server', 'includes/valghalla_internal_server.pages');
 module_load_include('inc', 'valghalla_internal_server', 'includes/valghalla_internal_server.batch');
 module_load_include('inc', 'valghalla_internal_server', 'includes/valghalla_internal_server.utils');
@@ -31,8 +37,6 @@ function valghalla_internal_server_node_update($node) {
  * Implements hook_taxonomy_term_insert().
  */
 function valghalla_internal_server_taxonomy_term_insert($term) {
-  //TODO: add term filter
-  //TODO: do we need to synch terms back?
   valghalla_synch_queue_add_item($term);
 }
 
@@ -40,8 +44,6 @@ function valghalla_internal_server_taxonomy_term_insert($term) {
  * Implements hook_taxonomy_term_update().
  */
 function valghalla_internal_server_taxonomy_term_update($term) {
-  //TODO: add term filter
-  //TODO: do we need to synch terms back?
   valghalla_synch_queue_add_item($term);
 }
 
@@ -52,7 +54,6 @@ function valghalla_internal_server_cron() {
   valghalla_internal_server_clone_updated_content();
   valghalla_internal_server_push_updated_content();
 
-  variable_set('valgalla_internal_server_last_synch', time());
   if (drupal_is_cli() && function_exists('drush_main')) {
     drush_backend_batch_process();
   }
@@ -64,7 +65,7 @@ function valghalla_internal_server_cron() {
 function valghalla_internal_server_clone_updated_content($forceStart = FALSE) {
   $updatedContent = array();
 
-  $ws = new ExternalWebservice();
+  $ws = new \ValghallaInternalServer\ExternalWebservice();
 
   // Allowing to get limited number of nodes. Limit = VALGHALLA_INTERNAL_SERVER_MAX_SUBSEQ_WS_REQUESTS * pageSize (default to 20).
   for ($i = 0; $i < VALGHALLA_INTERNAL_SERVER_MAX_SUBSEQ_WS_REQUESTS; $i++) {
@@ -119,18 +120,25 @@ function valghalla_internal_server_push_updated_content($forceStart = FALSE) {
 }
 
 /**
- * Implements hook_node_export_dependency_alter().
- *
- */
-function valghalla_internal_server_node_export_dependency_field_alter(&$handled, &$node, $dependency) {
-  // Adding parent uuid.
-  $handled[0]['parent_uuid'] = $dependency->uuid;
-}
-
-/**
  * Implements hook_node_export_node_alter().
  *
  */
 function valghalla_internal_server_node_export_node_alter(&$node, $original_node) {
   $node = valghalla_internal_server_anonymize_node($node);
 }
+
+/*
+ * Implements hook_monolog_channel_info().
+ */
+function valghalla_internal_server_monolog_channel_info() {
+  $channels = array();
+
+  $channels['valghalla_internal_server_channel'] = array(
+    'label' => t('Valghalla internal server'),
+    'description' => t('The default channel to log Valghalla internal server messages.'),
+    'default profile' => 'valghalla_internal_server_profile',
+  );
+
+  return $channels;
+}
+

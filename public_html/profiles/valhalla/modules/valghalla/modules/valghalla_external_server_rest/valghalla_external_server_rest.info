@@ -1,7 +1,7 @@
 name = Valghalla External Server Rest
 description = stores configuration of Valghalla External Server Rest endpoint
 core = 7.x
-package = Valghalla - External server
+package = Valghalla - Synch
 version = 7.x-1.0
 dependencies[] = ctools
 dependencies[] = rest_server

@@ -1,24 +1,12 @@
 <?php
 
-module_load_include('inc', 'valghalla_external_server', 'includes/valghalla_external_server.utils');
-module_load_include('inc', 'valghalla_external_server', 'includes/valghalla_external_server.queue');
-
 /**
- * Implement hook_node_insert().
+ * Implements hook_node_export_dependency_alter().
+ *
  */
-function valghalla_external_server_node_insert($node) {
-  if (in_array($node->type, array('volunteers'))) {
-    valghalla_synch_queue_add_item($node);
-  }
-}
-
-/**
- * Implement hook_node_update().
- */
-function valghalla_external_server_node_update($node) {
-  if (in_array($node->type, array('volunteers'))) {
-    valghalla_synch_queue_add_item($node);
-  }
+function valghalla_synch_node_export_node_export_dependency_field_alter(&$handled, &$node, $dependency) {
+  // Adding parent uuid.
+  $handled[0]['parent_uuid'] = $dependency->uuid;
 }
 
 /**
@@ -26,14 +14,14 @@ function valghalla_external_server_node_update($node) {
  *
  * Updates the references inside $node->node_export_dependency to the local created objects.
  */
-function valghalla_external_server_node_export_import_alter(&$nodes, $format, $save) {
+function valghalla_synch_node_export_node_export_import_alter(&$nodes, $format, $save) {
   foreach ($nodes as $node) {
     if (isset($node->node_export_dependency)) {
       $field_collection_items = array();
       // Find all field_collection_items.
       foreach ($node->node_export_dependency as $dep_key => $dependency) {
         if (strcmp($dependency['type'], 'field_collection_item') === 0) {
-          $field_collection_items['uuid'] = $dep_key;
+          $field_collection_items[$dependency['uuid']] = $dep_key;
         }
       }
 
