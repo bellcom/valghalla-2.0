@@ -111,6 +111,8 @@ function odin_get_volunteers_count($election_nid, $polling_station_nids, $roles,
     );
 
   foreach ($roles as $role_nid => $role_title) {
+    $role_count[$role_nid]['role_name'] = $role_title;
+
     //
     // Total assinged roles
     //
