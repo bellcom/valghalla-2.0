@@ -1,0 +1,8 @@
+<?php
+
+/**
+ * @file
+ * Code for the Valghalla External Server Rest feature.
+ */
+
+include_once 'valghalla_external_server_rest.features.inc';
