@@ -563,22 +563,22 @@ function valghalla_volunteers_to_polling_station_markup($polling_station, $user_
 
     // Filling party status information.
     foreach (odin_get_parties() as $party_tid => $party) {
-        $status = odin_get_volunteers_count($_SESSION['election_nid'], array($polling_station->nid), odin_get_roles(), $party_tid);
-        $parties_status[$party_tid] = array(
-          'party_name' => $party,
-          'party_status_label' => _valhalla_blocks_get_label($status['total_count']),
-          'status' => $status
-        );
+      $status = odin_get_volunteers_count($_SESSION['election_nid'], array($polling_station->nid), odin_get_roles(), $party_tid);
+      $parties_status[$party_tid] = array(
+        'party_name' => $party,
+        'party_status_label' => _valhalla_blocks_get_label($status['total_count']),
+        'status' => $status
+      );
     }
 
     // Return the themed values
     return theme('station', array(
-            'posts_to_fill' => $posts_array2['posts_to_fill'],
-            'parties_status' => $parties_status,
-            'pollingstation_nid' => $posts_array['station_nid'],
-            'existing' => $posts_array['existing'],
-            'party_posts_to_fill' => $posts_array['party_posts_to_fill'],
-          ));
+      'posts_to_fill' => $posts_array2['posts_to_fill'],
+      'parties_status' => $parties_status,
+      'pollingstation_nid' => $posts_array['station_nid'],
+      'existing' => $posts_array['existing'],
+      'party_posts_to_fill' => $posts_array['party_posts_to_fill'],
+    ));
   }
 }
 

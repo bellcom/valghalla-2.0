@@ -5,11 +5,33 @@
  */
 ?>
 
-<?php
-//dpm($party_posts_to_fill);
-//dpm($existing);
+<table class="table">
+  <tr>
+    <th>
+    </th>
+<!--    --><?php //foreach ($parties_status[41]['status']['role_count'] as $role_count): ?>
+<!--      <th>-->
+<!--        --><?php //print $role_count['role_name']; ?>
+<!--      </th>-->
+<!--    --><?php //endforeach; ?>
+  </tr>
 
-?>
+  <?php foreach ($parties_status as $party_status): ?>
+    <?php if ($party_status['status']['total_count']['total'] !== 0): ?>
+      <tr class="<?php print $party_status['party_status_label']; ?>">
+        <td>
+          <?php print $party_status['party_name']; ?>
+        </td>
+        <?php foreach ($party_status['status']['role_count'] as $role_count): ?>
+          <td>
+            <?php print $role_count['total']; ?>
+          </td>
+        <?php endforeach; ?>
+      </tr>
+    <?php endif; ?>
+  <?php endforeach; ?>
+</table>
+
 <?php if ($party_posts_to_fill): ?>
   <div id="volunteer-station-list">
     <?php foreach ($party_posts_to_fill as $party_tid => $party_posts): ?>
@@ -96,10 +118,6 @@
 
     <?php endforeach; ?>
   </div>
-
-  <table>
-    
-  </table>
 <?php endif; ?>
 
 <hr/>
