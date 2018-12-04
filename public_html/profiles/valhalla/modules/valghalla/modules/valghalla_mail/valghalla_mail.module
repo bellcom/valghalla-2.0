@@ -36,8 +36,6 @@ function valghalla_mail_notifications_info() {
  * Handles valghalla templated mail sendout.
  */
 function valghalla_mail_mail($key, &$message, $params) {
-  $options = array();
-
   // If $params isnt an array, dont do anything.
   if (!is_array($params)) {
     $message['send'] = FALSE;
@@ -62,8 +60,8 @@ function valghalla_mail_mail($key, &$message, $params) {
         }
       }
 
-      $message['subject'] = t($params['subject'], $params['tokens'], $options);
-      $message['body'][] = t($params['body'], $params['tokens'], $options);
+      $message['subject'] = format_string($params['subject'], $params['tokens']);
+      $message['body'][] = format_string($params['body'], $params['tokens']);
       $message['params']['attachments'] = $params['attachments'];
       if (!empty($params['bcc'])) {
         $message['headers']['Bcc'] = $params['bcc'];
@@ -73,8 +71,8 @@ function valghalla_mail_mail($key, &$message, $params) {
     // 20/03-2014 - tth@bellcom.dk: Not sure if this is needed anymore
     // will keep it for a bit.
     case 'default':
-      $message['subject'] = t($params['subject'], $params['replacements'], $options);
-      $message['body'][] = t($params['message'], $params['replacements'], $options);
+      $message['subject'] = format_string($params['subject'], $params['replacements']);
+      $message['body'][] = format_string($params['message'], $params['replacements']);
       break;
   }
 }

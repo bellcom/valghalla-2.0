@@ -46,8 +46,11 @@ function valghalla_eboks_get_message($template_node) {
  */
 function valghalla_eboks_send_message($to, $params, $multistep_values) {
   $language = language_default();
+  module_load_include('inc', 'valghalla_eboks', 'inccludes/ServicePlatformenPrint');
 
-  // @TODO Seng eboks gateway implementing.
+  $service = new ServiceplatformenPrintDP();
+  $service->setTo($to);
+  $service->sendMessage();
   return TRUE;
 }
 
@@ -59,4 +62,93 @@ function valghalla_eboks_send_to($entity) {
     return $field[0]['value'];
   }
   return FALSE;
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function valghalla_eboks_form_valghalla_notifications_admin_settings_alter(&$form, &$form_state, $form_id) {
+  $form['print_service'] = array(
+    '#title' => t('Print service'),
+    '#type' => 'fieldset',
+  );
+
+  $form['print_service']['valghalla_eboks_serviceagreementuuid'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Serviceaftale UUID'),
+    '#default_value' => variable_get('valghalla_eboks_serviceagreementuuid', ''),
+  );
+
+  $form['print_service']['valghalla_eboks_serviceuuid'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Service UUID'),
+    '#default_value' => variable_get('valghalla_eboks_erviceuuid', ''),
+  );
+
+  $form['print_service']['valghalla_eboks_wsdl'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Service WSDL URL location'),
+    '#default_value' => variable_get('valghalla_eboks_wsdl', ''),
+    '#maxlength' => 256,
+    '#description' => t('ex. CPRBasicInformationService/CPRBasicInformationService.wsdl, relative path would be automatically converted to absolute path'),
+    '#element_validate' => array('valghalla_eboks_wsdl_validate'),
+  );
+  array_unshift($form['#submit'], 'valghalla_eboks_wsdl_submit');
+
+  $form['print_service']['valghalla_eboks_location'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Service URL location'),
+    '#default_value' => variable_get('valghalla_eboks_location', ''),
+    '#description' => t('ex. https://exttest.serviceplatformen.dk/service/CPRBasicInformation/CPRBasicInformation/1'),
+  );
+
+  $form['valghalla_eboks_usersystemuuid'] = array(
+    '#type' => 'textfield',
+    '#title' => t('System UUID'),
+    '#default_value' => variable_get('valghalla_eboks_usersystemuuid', ''),
+  );
+
+  $form['valghalla_eboks_useruuid'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Kommune UUID'),
+    '#default_value' => variable_get('valghalla_eboks_useruuid', ''),
+  );
+
+  $form['valghalla_eboks_accountinginfo'] = array(
+    '#type' => 'textfield',
+    '#title' => t('AccountingInfo'),
+    '#default_value' => variable_get('valghalla_eboks_accountinginfo', ''),
+  );
+
+  $form['valghalla_eboks_certfile_passphrase'] = array(
+    '#type' => 'password',
+    '#title' => t('Certfile passphrase'),
+    '#default_value' => variable_get('valghalla_eboks_certfile_passphrase', ''),
+  );
+
+  $form['valghalla_eboks_certfile'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Certfile'),
+    '#default_value' => variable_get('valghalla_eboks_certfile', ''),
+  );
+
+}
+
+
+/**
+ * Custom validate handler for serviceplatformen settings.
+ */
+function valghalla_eboks_wsdl_submit(&$form, &$form_state) {
+  if ($form_state['values']['valghalla_eboks_certfile_passphrase'] == '') {
+    unset($form_state['values']['valghalla_eboks_certfile_passphrase']);
+  }
+
+  if ($valghalla_eboks_wsdl = $form_state['values']['valghalla_eboks_wsdl']) {
+    // If it is relative URL make is absolute.
+    if (substr($valghalla_eboks_wsdl, 0, 4) !== "http") {
+      global $base_url, $base_path;
+      $form_state['values']['valghalla_eboks_wsdl'] = $base_url . $base_path . drupal_get_path('module', 'vcv_serviceplatformen') . '/' . $valghalla_eboks_wsdl;
+    }
+
+  }
 }
