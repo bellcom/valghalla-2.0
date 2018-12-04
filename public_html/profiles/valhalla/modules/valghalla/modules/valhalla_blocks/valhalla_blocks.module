@@ -110,7 +110,7 @@ function valhalla_block_ajax_view($delta = '') {
   $polling_station_nids = odin_get_polling_stations($election_node->nid);
 
   if (empty($polling_station_nids)) {
-    print t('Der er ingen valsteder på dette valg');
+    print t('Der er ingen valgsteder på dette valg');
     return;
   }
 

@@ -18,3 +18,4 @@ private
 public_html/vendor
 public_html/sites/all/vendor/
 .DS_Store
+*.dd

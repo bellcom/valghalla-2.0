@@ -227,16 +227,16 @@ function _valghalla_helper_get_posts_to_fill($polling_station, $party_tid){
  *
  */
 function _valghalla_helper_get_roles_count($polling_station_nids, $role_nid, $party_tid = NULL){
-  // This query is crazy. I just copied it from the valghalla_blocks module.
-  // But it does what it is supposed to.
-  $query = db_select('field_data_field_role_n'.$role_nid, 'vr');
-  $query->innerJoin('field_data_field_party_list', 'vp', 'vp.entity_id=vr.entity_id ' );
-  $query->innerJoin('field_data_field_volunteers_pr_party_1', 'vpp', 'vpp.field_volunteers_pr_party_1_value=vr.entity_id' );
-  $query->addExpression('SUM(vr.field_role_n'.$role_nid.'_number_vo)');
+  $query = db_select('field_data_field_role_n' . $role_nid, 'vr');
+  $query->innerJoin('field_data_field_ppsp_party', 'vp', 'vp.entity_id=vr.entity_id');
+  $query->innerJoin('field_data_field_ppsp_polling_station', 'vps', 'vps.entity_id=vr.entity_id');
+  $query->innerJoin('field_data_field_volunteers_pr_pol_st_party', 'vpp', 'vpp.field_volunteers_pr_pol_st_party_value=vr.entity_id');
+  $query->addExpression('SUM(vr.field_role_n' . $role_nid . '_number_vo)');
   if ($party_tid) {
-    $query->condition('vp.field_party_list_party_list', $party_tid);
+    $query->condition('vp.field_ppsp_party_tid', $party_tid);
   }
-  $query->condition('vpp.entity_id', $polling_station_nids, 'IN');
+  $query->condition('vps.field_ppsp_polling_station_nid', $polling_station_nids, 'IN');
+  $query->condition('vpp.entity_id', $_SESSION['election_nid']);
   $res = $query->execute()->fetchColumn();
 
   return $res;

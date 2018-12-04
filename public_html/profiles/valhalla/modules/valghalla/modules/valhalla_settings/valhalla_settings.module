@@ -220,27 +220,12 @@ function _valhalla_settings_lock_field(&$form, &$form_state) {
     $form[$field][$lang][0]['value']['#disabled'] = TRUE;
   }
 
-  $roles = array();
-  $res = db_select('node', 'n')
-          ->distinct()
-          ->fields('n', array('nid', 'title'))
-          ->condition('n.type', 'roles')
-          ->execute();
+  if ($form['#form_id'] === 'field_collection_item_form' && $form['#bundle'] === 'field_volunteers_pr_pol_st_party') {
+    $roles = odin_get_roles();
 
-  while ($rec = $res->fetchAssoc()) {
-    $roles[$rec['nid']] = $rec['title'];
-  }
-  $lang = $form['field_volunteers_pr_party_1']['#language'];
-  //fields count
-  $field_volunteers_pr_party_1_count = count($form_state['node']->field_volunteers_pr_party_1[$lang]);
-
-  for ($i = 0; $i < $field_volunteers_pr_party_1_count; $i++) {
     foreach ($roles as $role_id => $role) {
-      $form['field_volunteers_pr_party_1'][$lang][$i]["field_role_n" . $role_id][$lang][0]['number_vo']['#disabled'] = TRUE;
-      $form['field_volunteers_pr_party_1'][$lang][$i]["field_role_n" . $role_id][$lang][0]['meeting_time']['#disabled'] = TRUE;
+      $form["field_role_n" . $role_id]['#disabled'] = TRUE;
+      $form["field_role_n" . $role_id]['#disabled'] = TRUE;
     }
-    $form['field_volunteers_pr_party_1'][$lang][$i]['remove_button']['#access'] = FALSE;
-    $form['field_volunteers_pr_party_1'][$lang][$i]['field_party_list'][$lang][0]['party_list']['#disabled'] = TRUE;
   }
-  $form['field_volunteers_pr_party_1'][$lang]['add_more']['#access'] = FALSE;
 }

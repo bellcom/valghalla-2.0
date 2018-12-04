@@ -1,0 +1,31 @@
+<?php
+
+/**
+ * @file
+ * Valghalla_external_server.module.
+ */
+
+/**
+ * Implements hook_node_insert().
+ */
+function valghalla_external_server_node_insert($node) {
+  if (in_array($node->type, array('volunteers'))) {
+    valghalla_synch_queue_add_item($node);
+  }
+}
+
+/**
+ * Implements hook_node_update().
+ */
+function valghalla_external_server_node_update($node) {
+  if (in_array($node->type, array('volunteers'))) {
+    valghalla_synch_queue_add_item($node);
+  }
+}
+
+/**
+ * Implements hook_valghalla_allowed_uris_alter().
+ */
+function valghalla_external_server_valghalla_allowed_uris_alter(&$allowed_uris) {
+  $allowed_uris[] = '/rest*';
+}

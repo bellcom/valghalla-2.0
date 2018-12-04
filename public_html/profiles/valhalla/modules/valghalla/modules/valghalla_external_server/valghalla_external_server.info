@@ -1,0 +1,15 @@
+name = Valghalla External Server
+description = Provides functionality so that Valghalla installation is behaving as external server
+package = Valghalla - Synch
+dependencies[] = node_export
+dependencies[] = node_export_dependency
+dependencies[] = valghalla_external_server_rest
+dependencies[] = valghalla_external_server_rest
+dependencies[] = valghalla_resource_export_service
+dependencies[] = valghalla_synch_node_export
+dependencies[] = valghalla_synch_queue
+dependencies[] = uuid
+
+version = "7.x-1.0"
+core = "7.x"
+project = "valghalla_external_server"
