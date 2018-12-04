@@ -555,8 +555,7 @@ function valghalla_volunteers_to_polling_station($station_nid = NULL) {
  */
 function valghalla_volunteers_to_polling_station_markup($polling_station, $user_party_id){
   // Get values
-  $posts_array2 = valghalla_volunteers_to_polling_station_roles($polling_station, $user_party_id);
-  $posts_array = valghalla_volunteers_to_polling_station_roles2($polling_station);
+  $posts_array = valghalla_volunteers_polling_station_posts_to_fill($polling_station);
 
   if (!empty($posts_array['party_posts_to_fill'])) {
     $parties_status = array();
@@ -571,32 +570,52 @@ function valghalla_volunteers_to_polling_station_markup($polling_station, $user_
       );
     }
 
+    // Finding the roles the are actually used here.
+    $existing_roles = array();
+    foreach (odin_get_parties() as $party_tid => $party) {
+      foreach(odin_get_roles() as $role_nid => $role) {
+        $status = odin_get_volunteers_count($_SESSION['election_nid'], array($polling_station->nid), array($role_nid => $role), $party_tid);
+
+        if ($status['total_count']['total'] !== 0) {
+          $existing_roles[$role_nid] = $status['role_count'][$role_nid]['role_name'];
+        }
+      }
+    }
+
     // Return the themed values
     return theme('station', array(
-      'posts_to_fill' => $posts_array2['posts_to_fill'],
       'parties_status' => $parties_status,
       'pollingstation_nid' => $posts_array['station_nid'],
-      'existing' => $posts_array['existing'],
       'party_posts_to_fill' => $posts_array['party_posts_to_fill'],
+      'existing_roles' => $existing_roles,
     ));
   }
 }
 
 
-/** tth: Generate list of posts to fill and filled posts. Used for generating station list for adding volunteers.
- * Also used for validation when adding volunteer. (Which is why i had to seperate this from the
- * 'valghalla_volunteers_to_polling_station_markup' function. Someone took out the view_all_parties option. I cleaned up
+/**
+ * Generate list of posts to fill and filled posts by polling station.
  *
- * @param
- *  pollling station node
- *  view all parties bool
- * @return
- *  information array
+ * Used for generating station list for adding volunteers.
+ *
+ * @param nid $polling_station
+ *   Nid of the polling station.
+ *
+ * @return array
+ *   Array of the posts to fill with the information about existing posts.
  */
-function valghalla_volunteers_to_polling_station_roles2($polling_station, $election_nid = FALSE) {
+function valghalla_volunteers_polling_station_posts_to_fill($polling_station) {
+  // Initializing variables.
   $station_id = $polling_station->nid;
-  $election_nid = $election_nid ? $election_nid : $_SESSION['election_nid'];
+  $election_nid = $_SESSION['election_nid'];
+  $election = node_load($election_nid);
 
+  $volunteers = array();
+  $party_posts_to_fill = array();
+
+  // Creating array of existing volunteers, as:
+  // $volunteers['party_tid']['role_nid']['volunteer_nid'] =
+  // array('nid' => volunteer_nid, 'fcid' => 'field_collection_id').
   $volunteer_query = new EntityFieldQuery();
   $volunteer_query->entityCondition('entity_type', 'field_collection_item')
     ->entityCondition('bundle', 'field_electioninfo')
@@ -616,25 +635,26 @@ function valghalla_volunteers_to_polling_station_roles2($polling_station, $elect
       if ($party_tid && $role_nid) {
         // Check if has host entity.
         if ($nid = $fc->hostEntity()->nid) {
-          $volunteers[$party_tid][$role_nid][$nid] = array('nid' => $nid, 'fcid' => $fcid);
+          $volunteers[$party_tid][$role_nid][$nid] = array(
+            'nid' => $nid,
+            'fcid' => $fcid
+          );
         }
       }
     }
   }
 
-  // Populate "existing"-array with volunteer data.
-  $existing = array();
-  $party_posts_to_fill = array();
-
+  // Populate filled_post with volunteer data.
   foreach (odin_get_parties() as $party_tid => $party) {
     $assigned_posts = _valghalla_helper_get_posts_to_fill($polling_station, $party_tid);
 
-    foreach($assigned_posts as $key => $value){
+    foreach ($assigned_posts as $assigned_post) {
       $id = NULL;
+      $existing_post = NULL;
 
       // Check if there is a volunteer with the role in with this party.
-      if(!empty($volunteers[$party_tid][$value['role_nid']])){
-        $volunteer = array_shift($volunteers[$party_tid][$value['role_nid']]);
+      if (!empty($volunteers[$party_tid][$assigned_post['role_nid']])) {
+        $volunteer = array_shift($volunteers[$party_tid][$assigned_post['role_nid']]);
         $id = $volunteer['nid'];
       }
 
@@ -652,8 +672,7 @@ function valghalla_volunteers_to_polling_station_roles2($polling_station, $elect
           }
         }
 
-        $existing[$id] = array(
-          'data' => _valghalla_helper_wrap_name(node_load($id), "p", $volunteer['fcid']),
+        $existing_post = array(
           'name' => $volunteer_node->title,
           'rsvp' => $rsvp,
           'rsvp_comment' => $rsvp_comment[0]['value'],
@@ -663,33 +682,35 @@ function valghalla_volunteers_to_polling_station_roles2($polling_station, $elect
         );
       }
       else {
-        // tth: The id is used when the js inserts the volunteer info on the page
-        // previously the id was just a running number, which caused the volunteer
-        // info to be places in numerous fields on the list, although the volunteer
-        // was only added to one post.
-        // The problem only existed when watching multiple parties on the polling
-        // station. Fix: insert a number that is not repeated.
-        $id = rand(1,9) . rand(1,9) . rand(1,9);
+        // tth: The id is used when the js inserts the volunteer info on the
+        // page previously the id was just a running number, which caused the
+        // volunteer info to be places in numerous fields on the list, although
+        // the volunteer was only added to one post. The problem only existed
+        // when watching multiple parties on the polling station.
+        // Fix: insert a number that is not repeated.
+        $id = rand(1, 9) . rand(1, 9) . rand(1, 9);
       }
 
+      // Adding filled post information to party_posts_to_fill.
       $party_posts_to_fill[$party_tid]['party_name'] = $party;
       $party_posts_to_fill[$party_tid]['posts'][$id] = array(
         'id' => $id,
-        'role_nid' => $value['role_nid'],
-        'role_title' => $value['role_title'],
-        'party_tid' => $party_tid
+        'role_nid' => $assigned_post['role_nid'],
+        'role_title' => $assigned_post['role_title'],
+        'party_tid' => $party_tid,
+        'existing_post' => $existing_post,
       );
     }
   }
 
-  $election = node_load($election_nid);
+  // Getting field_collection edit url.
   $electionAttachedVPSP = array();
   foreach ($election->field_volunteers_pr_pol_st_party['und'] as $field_volunteers_pr_pol_st_party) {
     $electionAttachedVPSP[] = $field_volunteers_pr_pol_st_party['value'];
   }
 
-  // Volunteers per polling station per party
-  foreach($party_posts_to_fill as $party_tid => $party) {
+  // Volunteers per polling station per party.
+  foreach ($party_posts_to_fill as $party_tid => $party) {
     $volunteer_pr_pol_st_pr_party_query = new EntityFieldQuery();
     $volunteer_pr_pol_st_pr_party_query->entityCondition('entity_type', 'field_collection_item')
       ->entityCondition('bundle', 'field_volunteers_pr_pol_st_party')
@@ -702,20 +723,21 @@ function valghalla_volunteers_to_polling_station_roles2($polling_station, $elect
 
     if ($result) {
       $fc_id = reset($result);
-      $party_posts_to_fill[$party_tid]['edit_url'] = url('field-collection/field-volunteers-pr-pol-st-party/' . $fc_id->item_id . '/edit', array('query' => array('destination' => current_path())));
+      $params = array('query' => array('destination' => current_path()));
+      $party_posts_to_fill[$party_tid]['edit_url'] = url('field-collection/field-volunteers-pr-pol-st-party/' . $fc_id->item_id . '/edit', $params);
     }
   }
 
+  // Finally returning our result.
   return array(
     'party_posts_to_fill' => $party_posts_to_fill,
     'station_nid' => $station_id,
-    'existing' => $existing,
   );
 }
 
 /**
- * tth: Generate list of posts to fill and filled posts. Used for generating station list for adding volunteers.
- * Also used for validation when adding volunteer. (Which is why i had to seperate this from the
+ * tth: Generate list of posts to fill and filled posts.
+ * Used for validation when adding volunteer. (Which is why i had to seperate this from the
  * 'valghalla_volunteers_to_polling_station_markup' function. Someone took out the view_all_parties option. I cleaned up
  *
  * @param
