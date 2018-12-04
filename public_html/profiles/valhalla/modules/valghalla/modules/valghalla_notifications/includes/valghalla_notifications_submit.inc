@@ -101,7 +101,12 @@ function valghalla_notifications_send_confirm_submit($form, &$form_state) {
 function valghalla_notifications_send_batch(array $recipients, array $form_state, array &$context) {
   $multistep_values = $form_state['multistep_values'];
   $template_nid = $multistep_values['get_recipients']['valghalla_notifications_message_node_ID'];
-
+  if (empty($context['results'])) {
+    $context['results'] = array(
+      'success' => 0,
+      'fails' => 0,
+    );
+  }
   $gateway = valghalla_notifications_gateway($form_state['storage']['gateway_id']);
 
   foreach ($recipients as $nid => $fc_id) {
@@ -137,9 +142,11 @@ function valghalla_notifications_send_batch(array $recipients, array $form_state
 
     if (call_user_func($gateway['send_message_callback'], $to, $params, $multistep_values)) {
       watchdog('valghalla_notifications', 'Message nid = %nid has been sent to volunteer %name via %gateway', $placeholders);
+      $context['results']['success']++;
     }
     else {
       watchdog('valghalla_notifications', 'Message nid = %nid has NOT been sent to volunteer %name via %gateway', $placeholders, WATCHDOG_ERROR);
+      $context['results']['fails']++;
     }
   }
 
@@ -151,7 +158,12 @@ function valghalla_notifications_send_batch(array $recipients, array $form_state
  */
 function valghalla_notifications_send_batch_finished($success, $results, $operations){
   if ($success) {
-    drupal_set_message(t('Beskeder er blevet sendt'));
+    if ($results['success']) {
+      drupal_set_message(format_plural($results['success'], '@count besked er blevet sendt', '@count beskeder er blevet sendt'));
+    }
+    if ($results['fails']) {
+      drupal_set_message(format_plural($results['fails'], '@count besked mislykkedes', '@count beskeder mislykkedes'), 'warning');
+    }
     drupal_goto('valghalla/administration/valg');
   }
 }

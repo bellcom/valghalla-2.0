@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file
  * The wrapper class to work with Serviceplatformen Print service.
@@ -8,7 +7,7 @@
 /**
  * Class that holds the service requests.
  */
-class ServiceplatformenPrint {
+class ServicePlatformenPrint {
 
   /**
    * SOAPClient object.
@@ -42,8 +41,6 @@ class ServiceplatformenPrint {
       'trace' => TRUE,
     ));
 
-
-
     $serviceagreementuuid = variable_get('valghalla_eboks_serviceagreementuuid');
     $usersystemuuid = variable_get('valghalla_eboks_usersystemuuid');
     $useruuid = variable_get('valghalla_eboks_useruuid');
@@ -65,12 +62,10 @@ class ServiceplatformenPrint {
   /**
    * Set Request data.
    *
-   * @param array $request
+   * @param array $params
    *   Request array.
    */
-  public function setRequest(array $request) {
-    $this->request = $request;
-  }
+  public function prepareRequest(array $params) {}
 
   /**
    * Get Request data.
@@ -86,16 +81,42 @@ class ServiceplatformenPrint {
     ini_set('soap.wsdl_cache_enabled', 0);
     ini_set('soap.wsdl_cache_ttl', 0);
     try {
-      $response = $this->client->PrintAfsendBrevRequest($this->request);
+      $response = $this->client->afsendBrev($this->request);
       $response['status'] = TRUE;
-      return $response;
     }
     catch (Exception $e) {
-      $response = explode(':', $e->faultstring);
-      return array(
+      $response = array(
         'status' => FALSE,
-        'text' => empty($response[1]) ? $response[1] : $e->faultstring,
+        'text' => $e->faultstring,
+        'code' => $e->faultcode,
       );
     }
+    if (variable_get('valghalla_eboks_debug', FALSE)) {
+      $path = file_directory_temp() . '/service-print-soap';
+      if (!file_exists($path)) {
+        mkdir($path, 0777, TRUE);
+      }
+      $path .= '/request-' . time() . '-' . uniqid() . '.xml';
+      file_unmanaged_save_data($this->client->__getLastRequest(), $path, FILE_EXISTS_REPLACE);
+      watchdog('ServicePlatformenPrint', 'XML-request filesaved to %path', array('%path' => $path));
+    }
+
+    return $response;
+
   }
+
+  /**
+   * Render entire message to send.
+   *
+   * @param array $params
+   *   Array with message sources.
+   *
+   * @return string
+   *   Formatted message.
+   */
+  public function renderMessage(array $params) {
+    $message = format_string($params['body'], $params['tokens']);
+    return check_markup($message, isset($params['format']) ? $params['format'] : NULL);
+  }
+
 }
