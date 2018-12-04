@@ -22,3 +22,10 @@ function valghalla_external_server_node_update($node) {
     valghalla_synch_queue_add_item($node);
   }
 }
+
+/**
+ * Implements hook_valghalla_allowed_uris_alter().
+ */
+function valghalla_external_server_valghalla_allowed_uris_alter(&$allowed_uris) {
+  $allowed_uris[] = '/rest*';
+}
