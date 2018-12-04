@@ -15,7 +15,7 @@
  *    wherever.
  */
 
-Use Mpdf\Mpdf;
+use Drupal\Valghalla\Pdf;
 
 /**
  * Implements hook_menu().
@@ -34,21 +34,15 @@ function valghalla_status_report_menu() {
  * Generates a PDF report
  */
 function valghalla_status_report_generator() {
-  $mpdf = new Mpdf();
-
-  // Attach stylesheet.
-  $stylesheet = __DIR__ . '/css/pdf.css';
-  if (file_exists($stylesheet)) {
-    $mpdf->WriteHTML(file_get_contents($stylesheet), 1);
-  }
+  $pdf = new Pdf();
 
   // Generate PDF.
   $content = _generate_pdf_content();
-  $mpdf->writeHTML(t('<h1>Valghalla status report</h1>'));
-  $mpdf->WriteHTML($content);
+  $pdf->writeHTML(t('<h1>Valghalla status report</h1>'));
+  $pdf->WriteHTML($content);
 
   // Sent PDF to the browser.
-  $mpdf->Output();
+  $pdf->Output();
 }
 
 /**
