@@ -166,4 +166,14 @@ function valghalla_eboks_wsdl_submit(&$form, &$form_state) {
       $form_state['values']['valghalla_eboks_wsdl'] = $base_url . $base_path . drupal_get_path('module', 'valghalla_eboks') . '/' . $valghalla_eboks_wsdl;
     }
   }
+
+  if (empty($form_state['values']['valghalla_eboks_debug'])
+    && file_exists(file_directory_temp() . '/service-print-soap')) {
+    $files = glob(file_directory_temp() . '/service-print-soap/*');
+    foreach ($files as $file) {
+      if (is_file($file)) {
+        unlink($file);
+      }
+    }
+  }
 }
