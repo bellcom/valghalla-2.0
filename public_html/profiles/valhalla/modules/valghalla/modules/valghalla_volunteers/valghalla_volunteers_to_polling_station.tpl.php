@@ -60,14 +60,14 @@
                         <?php
                         //0 => t('unknown') - blue
                         //1 => t('yes') - green
-                        //2 => t('no') - yellow
-                        //3 => t('never') - yellow
+                        //2 => t('no') - danger
+                        //3 => t('never') - danger
                         ?>
                         <?php if ($post['existing_post']['rsvp'] == '0'): ?>
                           <span
                             data-toggle="tooltip"
                             data-placement="top"
-                            title="<?= t('Ukendt'); ?>"
+                            title="<?= t('Har endnu ikke svaret'); ?>"
                             class="status-circle status-circle--info"
                           ></span>
                         <?php endif; ?>
@@ -76,17 +76,26 @@
                           <span
                             data-toggle="tooltip"
                             data-placement="top"
-                            title="<?= t('Ja'); ?>"
+                            title="<?= t('Har svaret ja'); ?>"
                             class="status-circle status-circle--success"
                           ></span>
                         <?php endif; ?>
 
-                        <?php if ($post['existing_post']['rsvp'] == '2' || $post['existing_post']['rsvp'] == '3'): ?>
+                        <?php if ($post['existing_post']['rsvp'] == '2'): ?>
                           <span
                             data-toggle="tooltip"
                             data-placement="top"
-                            title="<?= t('No'); ?>"
-                            class="status-circle status-circle--warning"
+                            title="<?= t('Har svaret nej'); ?>"
+                            class="status-circle status-circle--danger"
+                          ></span>
+                        <?php endif; ?>
+
+                        <?php if ($post['existing_post']['rsvp'] == '3'): ?>
+                          <span
+                            data-toggle="tooltip"
+                            data-placement="top"
+                            title="<?= t('Vil ikke kontaktes igen'); ?>"
+                            class="status-circle status-circle--danger"
                           ></span>
                         <?php endif; ?>
                       </div>
