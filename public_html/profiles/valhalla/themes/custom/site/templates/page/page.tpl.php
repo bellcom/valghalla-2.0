@@ -234,13 +234,7 @@
           <?php if (!empty($page['sidebar__right'])): ?>
             <div class="row">
               <section class="col-sm-8">
-
-                <div class="partial">
-                  <div class="partial__body">
-                    <?php print render($page['content']); ?>
-                  </div>
-                </div>
-
+                <?php print render($page['content']); ?>
               </section>
 
               <aside class="hidden-xs col-sm-4" role="complementary">
@@ -249,13 +243,7 @@
             </div>
 
           <?php else: ?>
-
-            <div class="partial">
-              <div class="partial__body">
-                <?php print render($page['content']); ?>
-              </div>
-            </div>
-
+            <?php print render($page['content']); ?>
           <?php endif; ?>
 
         </div>

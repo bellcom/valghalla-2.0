@@ -5,119 +5,242 @@
  */
 ?>
 
-<table class="table">
-  <tr>
-    <th>
-    </th>
-    <?php foreach ($existing_roles as $existing_role_nid => $existing_role): ?>
-      <th>
-        <?php print $existing_role; ?>
-      </th>
-    <?php endforeach; ?>
-  </tr>
+<div class="row">
+  <div class="col-xs-12 col-md-7">
 
-  <?php foreach ($parties_status as $party_status): ?>
-    <?php if ($party_status['status']['total_count']['total'] !== 0): ?>
-      <tr class="<?php print $party_status['party_status_label']; ?>">
-        <td>
-          <?php print $party_status['party_name']; ?>
-        </td>
-        <?php foreach ($party_status['status']['role_count'] as $role_nid => $role_count): ?>
-          <?php if (array_key_exists($role_nid, $existing_roles)): ?>
-            <td>
-              <?php print $role_count['total']; ?>
-            </td>
-          <?php endif; ?>
+    <?php if ($party_posts_to_fill): ?>
+      <div id="volunteer-station-list">
+        <?php foreach ($party_posts_to_fill as $party_tid => $party_posts): ?>
+          <div class="boxy boxy--<?=$parties_status[$party_tid]['party_status_label']; ?>">
+
+            <!-- Begin - heading -->
+            <div class="boxy__heading">
+              <div class="flexy-row">
+                <h2 class="boxy__heading__title"><?php print $party_posts['party_name']; ?></h2>
+                <?php foreach($parties_status[$party_tid]['status']['role_count'] as $role_count): ?>
+                  <?php if ($role_count['total'] !== 0) : ?>
+                    <div class="boxy__heading__meta-data">
+                      <?php print $role_count['role_name'] . ': ' .$role_count['assigned'] . '/' . $role_count['total'] ?>
+                    </div>
+                  <?php endif; ?>
+                <?php endforeach; ?>
+
+                <div class="flexy-spacer"></div>
+
+                <a href="<?php print $party_posts['edit_url']; ?>" class="btn btn-default btn-xs" data-toggle="tooltip" data-placement="top" title="<?=t('Redigér'); ?>">
+                  <span class="glyphicon glyphicon-edit"></span>
+                </a>
+              </div>
+            </div>
+            <!-- End - heading -->
+
+            <!-- Begin - body -->
+            <div class="boxy__body">
+              <?php foreach ($party_posts['posts'] as $i => $post): ?>
+                <dl id="volunteer-station-list-item-<?php print $i ?>">
+                  <dd data-post="<?php print $post['role_nid'] . $post['party_tid'] . $i; ?>">
+
+                    <div class="entity-list entity-list--volunteer">
+                      <div class="entity-list__data">
+
+                        <?php if (isset($post['existing_post'])): ?>
+                          <?php
+                          //0 => t('unknown') - blue
+                          //1 => t('yes') - green
+                          //2 => t('no') - yellow
+                          //3 => t('never') - yellow
+                          ?>
+                          <div class="entity-list__data__item entity-list__data__item--status">
+                            <?php if ($post['existing_post']['rsvp'] == '0'): ?>
+                              <span
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                title="<?= t('Ukendt'); ?>"
+                                class="status-circle status-circle--info"
+                              ></span>
+                            <?php endif; ?>
+
+                            <?php if ($post['existing_post']['rsvp'] == '1'): ?>
+                              <span
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                title="<?= t('Ja'); ?>"
+                                class="status-circle status-circle--success"
+                              ></span>
+                            <?php endif; ?>
+
+                            <?php if ($post['existing_post']['rsvp'] == '2' || $post['existing_post']['rsvp'] == '3'): ?>
+                              <span
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                title="<?= t('No'); ?>"
+                                class="status-circle status-circle--warning"
+                              ></span>
+                            <?php endif; ?>
+                          </div>
+                          <div class="entity-list__data__item entity-list__data__item--role">
+                            <strong><?php print $post['role_title'] ?></strong>
+                          </div>
+                          <div class="entity-list__data__item entity-list__data__item--name"><?php print $post['existing_post']['name']; ?></div>
+                        <?php else: ?>
+                          <input type="text" class="form-control" placeholder="<?=t('Vælg en deltager'); ?>"/>
+                        <?php endif; ?>
+
+                      </div>
+
+                      <!-- Begin - controls -->
+                      <div class="entity-list__controls">
+
+                        <!-- Begin - response -->
+                        <?php if ($post['existing_post']['rsvp_comment']): ?>
+                          <span
+                            data-toggle="tooltip"
+                            data-placement="top"
+                            title="<?= t('Kommentar'); ?>"
+                          >
+                            <button
+                              class="btn btn-default btn-xs"
+                              data-toggle="popover"
+                              data-placement="top"
+                              data-content="<?php print $post['existing_post']['rsvp_comment']; ?>"
+                              title="<?= t('Kommentar'); ?>"
+                            >
+                              <span class="glyphicon glyphicon-comment"></span>
+                            </button>
+                          </span>
+                        <?php endif; ?>
+                        <!-- End - response -->
+
+                        <!-- Begin - reply -->
+                        <a
+                          href="<?=$post['existing_post']['reply_link']; ?>"
+                          class="btn btn-default btn-xs"
+                          data-toggle="tooltip"
+                          data-placement="top"
+                          title="<?= t('Besvar'); ?>"
+                        >
+                          <span class="glyphicon glyphicon-link"></span>
+                        </a>
+                        <!-- End - reply -->
+
+                        <?php if (user_access('add volunteer to station')) : ?>
+
+                          <!-- Begin - add existing -->
+                          <a data-role_nid="<?php print $post['role_nid']; ?>"
+                             data-party_tid="<?php print $post['party_tid']; ?>"
+                             data-pollingstation_nid="<?php print $pollingstation_nid; ?>"
+                             data-toggle="tooltip"
+                             data-placement="top"
+                             title="<?= t('Tilføj eksisterende deltager'); ?>"
+                            <?php if (isset($post['existing_post'])): ?> style="display:none;"  <?php endif; ?>
+                             class="btn btn-default btn-xs js-add-volunteer"
+                          >
+                            <span class="glyphicon glyphicon-plus"></span>
+                          </a>
+                          <!-- End - add existing -->
+
+                          <!-- Begin - add new -->
+                          <?php
+                          $add_url = url('valghalla/deltagere/tilfoej',
+                            [
+                              'query' => [
+                                'role_nid'           => $post['role_nid'],
+                                'party_tid'          => $post['party_tid'],
+                                'pollingstation_nid' => $pollingstation_nid,
+                                'destination'        => current_path(),
+                              ],
+                            ]);
+                          ?>
+                          <a
+                            href="<?php print $add_url; ?>" <?php if (isset($post['existing_post'])): ?> style="display:none;"  <?php endif; ?>
+                            class="btn btn-default btn-xs"
+                            data-toggle="tooltip"
+                            data-placement="top"
+                            title="<?= t('Opret en ny deltager'); ?>"
+                          >
+                            <span class="glyphicon glyphicon-user"></span>
+                            <span class="glyphicon glyphicon-plus"></span>
+                          </a>
+                          <!-- End - add new -->
+
+                          <?php if (isset($post['existing_post'])): ?>
+
+                            <!-- Begin - edit -->
+                            <a href="/node/<?php print $post['existing_post']['nid'] ?>/edit?destination=<?php print (implode('/', arg())) ?>"
+                               class="btn btn-default btn-xs edit"
+                               data-toggle="tooltip"
+                               data-placement="top"
+                               title="<?= t('Redigér deltager'); ?>"
+                            >
+                              <span class="glyphicon glyphicon-user"></span>
+                            </a>
+                            <!-- End - edit -->
+
+                            <!-- Begin - remove -->
+                            <a data-fcid="<?php print $post['existing_post']['fcid'] ?>"
+                               data-toggle="tooltip"
+                               data-placement="top"
+                               title="<?= t('Fjern deltager'); ?>"
+                               class="remove btn btn-danger btn-xs js-remove-volunteer"
+                            >
+                              <span class="glyphicon glyphicon-minus"></span>
+                            </a>
+                            <!-- End - remove -->
+
+                          <?php endif; ?>
+
+                        <?php endif; ?>
+
+                      </div>
+                      <!-- End - controls -->
+
+                    </div>
+
+                  </dd>
+                </dl>
+              <?php endforeach; ?>
+
+            </div>
+            <!-- End - body -->
+
+          </div>
+
+        <?php endforeach; ?>
+
+      </div>
+    <?php endif; ?>
+
+  </div>
+  <div class="col-xs-12 col-md-5">
+
+    <table class="table">
+      <tr>
+        <th>
+        </th>
+        <?php foreach ($existing_roles as $existing_role_nid => $existing_role): ?>
+          <th>
+            <?php print $existing_role; ?>
+          </th>
         <?php endforeach; ?>
       </tr>
-    <?php endif; ?>
-  <?php endforeach; ?>
-</table>
 
-<?php if ($party_posts_to_fill): ?>
-  <div id="volunteer-station-list">
-    <?php foreach ($party_posts_to_fill as $party_tid => $party_posts): ?>
-      <div>
-        <h2>
-          <?php print $party_posts['party_name'] . ' ' . $parties_status[$party_tid]['party_status_label']; ?>
-        </h2>
-        <?php foreach($parties_status[$party_tid]['status']['role_count'] as $role_count): ?>
-          <?php if ($role_count['total'] !== 0) : ?>
-            <div>
-              <?php print $role_count['role_name'] . ': ' .$role_count['assigned'] . '/' . $role_count['total'] ?>
-            </div>
-          <?php endif; ?>
-        <?php endforeach; ?>
+      <?php foreach ($parties_status as $party_status): ?>
+        <?php if ($party_status['status']['total_count']['total'] !== 0): ?>
+          <tr class="<?php print $party_status['party_status_label']; ?>">
+            <td>
+              <?php print $party_status['party_name']; ?>
+            </td>
+            <?php foreach ($party_status['status']['role_count'] as $role_nid => $role_count): ?>
+              <?php if (array_key_exists($role_nid, $existing_roles)): ?>
+                <td>
+                  <?php print $role_count['total']; ?>
+                </td>
+              <?php endif; ?>
+            <?php endforeach; ?>
+          </tr>
+        <?php endif; ?>
+      <?php endforeach; ?>
+    </table>
 
-        edit link: <?php print $party_posts['edit_url']; ?>
-
-        <?php foreach ($party_posts['posts'] as $i => $post): ?>
-          <dl class="clearfix" id="volunteer-station-list-item-<?php print $i ?>">
-            <dt class="label-<?php print $post['role_title'] ?>"><?php print $post['role_title'] ?></dt>
-            <dd data-post="<?php print $post['role_nid'] . $post['party_tid'] . $i; ?>">
-              <div class="row">
-                <div class="post col-xs-6"
-                  <?php if (!isset($post['existing_post'])): ?> style="display:none;" <?php endif; ?> >
-
-                  <?php if (isset($post['existing_post'])): ?>
-                    <div>NAME: <?php print $post['existing_post']['name']; ?></div>
-                    <div>reply link: <?php print $post['existing_post']['reply_link']; ?></div>
-                    <div>RSVP: <?php
-                      //0 => t('unknown')
-                      //1 => t('yes')
-                      //2 => t('no')
-                      //3 => t('never')
-                      print $post['existing_post']['rsvp']; ?>
-                    </div>
-                    <div>RSVP comment: <?php print $post['existing_post']['rsvp_comment']; ?></div>
-                  <?php endif; ?>
-                </div>
-
-                <div class="col-xs-6"
-                  <?php if (isset($post['existing_post'])): ?> style="display:none;" <?php endif; ?> >
-                  <input type="text" class="form-control"
-                         placeholder="<?php print t('Vælg en deltager'); ?>"/>
-                </div>
-                <?php if (user_access('add volunteer to station')) : ?>
-                  <a data-role_nid="<?php print $post['role_nid']; ?>"
-                     data-party_tid="<?php print $post['party_tid']; ?>"
-                     data-pollingstation_nid="<?php print $pollingstation_nid; ?>"
-                    <?php if (isset($post['existing_post'])): ?> style="display:none;"  <?php endif; ?>
-                     class="btn btn-default btn-xs js-add-volunteer"><span
-                      class="glyphicon glyphicon-plus"></span></a>
-                  <?php
-                  $add_url = url('valghalla/deltagere/tilfoej',
-                    [
-                      'query' => [
-                        'role_nid'           => $post['role_nid'],
-                        'party_tid'          => $post['party_tid'],
-                        'pollingstation_nid' => $pollingstation_nid,
-                        'destination'        => current_path(),
-                      ],
-                    ]);
-                  ?>
-                  <a
-                    href="<?php print $add_url; ?>" <?php if (isset($post['existing_post'])): ?> style="display:none;"  <?php endif; ?>
-                    class="btn btn-default btn-xs"><span
-                      class="glyphicon glyphicon-user"></span><span
-                      class="glyphicon glyphicon-plus"></span></a>
-                  <?php if (isset($post['existing_post'])): ?>
-                    <a
-                      href="/node/<?php print $post['existing_post']['nid'] ?>/edit?destination=<?php print (implode('/',
-                        arg())) ?>" class="btn btn-default btn-xs edit">rediger <span
-                        class="glyphicon glyphicon-user"></span></a>
-                    <a data-fcid="<?php print $post['existing_post']['fcid'] ?>"
-                       class="remove btn btn-danger btn-xs js-remove-volunteer">fjern <span
-                        class="glyphicon glyphicon-minus"></span></a>
-                  <?php endif; ?>
-                <?php endif; ?>
-
-              </div>
-            </dd>
-          </dl>
-        <?php endforeach; ?>
-      </div>
-
-    <?php endforeach; ?>
   </div>
-<?php endif; ?>
+</div>

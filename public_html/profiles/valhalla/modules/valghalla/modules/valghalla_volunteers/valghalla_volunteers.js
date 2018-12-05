@@ -6,7 +6,7 @@ var valghalla_volunteers = valghalla_volunteers || [];
   Drupal.behaviors.valghalla_volunteers = {
     attach: function (context, settings) {
       // Fetch info about post
-      $('dd input').live('focus', function(){
+      $('dd input').on('focus', function(){
         var $parent = $(this).parent().parent();
         var $el = $parent.find('.js-add-volunteer');
         volunteer_info.post_id = $parent.attr('data-post');
@@ -47,7 +47,7 @@ var valghalla_volunteers = valghalla_volunteers || [];
       });
 
       // Remove volunteer from post
-      $('.js-remove-volunteer').live('click', function(){
+      $('.js-remove-volunteer').on('click', function(){
         var fcid = $(this).attr('data-fcid');
         $parent = $(this).parent();
         $el = $parent.find('.volunteer');
@@ -68,7 +68,7 @@ var valghalla_volunteers = valghalla_volunteers || [];
       });
 
       // Select volunteer from modal
-      $('.js-select-volunteer').live('click', function(event){
+      $('.js-select-volunteer').on('click', function(event){
         $('.modal').modal('hide');
         $el = $('[data-post="'+volunteer_info.post_id+'"]');
 
@@ -88,7 +88,6 @@ var valghalla_volunteers = valghalla_volunteers || [];
           setTimeout(function(){
             Drupal.behaviors.valghalla_volunteers.populateTable();
           }, 500);
-
         });
       });
 

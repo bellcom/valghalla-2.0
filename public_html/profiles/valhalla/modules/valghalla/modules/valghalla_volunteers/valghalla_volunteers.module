@@ -498,12 +498,9 @@ function valghalla_volunteers_to_polling_station($station_nid = NULL) {
         continue;
       }
 
-      $markup_temp .= valghalla_volunteers_to_polling_station_markup($polling_station, $term->tid, TRUE);
-      if($markup_temp){
-        $markup .= '<h2>'.$term->name.'</h2>';
-        $markup .= $markup_temp;
+      if ($output = valghalla_volunteers_to_polling_station_markup($polling_station, $term->tid, TRUE)) {
+        $markup .= $output;
       }
-
     }
   }
   else {
@@ -516,7 +513,8 @@ function valghalla_volunteers_to_polling_station($station_nid = NULL) {
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h4 class="modal-title">Vælg tilforordnet</h4>
+            
+            <h4 class="modal-title">' . t('Vælg tilforordnet') . '</h4>
           </div>
           <div class="modal-body">
             <div ng-controller="volunteerController">

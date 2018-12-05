@@ -1,9 +1,9 @@
 // |--------------------------------------------------------------------------
-// | List
+// | Status circle
 // |--------------------------------------------------------------------------
 // |
 // | This file contains styles for the following:
-// | - .entity-list
+// | - .status-circle
 // |
 
 // --------------------------------------------------
@@ -14,46 +14,39 @@
 // Mixins
 // --------------------------------------------------
 
-@mixin entity-list-mixin() {}
+@mixin status-circle-mixin() {}
 
 // --------------------------------------------------
 // Styling
 // --------------------------------------------------
 
-.entity-list {
-  display: flex;
+.status-circle {
+  display: inline-block;
 
-  flex-direction: row;
-}
+  width: 12px;
+  height: 12px;
 
-.entity-list__data {
-  display: flex;
+  border-radius: 100%;
 
-  flex-grow: 1;
-}
-.entity-list__data__item {
-
-  + .entity-list__data__item {
-    margin-left: 10px;
-  }
-}
-
-.entity-list__data__item--role {
-  min-width: 25px;
-}
-.entity-list__data__item--name {}
-
-.entity-list__controls {
-  flex-wrap: nowrap;
-
-  > * {
-    margin-left: 8px;
-  }
+  background-color: $body-bg-tertiary;
 }
 
 // --------------------------------------------------
 // Variants
 // --------------------------------------------------
+
+.status-circle--danger {
+  background-color: $brand-danger;
+}
+.status-circle--warning {
+  background-color: $brand-warning;
+}
+.status-circle--success {
+  background-color: $brand-success;
+}
+.status-circle--info {
+  background-color: $brand-info;
+}
 
 // --------------------------------------------------
 // Responsive

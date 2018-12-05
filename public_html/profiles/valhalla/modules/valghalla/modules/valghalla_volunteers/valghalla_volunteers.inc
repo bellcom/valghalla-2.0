@@ -38,7 +38,9 @@ function _valghalla_helper_wrap_name($node, $container = 'p', $fcid = null) {
 
   if ($rsvp_message) {
     if (!empty($rsvp_message[0]['value'])) {
-      $rsvp_markup = '<span class="rsvp-message-icon fa fa-envelope-o"></span><span style="display:none;" class="rsvp-message">' . $rsvp_message[0]['value'] . '</span>';
+      $rsvp_markup = '<button class="btn btn-default btn-xs">';
+      $rsvp_markup .=   '<span class="rsvp-message-icon fa fa-envelope-o" data-toggle="popover" data-placement="top" data-title="' . t('Deltagerens svar') . '" data-content="' . $rsvp_message[0]['value'] . '"></span>';
+      $rsvp_markup .= '</button>';
     }
   }
 
@@ -48,7 +50,7 @@ function _valghalla_helper_wrap_name($node, $container = 'p', $fcid = null) {
 
   if (user_access('add volunteer to station') && ($rsvp == 0 || variable_get('valghalla_volunteers_always_show_rsvp_link', FALSE))) {
     $field_token = field_get_items('field_collection_item', $fc, 'field_token');
-    $reply_link = '<a title="Svar for denne tilforordnede" class="reply edit" href="/volunteers/rsvp/'  . $field_token[0]['value'] . '"><span class="glyphicon glyphicon-comment"></span></a>';
+    $reply_link = '<a class="btn btn-default btn-xs" data-toggle="tooltip" data-placement="top" title="Svar for denne tilforordnede" class="reply edit" href="/volunteers/rsvp/'  . $field_token[0]['value'] . '"><span class="glyphicon glyphicon-comment"></span></a>';
   }
 
   $valid = '';
