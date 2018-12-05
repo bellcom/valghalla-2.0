@@ -143,4 +143,20 @@ var valghalla_volunteers = valghalla_volunteers || [];
       }
     }
   };
+  Drupal.behaviors.valghallaMoveEditPollingStationButton = {
+    attach: function (context, settings) {
+      var $button = $('.edit-polling-station');
+      var $wrapper = $('.page-volunteers-station .breadcrumb__wrapper');
+      var $breadcrumb = $('.breadcrumb');
+
+      // If we don't have a wrapper, stop what we are doing!
+      if ($wrapper.length === 0) return;
+
+      // Don't proceed if a breadcrumb is present. This will break styling.
+      if ($breadcrumb.length > 0) return;
+
+      // Inserts a button into the wrapper.
+      $wrapper.html($button.removeClass('hidden'));
+    },
+  };
 })(jQuery);

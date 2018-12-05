@@ -542,7 +542,7 @@ function valghalla_volunteers_to_polling_station($station_nid = NULL) {
   $node_edit = '';
   if (node_access('update', node_load(arg(2)))) {
     $node_edit_url = '/node/' . arg(2) . '/edit?destination=' . current_path();
-    $node_edit = '<a class="btn btn-default pull-right" href="' . $node_edit_url . '">Rediger valgsted</a>';
+    $node_edit = '<div><a class="btn btn-secondary edit-polling-station hidden" href="' . $node_edit_url . '">' . t('Rediger valgsted') . '</a></div>';
   }
 
   return $node_edit . $markup . $modal;
