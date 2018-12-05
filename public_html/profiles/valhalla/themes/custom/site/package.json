@@ -11,6 +11,7 @@
     "additional-bootstrap-colors": "^1.0.5",
     "babel-preset-es2015": "^6.24.1",
     "bootstrap-sass": "^3.3.7",
+    "bootstrap-sweetalert": "^1.0.1",
     "boxy-concept": "^1.0.1",
     "column-restrictor": "^1.0.1",
     "content-transitions": "^1.0.4",

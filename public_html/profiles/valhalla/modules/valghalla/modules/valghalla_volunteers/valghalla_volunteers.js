@@ -6,7 +6,7 @@ var valghalla_volunteers = valghalla_volunteers || [];
   Drupal.behaviors.valghalla_volunteers = {
     attach: function (context, settings) {
       // Fetch info about post
-      $('.entity-list--volunteer input').on('focus', function(){
+      $('.entity-list--volunteer-form input').on('focus', function(){
         var $parent = $(this).parent().parent();
         var $el = $parent.find('.js-add-volunteer');
         volunteer_info.post_id = $parent.attr('data-post');
@@ -95,26 +95,62 @@ var valghalla_volunteers = valghalla_volunteers || [];
       // <------------------- Add to polling station modal
     },
     autocompleteSelect: function( item ){
-      $el = item.volunteer_item;
-      $el.find('.js-add-volunteer').hide();
-
+      // $form = item.volunteer_item;
+      // $parent = $form.parent();
+      // $data = $parent.find('.entity-list__data');
+      // $controls = $parent.find('.entity-list__controls');
       volunteer_info.volunteer_nid = item.volunteer_nid;
 
-      $el.find('div.post').html('<p class="volunteer">...</p>');
-      $el.find('div').hide();
-      $el.find('div.post').show();
+      // Hide.
+      // $controls.find('.js-add-volunteer').hide();
 
-      $.post('/ajax/volunteers/station/add', volunteer_info, function(data){
-        $el.find('div.post').html(data.html);
-        $el.find('div.post').show();
-        $el.append('<a href="/node/'+volunteer_info.volunteer_nid+'/edit?destination=volunteers/station/'+volunteer_info.pollingstation_nid+'" class="btn btn-default btn-xs edit"><span class="glyphicon glyphicon-user"></span></a>');
+      // console.log('Form', $form);
+      // console.log('Parent', $parent);
+      // console.log('Data', $data);
+      // console.log('Controls', $controls);
 
-        $el.append('<a data-fcid="'+data.fcid+'" class="remove btn btn-default btn-xs js-remove-volunteer"><span class="glyphicon glyphicon-minus"></span></a>');
-        setTimeout(function(){
-          Drupal.behaviors.valghalla_volunteers.populateTable();
-        }, 500);
+      // Add volunteer.
+      $.post('/ajax/volunteers/station/add', volunteer_info, function(data) {
+
+        // Show a modal.
+        swal({
+          title: Drupal.t('Siden genindlæses...'),
+          type: 'success',
+          showCancelButton: false,
+          showConfirmButton: false,
+        });
+
+        // Refresh after 0.1 sec.
+        setTimeout(function() {
+          location.reload();
+        }, 100);
+
+        // var $editButton = '<a href="/node/'+volunteer_info.volunteer_nid+'/edit?destination=volunteers/station/'+volunteer_info.pollingstation_nid+'" class="btn btn-default btn-xs edit"><span class="glyphicon glyphicon-user"></span></a>';
+        // var $removeButton = '<a data-fcid="'+data.fcid+'" class="remove btn btn-default btn-xs js-remove-volunteer"><span class="glyphicon glyphicon-minus"></span></a>';
+        //
+        // // Switch between form display and volunteer display.
+        // $parent
+        //     .removeClass('entity-list--volunteer-form')
+        //     .addClass('entity-list--volunteer');
+        //
+        // // Hide form.
+        // $form.addClass('hidden');
+        //
+        // // Hide all controls.
+        // $controls.find('.btn').addClass('hidden');
+        //
+        // // Show data.
+        // $data.html(data.html);
+        // $data.removeClass('hidden');
+        //
+        // // Add buttons.
+        // $controls.append($editButton);
+        // $controls.append($removeButton);
+        //
+        // setTimeout(function(){
+        //   Drupal.behaviors.valghalla_volunteers.populateTable();
+        // }, 500);
       });
-
     },
     populateTable: function(){
       $.get('/ajax/volunteers/station/getvolunteers', function(data){

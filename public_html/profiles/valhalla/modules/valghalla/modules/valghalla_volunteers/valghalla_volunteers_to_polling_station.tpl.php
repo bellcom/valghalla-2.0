@@ -135,15 +135,17 @@
                     <!-- End - response -->
 
                     <!-- Begin - reply -->
-                    <a
-                      href="<?=$post['existing_post']['reply_link']; ?>"
-                      class="btn btn-default btn-xs"
-                      data-toggle="tooltip"
-                      data-placement="top"
-                      title="<?= t('Besvar'); ?>"
-                    >
-                      <span class="glyphicon glyphicon-link"></span>
-                    </a>
+                    <?php if (! $post['existing_post']['reply_link']): ?>
+                      <a
+                        href="<?=$post['existing_post']['reply_link']; ?>"
+                        class="btn btn-default btn-xs"
+                        data-toggle="tooltip"
+                        data-placement="top"
+                        title="<?= t('Besvar'); ?>"
+                      >
+                        <span class="glyphicon glyphicon-link"></span>
+                      </a>
+                    <?php endif; ?>
                     <!-- End - reply -->
 
                     <?php if (user_access('add volunteer to station')) : ?>
