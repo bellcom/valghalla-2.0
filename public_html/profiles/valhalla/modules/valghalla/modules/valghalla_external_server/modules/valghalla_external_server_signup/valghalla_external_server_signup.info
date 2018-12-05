@@ -1,0 +1,5 @@
+name = Valhalla External Server Signup
+description = Enables volunteers to sign up on external server
+core = 7.x
+package = Valghalla - Synch
+dependencies[] = "odin"
