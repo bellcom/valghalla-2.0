@@ -22,7 +22,9 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
   }
 
   if (!$election || !$party) {
-    // TODO: throw error
+    // Throwing the warning and redirecting to the main page.
+    drupal_set_message(t('Pladserne er desværre blevet optaget. Vælg evt. et andet valgsted.'), 'warning');
+    drupal_goto();
   }
 
   // Getting role, polling station from form state or URL.
@@ -97,7 +99,9 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
     );
   }
   else {
-    // TODO: throw error.
+    // Throwing the warning and redirecting to the main page.
+    drupal_set_message(t('Pladserne er desværre blevet optaget. Vælg evt. et andet valgsted.'), 'warning');
+    drupal_goto();
   }
 
   // Building a form.
