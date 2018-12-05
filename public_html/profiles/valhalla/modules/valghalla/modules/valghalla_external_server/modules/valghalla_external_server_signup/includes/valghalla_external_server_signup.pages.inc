@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * @file
+ * Valghalla_external_server_signup.pages.inc.
+ */
+
+/**
+ * Builds signup form.
+ */
 function valghalla_external_server_signup_signup_form($form, &$form_state) {
   // Getting election and party from state or URL.
   $election = $form_state['election'];
@@ -40,19 +48,22 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
   $form_mode = NULL;
   $election_date_str = format_date(strtotime($election->field_date['da'][0]['value']), 'custom', 'd. F Y');
 
-//  dpm($election);
-//  dpm($party);
-//  dpm($role);
-//  dpm($polling_station);
-
   drupal_set_title($election->title);
+
+  $form['cpr'] = array(
+    '#type' => 'textfield',
+    '#description' => 'Temporary field, until NemID login is added',
+    '#attributes' => array(
+      'placeholder' => 'Temporary field, until NemID login is added',
+    ),
+  );
 
   $form['comment'] = array(
     '#type' => 'textarea',
     '#rows' => 5,
     '#attributes' => array(
-      'placeholder' => 'Skriv evt. en kommentar her'
-    )
+      'placeholder' => 'Skriv evt. en kommentar her',
+    ),
   );
 
   if (!$form_state['role_in_url'] && !$form_state['polling_station_in_url']) {
@@ -73,7 +84,8 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
       $election_date_str . ' kl. ' . $role->field_meetingtime['und'][0]['value'],
     );
 
-  } elseif ($form_state['role_in_url'] && $form_state['polling_station_in_url']) {
+  }
+  elseif ($form_state['role_in_url'] && $form_state['polling_station_in_url']) {
     $form_mode = 'party_role_polling_station';
     $replacements = array(
       $election->title,
@@ -81,9 +93,10 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
       $party->name,
       $role->title,
       $election_date_str . ' kl. ' . $role->field_meetingtime['und'][0]['value'],
-      $polling_station->title
+      $polling_station->title,
     );
-  } else {
+  }
+  else {
     // TODO: throw error.
   }
 
@@ -169,11 +182,35 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
     $form['#bottom_text'] = str_replace($tokens, $replacements, $form['#bottom_text']);
   }
 
+  $form['terms_agreement'] = array(
+    '#type' => 'checkbox',
+    '#title' => 'Accepter at vi gemmer dine oplysninger.',
+    '#required' => TRUE,
+  );
+
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Subscribe'),
+    '#states' => array(
+      'enabled' => array(
+        ':input[name="terms_agreement"]' => array('checked' => TRUE),
+      ),
+    ),
+  );
+
   $form['#theme'] = array('valghalla_external_server_signup_form');
 
   return $form;
 }
 
+/**
+ * Ajax callback for role select.
+ *
+ * Updated the list of polling stations, and selected polling station details.
+ *
+ * @return mixed
+ *   Polling station container element.
+ */
 function valghalla_external_server_signup_role_select_callback($form, &$form_state) {
   $first_polling_station = reset($form_state['available_polling_stations']);
   $polling_station_selected = key($first_polling_station);
@@ -186,11 +223,54 @@ function valghalla_external_server_signup_role_select_callback($form, &$form_sta
   return $form['polling_stations_container'];
 }
 
-
+/**
+ * Ajax callback for polling station select.
+ *
+ * Updated the polling station details.
+ *
+ * @return mixed
+ *   Polling station details element.
+ */
 function valghalla_external_server_signup_polling_station_select_callback($form, $form_state) {
   return $form['polling_stations_container']['polling_station_details'];
 }
 
+/**
+ * Create node for volunteer and adding to volunteer to post.
+ */
+function valghalla_external_server_signup_signup_form_submit($form, $form_state) {
+  $election_nid = $form_state['election']->nid;
+  $party_tid = $form_state['party']->tid;
+  $role_nid = ($form_state['role']->nid) ? $form_state['role']->nid : $role_nid = $form_state['values']['role_select'];
+  $polling_station_nid = ($form_state['polling_station']) ? $form_state['polling_station']->nid : $form_state['values']['polling_station_select'];
+
+  if ($polling_station_nid && $role_nid && $party_tid && $election_nid) {
+    $volunteer_node = new stdClass();
+    $volunteer_node->type = 'volunteers';
+    $volunteer_node->language = LANGUAGE_NONE;
+    node_object_prepare($volunteer_node);
+    $volunteer_node->status = 1;
+
+    $cpr = $form_state['values']['cpr'];
+    $volunteer_node->title = "New volunteer, CPR: " . $cpr;
+
+    $volunteer_node->field_cpr_number[LANGUAGE_NONE][]['value'] = $cpr;
+    $volunteer_node->field_external_signup[LANGUAGE_NONE][]['value'] = 1;
+
+    node_save($volunteer_node);
+    $post_info = valghalla_volunteers_add_volunteer_to_post($volunteer_node->nid, $polling_station_nid, $role_nid, $party_tid, $election_nid, 1);
+    $post = entity_load('field_collection_item', array($post_info['fcid']));
+    if ($post) {
+      $post = reset($post);
+      $post->field_rsvp_comment[LANGUAGE_NONE][]['value'] = $form_state['values']['comment'];
+      $post->save();
+    }
+  }
+}
+
+/**
+ * External server signup settings form.
+ */
 function valghalla_external_server_signup_settings_form($form, $form_state) {
   $form['valghalla_external_server_signup_text_party_fs'] = array(
     '#type' => 'fieldset',
@@ -209,7 +289,7 @@ function valghalla_external_server_signup_settings_form($form, $form_state) {
     '#default_value' => variable_get('valghalla_external_server_signup_text_party_bottom'),
   );
   $token_str = array();
-  foreach(_valghalla_external_server_signup_text_get_replacement_tokens('party') as $token => $text) {
+  foreach (_valghalla_external_server_signup_text_get_replacement_tokens('party') as $token => $text) {
     $token_str[] = "<li>$token - $text</li>";
   }
   $form['valghalla_external_server_signup_text_party_fs'][] = array(
@@ -218,8 +298,8 @@ function valghalla_external_server_signup_settings_form($form, $form_state) {
     '#collapsible' => TRUE,
     '#collapsed' => TRUE,
     0 => array(
-      '#markup' => '<ul>' . implode('', $token_str) . '</ul>'
-    )
+      '#markup' => '<ul>' . implode('', $token_str) . '</ul>',
+    ),
   );
 
   $form['valghalla_external_server_signup_text_party_role_fs'] = array(
@@ -239,7 +319,7 @@ function valghalla_external_server_signup_settings_form($form, $form_state) {
     '#default_value' => variable_get('valghalla_external_server_signup_text_party_role_bottom'),
   );
   $token_str = array();
-  foreach(_valghalla_external_server_signup_text_get_replacement_tokens('party_role') as $token => $text) {
+  foreach (_valghalla_external_server_signup_text_get_replacement_tokens('party_role') as $token => $text) {
     $token_str[] = "<li>$token - $text</li>";
   }
   $form['valghalla_external_server_signup_text_party_role_fs'][] = array(
@@ -248,8 +328,8 @@ function valghalla_external_server_signup_settings_form($form, $form_state) {
     '#collapsible' => TRUE,
     '#collapsed' => TRUE,
     0 => array(
-      '#markup' => '<ul>' . implode('', $token_str) . '</ul>'
-    )
+      '#markup' => '<ul>' . implode('', $token_str) . '</ul>',
+    ),
   );
 
   $form['valghalla_external_server_signup_text_party_role_polling_station_fs'] = array(
@@ -269,7 +349,7 @@ function valghalla_external_server_signup_settings_form($form, $form_state) {
     '#default_value' => variable_get('valghalla_external_server_signup_text_party_role_polling_station_bottom'),
   );
   $token_str = array();
-  foreach(_valghalla_external_server_signup_text_get_replacement_tokens('party_role_polling_station') as $token => $text) {
+  foreach (_valghalla_external_server_signup_text_get_replacement_tokens('party_role_polling_station') as $token => $text) {
     $token_str[] = "<li>$token - $text</li>";
   }
   $form['valghalla_external_server_signup_text_party_role_polling_station_fs'][] = array(
@@ -278,8 +358,8 @@ function valghalla_external_server_signup_settings_form($form, $form_state) {
     '#collapsible' => TRUE,
     '#collapsed' => TRUE,
     0 => array(
-      '#markup' => '<ul>' . implode('', $token_str) . '</ul>'
-    )
+      '#markup' => '<ul>' . implode('', $token_str) . '</ul>',
+    ),
   );
 
   return system_settings_form($form);

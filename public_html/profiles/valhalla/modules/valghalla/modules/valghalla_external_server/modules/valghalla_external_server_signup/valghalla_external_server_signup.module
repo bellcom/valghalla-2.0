@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Valghalla_external_server_signup.module.
@@ -21,8 +22,8 @@ function valghalla_external_server_signup_menu() {
   );
 
   $items['admin/valghalla/settings/external_server_signup'] = array(
-    'title' => t('External server signup settings'),
-    'description' => t('Various setting for external server signup'),
+    'title' => 'External server signup settings',
+    'description' => 'Various setting for external server signup',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('valghalla_external_server_signup_settings_form'),
     'access arguments' => array('administer valghalla'),
@@ -35,7 +36,7 @@ function valghalla_external_server_signup_menu() {
 /**
  * Implements hook_theme().
  */
-function valghalla_external_server_signup_theme($existing, $type, $theme, $path){
+function valghalla_external_server_signup_theme($existing, $type, $theme, $path) {
   return array(
     'valghalla_external_server_signup_form' => array(
       'render element' => 'form',
