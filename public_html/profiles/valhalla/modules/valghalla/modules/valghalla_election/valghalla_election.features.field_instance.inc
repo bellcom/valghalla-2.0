@@ -635,11 +635,120 @@ function valghalla_election_field_default_field_instances() {
     ),
   );
 
+  // Exported field_instance:
+  // 'taxonomy_term-partier-field_party_subsc_accept_comment'.
+  $field_instances['taxonomy_term-partier-field_party_subsc_accept_comment'] = array(
+    'bundle' => 'partier',
+    'default_value' => array(
+      0 => array(
+        'value' => 0,
+      ),
+    ),
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'list',
+        'settings' => array(),
+        'type' => 'list_default',
+        'weight' => 9,
+      ),
+    ),
+    'entity_type' => 'taxonomy_term',
+    'field_name' => 'field_party_subsc_accept_comment',
+    'label' => 'Commenting enabled',
+    'required' => 0,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'options',
+      'settings' => array(
+        'display_label' => 1,
+      ),
+      'type' => 'options_onoff',
+      'weight' => 6,
+    ),
+  );
+
+  // Exported field_instance: 'taxonomy_term-partier-field_party_subsc_message'.
+  $field_instances['taxonomy_term-partier-field_party_subsc_message'] = array(
+    'bundle' => 'partier',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 7,
+      ),
+    ),
+    'entity_type' => 'taxonomy_term',
+    'field_name' => 'field_party_subsc_message',
+    'label' => 'Subscription comment',
+    'required' => 0,
+    'settings' => array(
+      'text_processing' => 0,
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'text',
+      'settings' => array(
+        'rows' => 5,
+      ),
+      'type' => 'text_textarea',
+      'weight' => 8,
+    ),
+  );
+
+  // Exported field_instance:
+  // 'taxonomy_term-partier-field_party_subsc_terms_text'.
+  $field_instances['taxonomy_term-partier-field_party_subsc_terms_text'] = array(
+    'bundle' => 'partier',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 8,
+      ),
+    ),
+    'entity_type' => 'taxonomy_term',
+    'field_name' => 'field_party_subsc_terms_text',
+    'label' => ' Terms and conditions text',
+    'required' => 0,
+    'settings' => array(
+      'text_processing' => 0,
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'text',
+      'settings' => array(
+        'size' => 60,
+      ),
+      'type' => 'text_textfield',
+      'weight' => 7,
+    ),
+  );
+
   // Translatables
   // Included for use with string extractors like potx.
+  t(' Terms and conditions text');
   t('Body');
   t('Bogstav');
   t('CVR nummer');
+  t('Commenting enabled');
   t('Dato');
   t('Deltagere pr. parti');
   t('E-mail adresse');
@@ -649,6 +758,7 @@ function valghalla_election_field_default_field_instances() {
   t('Partisekretær');
   t('Party');
   t('Polling Station');
+  t('Subscription comment');
   t('Sæt igang');
   t('Type');
   t('Udsend PDF rapport til partier');

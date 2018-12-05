@@ -1,6 +1,12 @@
+<?php if (isset($form['#party_message'])): ?>
+  <p>
+    <?php print $form['#party_message']; ?>
+  </p>
+<?php endif; ?>
+
 <p>
   <?php
-  print $form['#upper_text'];
+    print $form['#upper_text'];
   ?>
 </p>
 

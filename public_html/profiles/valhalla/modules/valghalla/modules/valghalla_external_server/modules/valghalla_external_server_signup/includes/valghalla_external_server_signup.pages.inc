@@ -10,25 +10,23 @@
  */
 function valghalla_external_server_signup_signup_form($form, &$form_state) {
   // Getting election and party from state or URL.
-  $election = $form_state['election'];
+  $election = isset($form_state['election']) ? $form_state['election'] : NULL;
   if (!$election) {
     $election = _valghalla_external_server_signup_fetch_entity_from_url('election', 'node');
     $form_state['election'] = $election;
   }
-  $party = $form_state['party'];
+  $party = isset($form_state['party']) ? $form_state['party'] : NULL;
   if (!$party) {
     $party = _valghalla_external_server_signup_fetch_entity_from_url('party', 'taxonomy_term');
     $form_state['party'] = $party;
   }
 
   if (!$election || !$party) {
-    // Throwing the warning and redirecting to the main page.
-    drupal_set_message(t('Pladserne er desværre blevet optaget. Vælg evt. et andet valgsted.'), 'warning');
-    drupal_goto();
+    valghalla_external_server_signup_terminate_signup();
   }
 
   // Getting role, polling station from form state or URL.
-  $role = $form_state['role'];
+  $role = isset($form_state['role']) ? $form_state['role'] : NULL;
   if (!$role) {
     $role = _valghalla_external_server_signup_fetch_entity_from_url('role', 'node');
 
@@ -37,7 +35,7 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
       $form_state['role_in_url'] = TRUE;
     }
   }
-  $polling_station = $form_state['polling_station'];
+  $polling_station = isset($form_state['polling_station']) ? $form_state['polling_station'] : NULL;
   if (!$polling_station) {
     $polling_station = _valghalla_external_server_signup_fetch_entity_from_url('pol_st', 'node');
 
@@ -66,9 +64,10 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
     '#attributes' => array(
       'placeholder' => 'Skriv evt. en kommentar her',
     ),
+    '#access' => !empty($party->field_party_subsc_accept_comment) ? $party->field_party_subsc_accept_comment['und'][0]['value'] : FALSE,
   );
 
-  if (!$form_state['role_in_url'] && !$form_state['polling_station_in_url']) {
+  if (!isset($form_state['role_in_url']) && !isset($form_state['polling_station_in_url'])) {
     $form_mode = 'party';
     $replacements = array(
       $election->title,
@@ -76,7 +75,7 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
       $party->name,
     );
   }
-  elseif ($form_state['role_in_url'] && !$form_state['polling_station_in_url']) {
+  elseif (isset($form_state['role_in_url']) && !isset($form_state['polling_station_in_url'])) {
     $form_mode = 'party_role';
     $replacements = array(
       $election->title,
@@ -87,7 +86,7 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
     );
 
   }
-  elseif ($form_state['role_in_url'] && $form_state['polling_station_in_url']) {
+  elseif (isset($form_state['role_in_url']) && isset($form_state['polling_station_in_url'])) {
     $form_mode = 'party_role_polling_station';
     $replacements = array(
       $election->title,
@@ -99,14 +98,16 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
     );
   }
   else {
-    // Throwing the warning and redirecting to the main page.
-    drupal_set_message(t('Pladserne er desværre blevet optaget. Vælg evt. et andet valgsted.'), 'warning');
-    drupal_goto();
+    valghalla_external_server_signup_terminate_signup();
   }
 
   // Building a form.
-  if (!$form_state['role_in_url']) {
+  if (!isset($form_state['role_in_url'])) {
     $available_roles = _valghalla_external_server_signup_get_available_roles($election->nid, $party->tid);
+    if (empty($available_roles)) {
+      valghalla_external_server_signup_terminate_signup();
+    }
+
     $form_state['available_roles'] = $available_roles;
     $form['role_select'] = array(
       '#type' => 'select',
@@ -137,7 +138,7 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
     '#suffix' => '</div>',
   );
 
-  if (!$form_state['polling_station_in_url']) {
+  if (!isset($form_state['polling_station_in_url'])) {
     if ($role) {
       $available_polling_stations = _valghalla_external_server_signup_get_available_polling_stations($election->nid, $role->nid);
       $form_state['available_polling_stations'] = $available_polling_stations;
@@ -185,10 +186,14 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
     $form['#upper_text'] = str_replace($tokens, $replacements, $form['#upper_text']);
     $form['#bottom_text'] = str_replace($tokens, $replacements, $form['#bottom_text']);
   }
+  if (!empty($party->field_party_subsc_message)) {
+    $form['#party_message'] = $party->field_party_subsc_message['und'][0]['value'];
+  }
 
+  $terms_agreement_default = 'Accepter at vi gemmer dine oplysninger.';
   $form['terms_agreement'] = array(
     '#type' => 'checkbox',
-    '#title' => 'Accepter at vi gemmer dine oplysninger.',
+    '#title' => !empty($party->field_party_subsc_terms_text) ? $party->field_party_subsc_terms_text['und'][0]['value'] : $terms_agreement_default,
     '#required' => TRUE,
   );
 
@@ -237,6 +242,18 @@ function valghalla_external_server_signup_role_select_callback($form, &$form_sta
  */
 function valghalla_external_server_signup_polling_station_select_callback($form, $form_state) {
   return $form['polling_stations_container']['polling_station_details'];
+}
+
+/**
+ * Helper function.
+ *
+ * Cancels the subscription by redirecting user to front page
+ * with a warning message.
+ */
+function valghalla_external_server_signup_terminate_signup() {
+  // Throwing the warning and redirecting to the main page.
+  drupal_set_message(t('Pladserne er desværre blevet optaget. Vælg evt. et andet valgsted.'), 'warning');
+  drupal_goto();
 }
 
 /**
