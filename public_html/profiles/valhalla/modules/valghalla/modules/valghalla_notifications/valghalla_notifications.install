@@ -80,3 +80,68 @@ function valghalla_notifications_install() {
     }
   }
 }
+
+/**
+ * Implements hook_schema().
+ */
+function valghalla_notifications_schema() {
+  $schema = array();
+
+  $schema['entity_valghalla_notification'] = array(
+    'description' => 'The base table for valghalla notifications entity.',
+    'fields' => array(
+      'id' => array(
+        'description' => 'Primary key of the valghalla notifications entity.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'bundle_type' => array(
+        'description' => 'The bundle type',
+        'type' => 'text',
+        'size' => 'medium',
+        'not null' => TRUE,
+      ),
+      'type' => array(
+        'description' => 'Notification type',
+        'type' => 'varchar',
+        'length' => 255,
+        'default' => '',
+      ),
+      'message' => array(
+        'description' => 'A description of the item',
+        'type' => 'text',
+        'not null' => FALSE,
+        'size' => 'big',
+      ),
+      'gateway' => array(
+        'description' => 'Notification gateway',
+        'type' => 'varchar',
+        'length' => 255,
+        'default' => '',
+      ),
+      'status' => array(
+        'description' => 'Status',
+        'type' => 'varchar',
+        'length' => 255,
+        'default' => '',
+      ),
+      'status_info' => array(
+        'description' => 'Notification status details',
+        'type' => 'text',
+        'not null' => FALSE,
+        'size' => 'big',
+      ),
+      'created' => array(
+        'description' => 'The Unix timestamp of the entity creation time.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+    ),
+    'primary key' => array('id'),
+  );
+
+  return $schema;
+}
+

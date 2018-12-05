@@ -99,6 +99,7 @@ function valghalla_notifications_send_confirm_submit($form, &$form_state) {
  *   Context array.
  */
 function valghalla_notifications_send_batch(array $recipients, array $form_state, array &$context) {
+  $notification_type = 'On demand';
   $multistep_values = $form_state['multistep_values'];
   $template_nid = $multistep_values['get_recipients']['valghalla_notifications_message_node_ID'];
   if (empty($context['results'])) {
@@ -123,8 +124,9 @@ function valghalla_notifications_send_batch(array $recipients, array $form_state
     );
 
     if ($template_nid == 'invite') {
+      $notification_type = 'invitation';
       $election_nid = $multistep_values['get_recipients']['election_nid'];
-      $template_nid = valghalla_notifications_get_template($gateway['id'], $election_nid, $tokens['!position_nid'], 'invitation');
+      $template_nid = valghalla_notifications_get_template($gateway['id'], $election_nid, $tokens['!position_nid'], $notification_type);
     }
 
     $params = valghalla_notifications_get_message_by_nid($template_nid);
@@ -132,6 +134,8 @@ function valghalla_notifications_send_batch(array $recipients, array $form_state
       watchdog('valghalla_notifications', 'Template not found to send message to volunteer %name via %gateway', $placeholders);
       continue;
     }
+
+    $params['notification_type'] = $notification_type;
 
     $params = array_merge(array('tokens' => $tokens), $params);
     $to = call_user_func($gateway['send_to_callback'], $volunteer_fc->hostEntity());
