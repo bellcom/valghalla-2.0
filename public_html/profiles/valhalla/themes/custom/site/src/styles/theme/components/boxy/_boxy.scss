@@ -55,6 +55,8 @@ $lg-boxy-spacing-left-right: $boxy-spacing-left-right;
 .boxy__heading__title {
   display: inline-block;
 
+  font-weight: $headings-font-weight-bold;
+
   + .boxy__heading__meta-data {
     margin-left: $grid-gutter-width;
   }
@@ -63,7 +65,7 @@ $lg-boxy-spacing-left-right: $boxy-spacing-left-right;
 .boxy__heading__meta-data {
   display: inline-block;
 
-  font-size: $font-size-h5;
+  font-size: $font-size-h6;
   color: $boxy-heading-title-color;
 
   + .boxy__heading__meta-data {

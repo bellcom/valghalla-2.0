@@ -6,7 +6,7 @@ var valghalla_volunteers = valghalla_volunteers || [];
   Drupal.behaviors.valghalla_volunteers = {
     attach: function (context, settings) {
       // Fetch info about post
-      $('dd input').on('focus', function(){
+      $('.entity-list--volunteer input').on('focus', function(){
         var $parent = $(this).parent().parent();
         var $el = $parent.find('.js-add-volunteer');
         volunteer_info.post_id = $parent.attr('data-post');

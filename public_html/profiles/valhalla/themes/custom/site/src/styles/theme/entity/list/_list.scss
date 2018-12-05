@@ -23,7 +23,17 @@
 .entity-list {
   display: flex;
 
+  flex-wrap: nowrap;
   flex-direction: row;
+  align-items: center;
+
+  + .entity-list {
+    margin-top: 14px;
+  }
+}
+
+.entity-list__form {
+  flex-grow: 1;
 }
 
 .entity-list__data {
@@ -54,6 +64,21 @@
 // --------------------------------------------------
 // Variants
 // --------------------------------------------------
+
+.entity-list--volunteer-form {
+  padding: 10px 15px;
+
+  background-color: $body-bg-secondary;
+
+  .boxy & {
+    margin-left: -15px;
+    margin-right: -15px;
+  }
+
+  .btn-default {
+    background-color: darken($btn-default-bg, 10%);
+  }
+}
 
 // --------------------------------------------------
 // Responsive
