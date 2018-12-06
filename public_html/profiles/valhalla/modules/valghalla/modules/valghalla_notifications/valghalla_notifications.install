@@ -109,10 +109,16 @@ function valghalla_notifications_schema() {
         'default' => '',
       ),
       'message' => array(
-        'description' => 'A description of the item',
+        'description' => 'Notification message',
         'type' => 'text',
         'not null' => FALSE,
         'size' => 'big',
+      ),
+      'vol_id' => array(
+        'description' => 'The Volunteer reference',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
       ),
       'gateway' => array(
         'description' => 'Notification gateway',

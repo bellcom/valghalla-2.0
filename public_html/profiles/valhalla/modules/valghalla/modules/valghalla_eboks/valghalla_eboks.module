@@ -59,6 +59,7 @@ function valghalla_eboks_send_message($to, $params, $multistep_values) {
   $notification = entity_get_controller('entity_valghalla_notification')->create(array(
     'type' => $params['notification_type'],
     'gateway' => 'eboks',
+    'vol_id' => $params['volunteer_nid'],
     'message' => $service->renderMessage($params),
     'status' => $result['status'] ? 'Succeed' : 'Failed',
     'status_info' => $result['responce'],
