@@ -100,7 +100,7 @@ class ServicePlatformenPrint {
       file_unmanaged_save_data($this->client->__getLastRequest(), $path, FILE_EXISTS_REPLACE);
       watchdog('ServicePlatformenPrint', 'XML-request filesaved to %path', array('%path' => $path));
     }
-
+    $response['responce'] = $this->client->__getLastResponse();
     return $response;
 
   }

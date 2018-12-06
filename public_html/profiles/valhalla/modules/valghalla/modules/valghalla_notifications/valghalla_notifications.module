@@ -6,6 +6,7 @@
 module_load_include('inc', 'valghalla_notifications', 'includes/valghalla_notifications_navigation');
 module_load_include('inc', 'valghalla_notifications', 'includes/valghalla_notifications_form');
 module_load_include('inc', 'valghalla_notifications', 'includes/valghalla_notifications_submit');
+module_load_include('inc', 'valghalla_notifications', 'valghalla_notifications.entity');
 
 /**
  * Implements hook_menu().
@@ -97,6 +98,8 @@ function valghalla_notifications_menu() {
     'weight' => -4,
   );
 
+  entity_valghalla_menu($items);
+
   return $items;
 }
 
@@ -138,6 +141,59 @@ function valghalla_notifications_theme() {
       'template' => 'message-preview',
     ),
   );
+}
+
+/**
+ * Implements hook_entity_info().
+ */
+function valghalla_notifications_entity_info() {
+  $info['entity_valghalla_notification'] = array(
+    'label' => t('Valghalla notification Entity'),
+    'controller class' => 'ValghallaNotificationController',
+    'entity class' => 'ValghallaNotification',
+    'base table' => 'entity_valghalla_notification',
+    'uri callback' => 'entity_valghalla_notification_uri',
+    'entity keys' => array(
+      'id' => 'id',
+    ),
+    'bundle' => 'bundle_type',
+    'bundle keys' => array(
+      'bundle' => 'bundle_type',
+    ),
+    'bundles' => array(
+      'default_bundle' => array(
+        'label' => 'Default notification bundle',
+        'admin' => array(
+          'path' => 'admin/structure/entity_valghalla_notification/manage',
+          'access arguments' => array('administer valghalla notification entities'),
+        ),
+      ),
+    ),
+    'static cache' => TRUE,
+    'view modes' => array(
+      'default' => array(
+        'label' => t('Default'),
+        'custom settings' => FALSE,
+      ),
+    ),
+  );
+
+  return $info;
+}
+
+/**
+ * Implements hook_permission().
+ */
+function valghalla_notification_permission() {
+  $permissions = array(
+    'administer valghalla notification entities' => array(
+      'title' => t('Administer entity_valghalla_notification entities'),
+    ),
+    'view any valghalla notification entity' => array(
+      'title' => t('View any Valghalla Notification entity'),
+    ),
+  );
+  return $permissions;
 }
 
 /**
@@ -372,6 +428,7 @@ function valghalla_notifications_notify_volunteer($election_nid, $role_nid, $fc,
 
   $params = valghalla_notifications_get_message_by_nid($template_nid);
   $params = array_merge(array('tokens' => $tokens), $params);
+  $params['notification_type'] = $type;
   $to = call_user_func($gateway['send_to_callback'], $fc->hostEntity());
   if (empty($to)) {
     watchdog('valghalla_notifications', 'Empty email for recipient with name %name', $placeholders, WATCHDOG_ERROR);

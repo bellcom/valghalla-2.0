@@ -61,18 +61,23 @@ function valghalla_mail_mail($key, &$message, $params) {
       }
 
       $message['subject'] = format_string($params['subject'], $params['tokens']);
-      $message['body'][] = format_string($params['body'], $params['tokens']);
+      $message_body = format_string($params['body'], $params['tokens']);
+      $message['body'][] = $message_body;
       $message['params']['attachments'] = $params['attachments'];
       if (!empty($params['bcc'])) {
         $message['headers']['Bcc'] = $params['bcc'];
       }
-      break;
-
-    // 20/03-2014 - tth@bellcom.dk: Not sure if this is needed anymore
-    // will keep it for a bit.
-    case 'default':
-      $message['subject'] = format_string($params['subject'], $params['replacements']);
-      $message['body'][] = format_string($params['message'], $params['replacements']);
+      /** @var EntityInterface $notification */
+      $notification = $params['notification_entity'];
+      $notification->message = $message_body;
+      if (!empty($params['attachments'])) {
+        $files = array();
+        foreach ($params['attachments'] as $attachment) {
+          $files[] = $attachment['filename'];
+        }
+        $notification->message .= theme('item_list', array('items' => $files, 'title' => t('Attachments')));
+      }
+      $notification->save();
       break;
   }
 }
@@ -87,14 +92,14 @@ function valghalla_mail_get_mail_types() {
 }
 
 /**
- * Available mails
+ * Available mails.
  */
-function valghalla_mail_get_mails(){
+function valghalla_mail_get_mails() {
   $mail_nodes = node_load_multiple(array(), array('type' => 'email'));
   // Populate array with mail options for general mails.
   $mail_options[0] = t('Nedarves fra "Standard E-Mail skabeloner"');
   $mail_options[1] = t('None');
-  foreach($mail_nodes as $mail_node){
+  foreach ($mail_nodes as $mail_node) {
     $mail_options[$mail_node->nid] = $mail_node->title;
   }
   return $mail_options;
@@ -182,7 +187,21 @@ function valghalla_mail_send_message($to, $params, $context = array()) {
   if (!empty($context['get_recipients']['email_sender'])) {
     $from = $context['get_recipients']['user_email'];
   }
+
+  /** @var EntityInterface $notification */
+  $notification = entity_get_controller('entity_valghalla_notification')->create(array(
+    'type' => $params['notification_type'],
+    'gateway' => 'mail',
+    'status' => 'Failed',
+  ));
+  $notification->save();
+  $params['notification_entity'] = $notification;
+
   $result = drupal_mail('valghalla_mail', 'mail', $to, $language, $params, $from, TRUE);
+  if ($result['result']) {
+    $notification->status = 'Succeed';
+    $notification->save();
+  }
   return $result['result'];
 }
 
