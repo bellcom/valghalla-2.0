@@ -404,7 +404,8 @@ function valghalla_notifications_get_message_by_nid($template_nid) {
  * Notify volunteer of post change.
  */
 function valghalla_notifications_notify_volunteer($election_nid, $role_nid, $fc, $type) {
-  $no_mail = valghalla_notifications_volunteer_no_notification($fc->hostEntity());
+  $volunteer = $fc->hostEntity();
+  $no_mail = valghalla_notifications_volunteer_no_notification($volunteer);
   $election_node = node_load($election_nid);
   $field_status = field_get_items('node', $election_node, 'field_election_status');
   if ($no_mail || empty($field_status)) {
@@ -429,7 +430,8 @@ function valghalla_notifications_notify_volunteer($election_nid, $role_nid, $fc,
   $params = valghalla_notifications_get_message_by_nid($template_nid);
   $params = array_merge(array('tokens' => $tokens), $params);
   $params['notification_type'] = $type;
-  $to = call_user_func($gateway['send_to_callback'], $fc->hostEntity());
+  $params['volunteer_nid'] = $volunteer->nid;
+  $to = call_user_func($gateway['send_to_callback'], $volunteer);
   if (empty($to)) {
     watchdog('valghalla_notifications', 'Empty email for recipient with name %name', $placeholders, WATCHDOG_ERROR);
     return FALSE;

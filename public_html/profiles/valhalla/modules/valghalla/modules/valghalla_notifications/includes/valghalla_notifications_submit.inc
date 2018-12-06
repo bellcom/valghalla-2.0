@@ -112,8 +112,9 @@ function valghalla_notifications_send_batch(array $recipients, array $form_state
 
   foreach ($recipients as $nid => $fc_id) {
     $volunteer_fc = entity_load_single('field_collection_item', $fc_id);
+    $volunteer = $volunteer_fc->hostEntity();
     if (!is_object($volunteer_fc)) {
-      watchdog('valghalla_notifications', 'Volunteer entity is emoty for id %fc_id ', ['fc_id' => $fc_id]);
+      watchdog('valghalla_notifications', 'Volunteer entity is empty for id %fc_id ', ['fc_id' => $fc_id]);
       continue;
     }
     $tokens = _valghalla_helper_get_token_values($volunteer_fc);
@@ -136,9 +137,10 @@ function valghalla_notifications_send_batch(array $recipients, array $form_state
     }
 
     $params['notification_type'] = $notification_type;
+    $params['volunteer_nid'] = $volunteer->nid;
 
     $params = array_merge(array('tokens' => $tokens), $params);
-    $to = call_user_func($gateway['send_to_callback'], $volunteer_fc->hostEntity());
+    $to = call_user_func($gateway['send_to_callback'], $volunteer);
     if (empty($to)) {
       watchdog('valghalla_notifications', 'Empty email for recipient with name %name', array('%name' => $params['tokens']['!name']), WATCHDOG_ERROR);
       continue;

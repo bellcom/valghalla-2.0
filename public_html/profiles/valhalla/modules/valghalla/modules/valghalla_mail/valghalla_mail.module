@@ -191,6 +191,7 @@ function valghalla_mail_send_message($to, $params, $context = array()) {
   /** @var EntityInterface $notification */
   $notification = entity_get_controller('entity_valghalla_notification')->create(array(
     'type' => $params['notification_type'],
+    'vol_id' => $params['volunteer_nid'],
     'gateway' => 'mail',
     'status' => 'Failed',
   ));
