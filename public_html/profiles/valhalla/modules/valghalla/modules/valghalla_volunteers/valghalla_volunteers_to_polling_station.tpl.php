@@ -28,8 +28,8 @@
 
                 <div class="flexy-spacer"></div>
 
-                <a href="#" class="btn btn-default btn-xs" data-toggle="tooltip" data-placement="top" title="<?=t('Ekstern tilmelding'); ?>">
-                  <?php print $party_posts['party_subscribe_url']?><span class="glyphicon glyphicon-link"></span>
+                <a href="<?php print $party_posts['party_subscribe_url']?>" class="btn btn-default btn-xs" data-toggle="tooltip" data-placement="top" title="<?=t('Ekstern tilmelding'); ?>">
+                  <span class="glyphicon glyphicon-link"></span>
                 </a>
 
                 <a href="<?php print $party_posts['edit_url']; ?>" class="btn btn-default btn-xs" data-toggle="tooltip" data-placement="top" title="<?=t('Redigér'); ?>">
