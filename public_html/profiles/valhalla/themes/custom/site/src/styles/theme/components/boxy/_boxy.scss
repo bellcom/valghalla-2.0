@@ -33,6 +33,10 @@ $lg-boxy-spacing-left-right: $boxy-spacing-left-right;
   .btn-default {
     background-color: darken($btn-default-bg, 10%);
   }
+
+  .btn + .btn {
+    margin-left: 8px;
+  }
 }
 
 .boxy__body {
