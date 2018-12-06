@@ -20,8 +20,38 @@
 // Styling
 // --------------------------------------------------
 
-.autocomplete {
+.ui-menu {
+  padding: 0;
 
+  border-radius: 0;
+  border-color: $input-border !important;
+
+  .ui-menu-item {
+
+    a {
+      font-family: $font-family-base;
+      font-size: $font-size-base;
+      font-weight: $font-weight;
+
+      color: $text-color;
+      background-color: $body-bg !important;
+
+      &:focus,
+      &:hover {
+        background-color: $body-bg-secondary !important;
+      }
+
+      &,
+      &:hover,
+      &:focus {
+        margin: 0 !important;
+        padding: $padding-small-vertical $padding-small-horizontal !important;
+
+        border: 0 !important;
+        background-image: none !important;
+      }
+    }
+  }
 }
 
 // --------------------------------------------------
