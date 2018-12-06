@@ -122,7 +122,7 @@
                     <?php if ($post['existing_post']['rsvp_comment']): ?>
                       <span
                         data-toggle="tooltip"
-                        data-placement="top"
+                        data-placement="left"
                         title="<?= t('Kommentar'); ?>"
                       >
                         <button

@@ -116,26 +116,46 @@ var valghalla_volunteers = valghalla_volunteers || [];
       });
 
       // Select volunteer from modal
-      $('.js-select-volunteer').on('click', function(event){
-        $('.modal').modal('hide');
-        $el = $('[data-post="'+volunteer_info.post_id+'"]');
-
-        $el.find('.js-add-volunteer').hide();
-        $el.find('.post').html('<p class="volunteer">...</p>');
-        $el.find('div').hide();
-        $el.find('div.post').show();
-
+      $('.modal').on('click', '.js-select-volunteer', function(event) {
         volunteer_info.volunteer_nid = $(this).attr('data-volunteer_nid');
 
+        // $el = $('[data-post="'+volunteer_info.post_id+'"]');
+
+        // $el.find('.js-add-volunteer').hide();
+        // $el.find('.post').html('<p class="volunteer">...</p>');
+        // $el.find('div').hide();
+        // $el.find('div.post').show();
+
+
         $.post('/ajax/volunteers/station/add', volunteer_info, function(data){
-          $el.find('div.post').html(data.html);
-          $el.append('<a href="/node/'+volunteer_info.volunteer_nid+'/edit?destination=volunteers/station/'+volunteer_info.pollingstation_nid+'" class="btn btn-default btn-xs edit"><span class="glyphicon glyphicon-user"></span></a>');
+          // $el.find('div.post').html(data.html);
+          // $el.append('<a href="/node/'+volunteer_info.volunteer_nid+'/edit?destination=volunteers/station/'+volunteer_info.pollingstation_nid+'" class="btn btn-default btn-xs edit"><span class="glyphicon glyphicon-user"></span></a>');
 
-          $el.append('<a data-fcid="'+data.fcid+'" class="remove btn btn-default btn-xs js-remove-volunteer"><span class="glyphicon glyphicon-minus"></span></a>');
+          // $el.append('<a data-fcid="'+data.fcid+'" class="remove btn btn-default btn-xs js-remove-volunteer"><span class="glyphicon glyphicon-minus"></span></a>');
 
-          setTimeout(function(){
-            Drupal.behaviors.valghalla_volunteers.populateTable();
-          }, 500);
+          // setTimeout(function(){
+          //   Drupal.behaviors.valghalla_volunteers.populateTable();
+          // }, 500);
+
+          // Hide modal.
+          $('.modal').modal('hide');
+
+          // When modal is hidden.
+          $('.modal').on('hidden.bs.modal', function () {
+
+            // Show a modal.
+            swal({
+              title: Drupal.t('Siden genindlæses...'),
+              type: 'success',
+              showCancelButton: false,
+              showConfirmButton: false,
+            });
+
+            // Refresh after 0.1 sec.
+            setTimeout(function() {
+              location.reload();
+            }, 100);
+          })
         });
       });
 
@@ -151,11 +171,6 @@ var valghalla_volunteers = valghalla_volunteers || [];
 
       // Hide.
       // $controls.find('.js-add-volunteer').hide();
-
-      // console.log('Form', $form);
-      // console.log('Parent', $parent);
-      // console.log('Data', $data);
-      // console.log('Controls', $controls);
 
       // Add volunteer.
       $.post('/ajax/volunteers/station/add', volunteer_info, function(data) {
@@ -211,7 +226,6 @@ var valghalla_volunteers = valghalla_volunteers || [];
             value: "(" + data[key].volunteer_party + ")" + data[key].volunteer_name,
             volunteer_nid: data[key].volunteer_nid,
             desc: ""
-
           });
         }
 
