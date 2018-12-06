@@ -121,8 +121,8 @@ function entity_valghalla_notification_list_entities() {
         'data' => array(
           'id' => $entity->id,
           'type' => $entity->type,
-          'message' => substr($message, 0, 100),
-          'status' => l($entity->status, 'valghalla/administration/notifications/' . $entity->id),
+          'message' => l(substr($message, 0, 100), 'valghalla/administration/notifications/' . $entity->id),
+          'status' => $entity->status,
           'operations' => theme('links__ctools_dropbutton', array(
             'links' => array(
               array('title' => t('View'), 'href' => 'valghalla/administration/notifications/' . $entity->id),
@@ -131,6 +131,9 @@ function entity_valghalla_notification_list_entities() {
           )),
         ),
       );
+      if (strtolower($entity->status) == 'failed') {
+        $row['style'] = 'background-color:#ffdddd;';
+      }
       $rows[] = $row;
     }
     // Put our entities into a themed table. See theme_table() for details.
