@@ -495,28 +495,52 @@ function valghalla_volunteers_to_polling_station($station_nid = NULL) {
     }
   }
 
-  $markup = '';
+  $markup = '<div class="row">';
 
   if (user_access('valghalla see all parties') && !$user_party_id) {
     // tth: If the user is administrator and theres no party chosen, show all parties!
     $parties = odin_get_parties();
+    $markup .= '<div class="col-xs-12 col-sm-6 col-md-7">';
 
     foreach ($parties  as $party_tid => $party_name) {
       if (is_array($restrict_polling_stations) && !in_array($polling_station->nid, $restrict_polling_stations)) {
         continue;
       }
 
+      // Polling stations.
       if ($output = valghalla_volunteers_to_polling_station_markup($polling_station, $party_tid)) {
         $markup .= $output;
       }
     }
-    $markup .= valghalla_volunteers_seat_matrix_roles_table_markup($polling_station, $parties);
+
+    $markup .= '</div>';
+
+    // Table.
+    if ($output = valghalla_volunteers_seat_matrix_roles_table_markup($polling_station, $parties)) {
+      $markup .= '<div class="col-xs-12 col-sm-6 col-md-5">';
+      $markup .=    $output;
+      $markup .= '</div>';
+    }
   }
   else {
-    $markup .= valghalla_volunteers_to_polling_station_markup($polling_station, $user_party_id);
+
+    // Polling stations.
+    if ($output = valghalla_volunteers_to_polling_station_markup($polling_station, $user_party_id)) {
+      $markup .= '<div class="col-xs-12 col-sm-6 col-md-7">';
+      $markup .=    $output;
+      $markup .= '</div>';
+    }
+
+    // Table.
     $user_party_loaded = taxonomy_term_load($user_party_id);
-    $markup .= valghalla_volunteers_seat_matrix_roles_table_markup($polling_station, array($user_party_id => $user_party_loaded->name));
+    if ($output = valghalla_volunteers_seat_matrix_roles_table_markup($polling_station, array($user_party_id => $user_party_loaded->name))) {
+      $markup .= '<div class="col-xs-12 col-sm-6 col-md-5">';
+      $markup .=    $output;
+      $markup .= '</div>';
+    }
   }
+
+  $markup .= '</div>';
 
   $modal = '
     <div class="modal fade">
