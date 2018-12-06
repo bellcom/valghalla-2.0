@@ -50,21 +50,69 @@ var valghalla_volunteers = valghalla_volunteers || [];
       $('.js-remove-volunteer').on('click', function(){
         var fcid = $(this).attr('data-fcid');
         $parent = $(this).parent();
-        $el = $parent.find('.volunteer');
 
-        $parent.find('.edit').remove();
-        $parent.find('.js-remove-volunteer').hide();
+        // Show a modal.
+        swal({
+              title: Drupal.t('Er du sikker?'),
+              text: Drupal.t('Dette vil fjerne deltageren fra pladsen.'),
+              type: 'warning',
+              showCancelButton: true,
+              confirmButtonClass: 'btn-danger',
+              cancelButtonText: Drupal.t('Annullér'),
+              confirmButtonText: Drupal.t('Ja, fjern deltageren'),
+              closeOnConfirm: false
+            },
+            function () {
+              $.post('/ajax/volunteers/station/remove', {'fcid': fcid}, function (data) {
 
-        $el.text('...');
+                // Show a modal.
+                swal({
+                  title: Drupal.t('Siden genindlæses...'),
+                  type: 'success',
+                  showCancelButton: false,
+                  showConfirmButton: false,
+                });
 
-        $.post('/ajax/volunteers/station/remove', {'fcid': fcid}, function(data){
-          if(data.success){
-            $parent.find('div').show();
-            $parent.find('div.post').hide();
-            $parent.find('.js-add-volunteer').show();
-            Drupal.behaviors.valghalla_volunteers.populateTable();
-          }
-        });
+                // Refresh after 0.1 sec.
+                setTimeout(function () {
+                  location.reload();
+                }, 100);
+              });
+            });
+
+
+
+        // $el = $parent.find('.volunteer');
+
+        // $parent.find('.edit').remove();
+        // $parent.find('.js-remove-volunteer').hide();
+
+        // $el.text('...');
+
+        // $.post('/ajax/volunteers/station/remove', {'fcid': fcid}, function(data){
+        //   if(data.success){
+        //
+        //     // Show a modal.
+        //     swal({
+        //       title: Drupal.t('Siden genindlæses...'),
+        //       type: 'success',
+        //       showCancelButton: false,
+        //       showConfirmButton: false,
+        //     });
+        //
+        //     // Refresh after 0.1 sec.
+        //     setTimeout(function() {
+        //       location.reload();
+        //     }, 100);
+        //
+        //
+        //
+        //     $parent.find('div').show();
+        //     $parent.find('div.post').hide();
+        //     $parent.find('.js-add-volunteer').show();
+        //     Drupal.behaviors.valghalla_volunteers.populateTable();
+        //   }
+        // });
       });
 
       // Select volunteer from modal
