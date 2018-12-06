@@ -166,3 +166,12 @@ function valghalla_election_update_7102() {
   // Otherwise it will be removed from next cron run.
   field_purge_batch(1);
 }
+
+/**
+ * Adding fields: field_party_subsc_accept_comment, field_party_subsc_message, field_party_subsc_terms_text
+ *
+ */
+function valghalla_election_update_7103() {
+  // Reverting feature.
+  features_revert_module('valghalla_election');
+}
