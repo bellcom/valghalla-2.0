@@ -1,8 +1,18 @@
 <?php
+
 /**
  * @file
  * valghalla_sms.features.inc
  */
+
+/**
+ * Implements hook_ctools_plugin_api().
+ */
+function valghalla_sms_ctools_plugin_api($module = NULL, $api = NULL) {
+  if ($module == "strongarm" && $api == "strongarm") {
+    return array("version" => "1");
+  }
+}
 
 /**
  * Implements hook_node_info().

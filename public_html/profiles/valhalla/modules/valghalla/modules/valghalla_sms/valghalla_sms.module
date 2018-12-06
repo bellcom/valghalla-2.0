@@ -25,10 +25,39 @@ function valghalla_sms_notifications_info() {
 }
 
 /**
+ * Get function for listing sms gateway plugins.
+ */
+function valghalla_sms_plugins($id = NULL) {
+  ctools_include('plugins');
+  return ctools_get_plugins('valghalla_sms', 'vanghalla_sms_gateway', $id);
+}
+
+/**
+ * Implements hook_ctools_plugin_directory().
+ */
+function valghalla_sms_ctools_plugin_directory($module, $plugin) {
+  if ($module == 'valghalla_sms' && \array_key_exists($plugin, valghalla_sms_ctools_plugin_type())) {
+    return 'plugins/' . $plugin;
+  }
+}
+
+/**
+ * Implements hook_ctools_plugin_type().
+ */
+function valghalla_sms_ctools_plugin_type() {
+  return [
+    'vanghalla_sms_gateway' => [
+      'label' => 'sms_gateway',
+      'use hooks' => FALSE,
+    ],
+  ];
+}
+
+/**
  * Get message callback.
  */
 function valghalla_sms_get_message($template_node) {
-  $body_field = field_get_items('node', $template_node, 'body');
+  $body_field = field_get_items('node', $template_node, 'field_sms_body');
 
   $body = $body_field[0]['value'];
   $format = 'plain_text';
@@ -41,12 +70,41 @@ function valghalla_sms_get_message($template_node) {
 /**
  * Send message callback.
  */
-function valghalla_sms_send_message($to, $params, $multistep_values) {
-  $language = language_default();
+function valghalla_sms_send_message($to, $params, $context) {
   $from = variable_get('valghalla_sms_from', FALSE);
+  $sms_gateway = valghalla_sms_plugins(variable_get('valghalla_sms_default_gateway', FALSE));
+  $message_body = format_string($params['body'], $params['tokens']);
 
-  // @TODO Seng sms gateway implementing.
-  return TRUE;
+  if (empty($sms_gateway)) {
+    watchdog('valghalla_sms', 'Default SMS gateway is not set.', array(), WATCHDOG_ERROR);
+    return FALSE;
+  }
+
+  /** @var EntityInterface $notification */
+  $notification = entity_get_controller('entity_valghalla_notification')->create(array(
+    'type' => $params['notification_type'],
+    'gateway' => 'SMS ' . $sms_gateway['title'],
+    'vol_id' => $params['volunteer_nid'],
+    'message' => $message_body,
+    'status' => 'Failed',
+  ));
+  $notification->save();
+  $params['notification_id'] = $notification->id;
+  $params['from'] = $from;
+
+  if (!function_exists($sms_gateway['callback'])) {
+    watchdog('valghalla_sms', 'Broken SMS gateway %title. Missing callback', array('%title' => $sms_gateway['title']), WATCHDOG_ERROR);
+    return FALSE;
+  }
+
+  $result = call_user_func($sms_gateway['callback'], $to, $message_body, $params);
+  if ($result['status']) {
+    $notification->status = 'Success';
+  }
+  $notification->status_info = $result['response'];
+  $notification->save();
+
+  return $result['status'];
 }
 
 /**
@@ -57,4 +115,38 @@ function valghalla_sms_send_to($entity) {
     return $field[0]['value'];
   }
   return FALSE;
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function valghalla_sms_form_sms_node_form_alter(&$form, &$form_state, $form_id) {
+  $form['field_sms_body']['#suffix'] = _valghalla_helper_get_volunteer_info_params('info');
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function valghalla_sms_form_valghalla_notifications_admin_settings_alter(&$form, &$form_state, $form_id) {
+  $form['sms_gateway_settings'] = array(
+    '#title' => t('SMS Gateway'),
+    '#type' => 'fieldset',
+  );
+
+  $plugins = array('' => t('None'));
+  foreach (valghalla_sms_plugins() as $plugin_name => $plugin) {
+    $plugins[$plugin_name] = $plugin['title'];
+  }
+  $form['sms_gateway_settings']['valghalla_sms_default_gateway'] = array(
+    '#type' => 'select',
+    '#title' => t('Default gateway'),
+    '#options' => $plugins,
+    '#default_value' => variable_get('valghalla_sms_default_gateway', FALSE),
+  );
+
+  $form['sms_gateway_settings']['valghalla_sms_from'] = array(
+    '#type' => 'textfield',
+    '#title' => t('SMS sender name'),
+    '#default_value' => variable_get('valghalla_sms_from', FALSE),
+  );
 }
