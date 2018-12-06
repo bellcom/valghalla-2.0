@@ -29,7 +29,7 @@
                 <div class="flexy-spacer"></div>
 
                 <a href="#" class="btn btn-default btn-xs" data-toggle="tooltip" data-placement="top" title="<?=t('Ekstern tilmelding'); ?>">
-                  <span class="glyphicon glyphicon-link"></span>
+                  <?php print $party_posts['party_subscribe_url']?><span class="glyphicon glyphicon-link"></span>
                 </a>
 
                 <a href="<?php print $party_posts['edit_url']; ?>" class="btn btn-default btn-xs" data-toggle="tooltip" data-placement="top" title="<?=t('Redigér'); ?>">
@@ -137,6 +137,20 @@
                       </span>
                     <?php endif; ?>
                     <!-- End - response -->
+
+                    <!-- Begin subscribe url -->
+                    <?php if ($post['post_subscribe_url']): ?>
+                      <a
+                        href="<?=$post['post_subscribe_url']; ?>"
+                        class="btn btn-default btn-xs"
+                        data-toggle="tooltip"
+                        data-placement="top"
+                        title="<?= t('Tilmeld'); ?>"
+                        >
+                        <span class="glyphicon glyphicon-link"></span>
+                      </a>
+                    <?php endif; ?>
+                    <!-- End subscribe url -->
 
                     <!-- Begin - reply -->
                     <?php if (! $post['existing_post']['reply_link']): ?>

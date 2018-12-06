@@ -645,10 +645,43 @@ function valghalla_volunteers_polling_station_posts_to_fill($polling_station) {
     }
   }
 
+  // Getting field_collection attached to election.
+  $electionAttachedVPSP = array();
+  foreach ($election->field_volunteers_pr_pol_st_party['und'] as $field_volunteers_pr_pol_st_party) {
+    $electionAttachedVPSP[] = $field_volunteers_pr_pol_st_party['value'];
+  }
+
   // Populate filled_post with volunteer data.
   foreach (odin_get_parties() as $party_tid => $party) {
-    $assigned_posts = _valghalla_helper_get_posts_to_fill($polling_station, $party_tid);
+    // Filling party information.
+    $party_posts_to_fill[$party_tid] = array(
+      'party_name' => $party,
+      'posts' => array(),
+    );
 
+    // Party edit URL.
+    $volunteer_pr_pol_st_pr_party_query = new EntityFieldQuery();
+    $volunteer_pr_pol_st_pr_party_query->entityCondition('entity_type', 'field_collection_item')
+      ->entityCondition('bundle', 'field_volunteers_pr_pol_st_party')
+      ->propertyCondition('item_id', $electionAttachedVPSP)
+      ->fieldCondition('field_ppsp_polling_station', 'nid', $station_id)
+      ->fieldCondition('field_ppsp_party', 'tid', $party_tid);
+    $query_result = $volunteer_pr_pol_st_pr_party_query->execute();
+    $result = array_shift($query_result);
+    if ($result) {
+      $fc_id = reset($result);
+      $params = array('query' => array('destination' => current_path()));
+      $party_posts_to_fill[$party_tid]['edit_url'] = url('field-collection/field-volunteers-pr-pol-st-party/' . $fc_id->item_id . '/edit', $params);
+    }
+
+    // Party subscribe URL.
+    if (module_exists('valghalla_internal_server')) {
+      $party_loaded = taxonomy_term_load($party_tid);
+      $party_posts_to_fill[$party_tid]['party_subscribe_url'] = valghalla_internal_server_generate_external_subscribe_url($election, $party_loaded);
+    }
+
+    // Traversing assigned posts.
+    $assigned_posts = _valghalla_helper_get_posts_to_fill($polling_station, $party_tid);
     foreach ($assigned_posts as $assigned_post) {
       $id = NULL;
       $existing_post = NULL;
@@ -681,6 +714,7 @@ function valghalla_volunteers_polling_station_posts_to_fill($polling_station) {
           'nid' => $id,
           'fcid' => $volunteer['fcid'],
         );
+
       }
       else {
         // tth: The id is used when the js inserts the volunteer info on the
@@ -693,7 +727,6 @@ function valghalla_volunteers_polling_station_posts_to_fill($polling_station) {
       }
 
       // Adding filled post information to party_posts_to_fill.
-      $party_posts_to_fill[$party_tid]['party_name'] = $party;
       $party_posts_to_fill[$party_tid]['posts'][$id] = array(
         'id' => $id,
         'role_nid' => $assigned_post['role_nid'],
@@ -701,31 +734,16 @@ function valghalla_volunteers_polling_station_posts_to_fill($polling_station) {
         'party_tid' => $party_tid,
         'existing_post' => $existing_post,
       );
-    }
-  }
 
-  // Getting field_collection edit url.
-  $electionAttachedVPSP = array();
-  foreach ($election->field_volunteers_pr_pol_st_party['und'] as $field_volunteers_pr_pol_st_party) {
-    $electionAttachedVPSP[] = $field_volunteers_pr_pol_st_party['value'];
-  }
+      if (!$existing_post) {
+        // Party subscribe URL.
+        if (module_exists('valghalla_internal_server')) {
+          $party_loaded = taxonomy_term_load($party_tid);
+          $role_loaded = node_load($assigned_post['role_nid']);
 
-  // Volunteers per polling station per party.
-  foreach ($party_posts_to_fill as $party_tid => $party) {
-    $volunteer_pr_pol_st_pr_party_query = new EntityFieldQuery();
-    $volunteer_pr_pol_st_pr_party_query->entityCondition('entity_type', 'field_collection_item')
-      ->entityCondition('bundle', 'field_volunteers_pr_pol_st_party')
-      ->propertyCondition('item_id', $electionAttachedVPSP)
-      ->fieldCondition('field_ppsp_polling_station', 'nid', $station_id)
-      ->fieldCondition('field_ppsp_party', 'tid', $party_tid);
-
-    $query_result = $volunteer_pr_pol_st_pr_party_query->execute();
-    $result = array_shift($query_result);
-
-    if ($result) {
-      $fc_id = reset($result);
-      $params = array('query' => array('destination' => current_path()));
-      $party_posts_to_fill[$party_tid]['edit_url'] = url('field-collection/field-volunteers-pr-pol-st-party/' . $fc_id->item_id . '/edit', $params);
+          $party_posts_to_fill[$party_tid]['posts'][$id]['post_subscribe_url'] = valghalla_internal_server_generate_external_subscribe_url($election, $party_loaded, $role_loaded, $polling_station);
+        }
+      }
     }
   }
 
