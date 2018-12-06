@@ -1,5 +1,5 @@
-name = Valghalla External Server
-description = Provides functionality so that Valghalla installation is behaving as external server
+name = Valghalla Synch Queue
+description = Provides functionality to store queue of resources that need to by synched
 package = Valghalla - Synch
 dependencies[] = uuid
 
