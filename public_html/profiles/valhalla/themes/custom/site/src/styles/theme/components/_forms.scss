@@ -34,7 +34,10 @@ label {
 }
 
 .form-required {
-  font-size: 24px;
+  font-family: Verdana, Arial, sans-serif;
+  font-weight: bold;
+  font-size: inherit;
+
   color: $brand-danger;
 }
 

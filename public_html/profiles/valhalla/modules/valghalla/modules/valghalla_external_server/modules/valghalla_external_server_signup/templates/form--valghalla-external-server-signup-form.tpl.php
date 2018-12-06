@@ -1,44 +1,55 @@
-<?php if (isset($form['#party_message'])): ?>
-  <p>
-    <?php print $form['#party_message']; ?>
-  </p>
-<?php endif; ?>
-
-<p>
-  <?php
-    print $form['#upper_text'];
-  ?>
-</p>
-
-<div style="border: 1px solid black">
-  <p>...</p>
-
-  <p>NemID block</p>
-
-  <p>...</p>
-</div>
-
 <?php
 $comment_field = $form['comment'];
 $submit = $form['submit'];
 $term_agreement = $form['terms_agreement'];
+
 unset($form['comment']);
 unset($form['submit']);
 unset($form['terms_agreement']);
-
-print drupal_render_children($form);
 ?>
 
-<hr/>
+<!-- Begin - message -->
+<?php if (isset($form['#party_message'])): ?>
+  <div class="alert alert-info">
+    <?php print $form['#party_message']; ?>
+  </div>
+<?php endif; ?>
+<!-- End - message -->
 
-<p>
-  <?php
-  print $form['#bottom_text'];
-  ?>
-</p>
+<!-- Begin - upper text -->
+<div class="partial">
+  <div class="partial__body">
+    <?php print $form['#upper_text']; ?>
+  </div>
+</div>
+<!-- End - upper text -->
 
+<!-- Begin - nemid login -->
+<div>
+  <p>NemID block</p>
+</div>
+<!-- End - nemid login -->
+
+<!-- Begin - form -->
+<?php print drupal_render_children($form); ?>
+<!-- End - form -->
+
+<!-- Begin - bottom text -->
+<div class="partial">
+  <div class="partial__body">
+    <?php print $form['#bottom_text']; ?>
+  </div>
+</div>
+<!-- End - bottom text -->
+
+<!-- Begin - comment -->
 <?php print drupal_render($comment_field); ?>
-<?php print drupal_render($term_agreement); ?>
-<?php print drupal_render($submit); ?>
+<!-- End - comment -->
 
-<?php ?>
+<!-- Begin - agreement -->
+<?php print drupal_render($term_agreement); ?>
+<!-- End - agreement -->
+
+<!-- Begin - submit -->
+<?php print drupal_render($submit); ?>
+<!-- End - submit -->
