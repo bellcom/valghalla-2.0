@@ -44,6 +44,7 @@ function valghalla_notifications_rsvp_reminder($last_run_ts) {
     // Check dates.
     $notification_days_arr = variable_get('valghalla_rsvp_reminder_days');
     $notification_days = explode(',', variable_get('valghalla_rsvp_reminder_days'));
+    $notification_days = array_map('trim', $notification_days);
     if (!in_array($days_to_election, $notification_days)) {
       watchdog('Valghalla', 'Mail job blev ikke kørt idet idag ikke er nogen rykker dag. Valg: %election_date Dage til valget: %todays Rykkerdage: %godays', array(
         '%todays' => $days_to_election,

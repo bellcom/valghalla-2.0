@@ -131,7 +131,7 @@ function entity_valghalla_notification_notification_tab_title() {
     ->propertyOrderBy('created', 'DESC')
     ->propertyCondition('vol_id', arg(1))
     ->execute();
-  return t('Notifications (@count)', array('@count' => count($notification_ids)));
+  return t('Notifications (@count)', array('@count' => count(reset($notification_ids))));
 }
 
 /**
@@ -155,20 +155,18 @@ function entity_valghalla_notification_list_entities($vol_nid = FALSE) {
   $headers[] = t('Send time');
   $headers[] = t('Status');
   $headers[] = t('Operations');
-  $ids = array_keys(reset($query->execute()));
-  $entities = entity_valghalla_notification_load_multiple($ids);
+  $result = $query->execute();
+  $ids = reset($result);
+  $entities = entity_valghalla_notification_load_multiple(array_keys($ids));
   if (!empty($entities)) {
     foreach ($entities as $entity) {
       $message = strip_tags(str_replace('<br/>', '  ', $entity->message));
-      $volunteer = node_load($entity->vol_id);
       $row = $row_data = array();
       $row_data['id'] = l($entity->id, 'valghalla/administration/notifications/' . $entity->id);
       $row_data['gateway'] = $entity->gateway;
       $row_data['type'] = $entity->type;
       if (!$vol_nid) {
-        $row_data['volunteer'] = !empty($volunteer) ? l($volunteer->title, 'node/' . $volunteer->nid, array(
-          'attributes' => array('target' => '_blank'),
-        )) : '';
+        $row_data['volunteer'] = entity_valghalla_notification_volunteer_view($entity->vol_id);
       }
       $row_data['message'] = substr($message, 0, 100);
       $row_data['created'] = format_date($entity->created, 'short');
@@ -240,8 +238,6 @@ function entity_valghalla_notification_view($entity, $view_mode = 'default') {
   // Now field_attach_view() generates the content for the fields.
   $entity->content += field_attach_view($entity_type, $entity, $view_mode);
 
-  $volunteer = node_load($entity->vol_id);
-
   $entity->content['created'] = array(
     '#type' => 'item',
     '#title' => t('Sending date'),
@@ -265,7 +261,7 @@ function entity_valghalla_notification_view($entity, $view_mode = 'default') {
   $entity->content['volunteer'] = array(
     '#type' => 'item',
     '#title' => t('Volunteer'),
-    '#markup' => empty($volunteer) ? 'N/A' : l($volunteer->title, 'node/' . $volunteer->nid . '?destination=' . current_path()),
+    '#markup' => entity_valghalla_notification_volunteer_view($entity->vol_id),
   );
   $entity->content['status'] = array(
     '#type' => 'item',
@@ -351,4 +347,22 @@ function entity_valghalla_notification_confirm_delete_submit($form, &$form_state
   $form_state['storage']['notification']->delete();
   drupal_set_message(t('Deleted notification %id.', array('%id' => $form_state['values']['notification_id'])));
   $form_state['redirect'] = 'valghalla/administration/notifications/list';
+}
+
+/**
+ * View function for volunteer id value.
+ */
+function entity_valghalla_notification_volunteer_view($vol_id) {
+  switch ($vol_id) {
+    case '-1':
+      $output = 'copy';
+      break;
+
+    default:
+      $volunteer = node_load($vol_id);
+      $output = empty($volunteer) ? 'N/A' : l($volunteer->title, 'node/' . $volunteer->nid, array(
+        'attributes' => array('target' => '_blank'),
+      ));
+  }
+  return $output;
 }

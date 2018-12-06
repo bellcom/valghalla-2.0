@@ -441,8 +441,10 @@ function valghalla_notifications_notify_volunteer($election_nid, $role_nid, $fc,
   if ($type == 'rsvp_no' || $type == 'rsvp_never') {
     $to_admin = valghalla_volunteers_add_email_to_list();
     $mail_gateway = valghalla_notifications_gateway('mail');
-    if (!call_user_func($mail_gateway['send_message_callback'], $to_admin, $params)) {
-      watchdog('valghalla_notifications', 'Failed sending RSVP NO message nid = %nid via mail gateway', $placeholders, WATCHDOG_ERROR);
+    $copy_params = $params;
+    $copy_params['volunteer_nid'] = -1;
+    if (!empty($to_admin) && !call_user_func($mail_gateway['send_message_callback'], $to_admin, $copy_params)) {
+      watchdog('valghalla_notifications', 'Failed sending copy of message nid = %nid via mail gateway', $placeholders, WATCHDOG_ERROR);
     }
   }
 
