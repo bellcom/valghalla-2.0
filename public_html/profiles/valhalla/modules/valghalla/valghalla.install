@@ -34,8 +34,16 @@ function valghalla_update_7102() {
  * Update version of jQuery used and set default theme to "site".
  */
 function valghalla_update_7103() {
+  $current_theme = variable_get('theme_default', 'none');
+  $new_theme = 'site';
+  $current_settings = variable_get('theme_' . $current_theme . '_settings', array());
+
+  // Transfer settings.
+  variable_set('theme_default', $new_theme);
+  variable_set('theme_' . $new_theme . '_settings', $current_settings);
+
+  // Set new theme settings.
   variable_set('jquery_update_jquery_version', '1.10');
-  variable_set('theme_default', 'site');
 }
 
 /**
