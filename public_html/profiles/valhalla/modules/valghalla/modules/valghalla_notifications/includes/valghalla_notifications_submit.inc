@@ -101,11 +101,11 @@ function valghalla_notifications_send_confirm_submit($form, &$form_state) {
 function valghalla_notifications_send_batch(array $recipients, array $form_state, array &$context) {
   $notification_type = 'On demand';
   $multistep_values = $form_state['multistep_values'];
-  $template_nid = $multistep_values['get_recipients']['valghalla_notifications_message_node_ID'];
+  $init_template_nid = $multistep_values['get_recipients']['valghalla_notifications_message_node_ID'];
   if (empty($context['results'])) {
     $context['results'] = array(
-      'success' => 0,
-      'fails' => 0,
+      'success' => array(),
+      'fails' => array(),
     );
   }
   $gateway = valghalla_notifications_gateway($form_state['storage']['gateway_id']);
@@ -118,21 +118,25 @@ function valghalla_notifications_send_batch(array $recipients, array $form_state
       continue;
     }
     $tokens = _valghalla_helper_get_token_values($volunteer_fc);
+    $template_nid = $init_template_nid;
+
+    if ($template_nid == 'invite') {
+      $notification_type = 'invitation';
+      $election_nid = $multistep_values['get_recipients']['election_nid'];
+      $gateway = valghalla_notifications_get_gateway($election_nid, $tokens['!position_nid'], 'invitation');
+      $template_nid = valghalla_notifications_get_template($gateway['id'], $election_nid, $tokens['!position_nid'], $notification_type);
+    }
+
     $placeholders = array(
       '%nid' => $template_nid,
       '%name' => $tokens['!name'],
       '%gateway' => $gateway['name'],
     );
 
-    if ($template_nid == 'invite') {
-      $notification_type = 'invitation';
-      $election_nid = $multistep_values['get_recipients']['election_nid'];
-      $template_nid = valghalla_notifications_get_template($gateway['id'], $election_nid, $tokens['!position_nid'], $notification_type);
-    }
-
     $params = valghalla_notifications_get_message_by_nid($template_nid);
     if (empty($params)) {
       watchdog('valghalla_notifications', 'Template not found to send message to volunteer %name via %gateway', $placeholders);
+      $context['results']['fails'][] = $volunteer->title;
       continue;
     }
 
@@ -143,16 +147,17 @@ function valghalla_notifications_send_batch(array $recipients, array $form_state
     $to = call_user_func($gateway['send_to_callback'], $volunteer);
     if (empty($to)) {
       watchdog('valghalla_notifications', 'Empty email for recipient with name %name', array('%name' => $params['tokens']['!name']), WATCHDOG_ERROR);
+      $context['results']['fails'][] = $volunteer->title;
       continue;
     }
 
     if (call_user_func($gateway['send_message_callback'], $to, $params, $multistep_values)) {
       watchdog('valghalla_notifications', 'Message nid = %nid has been sent to volunteer %name via %gateway', $placeholders);
-      $context['results']['success']++;
+      $context['results']['success'][] = $volunteer->title;
     }
     else {
       watchdog('valghalla_notifications', 'Message nid = %nid has NOT been sent to volunteer %name via %gateway', $placeholders, WATCHDOG_ERROR);
-      $context['results']['fails']++;
+      $context['results']['fails'][] = $volunteer->title;
     }
   }
 
@@ -162,13 +167,13 @@ function valghalla_notifications_send_batch(array $recipients, array $form_state
 /**
  * Batch finished callback.
  */
-function valghalla_notifications_send_batch_finished($success, $results, $operations){
+function valghalla_notifications_send_batch_finished($success, $results, $operations) {
   if ($success) {
     if ($results['success']) {
-      drupal_set_message(format_plural($results['success'], '@count besked er blevet sendt', '@count beskeder er blevet sendt'));
+      drupal_set_message(format_plural(count($results['success']), 'Besked er blevet sendt.', '@count beskeder er blevet sendt.') . theme('item_list', array('items' => $results['success'])));
     }
     if ($results['fails']) {
-      drupal_set_message(format_plural($results['fails'], '@count besked mislykkedes', '@count beskeder mislykkedes'), 'warning');
+      drupal_set_message(format_plural(count($results['fails']), 'Besked mislykkedes.', '@count beskeder mislykkedes.') . theme('item_list', array('items' => $results['fails'])), 'warning');
     }
     drupal_goto('valghalla/administration/valg');
   }

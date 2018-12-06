@@ -53,7 +53,7 @@ function valghalla_notifications_form_alter(&$form, &$form_state) {
     );
   }
 
-  if (array_key_exists('valghalla_send_message', $form_state['storage'])) {
+  if (isset($form_state['storage']['valghalla_send_message'])) {
     $form['options']['status']['#default_value'] = 1;
     $form['additional_settings']['#prefix'] = '<div style="display:none;">';
     $form['additional_settings']['#suffix'] = '</div>';
@@ -262,7 +262,7 @@ function valghalla_notifications_confirm_form($form, &$form_state) {
   $volunteers_fcids = valghalla_notifications_get_recipients($values);
 
   $gateway = valghalla_notifications_gateway($form_state['storage']['gateway_id']);
-  if (empty($gateway)) {
+  if (empty($gateway) && $values['valghalla_notifications_message_node_ID'] != 'invite') {
     drupal_set_message(t('Gateway blev fundet ikke.'), 'error');
     return $form;
   }
@@ -428,7 +428,7 @@ function valghalla_notifications_send_invitation_form($form, &$form_state, $elec
   $form_state['multistep_values']['get_recipients']['election_nid'] = $election_nid;
   $form_state['multistep_values']['get_recipients']['valghalla_notifications_message_node_ID'] = 'invite';
 
-  // Define default invitation storage.
-  $form_state['storage']['gateway_id'] = variable_get('valghalla_notifications_invitation_gateway', 'mail');
+  // Gateway will be defained depend on election settings.
+  $form_state['storage']['gateway_id'] = FALSE;
   return valghalla_notifications_confirm_form($form, $form_state);
 }

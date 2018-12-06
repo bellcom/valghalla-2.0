@@ -143,6 +143,7 @@ function entity_valghalla_notification_list_entities($vol_nid = FALSE) {
   $query = new EntityFieldQuery();
   $query->entityCondition('entity_type', 'entity_valghalla_notification')->propertyOrderBy('created', 'DESC');
   $headers[] = t('ID');
+  $headers[] = t('Gateway');
   $headers[] = t('Type');
   if ($vol_nid) {
     $query->propertyCondition('vol_id', $vol_nid);
@@ -151,6 +152,7 @@ function entity_valghalla_notification_list_entities($vol_nid = FALSE) {
     $headers[] = t('Volunteer');
   }
   $headers[] = t('Message');
+  $headers[] = t('Send time');
   $headers[] = t('Status');
   $headers[] = t('Operations');
   $ids = array_keys(reset($query->execute()));
@@ -159,14 +161,17 @@ function entity_valghalla_notification_list_entities($vol_nid = FALSE) {
     foreach ($entities as $entity) {
       $message = strip_tags(str_replace('<br/>', '  ', $entity->message));
       $volunteer = node_load($entity->vol_id);
-      $row_data['id'] = $entity->id;
+      $row = $row_data = array();
+      $row_data['id'] = l($entity->id, 'valghalla/administration/notifications/' . $entity->id);
+      $row_data['gateway'] = $entity->gateway;
       $row_data['type'] = $entity->type;
       if (!$vol_nid) {
         $row_data['volunteer'] = !empty($volunteer) ? l($volunteer->title, 'node/' . $volunteer->nid, array(
           'attributes' => array('target' => '_blank'),
         )) : '';
       }
-      $row_data['message'] = l(substr($message, 0, 100), 'valghalla/administration/notifications/' . $entity->id);
+      $row_data['message'] = substr($message, 0, 100);
+      $row_data['created'] = format_date($entity->created, 'short');
       $row_data['status'] = $entity->status;
       $row_data['operations'] = theme('links__ctools_dropbutton', array(
         'links' => array(
@@ -252,10 +257,15 @@ function entity_valghalla_notification_view($entity, $view_mode = 'default') {
     '#title' => t('Message'),
     '#markup' => $entity->message,
   );
+  $entity->content['gateway'] = array(
+    '#type' => 'item',
+    '#title' => t('Gateway'),
+    '#markup' => $entity->gateway,
+  );
   $entity->content['volunteer'] = array(
     '#type' => 'item',
     '#title' => t('Volunteer'),
-    '#markup' => !empty($volunteer) ? 'N/A' : l($volunteer->title, 'node/' . $volunteer->nid . '?destination=' . current_path()),
+    '#markup' => empty($volunteer) ? 'N/A' : l($volunteer->title, 'node/' . $volunteer->nid . '?destination=' . current_path()),
   );
   $entity->content['status'] = array(
     '#type' => 'item',
