@@ -32,6 +32,12 @@ $lg-layout-content-padding-bottom: $grid-gutter-width;
   padding-bottom: $xs-layout-content-padding-bottom;
 }
 
+.narrow-wrapper {
+  max-width: 750px;
+
+  margin: auto;
+}
+
 // --------------------------------------------------
 // Variants
 // --------------------------------------------------

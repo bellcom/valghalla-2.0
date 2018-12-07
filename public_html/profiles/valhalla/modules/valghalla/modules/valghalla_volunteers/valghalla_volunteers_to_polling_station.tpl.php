@@ -24,7 +24,7 @@
 
           <div class="flexy-spacer"></div>
 
-          <a href="<?php print $party_posts['party_subscribe_url']?>" class="btn btn-default btn-xs" data-toggle="tooltip" data-placement="top" title="<?=t('Ekstern tilmelding'); ?>">
+          <a href="<?php print $party_posts['party_subscribe_url']?>" class="btn btn-default btn-xs" data-toggle="tooltip" data-placement="top" title="<?=t('Link til ekstern tilmelding'); ?>" target="_blank">
             <span class="glyphicon glyphicon-link"></span>
           </a>
 
@@ -58,7 +58,7 @@
 
                 <div class="entity-list__data__item entity-list__data__item--status">
                   <?php
-                  //0 => t('unknown') - blue
+                  //0 => t('unknown') - yellow
                   //1 => t('yes') - green
                   //2 => t('no') - danger
                   //3 => t('never') - danger
@@ -68,7 +68,7 @@
                       data-toggle="tooltip"
                       data-placement="top"
                       title="<?= t('Har endnu ikke svaret'); ?>"
-                      class="status-circle status-circle--info"
+                      class="status-circle status-circle--warning"
                     ></span>
                   <?php endif; ?>
 
@@ -148,19 +148,19 @@
               <?php endif; ?>
               <!-- End subscribe url -->
 
-              <!-- Begin - reply -->
+              <!-- Begin - external seat link -->
               <?php if (! $post['existing_post']['reply_link']): ?>
                 <a
                   href="<?=$post['existing_post']['reply_link']; ?>"
                   class="btn btn-default btn-xs"
                   data-toggle="tooltip"
                   data-placement="top"
-                  title="<?= t('Besvar'); ?>"
+                  title="<?= t('Link til ekstern tilmelding'); ?>"
                 >
                   <span class="glyphicon glyphicon-link"></span>
                 </a>
               <?php endif; ?>
-              <!-- End - reply -->
+              <!-- End - external seat link -->
 
               <?php if (user_access('add volunteer to station')) : ?>
 
@@ -203,6 +203,20 @@
                 <!-- End - add new -->
 
                 <?php if (isset($post['existing_post'])): ?>
+
+                  <!-- Begin - reply -->
+                  <?php if ($post['existing_post']['reply_link']): ?>
+                    <a
+                      href="<?=$post['existing_post']['reply_link']; ?>"
+                      class="btn btn-default btn-xs"
+                      data-toggle="tooltip"
+                      data-placement="top"
+                      title="<?= t('Besvar for denne deltager'); ?>"
+                    >
+                      <span class="glyphicon glyphicon-comment"></span>
+                    </a>
+                  <?php endif; ?>
+                  <!-- End - reply -->
 
                   <!-- Begin - edit -->
                   <a href="/node/<?php print $post['existing_post']['nid'] ?>/edit?destination=<?php print (implode('/', arg())) ?>"
