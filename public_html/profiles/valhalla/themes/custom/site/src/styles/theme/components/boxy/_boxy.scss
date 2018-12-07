@@ -110,6 +110,35 @@ $lg-boxy-spacing-left-right: $boxy-spacing-left-right;
   }
 }
 
+.boxy--toggleable {
+
+  .boxy__body {
+    display: none;
+  }
+
+  &.open {
+
+    .boxy__body {
+      display: block;
+    }
+  }
+
+  // Toggler icon.
+  .boxy__toggler-icon--close {
+    display: none;
+  }
+  &.open {
+
+    .boxy__toggler-icon--close {
+      display: inline-block;
+    }
+
+    .boxy__toggler-icon--open {
+      display: none;
+    }
+  }
+}
+
 // --------------------------------------------------
 // Responsive
 // --------------------------------------------------

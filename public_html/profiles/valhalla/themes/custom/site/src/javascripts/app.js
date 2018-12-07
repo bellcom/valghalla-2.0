@@ -1,33 +1,41 @@
-jQuery(function($) {
-    'use strict';
+jQuery(function ($) {
+  'use strict';
 
-    // Flexy header
-    flexy_header.init();
+  // Flexy header
+  flexy_header.init();
 
-    // Sidr
-    $('.slinky-menu')
-        .find('ul, li, a')
-        .removeClass();
+  // Sidr
+  $('.slinky-menu')
+      .find('ul, li, a')
+      .removeClass();
 
-    $('.sidr-toggle--right').sidr({
-        name: 'sidr-main',
-        side: 'right',
-        renaming: false,
-        body: '.layout__wrapper',
-        source: '.sidr-source-provider'
-    });
+  $('.sidr-toggle--right').sidr({
+    name: 'sidr-main',
+    side: 'right',
+    renaming: false,
+    body: '.layout__wrapper',
+    source: '.sidr-source-provider'
+  });
 
-    // Slinky
-    $('.sidr .slinky-menu').slinky({
-        title: true,
-        label: ''
-    });
+  // Slinky
+  $('.sidr .slinky-menu').slinky({
+    title: true,
+    label: ''
+  });
 
-    // Enable / disable Bootstrap tooltips, based upon touch events
-    if(Modernizr.touchevents) {
-        $('[data-toggle="tooltip"]').tooltip('hide');
-    }
-    else {
-        $('[data-toggle="tooltip"]').tooltip();
-    }
+  // Enable / disable Bootstrap tooltips, based upon touch events
+  if (Modernizr.touchevents) {
+    $('[data-toggle="tooltip"]').tooltip('hide');
+  }
+  else {
+    $('[data-toggle="tooltip"]').tooltip();
+  }
+
+  // Boxy toggleable.
+  $('.boxy__toggler').on('click', function(event) {
+    var $element = $(this);
+    var $parent = $element.parents('.boxy--toggleable');
+
+    $parent.toggleClass('open');
+  });
 });
