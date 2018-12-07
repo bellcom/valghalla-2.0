@@ -9,8 +9,10 @@
  * Implements hook_node_export_dependency_alter().
  */
 function valghalla_synch_node_export_node_export_dependency_field_alter(&$handled, &$node, $dependency) {
-  // Adding parent uuid.
-  $handled[0]['parent_uuid'] = $dependency->uuid;
+  foreach ($handled as $key => $element) {
+    // Adding parent uuid.
+    $handled[$key]['parent_uuid'] = $dependency->uuid;
+  }
 }
 
 /**
@@ -25,7 +27,7 @@ function valghalla_synch_node_export_node_export_import_alter(&$nodes, $format, 
       $field_collection_items = array();
       // Find all field_collection_items.
       foreach ($node->node_export_dependency as $dep_key => $dependency) {
-        if (strcmp($dependency['type'], 'field_collection_item') === 0) {
+        if (isset($dependency['type']) && strcmp($dependency['type'], 'field_collection_item') === 0) {
           $field_collection_items[$dependency['uuid']] = $dep_key;
         }
       }
@@ -33,7 +35,7 @@ function valghalla_synch_node_export_node_export_import_alter(&$nodes, $format, 
       foreach ($node->node_export_dependency as $dep_key => $dependency) {
         // If element has a different parent uuid than node.
         // This means it's not node's direct child.
-        if (strcmp($dependency['parent_uuid'], $node->uuid) !== 0) {
+        if (isset($dependency['type']) && isset($dependency['parent_uuid']) && strcmp($dependency['parent_uuid'], $node->uuid) !== 0) {
           unset($node->node_export_dependency[$dep_key]);
 
           // Try to find a parent.
