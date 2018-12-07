@@ -24,9 +24,17 @@
 
           <div class="flexy-spacer"></div>
 
-          <a href="<?php print $party_posts['party_subscribe_url']?>" class="btn btn-default btn-xs" data-toggle="tooltip" data-placement="top" title="<?=t('Link til ekstern tilmelding'); ?>" target="_blank">
-            <span class="glyphicon glyphicon-link"></span>
-          </a>
+          <?php if ($party_posts['party_subscribe_url']): ?>
+            <button type="button"
+                    class="btn btn-default btn-xs"
+                    data-toggle="tooltip"
+                    data-placement="top"
+                    title="<?= t('Link til ekstern tilmelding'); ?>"
+                    data-external-url="<?php print $party_posts['party_subscribe_url'] ?>"
+            >
+              <span class="glyphicon glyphicon-link"></span>
+            </button>
+          <?php endif; ?>
 
           <a href="<?php print $party_posts['edit_url']; ?>" class="btn btn-default btn-xs" data-toggle="tooltip" data-placement="top" title="<?=t('Redigér'); ?>">
             <span class="glyphicon glyphicon-edit"></span>
@@ -137,31 +145,18 @@
                 <?php endif; ?>
                 <!-- End - response -->
 
-                <!-- Begin subscribe url -->
-                <?php if ($post['post_subscribe_url']): ?>
-                  <a
-                    href="<?=$post['post_subscribe_url']; ?>"
-                    class="btn btn-default btn-xs"
-                    data-toggle="tooltip"
-                    data-placement="top"
-                    title="<?= t('Tilmeld'); ?>"
-                    >
-                    <span class="glyphicon glyphicon-link"></span>
-                  </a>
-                <?php endif; ?>
-                <!-- End subscribe url -->
-
                 <!-- Begin - external seat link -->
-                <?php if (! $post['existing_post']['reply_link']): ?>
-                  <a
-                    href="<?=$post['existing_post']['reply_link']; ?>"
+                <?php if ($post['post_subscribe_url']): ?>
+                  <button
+                    type="button"
                     class="btn btn-default btn-xs"
                     data-toggle="tooltip"
                     data-placement="top"
                     title="<?= t('Link til ekstern tilmelding'); ?>"
+                    data-external-url="<?=$post['existing_post']['reply_link']; ?>"
                   >
                     <span class="glyphicon glyphicon-link"></span>
-                  </a>
+                  </button>
                 <?php endif; ?>
                 <!-- End - external seat link -->
 
@@ -216,7 +211,7 @@
                         data-placement="top"
                         title="<?= t('Besvar for denne deltager'); ?>"
                       >
-                        <span class="glyphicon glyphicon-comment"></span>
+                        <span class="glyphicon glyphicon-edit"></span>
                       </a>
                     <?php endif; ?>
                     <!-- End - reply -->
@@ -263,3 +258,65 @@
 
   <?php endforeach; ?>
 <?php endif; ?>
+
+<!-- Begin - external link -->
+<div class="modal modal-clipboard fade" tabindex="-1" role="dialog" id="modal-clipboard">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="<?=t('Luk vindue'); ?>">
+          <span aria-hidden="true">&times;</span>
+        </button>
+
+        <h4 class="modal-title"><?=t('Link til ekstern tilmelding');?></h4>
+      </div>
+
+      <div class="modal-body">
+
+        <!-- Begin - input -->
+        <div class="input-group">
+
+          <!-- Begin - copy -->
+          <span class="input-group-btn">
+            <button class="btn btn-default"
+                    data-toggle="tooltip"
+                    data-placement="top"
+                    title="<?=t('Kopiér link til udklipsholderen'); ?>"
+                    type="button"
+                    data-clipboard-target="#clipboard_target"
+            >
+              <span class="glyphicon glyphicon-paste"></span>
+            </button>
+          </span>
+          <!-- End - copy -->
+
+          <!-- Begin - input -->
+          <input type="text" class="form-control modal-clipboard__input" id="clipboard_target" />
+          <!-- End - input -->
+
+          <!-- Begin - open -->
+          <span class="input-group-btn">
+            <a href="#"
+               class="btn btn-default modal-clipboard__external-link"
+               data-toggle="tooltip"
+               data-placement="top"
+               title="<?= t('Åben link i nyt vindue'); ?>"
+               target="_blank"
+            >
+              <span class="glyphicon glyphicon-link"></span>
+            </a>
+          </span>
+          <!-- End - open -->
+
+        </div>
+        <!-- End - input -->
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal"><?=t('Luk vindue'); ?></button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- End - external link -->
