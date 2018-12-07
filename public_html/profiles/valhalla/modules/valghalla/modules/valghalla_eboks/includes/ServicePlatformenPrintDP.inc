@@ -34,6 +34,7 @@ class ServicePlatformenPrintDP extends ServicePlatformenPrint {
    * Set receiver callback.
    */
   public function setTo($to) {
+    $to = str_replace('-', '', $to);
     $this->request['BrevSPBody']['ForsendelseI']['ForsendelseModtager'] = array(
       'AfsendelseModtager' => array('CPRnummerIdentifikator' => $to),
     );
@@ -56,15 +57,16 @@ class ServicePlatformenPrintDP extends ServicePlatformenPrint {
     $this->request['BrevSPBody'] = array(
       'Kanalvalg' => 'D',
       'Prioritet' => 'D',
-      'DigitalPostParametre' => array(
-        'MeddelelseIndholdstypeIdentifikator' => $this->materialeId,
-      ),
       'ForsendelseI' => array(
         'AfsendelseIdentifikator' => $this->getId($params),
         'FilformatNavn' => 'PDF',
         'MeddelelseIndholdData' => $message_data,
         'DokumentParametre' => array(
           'TitelTekst' => $title_text,
+        ),
+        'DigitalPostParametre' => array(
+          'MeddelelseIndholdstypeIdentifikator' => $this->materialeId,
+          'MedsendDokumentRegistreringIndikator' => 0,
         ),
       ),
     );
