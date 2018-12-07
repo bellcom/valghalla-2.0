@@ -54,7 +54,7 @@ var valghalla_volunteers = valghalla_volunteers || [];
         // Show a modal.
         swal({
               title: Drupal.t('Er du sikker?'),
-              text: Drupal.t('Dette vil fjerne deltageren fra pladsen.'),
+              text: Drupal.t('Dette vil fjerne deltageren fra pladsen. Denne handling kan ikke fortrydes.'),
               type: 'warning',
               showCancelButton: true,
               confirmButtonClass: 'btn-danger',
@@ -67,16 +67,17 @@ var valghalla_volunteers = valghalla_volunteers || [];
 
                 // Show a modal.
                 swal({
-                  title: Drupal.t('Siden genindlæses...'),
+                  title: Drupal.t('Deltageren blev fjernet fra pladsen!'),
+                  text: Drupal.t('Siden genindlæses...'),
                   type: 'success',
                   showCancelButton: false,
                   showConfirmButton: false,
                 });
 
-                // Refresh after 0.1 sec.
+                // Refresh after 2.5 sec.
                 setTimeout(function () {
                   location.reload();
-                }, 100);
+                }, 2500);
               });
             });
 
@@ -100,7 +101,7 @@ var valghalla_volunteers = valghalla_volunteers || [];
         //       showConfirmButton: false,
         //     });
         //
-        //     // Refresh after 0.1 sec.
+        //     // Refresh after 2.5 sec.
         //     setTimeout(function() {
         //       location.reload();
         //     }, 100);
@@ -145,16 +146,17 @@ var valghalla_volunteers = valghalla_volunteers || [];
 
             // Show a modal.
             swal({
-              title: Drupal.t('Siden genindlæses...'),
+              title: Drupal.t('Deltageren blev tilføjet til pladsen!'),
+              text: Drupal.t('Siden genindlæses...'),
               type: 'success',
               showCancelButton: false,
               showConfirmButton: false,
             });
 
-            // Refresh after 0.1 sec.
+            // Refresh after 2.5 sec.
             setTimeout(function() {
               location.reload();
-            }, 100);
+            }, 2500);
           })
         });
       });
@@ -177,16 +179,17 @@ var valghalla_volunteers = valghalla_volunteers || [];
 
         // Show a modal.
         swal({
-          title: Drupal.t('Siden genindlæses...'),
+          title: Drupal.t('Deltageren blev tilføjet til pladsen!'),
+          text: Drupal.t('Siden genindlæses...'),
           type: 'success',
           showCancelButton: false,
           showConfirmButton: false,
         });
 
-        // Refresh after 0.1 sec.
+        // Refresh after 2.5 sec.
         setTimeout(function() {
           location.reload();
-        }, 100);
+        }, 2500);
 
         // var $editButton = '<a href="/node/'+volunteer_info.volunteer_nid+'/edit?destination=volunteers/station/'+volunteer_info.pollingstation_nid+'" class="btn btn-default btn-xs edit"><span class="glyphicon glyphicon-user"></span></a>';
         // var $removeButton = '<a data-fcid="'+data.fcid+'" class="remove btn btn-default btn-xs js-remove-volunteer"><span class="glyphicon glyphicon-minus"></span></a>';

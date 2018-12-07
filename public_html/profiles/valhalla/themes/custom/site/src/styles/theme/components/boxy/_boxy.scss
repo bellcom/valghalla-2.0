@@ -81,6 +81,14 @@ $lg-boxy-spacing-left-right: $boxy-spacing-left-right;
 // Variants
 // --------------------------------------------------
 
+.boxy--light {
+
+  .boxy__heading,
+  .boxy__body {
+    background-color: $body-bg-secondary;
+  }
+}
+
 .boxy--danger {
 
   .boxy__heading {
@@ -99,6 +107,20 @@ $lg-boxy-spacing-left-right: $boxy-spacing-left-right;
 
   .boxy__heading {
     background-color: $state-warning-bg;
+  }
+}
+
+.boxy--toggleable {
+
+  .boxy__body {
+    display: none;
+  }
+
+  &.open {
+
+    .boxy__body {
+      display: block;
+    }
   }
 }
 

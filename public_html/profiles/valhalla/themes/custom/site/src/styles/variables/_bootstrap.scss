@@ -29,7 +29,7 @@ $brand-danger:          #d9534f !default;
 //** Background color for `<body>`.
 $body-bg:               #fff;
 //** Global text color on `<body>`.
-$text-color:            #707070;
+$text-color:            #333;
 
 //** Global textual link color.
 $link-color:            $brand-primary !default;
@@ -69,7 +69,7 @@ $line-height-computed:    floor(($font-size-base * $line-height-base)) !default;
 $headings-font-family:    inherit !default;
 $headings-font-weight:    400;
 $headings-line-height:    1.1 !default;
-$headings-color:          #333;
+$headings-color:          #111;
 
 
 //== Iconography
@@ -150,7 +150,7 @@ $table-border-color:            #eaeaea;
 $btn-font-weight:                700;
 
 $btn-default-color:              $text-color;
-$btn-default-bg:                 #f0f0f0;
+$btn-default-bg:                 #d7d7d7;
 $btn-default-border:             #ccc !default;
 
 $btn-primary-color:              #fff !default;
@@ -277,7 +277,7 @@ $dropdown-caret-color:           #000 !default;
 $zindex-navbar:            1000 !default;
 $zindex-dropdown:          1000 !default;
 $zindex-popover:           1060 !default;
-$zindex-tooltip:           1070 !default;
+$zindex-tooltip:           2000;
 $zindex-navbar-fixed:      1030 !default;
 $zindex-modal-background:  1040 !default;
 $zindex-modal:             1050 !default;

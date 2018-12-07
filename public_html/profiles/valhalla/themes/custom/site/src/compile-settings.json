@@ -9,6 +9,7 @@
     "node_modules/sidr/dist/jquery.sidr.js",
     "node_modules/bootstrap-sweetalert/dist/sweetalert.js",
     "node_modules/pace-progress/pace.js",
+    "node_modules/sticky-sidebar/dist/jquery.sticky-sidebar.js",
     "src/javascripts/jquery.tablesorter.min.js",
     "src/javascripts/jquery.tablesorter.widgets.js",
     "src/javascripts/valghalla.js",

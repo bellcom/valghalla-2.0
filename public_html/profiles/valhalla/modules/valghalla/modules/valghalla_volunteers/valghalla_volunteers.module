@@ -495,7 +495,7 @@ function valghalla_volunteers_to_polling_station($station_nid = NULL) {
     }
   }
 
-  $markup = '<div class="row">';
+  $markup = '<div class="row row--equal-height-columns">';
 
   if (user_access('valghalla see all parties') && !$user_party_id) {
     // tth: If the user is administrator and theres no party chosen, show all parties!

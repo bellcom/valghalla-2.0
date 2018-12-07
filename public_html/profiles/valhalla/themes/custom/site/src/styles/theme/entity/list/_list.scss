@@ -80,6 +80,17 @@
   }
 }
 
+.entity-list--volunteer {
+  padding-top: 10px;
+  padding-bottom: 10px;
+
+  + .entity-list--volunteer {
+    margin-top: 0;
+
+    border-top: 1px solid $border-color;
+  }
+}
+
 // --------------------------------------------------
 // Responsive
 // --------------------------------------------------

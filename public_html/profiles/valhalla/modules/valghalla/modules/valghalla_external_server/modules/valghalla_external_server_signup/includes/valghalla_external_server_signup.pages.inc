@@ -203,7 +203,7 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
     // Right column, as we have form selects.
     if (!isset($form_state['role_in_url']) || !isset($form_state['polling_station_in_url'])) {
       $form['wrapper']['right-column']['polling_station_details'] = array(
-        '#prefix' => '<div id="js-polling-station-details" class="boxy--light"><div class="boxy__heading"><h2 class="boxy__heading__title">' . t('Valgt valgsted1') . '</h2></div><div class="boxy__body"',
+        '#prefix' => '<div id="js-polling-station-details" class="boxy--light"><div class="boxy__heading"><h2 class="boxy__heading__title">' . t('Valgt valgsted') . '</h2></div><div class="boxy__body"',
         '#suffix' => '</div></div>',
         '#markup' => _valghalla_external_server_signup_get_polling_station_detail_html($polling_station),
       );
@@ -212,7 +212,7 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
     // Left column, as we have no form fields.
     else {
       $form['wrapper']['left-column']['polling_station_details'] = array(
-        '#prefix' => '<div id="js-polling-station-details" class="boxy--light"><div class="boxy__heading"><h2 class="boxy__heading__title">' . t('Valgt valgsted2') . '</h2></div><div class="boxy__body"',
+        '#prefix' => '<div id="js-polling-station-details" class="boxy--light"><div class="boxy__heading"><h2 class="boxy__heading__title">' . t('Valgt valgsted') . '</h2></div><div class="boxy__body"',
         '#suffix' => '</div></div>',
         '#markup' => _valghalla_external_server_signup_get_polling_station_detail_html($polling_station),
       );

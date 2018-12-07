@@ -9,7 +9,6 @@
   },
   "dependencies": {
     "additional-bootstrap-colors": "^1.0.5",
-    "babel-preset-es2015": "^6.24.1",
     "bootstrap-sass": "^3.3.7",
     "bootstrap-sweetalert": "^1.0.1",
     "boxy-concept": "^1.0.1",
@@ -24,7 +23,6 @@
     "font-awesome": "^4.7.0",
     "jquery": "^3.3.1",
     "jquery-slinky": "^3.0.0",
-    "npm-check-updates": "^2.14.3",
     "pace-bootstrap-theme": "^1.0.1",
     "pace-progress": "^1.0.2",
     "readable-bootstrap-breakpoints": "^1.0.2",
@@ -33,12 +31,15 @@
     "sidr": "^2.2.1",
     "sidr-bootstrap-theme": "^1.0.2",
     "slinky-bootstrap-theme": "^1.0.2",
+    "sticky-js": "^1.2.0",
+    "sticky-sidebar": "^3.3.1",
     "typography-breakpoints-justification": "^1.0.0",
     "typography-helper": "^1.0.5"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",
     "babel-preset-env": "^1.7.0",
+    "babel-preset-es2015": "^6.24.1",
     "babel-preset-es2015-rollup": "^3.0.0",
     "browser-sync": "^2.26.3",
     "cross-env": "^5.2.0",
