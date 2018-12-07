@@ -48,6 +48,10 @@ label {
   }
 }
 
+.help-block {
+  color: lighten($text-color, 20%);
+}
+
 .form-actions {
 
   .btn {
