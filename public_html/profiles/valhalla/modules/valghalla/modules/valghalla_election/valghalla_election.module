@@ -155,7 +155,6 @@ function valghalla_election_handle_polling_stations_fc($node) {
   // Deleting the field collections that are not relevant anymore.
   if (!$node->is_new) {
     $VPPSPIdsToDelete = array();
-    dpm($node->field_volunteers_pr_pol_st_party);
     foreach ($node->field_volunteers_pr_pol_st_party['und'] as $key => $value) {
       if (isset($value['entity'])) {
         $vppsp = $value['entity'];
