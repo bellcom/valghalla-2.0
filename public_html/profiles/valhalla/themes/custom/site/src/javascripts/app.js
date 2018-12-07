@@ -49,9 +49,9 @@ jQuery(function ($) {
     });
   });
 
-  // Sticky table.
+  // Sticky.
   $('.sticky').stickySidebar({
-    topSpacing: 50,
-    bottomSpacing: 50
+    topSpacing: 30,
+    bottomSpacing: 30
   });
 });
