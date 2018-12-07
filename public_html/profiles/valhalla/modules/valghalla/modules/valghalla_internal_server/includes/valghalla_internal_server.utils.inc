@@ -177,3 +177,42 @@ function valghalla_internal_server_free_last_selected_seat($volunteer) {
     }
   }
 }
+
+/**
+ * Generates the url for external signup.
+ *
+ * @param mixed $election
+ *   Election node.
+ * @param mixed $party
+ *   Party taxonomy term.
+ * @param mixed $role
+ *   Role node, optional.
+ * @param null $polling_station
+ *   Polling station node, optional.
+ *
+ * @return string
+ *   Generated subscribe url.
+ */
+function valghalla_internal_server_generate_external_subscribe_url($election, $party, $role = NULL, $polling_station = NULL) {
+  $subscribe_url = '';
+  if ($external_service_endpoint = variable_get('valghalla_external_server_endpoint')) {
+    if ($election && $party) {
+      // Parsing our endpoint to remove any paths.
+      $url_parts = parse_url($external_service_endpoint);
+      $subscribe_url = $url_parts['scheme'] . '://' . $url_parts['host'] . (isset($url_parts['port']) ? ':' . $url_parts['port'] : '');
+
+      // Adding election and party, mandatory params.
+      $subscribe_url .= '/valghalla/external-signup?election=' . $election->uuid . '&party=' . $party->uuid;
+      if ($role) {
+        // Adding role.
+        $subscribe_url .= '&role=' . $role->uuid;
+        if ($polling_station) {
+          // Adding polling station, it can only go together with role.
+          $subscribe_url .= '&pol_st=' . $polling_station->uuid;
+        }
+      }
+    }
+  }
+
+  return $subscribe_url;
+}

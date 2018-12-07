@@ -1,9 +1,9 @@
 // |--------------------------------------------------------------------------
-// | List
+// | Autocomplete
 // |--------------------------------------------------------------------------
 // |
 // | This file contains styles for the following:
-// | - .entity-list
+// | - .autocomplete
 // |
 
 // --------------------------------------------------
@@ -14,71 +14,49 @@
 // Mixins
 // --------------------------------------------------
 
-@mixin entity-list-mixin() {}
+@mixin autocomplete-mixin() {}
 
 // --------------------------------------------------
 // Styling
 // --------------------------------------------------
 
-.entity-list {
-  display: flex;
+.ui-menu {
+  padding: 0;
 
-  flex-wrap: nowrap;
-  flex-direction: row;
-  align-items: center;
+  border-radius: 0;
+  border-color: $input-border !important;
 
-  + .entity-list {
-    margin-top: 14px;
-  }
-}
+  .ui-menu-item {
 
-.entity-list__form {
-  flex-grow: 1;
-}
+    a {
+      font-family: $font-family-base;
+      font-size: $font-size-base;
+      font-weight: $font-weight;
 
-.entity-list__data {
-  display: flex;
+      color: $text-color;
+      background-color: $body-bg !important;
 
-  flex-grow: 1;
-}
-.entity-list__data__item {
+      &:focus,
+      &:hover {
+        background-color: $body-bg-secondary !important;
+      }
 
-  + .entity-list__data__item {
-    margin-left: 10px;
-  }
-}
+      &,
+      &:hover,
+      &:focus {
+        margin: 0 !important;
+        padding: $padding-small-vertical $padding-small-horizontal !important;
 
-.entity-list__data__item--role {
-  min-width: 25px;
-}
-.entity-list__data__item--name {}
-
-.entity-list__controls {
-  flex-wrap: nowrap;
-
-  > * {
-    margin-left: 8px;
+        border: 0 !important;
+        background-image: none !important;
+      }
+    }
   }
 }
 
 // --------------------------------------------------
 // Variants
 // --------------------------------------------------
-
-.entity-list--volunteer-form {
-  padding: 10px 15px;
-
-  background-color: $body-bg-secondary;
-
-  .boxy & {
-    margin-left: -15px;
-    margin-right: -15px;
-  }
-
-  .btn-default {
-    background-color: darken($btn-default-bg, 10%);
-  }
-}
 
 // --------------------------------------------------
 // Responsive

@@ -190,7 +190,7 @@ function valghalla_notifications_admin_settings() {
   );
   $form['valghalla_volunteers_mail']['valghalla_notifications_cancel']['valghalla_notifications_cancellation_from_participants_to_mails'] = array(
     '#type' => 'textfield',
-    '#description' => t('Liste af E-mailadresser adskildt af komma'),
+    '#description' => t('Liste af E-mailadresser adskilt af komma'),
     '#default_value' => variable_get('valghalla_notifications_cancellation_from_participants_to_mails'),
   );
 
@@ -198,12 +198,20 @@ function valghalla_notifications_admin_settings() {
   $form['valghalla_volunteers_mail']['options']['valghalla_rsvp_reminder_days'] = array(
     '#type' => 'textfield',
     '#title' => t('Påmindelses dage'),
-    '#description' => t('Liste af dage før valg der skal udsendes påmindelser, adskildt af komma ( , ). f.eks. 14, 7, 5, 3'),
+    '#description' => t('Liste af dage før valg der skal udsendes påmindelser, adskilt af komma ( , ). f.eks. 14, 7, 5, 3'),
     '#default_value' => variable_get('valghalla_rsvp_reminder_days', '14, 7, 5, 3'),
   );
 
+  // Status report settings.
+  $form['valghalla_volunteers_mail']['options']['valghalla_status_report_days'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Status rapport'),
+    '#description' => t('Liste af dage før valg der skal udsendes en status rapport til valgets partier. Dage skal være adskilt af komma ( , ). f.eks. 14, 7, 5, 3'),
+    '#default_value' => variable_get('valghalla_status_report_days', '14, 7, 5, 3'),
+  );
+
   $form['valghalla_volunteers_mail']['mails']['valghalla_notifications_send_invitation_on_add'] = array(
-    '#title' => t('Send besked(invitation) til deltager når denne tilføjes på et valgsted.'),
+    '#title' => t('Send besked (invitation) til deltager når denne tilføjes på et valgsted.'),
     '#default_value' => variable_get('valghalla_notification_send_invitation_on_add', TRUE),
     '#type' => 'checkbox',
   );
@@ -215,8 +223,16 @@ function valghalla_notifications_admin_settings() {
  * Extra validation needed to verify reminder days can be safely exloded.
  */
 function valghalla_notifications_settings_validate(&$elements, &$form_state, $form_id = NULL) {
+
+  // Reminder days.
   if (preg_match('/[^\d|,| ]/', $form_state['values']['valghalla_rsvp_reminder_days'])) {
     // Found illigal chars in the form.
     form_set_error('valghalla_rsvp_reminder_days', 'Dette felt skal være en komma-separeret liste af hele tal.');
+  }
+
+  // Status report.
+  if (preg_match('/[^\d|,| ]/', $form_state['values']['valghalla_status_report_days'])) {
+    // Found illigal chars in the form.
+    form_set_error('valghalla_status_report_days', 'Dette felt skal være en komma-separeret liste af hele tal.');
   }
 }
