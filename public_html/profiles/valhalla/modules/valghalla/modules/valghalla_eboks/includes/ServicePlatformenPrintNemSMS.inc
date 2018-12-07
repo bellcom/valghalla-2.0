@@ -4,15 +4,12 @@
  * The wrapper class to work with Serviceplatformen Print service.
  */
 
-use Drupal\Valghalla\Pdf;
-use Mpdf\Output\Destination;
-
 module_load_include('inc', 'valghalla_eboks', 'includes/ServicePlatformenPrint');
 
 /**
  * Class that holds the service requests for Digital Post.
  */
-class ServicePlatformenPrintDP extends ServicePlatformenPrint {
+class ServicePlatformenPrintNemSMS extends ServicePlatformenPrint {
 
   /**
    * MaterialeID variable.
@@ -27,14 +24,13 @@ class ServicePlatformenPrintDP extends ServicePlatformenPrint {
   public function __construct() {
     parent::__construct();
 
-    $this->materialeId = variable_get('valghalla_eboks_materiale_id_dp');
+    $this->materialeId = variable_get('valghalla_eboks_materiale_id_nemsms');
   }
 
   /**
    * Set receiver callback.
    */
   public function setTo($to) {
-    $to = str_replace('-', '', $to);
     $this->request['BrevSPBody']['ForsendelseI']['ForsendelseModtager'] = array(
       'AfsendelseModtager' => array('CPRnummerIdentifikator' => $to),
     );
@@ -43,31 +39,24 @@ class ServicePlatformenPrintDP extends ServicePlatformenPrint {
   /**
    * Prepare request data.
    *
+   * @param string $message
+   *   SMS string.
    * @param array $params
    *   Request array.
    */
-  public function prepareRequest(array &$params) {
-    $params['rendered_message'] = $this->renderMessage($params);
-    $pdf = new Pdf();
-    $pdf->WriteHTML($params['rendered_message']);
-    $pdf_output = $pdf->Output(FALSE, Destination::STRING_RETURN);
-    $message_data = base64_encode($pdf_output);
-    $title_text = format_string($params['subject'], $params['tokens']);
-
+  public function prepareRequest($message, array $params) {
+    $message_data = base64_encode($message);
     $this->request['BrevSPBody'] = array(
-      'Kanalvalg' => 'D',
+      'Kanalvalg' => 'S',
       'Prioritet' => 'D',
+      'DigitalPostParametre' => array(
+        'MeddelelseIndholdstypeIdentifikator' => $this->materialeId,
+      ),
       'ForsendelseI' => array(
         'AfsendelseIdentifikator' => $this->getId($params),
-        'FilformatNavn' => 'PDF',
+        'FilformatNavn' => 'TXT',
         'MeddelelseIndholdData' => $message_data,
-        'DokumentParametre' => array(
-          'TitelTekst' => $title_text,
-        ),
-        'DigitalPostParametre' => array(
-          'MeddelelseIndholdstypeIdentifikator' => $this->materialeId,
-          'MedsendDokumentRegistreringIndikator' => 0,
-        ),
+        'DokumentParametre' => array(),
       ),
     );
   }

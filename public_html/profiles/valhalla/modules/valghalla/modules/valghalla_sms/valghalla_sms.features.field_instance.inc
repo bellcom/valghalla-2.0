@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * valghalla_sms.features.field_instance.inc
@@ -10,55 +11,49 @@
 function valghalla_sms_field_default_field_instances() {
   $field_instances = array();
 
-  // Exported field_instance: 'node-sms-body'.
-  $field_instances['node-sms-body'] = array(
+  // Exported field_instance: 'node-sms-field_sms_body'.
+  $field_instances['node-sms-field_sms_body'] = array(
     'bundle' => 'sms',
     'default_value' => NULL,
     'deleted' => 0,
     'description' => '',
     'display' => array(
       'default' => array(
-        'label' => 'hidden',
+        'label' => 'above',
         'module' => 'text',
         'settings' => array(),
         'type' => 'text_default',
-        'weight' => 0,
+        'weight' => 1,
       ),
       'teaser' => array(
-        'label' => 'hidden',
-        'module' => 'text',
-        'settings' => array(
-          'trim_length' => 600,
-        ),
-        'type' => 'text_summary_or_trimmed',
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
         'weight' => 0,
       ),
     ),
     'entity_type' => 'node',
-    'field_name' => 'body',
-    'label' => 'Indhold',
+    'field_name' => 'field_sms_body',
+    'label' => 'SMS Body',
     'required' => 0,
     'settings' => array(
-      'display_summary' => 0,
-      'text_processing' => 1,
+      'text_processing' => 0,
       'user_register_form' => FALSE,
     ),
     'widget' => array(
       'active' => 1,
       'module' => 'text',
       'settings' => array(
-        'rows' => 20,
-        'summary_rows' => 5,
+        'rows' => 1,
       ),
-      'type' => 'text_textarea_with_summary',
-      'weight' => 2,
+      'type' => 'text_textarea',
+      'weight' => 3,
     ),
-    'widget_type' => 'text_textarea_with_summary',
   );
 
   // Translatables
   // Included for use with string extractors like potx.
-  t('Indhold');
+  t('SMS Body');
 
   return $field_instances;
 }

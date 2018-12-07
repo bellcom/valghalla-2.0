@@ -34,8 +34,10 @@ function valghalla_notifications_form_alter(&$form, &$form_state) {
   $form['#attributes']['class'][] = 'valghalla-notifications-send';
   drupal_add_js(drupal_get_path('module', 'valghalla_notifications') . '/js/valghalla_notifications.js');
 
-  $form['body'] += array('#suffix' => '');
-  $form['body']['#suffix'] = _valghalla_helper_get_volunteer_info_params('info') . $form['body']['#suffix'];
+  if (isset($form['body'])) {
+    $form['body'] += array('#suffix' => '');
+    $form['body']['#suffix'] = _valghalla_helper_get_volunteer_info_params('info') . $form['body']['#suffix'];
+  }
   $url = current_path();
 
   $form['title']['#description'] = 'Beskeds interne navn i Valghalla, dette er ikke emnefeltet.';

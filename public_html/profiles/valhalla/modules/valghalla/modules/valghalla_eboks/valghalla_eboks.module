@@ -25,6 +25,15 @@ function valghalla_eboks_notifications_info() {
 }
 
 /**
+ * Implements hook_ctools_plugin_directory().
+ */
+function valghalla_eboks_ctools_plugin_directory($module, $plugin) {
+  if ($module == 'valghalla_sms' && \array_key_exists($plugin, valghalla_sms_ctools_plugin_type())) {
+    return 'plugins/' . $plugin;
+  }
+}
+
+/**
  * Get message callback.
  */
 function valghalla_eboks_get_message($template_node) {
@@ -47,6 +56,17 @@ function valghalla_eboks_get_message($template_node) {
 function valghalla_eboks_send_message($to, $params, $multistep_values) {
   module_load_include('inc', 'valghalla_eboks', 'includes/ServicePlatformenPrintDP');
 
+  /** @var EntityInterface $notification */
+  $notification = entity_get_controller('entity_valghalla_notification')->create(array(
+    'type' => $params['notification_type'],
+    'gateway' => 'eboks',
+    'vol_id' => $params['volunteer_nid'],
+    'status' => 'Failed',
+  ));
+
+  $notification->save();
+  $params['notification_id'] = $notification->id;
+
   $service = new ServiceplatformenPrintDP();
   $service->prepareRequest($params);
   $service->setTo($to);
@@ -55,15 +75,9 @@ function valghalla_eboks_send_message($to, $params, $multistep_values) {
     watchdog('valghalla_eboks', 'WS request failed. Error message: %message', array('%message' => $result['text']), WATCHDOG_ERROR);
   }
 
-  /** @var EntityInterface $notification */
-  $notification = entity_get_controller('entity_valghalla_notification')->create(array(
-    'type' => $params['notification_type'],
-    'gateway' => 'eboks',
-    'vol_id' => $params['volunteer_nid'],
-    'message' => $service->renderMessage($params),
-    'status' => $result['status'] ? 'Succeed' : 'Failed',
-    'status_info' => $result['responce'],
-  ));
+  $notification->message = $params['rendered_message'];
+  $notification->status = $result['status'] ? 'Succeed' : 'Failed';
+  $notification->status_info = $result['response'];
   $notification->save();
   return $result['status'];
 }
@@ -113,49 +127,49 @@ function valghalla_eboks_form_valghalla_notifications_admin_settings_alter(&$for
     '#default_value' => variable_get('valghalla_eboks_location', ''),
   );
 
-  $form['valghalla_eboks_usersystemuuid'] = array(
+  $form['print_service']['valghalla_eboks_usersystemuuid'] = array(
     '#type' => 'textfield',
     '#title' => t('System UUID'),
     '#default_value' => variable_get('valghalla_eboks_usersystemuuid', ''),
   );
 
-  $form['valghalla_eboks_useruuid'] = array(
+  $form['print_service']['valghalla_eboks_useruuid'] = array(
     '#type' => 'textfield',
     '#title' => t('Kommune UUID'),
     '#default_value' => variable_get('valghalla_eboks_useruuid', ''),
   );
 
-  $form['valghalla_eboks_accountinginfo'] = array(
+  $form['print_service']['valghalla_eboks_accountinginfo'] = array(
     '#type' => 'textfield',
     '#title' => t('AccountingInfo'),
     '#default_value' => variable_get('valghalla_eboks_accountinginfo', ''),
   );
 
-  $form['valghalla_eboks_materiale_id_dp'] = array(
+  $form['print_service']['valghalla_eboks_materiale_id_dp'] = array(
     '#type' => 'textfield',
     '#title' => t('MaterialeID Digital POST'),
     '#default_value' => variable_get('valghalla_eboks_materiale_id_dp', ''),
   );
 
-  $form['valghalla_eboks_materiale_id_nemsms'] = array(
+  $form['print_service']['valghalla_eboks_materiale_id_nemsms'] = array(
     '#type' => 'textfield',
     '#title' => t('MaterialeID NemSMS'),
     '#default_value' => variable_get('valghalla_eboks_materiale_id_nemsms', ''),
   );
 
-  $form['valghalla_eboks_certfile_passphrase'] = array(
+  $form['print_service']['valghalla_eboks_certfile_passphrase'] = array(
     '#type' => 'password',
     '#title' => t('Certfile passphrase'),
     '#default_value' => variable_get('valghalla_eboks_certfile_passphrase', ''),
   );
 
-  $form['valghalla_eboks_certfile'] = array(
+  $form['print_service']['valghalla_eboks_certfile'] = array(
     '#type' => 'textfield',
     '#title' => t('Certfile'),
     '#default_value' => variable_get('valghalla_eboks_certfile', ''),
   );
 
-  $form['valghalla_eboks_debug'] = array(
+  $form['print_service']['valghalla_eboks_debug'] = array(
     '#type' => 'checkbox',
     '#title' => t('Debug'),
     '#default_value' => variable_get('valghalla_eboks_debug', FALSE),

@@ -60,14 +60,6 @@ class ServicePlatformenPrint {
   }
 
   /**
-   * Set Request data.
-   *
-   * @param array $params
-   *   Request array.
-   */
-  public function prepareRequest(array $params) {}
-
-  /**
    * Get Request data.
    */
   public function getRequest() {
@@ -100,7 +92,7 @@ class ServicePlatformenPrint {
       file_unmanaged_save_data($this->client->__getLastRequest(), $path, FILE_EXISTS_REPLACE);
       watchdog('ServicePlatformenPrint', 'XML-request filesaved to %path', array('%path' => $path));
     }
-    $response['responce'] = $this->client->__getLastResponse();
+    $response['response'] = $this->client->__getLastResponse();
     return $response;
 
   }
