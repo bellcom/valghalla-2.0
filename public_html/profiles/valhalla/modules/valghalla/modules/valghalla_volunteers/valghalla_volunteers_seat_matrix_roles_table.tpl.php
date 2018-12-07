@@ -18,7 +18,9 @@
     <?php if ($party_status['status']['total_count']['total'] !== 0): ?>
       <tr class="<?php print $party_status['party_status_label']; ?>">
         <td>
-          <strong><?php print $party_status['party_name']; ?></strong>
+          <a href="#" data-scroll-to="#party-<?=strtolower($party_status['party_name']); ?>">
+            <strong><?php print $party_status['party_name']; ?></strong>
+          </a>
         </td>
 
         <?php foreach ($party_status['status']['role_count'] as $role_nid => $role_count): ?>

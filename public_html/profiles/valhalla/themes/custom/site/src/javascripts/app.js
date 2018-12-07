@@ -31,11 +31,21 @@ jQuery(function ($) {
     $('[data-toggle="tooltip"]').tooltip();
   }
 
-  // Boxy toggleable.
-  $('.boxy__toggler').on('click', function(event) {
-    var $element = $(this);
-    var $parent = $element.parents('.boxy--toggleable');
+  // Scroll to.
+  $('[data-scroll-to]').click(function(event) {
+    event.preventDefault();
 
-    $parent.toggleClass('open');
+    var $element = $(this);
+    var target = $element.attr('data-scroll-to');
+    var $target = $(target);
+
+    // Scroll to target.
+    $([document.documentElement, document.body]).animate({
+      scrollTop: $target.offset().top
+    }, 400, function() {
+
+      // Add to URL.
+      window.location.hash = target;
+    });
   });
 });

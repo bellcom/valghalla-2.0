@@ -7,7 +7,7 @@
 
 <?php if ($party_posts_to_fill): ?>
   <?php foreach ($party_posts_to_fill as $party_tid => $party_posts): ?>
-    <div class="boxy boxy--toggleable boxy--<?=$parties_status[$party_tid]['party_status_label']; ?>">
+    <div class="boxy boxy--<?=$parties_status[$party_tid]['party_status_label']; ?>" id="party-<?=strtolower($party_posts['party_name']); ?>">
 
       <!-- Begin - heading -->
       <div class="boxy__heading">
@@ -32,10 +32,6 @@
             <span class="glyphicon glyphicon-edit"></span>
           </a>
 
-          <button class="btn btn-default btn-xs boxy__toggler" data-toggle="tooltip" data-placement="top" title="<?=t('Åben/luk'); ?>">
-            <span class="glyphicon glyphicon-minus boxy__toggler-icon--close"></span>
-            <span class="glyphicon glyphicon-plus boxy__toggler-icon--open"></span>
-          </button>
         </div>
       </div>
       <!-- End - heading -->
