@@ -132,64 +132,62 @@ function valghalla_election_form_submit($form, &$form_state) {
         ))
        ->execute();
   }
+
+  valghalla_election_handle_polling_stations_fc(node_load($nid));
 }
 
 /**
- * Implements hook_node_presave().
+ * Handle creating/deleting field_volunteers_pr_pol_st_party field collection.
  *
- * Managing field_volunteers_pr_pol_st_party fields.
+ * @param mixed $node
+ *   Election node.
  */
-function valghalla_election_node_presave($node) {
-  // We don't want this logic to be executed as drush.
-  if (drupal_is_cli()) {
-    return;
+function valghalla_election_handle_polling_stations_fc($node) {
+  $pollingStations = field_get_items('node', $node, 'field_polling_stations');
+  $pollingStationsIds = array();
+  $createVPPSPForPollingIds = array();
+
+  foreach ($pollingStations as $ps) {
+    $pollingStationsIds[$ps['target_id']] = $ps['target_id'];
+    $createVPPSPForPollingIds[$ps['target_id']] = $ps['target_id'];
   }
-  if ($node->type == 'election') {
-    $pollingStations = field_get_items('node', $node, 'field_polling_stations');
-    $pollingStationsIds = array();
-    $createVPPSPForPollingIds = array();
 
-    foreach($pollingStations as $ps) {
-      $pollingStationsIds[$ps['target_id']] = $ps['target_id'];
-      $createVPPSPForPollingIds[$ps['target_id']] = $ps['target_id'];
-    }
-
-    // Deleting the field collections that are not relevant anymore.
-    if (!$node->is_new) {
-      $VPPSPIdsToDelete = array();
-      foreach ($node->field_volunteers_pr_pol_st_party['und'] as $key => $value) {
-        if ($value['entity']) {
-          $vppsp = $value['entity'];
-        } else {
-          $vppsp = entity_load_single('field_collection_item', $value['value']);
-        }
-        $vppspPollingStationId = $vppsp->field_ppsp_polling_station['und'][0]['nid'];
-
-        if (!in_array($vppspPollingStationId, $pollingStationsIds)) {
-          // Add to array for deletion.
-          $VPPSPIdsToDelete[] = $vppsp->item_id;
-          // Unset them from node.
-          unset($node->field_volunteers_pr_pol_st_party[LANGUAGE_NONE][$key]);
-        }
-
-        // Unset polling station for the list.
-        unset($createVPPSPForPollingIds[$vppspPollingStationId]);
+  // Deleting the field collections that are not relevant anymore.
+  if (!$node->is_new) {
+    $VPPSPIdsToDelete = array();
+    dpm($node->field_volunteers_pr_pol_st_party);
+    foreach ($node->field_volunteers_pr_pol_st_party['und'] as $key => $value) {
+      if (isset($value['entity'])) {
+        $vppsp = $value['entity'];
+      }
+      else {
+        $vppsp = entity_load_single('field_collection_item', $value['value']);
       }
 
-      // Delete field collection items.
-      entity_delete_multiple('field_collection_item', $VPPSPIdsToDelete);
+      $vppspPollingStationId = $vppsp->field_ppsp_polling_station['und'][0]['nid'];
+      if (!in_array($vppspPollingStationId, $pollingStationsIds)) {
+        // Add to array for deletion.
+        $VPPSPIdsToDelete[] = $vppsp->item_id;
+        // Unset them from node.
+        unset($node->field_volunteers_pr_pol_st_party[LANGUAGE_NONE][$key]);
+      }
+
+      // Unset polling station for the list.
+      unset($createVPPSPForPollingIds[$vppspPollingStationId]);
     }
 
-    // Adding new field collections.
-    foreach($createVPPSPForPollingIds as $createVPPSPForPollingId) {
-      foreach(odin_get_parties() as $party_tid => $party_name) {
-        $fc = entity_create('field_collection_item', array('field_name' => 'field_volunteers_pr_pol_st_party'));
-        $fc->setHostEntity('node', $node);
-        $fc->field_ppsp_polling_station[LANGUAGE_NONE][0]['nid'] = $createVPPSPForPollingId;
-        $fc->field_ppsp_party[LANGUAGE_NONE][0]['tid'] = $party_tid;
-        // It's save to use $skip_host_save = TRUE  , since we are in the preprocess hook, node will be updated automatically
-        $fc->save(TRUE);
-      }
+    // Delete field collection items.
+    entity_delete_multiple('field_collection_item', $VPPSPIdsToDelete);
+  }
+
+  // Adding new field collections.
+  foreach ($createVPPSPForPollingIds as $createVPPSPForPollingId) {
+    foreach (odin_get_parties() as $party_tid => $party_name) {
+      $fc = entity_create('field_collection_item', array('field_name' => 'field_volunteers_pr_pol_st_party'));
+      $fc->setHostEntity('node', $node);
+      $fc->field_ppsp_polling_station[LANGUAGE_NONE][0]['nid'] = $createVPPSPForPollingId;
+      $fc->field_ppsp_party[LANGUAGE_NONE][0]['tid'] = $party_tid;
+      $fc->save();
     }
   }
 }
