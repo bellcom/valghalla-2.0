@@ -204,11 +204,19 @@ function valghalla_notifications_admin_settings() {
   );
 
   // Reminder settings.
-  $form['valghalla_notifications']['valghalla_rsvp_reminder_days'] = array(
+  $form['valghalla_notifications']['valghalla_notifications_rsvp_reminder_days'] = array(
     '#type' => 'textfield',
     '#title' => t('Påmindelses dage'),
     '#description' => t('Liste af dage før valg der skal udsendes påmindelser, adskilt af komma ( , ). f.eks. 14, 7, 5, 3'),
-    '#default_value' => variable_get('valghalla_rsvp_reminder_days', '14, 7, 5, 3'),
+    '#default_value' => variable_get('valghalla_notifications_rsvp_reminder_days', '14, 7, 5, 3'),
+  );
+
+  // Reminder toGo settings.
+  $form['valghalla_notifications']['valghalla_notifications_reminder_togo_days'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Påmindelses toGo før et valg'),
+    '#description' => t('Antal dage før et valg for at komme toGo-meddelelse'),
+    '#default_value' => variable_get('valghalla_notifications_reminder_togo_days', FALSE),
   );
 
   // Status report settings.
@@ -229,9 +237,16 @@ function valghalla_notifications_admin_settings() {
 }
 
 /**
- * Extra validation needed to verify reminder days can be safely exloded.
+ * Extra validation needed to verify reminder days can be safely exploded.
  */
-function valghalla_notifications_settings_validate(&$elements, &$form_state, $form_id = NULL) {
+function valghalla_notifications_admin_settings_validate(&$elements, &$form_state, $form_id = NULL) {
+
+  // Reminder days.
+  $togo_reminder_days = $form_state['values']['valghalla_notifications_reminder_togo_days'];
+  if (empty((int) $togo_reminder_days) && $togo_reminder_days != '') {
+    // Found illigal chars in the form.
+    form_set_error('valghalla_notifications_reminder_togo_days', 'Dette felt skal være en hele tal.');
+  }
 
   // Reminder days.
   if (preg_match('/[^\d|,| ]/', $form_state['values']['valghalla_rsvp_reminder_days'])) {

@@ -107,11 +107,15 @@ function valghalla_notifications_menu() {
  * Implements hook_cron().
  */
 function valghalla_notifications_cron() {
-  module_load_include('inc', 'valghalla_notifications', 'includes/valghalla_notifications_rsvp_reminder');
+  module_load_include('inc', 'valghalla_notifications', 'includes/valghalla_notifications_reminders');
 
-  $last_run_ts = variable_get('valghalla_notifications_last_run');
+  $last_run_ts = variable_get('valghalla_notifications_reminder_rsvp_last_run');
   valghalla_notifications_rsvp_reminder($last_run_ts);
-  variable_set('valghalla_notifications_last_run', REQUEST_TIME);
+  variable_set('valghalla_notifications_reminder_rsvp_last_run', REQUEST_TIME);
+
+  $last_run_ts = variable_get('valghalla_notifications_reminder_togo_last_run');
+  valghalla_notifications_togo_reminder($last_run_ts);
+  variable_set('valghalla_notifications_reminder_togo_last_run', REQUEST_TIME);
 }
 
 /**
@@ -229,6 +233,7 @@ function valghalla_notifications_get_types() {
     'invitation' => t('Invitation'),
     'confirmed' => t('Bekræftet (tak for din tilmeldelse)'),
     'reminder' => t('Påmindelse'),
+    'reminder_togo' => t('Påmindelse toGo'),
     'rsvp_yes' => t('RSVP Ja'),
     'rsvp_no' => t('RSVP Nej'),
     'rsvp_never' => t('RSVP Aldrig'),
