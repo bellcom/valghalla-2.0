@@ -15,6 +15,9 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
     $election = _valghalla_external_server_signup_fetch_entity_from_url('election', 'node');
     $form_state['election'] = $election;
   }
+  // Setting the election nid into the session, as some of the functionality depends on it.
+  $_SESSION['election_nid'] = $election->nid;
+
   $party = isset($form_state['party']) ? $form_state['party'] : NULL;
   if (!$party) {
     $party = _valghalla_external_server_signup_fetch_entity_from_url('party', 'taxonomy_term');
@@ -25,23 +28,38 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
     valghalla_external_server_signup_terminate_signup();
   }
 
-  // Getting role, polling station from form state or URL.
+  // Getting role from form state.
   $role = isset($form_state['role']) ? $form_state['role'] : NULL;
   if (!$role) {
-    $role = _valghalla_external_server_signup_fetch_entity_from_url('role', 'node');
-
-    if ($role) {
-      $form_state['role'] = $role;
-      $form_state['role_in_url'] = TRUE;
+    // Getting role from values.
+    if (isset($form_state['values']) && isset($form_state['values']['role_select'])) {
+      $role_selected = $form_state['values']['role_select'];
+      $role = node_load($role_selected);
+    }
+    // Getting role from URL.
+    else {
+      $role = _valghalla_external_server_signup_fetch_entity_from_url('role', 'node');
+      if ($role) {
+        $form_state['role_in_url'] = TRUE;
+        $form_state['role'] = $role;
+      }
     }
   }
+  // Getting polling station from form state.
   $polling_station = isset($form_state['polling_station']) ? $form_state['polling_station'] : NULL;
   if (!$polling_station) {
-    $polling_station = _valghalla_external_server_signup_fetch_entity_from_url('pol_st', 'node');
-
-    if ($polling_station) {
-      $form_state['polling_station'] = $polling_station;
-      $form_state['polling_station_in_url'] = TRUE;
+    // Getting polling station from values.
+    if (isset($form_state['values']) && isset($form_state['values']['polling_station_select'])) {
+      $polling_station_selected = $form_state['values']['polling_station_select'];
+      $polling_station = node_load($polling_station_selected);
+    }
+    // Getting polling station from URL.
+    else {
+      $polling_station = _valghalla_external_server_signup_fetch_entity_from_url('pol_st', 'node');
+      if ($polling_station) {
+        $form_state['polling_station_in_url'] = TRUE;
+        $form_state['polling_station'] = $polling_station;
+      }
     }
   }
 
@@ -85,7 +103,6 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
       $role->title,
       $election_date_str . ' kl. ' . $role->field_meetingtime['und'][0]['value'],
     );
-
   }
   elseif (isset($form_state['role_in_url']) && isset($form_state['polling_station_in_url'])) {
     $form_mode = 'party_role_polling_station';
@@ -125,9 +142,11 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
 
   // Building a form.
   if (!isset($form_state['role_in_url'])) {
-    $available_roles = _valghalla_external_server_signup_get_available_roles($election->nid, $party->tid);
-    if (empty($available_roles)) {
-      valghalla_external_server_signup_terminate_signup();
+    if ($polling_station) {
+      $available_roles = _valghalla_external_server_signup_get_available_roles($election->nid, $party->tid, $polling_station->nid);
+    }
+    else {
+      $available_roles = _valghalla_external_server_signup_get_available_roles($election->nid, $party->tid);
     }
 
     $form_state['available_roles'] = $available_roles;
@@ -137,86 +156,72 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
       '#title' => t('Vælg rolle'),
       '#type' => 'select',
       '#options' => $available_roles,
+      '#empty_option' => ('Vælg rolle'),
+      '#empty_value' => 0,
+      '#prefix' => '<div id="js-roles">',
+      '#suffix' => '</div>',
       '#ajax' => array(
         'callback' => 'valghalla_external_server_signup_role_select_callback',
-        'wrapper' => 'js-polling-stations-container',
-        'method' => 'replace',
         'effect' => 'none',
       ),
     );
 
-    $role_selected = NULL;
-
     if (isset($form_state['values']) && isset($form_state['values']['role_select'])) {
       $role_selected = $form_state['values']['role_select'];
+      $role = node_load($role_selected);
+      $form_state['role'] = $role;
     }
-    else {
-      reset($available_roles);
-      $role_selected = key($available_roles);
-    }
-    $role = node_load($role_selected);
-    $form_state['role'] = $role;
   }
-
-  $form['wrapper']['left-column']['polling_stations_container'] = array(
-    '#type' => 'container',
-    '#prefix' => '<div id="js-polling-stations-container">',
-    '#suffix' => '</div>',
-  );
 
   if (!isset($form_state['polling_station_in_url'])) {
     if ($role) {
-      $polling_station_selected = NULL;
-      $available_polling_stations = _valghalla_external_server_signup_get_available_polling_stations($election->nid, $role->nid);
+      $available_polling_stations = _valghalla_external_server_signup_get_available_polling_stations($election->nid, $party->tid, $role->nid);
+    } else {
+      $available_polling_stations = _valghalla_external_server_signup_get_available_polling_stations($election->nid, $party->tid);
+    }
 
-      $form_state['available_polling_stations'] = $available_polling_stations;
+    $form_state['available_polling_stations'] = $available_polling_stations;
 
-      $form['wrapper']['left-column']['polling_stations_container']['polling_station_select'] = array(
-        '#title' => t('Vælg valgsted'),
-        '#type' => 'select',
-        '#options' => $available_polling_stations,
-        '#prefix' => '<div id="js-polling-stations">',
-        '#suffix' => '</div>',
-        '#ajax' => array(
-          'callback' => 'valghalla_external_server_signup_polling_station_select_callback',
-          'wrapper' => 'js-polling-station-details',
-          'method' => 'replace',
-          'effect' => 'none',
-        ),
-      );
+    $form['wrapper']['left-column']['polling_station_select'] = array(
+      '#title' => t('Vælg valgsted'),
+      '#type' => 'select',
+      '#options' => $available_polling_stations,
+      '#empty_option' => t('Vælg valgsted'),
+      '#empty_value' => 0,
+      '#prefix' => '<div id="js-polling-stations">',
+      '#suffix' => '</div>',
+      '#ajax' => array(
+        'callback' => 'valghalla_external_server_signup_polling_station_select_callback',
+        'effect' => 'none',
+      ),
+    );
 
-      if (isset($form_state['values']) && isset($form_state['values']['polling_station_select'])) {
-        $polling_station_selected = $form_state['values']['polling_station_select'];
-      }
-      else {
-        $first_polling_station = reset($available_polling_stations);
-        // We are getting the list mapped by constituencies. Pop the first one.
-        $polling_station_selected = key($first_polling_station);
-      }
-
+    if (isset($form_state['values']) && isset($form_state['values']['polling_station_select'])) {
+      $polling_station_selected = $form_state['values']['polling_station_select'];
       $polling_station = node_load($polling_station_selected);
     }
   }
 
+  $polling_station_details_markup = '';
   if ($polling_station) {
+    $polling_station_details_markup = _valghalla_external_server_signup_get_polling_station_detail_html($polling_station);
+  }
 
-    // Right column, as we have form selects.
-    if (!isset($form_state['role_in_url']) || !isset($form_state['polling_station_in_url'])) {
-      $form['wrapper']['right-column']['polling_station_details'] = array(
-        '#prefix' => '<div id="js-polling-station-details" class="boxy--light"><div class="boxy__heading"><h2 class="boxy__heading__title">' . t('Valgt valgsted') . '</h2></div><div class="boxy__body"',
-        '#suffix' => '</div></div>',
-        '#markup' => _valghalla_external_server_signup_get_polling_station_detail_html($polling_station),
-      );
-    }
-
-    // Left column, as we have no form fields.
-    else {
-      $form['wrapper']['left-column']['polling_station_details'] = array(
-        '#prefix' => '<div id="js-polling-station-details" class="boxy--light"><div class="boxy__heading"><h2 class="boxy__heading__title">' . t('Valgt valgsted') . '</h2></div><div class="boxy__body"',
-        '#suffix' => '</div></div>',
-        '#markup' => _valghalla_external_server_signup_get_polling_station_detail_html($polling_station),
-      );
-    }
+  // Right column, as we have form selects.
+  if (!isset($form_state['role_in_url']) || !isset($form_state['polling_station_in_url'])) {
+    $form['wrapper']['right-column']['polling_station_details'] = array(
+      '#prefix' => '<div id="js-polling-station-details" class="boxy--light"><div class="boxy__heading"><h2 class="boxy__heading__title">' . t('Valgt valgsted') . '</h2></div><div class="boxy__body">',
+      '#suffix' => '</div></div>',
+      '#markup' => $polling_station_details_markup,
+    );
+  }
+  // Left column, as we have no form fields.
+  else {
+    $form['wrapper']['left-column']['polling_station_details'] = array(
+      '#prefix' => '<div id="js-polling-station-details" class="boxy--light"><div class="boxy__heading"><h2 class="boxy__heading__title">' . t('Valgt valgsted') . '</h2></div><div class="boxy__body">',
+      '#suffix' => '</div></div>',
+      '#markup' => $polling_station_details_markup,
+    );
   }
 
   // Making the replacements.
@@ -264,18 +269,32 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
 function valghalla_external_server_signup_role_select_callback($form, &$form_state) {
   $commands = array();
 
-  $first_polling_station = reset($form_state['available_polling_stations']);
-  $polling_station_selected = key($first_polling_station);
+  $role_selected = $form_state['values']['role_select'];
+  $polling_station_selected = $form_state['values']['polling_station_select'];
 
-  // Left column.
-  $form['wrapper']['left-column']['polling_stations_container']['polling_station_select']['#value'] = $polling_station_selected;
+  // Updating polling station select.
+  if ($role_selected) {
+    if (!$polling_station_selected) {
+      // Getting the first available polling station.
+      $first_polling_station = reset($form_state['available_polling_stations']);
+      $polling_station_selected = key($first_polling_station);
+    }
+  }
+  else {
+    $polling_station_selected = 0;
+  }
+  $form['wrapper']['left-column']['polling_station_select']['#value'] = $polling_station_selected;
+  $commands[] = ajax_command_replace('#js-polling-stations', drupal_render($form['wrapper']['left-column']['polling_station_select']));
 
-  $commands[] = ajax_command_replace('#js-polling-stations-container', drupal_render($form['wrapper']['left-column']['polling_stations_container']));
+  // Updating polling station details.
+  if ($polling_station_selected) {
+    $polling_station = node_load($polling_station_selected);
+    $form['wrapper']['right-column']['polling_station_details']['#markup'] = _valghalla_external_server_signup_get_polling_station_detail_html($polling_station);
+  }
+  else {
+    $form['wrapper']['right-column']['polling_station_details']['#markup'] = '';
+  }
 
-  // Right column.
-  $polling_station = node_load($polling_station_selected);
-
-  $form['wrapper']['right-column']['polling_station_details']['#markup'] = _valghalla_external_server_signup_get_polling_station_detail_html($polling_station);
   $commands[] = ajax_command_replace('#js-polling-station-details', drupal_render($form['wrapper']['right-column']['polling_station_details']));
 
   return array('#type' => 'ajax', '#commands' => $commands);
@@ -289,8 +308,36 @@ function valghalla_external_server_signup_role_select_callback($form, &$form_sta
  * @return mixed
  *   Polling station details element.
  */
-function valghalla_external_server_signup_polling_station_select_callback($form, $form_state) {
-  return $form['wrapper']['right-column']['polling_station_details'];
+function valghalla_external_server_signup_polling_station_select_callback($form, &$form_state) {
+  $commands = array();
+
+  $polling_station_selected = $form_state['values']['polling_station_select'];
+  $role_selected = $form_state['values']['role_select'];
+
+  // Updating role select.
+  if ($polling_station_selected) {
+    if (!$role_selected) {
+      // Getting the first available role.
+      reset($form_state['available_roles']);
+      $role_selected = key($form_state['available_roles']);
+    }
+  } else {
+    $role_selected = 0;
+  }
+  $form['wrapper']['left-column']['role_select']['#value'] = $role_selected;
+  $commands[] = ajax_command_replace('#js-roles', drupal_render($form['wrapper']['left-column']['role_select']));
+
+  // Updating polling station details.
+  if ($polling_station_selected) {
+    $polling_station = node_load($polling_station_selected);
+    $form['wrapper']['right-column']['polling_station_details']['#markup'] = _valghalla_external_server_signup_get_polling_station_detail_html($polling_station);
+  }
+  else {
+    $form['wrapper']['right-column']['polling_station_details']['#markup'] = '';
+  }
+  $commands[] = ajax_command_replace('#js-polling-station-details', drupal_render($form['wrapper']['right-column']['polling_station_details']));
+
+  return array('#type' => 'ajax', '#commands' => $commands);
 }
 
 /**
