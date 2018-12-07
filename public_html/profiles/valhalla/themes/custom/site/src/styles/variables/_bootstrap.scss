@@ -29,7 +29,7 @@ $brand-danger:          #d9534f !default;
 //** Background color for `<body>`.
 $body-bg:               #fff;
 //** Global text color on `<body>`.
-$text-color:            #444;
+$text-color:            #333;
 
 //** Global textual link color.
 $link-color:            $brand-primary !default;
@@ -150,7 +150,7 @@ $table-border-color:            #eaeaea;
 $btn-font-weight:                700;
 
 $btn-default-color:              $text-color;
-$btn-default-bg:                 #f0f0f0;
+$btn-default-bg:                 #d7d7d7;
 $btn-default-border:             #ccc !default;
 
 $btn-primary-color:              #fff !default;
