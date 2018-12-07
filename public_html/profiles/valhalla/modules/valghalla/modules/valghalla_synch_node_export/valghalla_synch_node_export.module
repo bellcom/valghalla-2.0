@@ -10,8 +10,10 @@
  */
 function valghalla_synch_node_export_node_export_dependency_field_alter(&$handled, &$node, $dependency) {
   foreach ($handled as $key => $element) {
-    // Adding parent uuid.
-    $handled[$key]['parent_uuid'] = $dependency->uuid;
+    // Adding parent uuid, if not set already.
+    if (!isset($handled[$key]['parent_uuid'])) {
+      $handled[$key]['parent_uuid'] = $dependency->uuid;
+    }
   }
 }
 
