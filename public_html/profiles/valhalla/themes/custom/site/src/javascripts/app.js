@@ -48,4 +48,10 @@ jQuery(function ($) {
       window.location.hash = target;
     });
   });
+
+  // Sticky table.
+  $('.sticky').stickySidebar({
+    topSpacing: 50,
+    bottomSpacing: 50
+  });
 });

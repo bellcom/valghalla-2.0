@@ -7,7 +7,7 @@
 
 <?php if ($party_posts_to_fill): ?>
   <?php foreach ($party_posts_to_fill as $party_tid => $party_posts): ?>
-    <div class="boxy boxy--<?=$parties_status[$party_tid]['party_status_label']; ?>" id="party-<?=strtolower($party_posts['party_name']); ?>">
+    <div class="boxy boxy--<?=$parties_status[$party_tid]['party_status_label']; ?>" id="party_<?=strtolower($party_posts['party_name']); ?>">
 
       <!-- Begin - heading -->
       <div class="boxy__heading">
