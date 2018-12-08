@@ -185,7 +185,7 @@ function valghalla_internal_server_free_last_selected_seat($volunteer) {
  *   Election node.
  * @param mixed $party
  *   Party taxonomy term.
- * @param mixed $role
+ * @param null $role
  *   Role node, optional.
  * @param null $polling_station
  *   Polling station node, optional.
@@ -206,10 +206,11 @@ function valghalla_internal_server_generate_external_subscribe_url($election, $p
       if ($role) {
         // Adding role.
         $subscribe_url .= '&role=' . $role->uuid;
-        if ($polling_station) {
-          // Adding polling station, it can only go together with role.
-          $subscribe_url .= '&pol_st=' . $polling_station->uuid;
-        }
+      }
+
+      if ($polling_station) {
+        // Adding polling station.
+        $subscribe_url .= '&pol_st=' . $polling_station->uuid;
       }
     }
   }
