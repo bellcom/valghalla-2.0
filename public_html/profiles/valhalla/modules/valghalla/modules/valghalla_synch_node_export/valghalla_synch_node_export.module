@@ -9,10 +9,12 @@
  * Implements hook_node_export_dependency_alter().
  */
 function valghalla_synch_node_export_node_export_dependency_field_alter(&$handled, &$node, $dependency) {
-  foreach ($handled as $key => $element) {
-    // Adding parent uuid, if not set already.
-    if (!isset($handled[$key]['parent_uuid'])) {
-      $handled[$key]['parent_uuid'] = $dependency->uuid;
+  if (is_array($handled)) {
+    foreach ($handled as $key => $element) {
+      // Adding parent uuid, if not set already.
+      if (!isset($handled[$key]['parent_uuid'])) {
+        $handled[$key]['parent_uuid'] = $dependency->uuid;
+      }
     }
   }
 }
