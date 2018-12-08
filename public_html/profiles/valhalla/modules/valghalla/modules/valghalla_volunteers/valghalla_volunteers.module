@@ -698,7 +698,7 @@ function valghalla_volunteers_polling_station_posts_to_fill($polling_station, $p
   // Party subscribe URL.
   if (module_exists('valghalla_internal_server')) {
     $party_loaded = taxonomy_term_load($party_tid);
-    $party_posts_to_fill[$party_tid]['party_subscribe_url'] = valghalla_internal_server_generate_external_subscribe_url($election, $party_loaded);
+    $party_posts_to_fill[$party_tid]['party_subscribe_url'] = valghalla_internal_server_generate_external_subscribe_url($election, $party_loaded, NULL, $polling_station);
   }
 
   // Traversing assigned posts.

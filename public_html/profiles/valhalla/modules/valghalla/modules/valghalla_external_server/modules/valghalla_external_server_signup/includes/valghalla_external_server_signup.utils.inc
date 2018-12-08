@@ -55,6 +55,14 @@ function _valghalla_external_server_signup_text_get_replacement_tokens($mode) {
         '@role_meeting_date' => 'time when the person must come',
       );
 
+    case 'party_polling_station':
+      return array(
+        '@election_name' => 'name of the election',
+        '@election_time' => 'time of the election',
+        '@party_name' => 'name of the party',
+        '@polling_station_name' => 'name of the polling station',
+      );
+
     case 'party_role_polling_station':
       return array(
         '@election_name' => 'name of the election',
@@ -75,7 +83,8 @@ function _valghalla_external_server_signup_text_get_replacement_tokens($mode) {
  * @param int $party_tid
  *   The party node TID.
  * @param int $polling_station_nid
- *   Node ID of polling station, if null the all available polling stations are returned.
+ *   Node ID of polling station,
+ *   if null the all available polling stations are returned.
  *
  * @return array
  *   The array of roles mapped by role->nid.
@@ -128,7 +137,7 @@ function _valghalla_external_server_signup_get_available_polling_stations($elect
     foreach (odin_get_roles() as $role_nid => $role) {
       $foundPollingStations = valghalla_signup_get_avaiable_polling_stations($election_nid, 1, $role_nid, $party_tid);
       foreach ($foundPollingStations as $constituency => $psList) {
-        foreach($psList as $ps_key => $ps_name) {
+        foreach ($psList as $ps_key => $ps_name) {
           $available_polling_stations[$constituency][$ps_key] = $ps_name;
         }
       }
@@ -136,10 +145,6 @@ function _valghalla_external_server_signup_get_available_polling_stations($elect
   }
 
   return $available_polling_stations;
-}
-
-function _valghalal_external_server_signup_get_available_roles($election_nid, $polling_station_nid) {
-
 }
 
 /**
