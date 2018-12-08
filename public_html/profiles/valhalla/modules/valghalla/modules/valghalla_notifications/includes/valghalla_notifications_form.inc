@@ -345,6 +345,7 @@ function valghalla_notifications_get_recipients($values) {
     $volunteer_query = new EntityFieldQuery();
     $volunteer_query->entityCondition('entity_type', 'field_collection_item')
       ->entityCondition('bundle', 'field_electioninfo')
+      ->propertyCondition('archived', 0)
       ->fieldCondition('field_post_role', 'target_id', 'NULL', '!=')
       ->fieldCondition('field_election', 'target_id', $values['election_nid']);
 
@@ -384,7 +385,8 @@ function valghalla_notifications_get_recipients($values) {
     // Prepare statement.
     $volunteer_query = new EntityFieldQuery();
     $volunteer_query->entityCondition('entity_type', 'field_collection_item')
-      ->entityCondition('bundle', 'field_electioninfo');
+      ->entityCondition('bundle', 'field_electioninfo')
+      ->propertyCondition('archived', 0);
 
     if ($election !== FALSE) {
       $volunteer_query->fieldCondition('field_election', 'target_id', $election);

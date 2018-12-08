@@ -641,6 +641,7 @@ function valghalla_volunteers_polling_station_posts_to_fill($polling_station, $p
   $volunteer_query = new EntityFieldQuery();
   $volunteer_query->entityCondition('entity_type', 'field_collection_item')
     ->entityCondition('bundle', 'field_electioninfo')
+    ->propertyCondition('archived', 0)
     ->fieldCondition('field_election', 'target_id', $election_nid)
     ->fieldCondition('field_post_party', 'target_id', $party_tid)
     ->fieldCondition('field_vlnt_station', 'target_id', $station_id);
@@ -684,6 +685,7 @@ function valghalla_volunteers_polling_station_posts_to_fill($polling_station, $p
   $volunteer_pr_pol_st_pr_party_query = new EntityFieldQuery();
   $volunteer_pr_pol_st_pr_party_query->entityCondition('entity_type', 'field_collection_item')
     ->entityCondition('bundle', 'field_volunteers_pr_pol_st_party')
+    ->propertyCondition('archived', 0)
     ->propertyCondition('item_id', $electionAttachedVPSP)
     ->fieldCondition('field_ppsp_polling_station', 'nid', $station_id)
     ->fieldCondition('field_ppsp_party', 'tid', $party_tid);
@@ -854,6 +856,7 @@ function valghalla_volunteers_to_polling_station_roles($polling_station, $party_
 
     $volunteer_query->entityCondition('entity_type', 'field_collection_item')
       ->entityCondition('bundle', 'field_electioninfo')
+      ->propertyCondition('archived', 0)
       ->fieldCondition('field_election', 'target_id', $query_election_nid)
       ->fieldCondition('field_vlnt_station', 'target_id', $station_id)
       ->fieldCondition('field_post_party', 'target_id', $party_tid)
