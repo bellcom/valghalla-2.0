@@ -94,7 +94,7 @@ function valghalla_internal_server_batch_clone_op($uuid, $operation_details, &$c
 
       // Check if the same node has been modified locally.
       // if yes, we have a conflict.
-      if ($existingNode && $existingNode->changed > variable_get('valgalla_internal_server_last_pull_timestamp')) {
+      if ($existingNode && $existingNode->changed > variable_get('valgalla_internal_server_last_clone_timestamp')) {
 
         // We have a conflict, the local node was modified after the last pull.
         // Return to the previous revision, as internal server always wins.
@@ -243,7 +243,7 @@ function valghalla_internal_server_batch_clone_finished($success, $results, $ope
   }
 
   // Updating last pull timestamp.
-  variable_set('valgalla_internal_server_last_pull_timestamp', time());
+  variable_set('valgalla_internal_server_last_clone_timestamp', time());
 }
 
 /**

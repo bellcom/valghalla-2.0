@@ -17,7 +17,20 @@ class ExternalWebservice {
   }
 
   /**
+   * Checks if the webservice can be accessed successfully.
+   *
+   * @return bool
+   *   TRUE or FALSE.
+   */
+  public function heartbeat() {
+    return (is_array($this->fetchContent()));
+  }
+
+  /**
    * Calling webservice endpoint: /valghalla_resource_export.
+   *
+   * @return array
+   *   Result array.
    */
   public function fetchContent($page = 0) {
     $getParams = http_build_query(

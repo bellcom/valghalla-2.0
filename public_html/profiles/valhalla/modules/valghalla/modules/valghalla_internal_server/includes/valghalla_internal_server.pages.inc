@@ -5,20 +5,13 @@
  * Valghalla_internal_server_pages.inc.
  */
 
+use ValghallaInternalServer\ExternalWebservice;
+
 /**
  * Implements hook_form_alter().
  */
 function valghalla_internal_server_form_alter(&$form, &$form_state, $form_id) {
   if ($form_id === 'valhalla_admin_settings_form') {
-    // TODO: activate
-    //    // Attempt the webservice request.
-    //    if (os2forms_webform_sharing_get_webform_node_export() !== NULL) {
-    //      drupal_set_message(t('Sharing repository set up correctly'));
-    //    }
-    //    else {
-    //      drupal_set_message(t('Could not connect to the repository. Check connection credentials'), 'error', FALSE);
-    //    }
-    //
     // Do synch, if asked.
     if (isset($form_state['triggering_element']) && $form_state['triggering_element']['#id'] == 'edit-synch-now') {
       valghalla_internal_server_cron();
@@ -46,24 +39,49 @@ function valghalla_internal_server_form_alter(&$form, &$form_state, $form_id) {
 
     $form['valghalla_internal_server_fs']['valghalla_external_server_endpoint'] = array(
       '#type' => 'textfield',
-      '#title' => t('Repository Endpoint URL'),
+      '#title' => t('External server endpoint URL'),
       '#default_value' => variable_get('valghalla_external_server_endpoint'),
-      '#description' => t('The service endpoint URL of the remote repository. Do not add trailing slash!'),
+      '#description' => t('The webservice endpoint URL of the external server. Do not add trailing slash!'),
       '#required' => TRUE,
     );
 
     $form['valghalla_internal_server_fs']['valghalla_external_server_user'] = array(
       '#type' => 'textfield',
-      '#title' => t('Repository username'),
+      '#title' => t('Endpoint username'),
       '#default_value' => variable_get('valghalla_external_server_user'),
-      '#description' => t('The service username.'),
+      '#description' => t('The webservice username'),
       '#required' => TRUE,
     );
 
     $form['valghalla_internal_server_fs']['valghalla_external_server_password'] = array(
       '#type' => 'password',
-      '#title' => t('Repository password'),
-      '#description' => t('The service password. Leave blank if not changed'),
+      '#title' => t('Endpoint user password'),
+      '#description' => t('The webservice password. Leave blank if not changed'),
+    );
+
+    $form['valghalla_internal_server_fs']['valghalla_external_server_synch_frequency'] = array(
+      '#type' => 'select',
+      '#title' => t('Synch frequency'),
+      '#options' => array(
+        '0' => 'As often as cron',
+        '1' => '1 minute',
+        '2' => '2 minutes',
+        '3' => '3 minutes',
+        '5' => '5 minutes',
+        '10' => '10 minutes',
+        '15' => '15 minutes',
+        '30' => '30 minutes',
+      ),
+      '#default_value' => variable_get('valghalla_external_server_synch_frequency', 0),
+      '#description' => t('Run synch every N minutes.'),
+      '#required' => TRUE,
+    );
+
+    $form['valghalla_internal_server_fs']['valghalla_external_server_synch_error_message'] = array(
+      '#type' => 'textarea',
+      '#title' => t('Synch error message'),
+      '#default_value' => variable_get('valghalla_external_server_synch_error_message'),
+      '#description' => t('Provide a custom message that will be presenter if synch fails'),
     );
 
     $form['valghalla_internal_server_fs']['valghalla_external_server_synch_now_fs'] = array(
@@ -79,7 +97,7 @@ function valghalla_internal_server_form_alter(&$form, &$form_state, $form_id) {
     );
 
     $form['valghalla_internal_server_fs']['valghalla_external_server_synch_now_fs'][] = array(
-      '#markup' => '<div>' . t('Last pulled: @datetime', array('@datetime' => format_date(variable_get('valgalla_internal_server_last_pull_timestamp')))) . '</div>'
+      '#markup' => '<div>' . t('Last pulled: @datetime', array('@datetime' => format_date(variable_get('valgalla_internal_server_last_clone_timestamp')))) . '</div>'
       . '<div>' . t('Last pushed: @datetime', array('@datetime' => format_date(variable_get('valgalla_internal_server_last_push_timestamp')))) . '</div>',
     );
 
@@ -102,4 +120,8 @@ function valghalla_internal_server_settings_form_submit($form, &$form_state) {
   if ($form_state['values']['valghalla_external_server_password'] == '') {
     unset($form_state['values']['valghalla_external_server_password']);
   }
+
+  // Update heartbeat.
+  $ws = new ExternalWebservice();
+  variable_set('valgalla_internal_server_heartbeat', $ws->heartbeat());
 }

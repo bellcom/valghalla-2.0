@@ -185,9 +185,9 @@ function valghalla_internal_server_free_last_selected_seat($volunteer) {
  *   Election node.
  * @param mixed $party
  *   Party taxonomy term.
- * @param null $role
+ * @param mixed $role
  *   Role node, optional.
- * @param null $polling_station
+ * @param mixed $polling_station
  *   Polling station node, optional.
  *
  * @return string
