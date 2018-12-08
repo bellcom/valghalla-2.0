@@ -20,6 +20,23 @@ function valghalla_synch_node_export_node_export_dependency_field_alter(&$handle
 }
 
 /**
+ * Implements hook_node_export_node_alter().
+ *
+ * Addes the role UUID to the export info,
+ * it is required for doing the mapping on the second server,
+ * since role nid can be different.
+ */
+function valghalla_synch_node_export_node_export_node_alter(&$node, $original_node) {
+  if ($node->type == 'election') {
+    $node->roles_uuids = array();
+    $roles_loaded = node_load_multiple(array_keys(odin_get_roles()));
+    foreach ($roles_loaded as $role) {
+      $node->roles_uuids[$role->nid] = $role->uuid;
+    }
+  }
+}
+
+/**
  * Implements hook_node_export_import_alter().
  *
  * Updates the references inside $node->node_export_dependency
@@ -28,8 +45,11 @@ function valghalla_synch_node_export_node_export_dependency_field_alter(&$handle
 function valghalla_synch_node_export_node_export_import_alter(&$nodes, $format, $save) {
   foreach ($nodes as $node) {
     if (isset($node->node_export_dependency)) {
-      $field_collection_items = array();
+      // Do the role fields remapping.
+      _valghalla_synch_node_export_role_remapping($node);
+
       // Find all field_collection_items.
+      $field_collection_items = array();
       foreach ($node->node_export_dependency as $dep_key => $dependency) {
         if (isset($dependency['type']) && strcmp($dependency['type'], 'field_collection_item') === 0) {
           $field_collection_items[$dependency['uuid']] = $dep_key;
@@ -58,4 +78,46 @@ function valghalla_synch_node_export_node_export_import_alter(&$nodes, $format, 
       }
     }
   }
+}
+
+/**
+ * Changes the keys of the role-related fields.
+ *
+ * Since the role fields are using nids in their name, which can be different
+ * between installations, we are using UUIDs to rename the field according
+ * to the local installation NIDs.
+ *
+ * @param mixed $node
+ *   Node object to be altered.
+ */
+function _valghalla_synch_node_export_role_remapping(&$node) {
+  // Find all field_collection_items.
+  foreach ($node->node_export_dependency as $dep_key => $dependency) {
+    if (isset($dependency['type']) && strcmp($dependency['type'], 'field_collection_item') === 0) {
+
+      // If field_collection_item is if type field_volunteers_pr_pol_st_party,
+      // do the roles remapping, since role nid might be different.
+      if (strcmp($dependency['field_name'], 'field_volunteers_pr_pol_st_party') === 0) {
+        if (isset($dependency['node_export_field_collection_data']) && is_array($dependency['node_export_field_collection_data'])) {
+          foreach ($dependency['node_export_field_collection_data'] as $key => $element) {
+            if (strpos($key, 'field_role_n') === 0) {
+              $role_remote_nid = intval(str_replace('field_role_n', '', $key));
+              $role_uuid = $node->roles_uuids[$role_remote_nid];
+              if ($role_uuid) {
+                $match = entity_get_id_by_uuid('node', array($role_uuid));
+                $role_local_nid = intval($match[$role_uuid]);
+                if ($role_local_nid !== $role_remote_nid) {
+                  $new_key = 'field_role_n' . $role_local_nid;
+                  $data = $node->node_export_dependency[$dep_key]['node_export_field_collection_data'][$key];
+                  unset($node->node_export_dependency[$dep_key]['node_export_field_collection_data'][$key]);
+                  $node->node_export_dependency[$dep_key]['node_export_field_collection_data'][$new_key] = $data;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  unset($node->roles_uuids);
 }
