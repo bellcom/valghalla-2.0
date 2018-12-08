@@ -94,11 +94,13 @@ function _valghalla_synch_node_export_role_remapping(&$node) {
   // Find all field_collection_items.
   foreach ($node->node_export_dependency as $dep_key => $dependency) {
     if (isset($dependency['type']) && strcmp($dependency['type'], 'field_collection_item') === 0) {
+      $new_roles_fields_data = array();
 
       // If field_collection_item is if type field_volunteers_pr_pol_st_party,
       // do the roles remapping, since role nid might be different.
       if (strcmp($dependency['field_name'], 'field_volunteers_pr_pol_st_party') === 0) {
         if (isset($dependency['node_export_field_collection_data']) && is_array($dependency['node_export_field_collection_data'])) {
+          // First we traverse to extract the data, and remove the old key.
           foreach ($dependency['node_export_field_collection_data'] as $key => $element) {
             if (strpos($key, 'field_role_n') === 0) {
               $role_remote_nid = intval(str_replace('field_role_n', '', $key));
@@ -109,11 +111,18 @@ function _valghalla_synch_node_export_role_remapping(&$node) {
                 if ($role_local_nid !== $role_remote_nid) {
                   $new_key = 'field_role_n' . $role_local_nid;
                   $data = $node->node_export_dependency[$dep_key]['node_export_field_collection_data'][$key];
+                  $new_roles_fields_data[$new_key] = $data;
+
+                  // We don't need that value anymore, unset it.
                   unset($node->node_export_dependency[$dep_key]['node_export_field_collection_data'][$key]);
-                  $node->node_export_dependency[$dep_key]['node_export_field_collection_data'][$new_key] = $data;
                 }
               }
             }
+          }
+
+          // Then we use the saved data to set the value anew.
+          foreach ($new_roles_fields_data as $role_field_key => $role_field_value) {
+            $node->node_export_dependency[$dep_key]['node_export_field_collection_data'][$role_field_key] = $role_field_value;
           }
         }
       }
