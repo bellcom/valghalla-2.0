@@ -195,19 +195,15 @@ function valghalla_internal_server_free_last_selected_seat($volunteer) {
  */
 function valghalla_internal_server_generate_external_subscribe_url($election, $party, $role = NULL, $polling_station = NULL) {
   $subscribe_url = '';
-  if ($external_service_endpoint = variable_get('valghalla_external_server_endpoint')) {
+  if ($external_service_url = valghalla_internal_server_get_external_server_url()) {
     if ($election && $party) {
-      // Parsing our endpoint to remove any paths.
-      $url_parts = parse_url($external_service_endpoint);
-      $subscribe_url = $url_parts['scheme'] . '://' . $url_parts['host'] . (isset($url_parts['port']) ? ':' . $url_parts['port'] : '');
-
       // Adding election and party, mandatory params.
-      $subscribe_url .= '/valghalla/external-signup?election=' . $election->uuid . '&party=' . $party->uuid;
+      $subscribe_url = $external_service_url . '/valghalla/external-signup?election=' . $election->uuid . '&party=' . $party->uuid;
+
       if ($role) {
         // Adding role.
         $subscribe_url .= '&role=' . $role->uuid;
       }
-
       if ($polling_station) {
         // Adding polling station.
         $subscribe_url .= '&pol_st=' . $polling_station->uuid;
@@ -216,4 +212,24 @@ function valghalla_internal_server_generate_external_subscribe_url($election, $p
   }
 
   return $subscribe_url;
+}
+
+/**
+ * Gets an external server URL without any path, also adds port if present.
+ *
+ * Does not have a leading slash.
+ *
+ * @return string
+ *   External server URL.
+ *   E.g. http://valghalla.dk
+ */
+function valghalla_internal_server_get_external_server_url() {
+  $external_server_url = '';
+  if ($external_service_endpoint = variable_get('valghalla_external_server_endpoint')) {
+    // Parsing our endpoint to remove any paths.
+    $url_parts = parse_url($external_service_endpoint);
+    $external_server_url = $url_parts['scheme'] . '://' . $url_parts['host'] . (isset($url_parts['port']) ? ':' . $url_parts['port'] : '');
+  }
+
+  return $external_server_url;
 }
