@@ -19,53 +19,6 @@ function valghalla_resource_export_service_services_resources() {
 }
 
 /**
- * Determine whether the current user can access a node resource.
- *
- * @param string $op
- *   One of view, update, create, delete per node_access().
- * @param mixed $args
- *   Resource arguments passed through from the original request.
- *
- * @return bool
- *   TRUE or FALSE.
- *
- * @see node_access()
- */
-function valghalla_resource_export_service_resource_access($op = 'view', $args = array()) {
-  $node = NULL;
-
-  if (empty($args[0])) {
-    return services_error(t('Must provide a uuid.'), 404);
-  }
-  elseif (is_array($args[0]) || is_object($args[0])) {
-    $node = (object) $args[0];
-  }
-  elseif (in_array(gettype($args[0]), array('string', 'integer'))) {
-    $node = valghalla_resource_export_service_resource_load($args[0]);
-  }
-
-  if ($node) {
-    // Return the node resource access.
-    module_load_include('inc', 'services', 'resources/node_resource');
-
-    if (strcasecmp($op, 'create') === 0) {
-      module_load_include('inc', 'services', 'resources/node_resource');
-      module_load_include('inc', 'node_export', 'formats/serialize');
-
-      // Getting the node and type.
-      $node = reset(node_export_serialize_import($node->node_export_data));
-    }
-
-    return _node_resource_access($op, array($node));
-  }
-  // TODO: add code for taxonomy.
-  else {
-    // Return a 404.
-    return services_error(t('Resource with @uuid could not be found', array('@uuid' => $args[0])), 404);
-  }
-}
-
-/**
  * Returns a single node resource as exported node with serialize format.
  *
  * @param mixed $entity

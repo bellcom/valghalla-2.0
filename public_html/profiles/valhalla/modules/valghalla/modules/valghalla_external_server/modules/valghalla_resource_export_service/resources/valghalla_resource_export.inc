@@ -26,10 +26,7 @@ function _valghalla_resource_export_resource_definition() {
             'description' => 'The uuid of the node to get',
           ),
         ),
-      // TODO: add custom permission.
-        'access callback' => 'valghalla_resource_export_service_resource_access',
-        'access arguments' => array('view'),
-        'access arguments append' => TRUE,
+        'access arguments' => array('administer valghalla'),
       ),
       // Creates the actual content (node only).
       'create' => array(
@@ -49,9 +46,7 @@ function _valghalla_resource_export_resource_definition() {
             'default value' => array(),
           ),
         ),
-        'access callback' => 'valghalla_resource_export_service_resource_access',
-        'access arguments' => array('create'),
-        'access arguments append' => TRUE,
+        'access arguments' => array('administer valghalla'),
       ),
       // Deletes the queue item only that represents the the actual
       // content (node or taxonomy_term).
@@ -70,10 +65,7 @@ function _valghalla_resource_export_resource_definition() {
             'type' => 'string',
           ),
         ),
-      // TODO: add custom permission.
-        'access callback' => 'valghalla_resource_export_service_resource_access',
-        'access arguments' => array('delete'),
-        'access arguments append' => TRUE,
+        'access arguments' => array('administer valghalla'),
       ),
       // Indexes the queue items that represent the actual content
       // (node or taxonomy_term).
@@ -127,8 +119,7 @@ function _valghalla_resource_export_resource_definition() {
             'source' => array('param' => 'options'),
           ),
         ),
-      // TODO: add custom permission.
-        'access arguments' => array('access content'),
+        'access arguments' => array('administer valghalla'),
       ),
     ),
   );
