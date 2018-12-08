@@ -70,9 +70,13 @@ function valghalla_internal_server_taxonomy_term_update($term) {
  * Implements hook_cron().
  */
 function valghalla_internal_server_cron() {
+  // Update heartbeat.
+  $ws = new ExternalWebservice();
+  variable_set('valgalla_internal_server_heartbeat', $ws->heartbeat());
+
   $synchFrequency = intval(variable_get('valghalla_external_server_synch_frequency', 0));
   $nowTs = time();
-
+  
   $batchExists = FALSE;
   if ((($nowTs - variable_get('valgalla_internal_server_last_clone_timestamp')) / 60) > $synchFrequency) {
     valghalla_internal_server_clone_updated_content();
@@ -91,10 +95,6 @@ function valghalla_internal_server_cron() {
       batch_process(current_path());
     }
   }
-
-  // Update heartbeat.
-  $ws = new ExternalWebservice();
-  variable_set('valgalla_internal_server_heartbeat', $ws->heartbeat());
 }
 
 /**
