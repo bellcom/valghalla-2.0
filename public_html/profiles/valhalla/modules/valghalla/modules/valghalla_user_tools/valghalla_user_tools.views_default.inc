@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * valghalla_user_tools.views_default.inc
@@ -326,6 +327,10 @@ function valghalla_user_tools_views_default_views() {
   $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
   $handler->display->display_options['fields']['title']['element_label_colon'] = FALSE;
   $handler->display->display_options['fields']['title']['link_to_node'] = FALSE;
+  /* Felt: Indhold: Type */
+  $handler->display->display_options['fields']['type']['id'] = 'type';
+  $handler->display->display_options['fields']['type']['table'] = 'node';
+  $handler->display->display_options['fields']['type']['field'] = 'type';
   /* Felt: Indhold: Emne */
   $handler->display->display_options['fields']['field_subject']['id'] = 'field_subject';
   $handler->display->display_options['fields']['field_subject']['table'] = 'field_data_field_subject';
@@ -366,6 +371,28 @@ function valghalla_user_tools_views_default_views() {
     'sms' => 'sms',
     'eboks' => 'eboks',
   );
+  /* Filterkriterie: Indhold: Type */
+  $handler->display->display_options['filters']['type_1']['id'] = 'type_1';
+  $handler->display->display_options['filters']['type_1']['table'] = 'node';
+  $handler->display->display_options['filters']['type_1']['field'] = 'type';
+  $handler->display->display_options['filters']['type_1']['value'] = array(
+    'email' => 'email',
+    'sms' => 'sms',
+    'eboks' => 'eboks',
+  );
+  $handler->display->display_options['filters']['type_1']['exposed'] = TRUE;
+  $handler->display->display_options['filters']['type_1']['expose']['operator_id'] = 'type_1_op';
+  $handler->display->display_options['filters']['type_1']['expose']['label'] = 'Type';
+  $handler->display->display_options['filters']['type_1']['expose']['operator'] = 'type_1_op';
+  $handler->display->display_options['filters']['type_1']['expose']['identifier'] = 'type_1';
+  $handler->display->display_options['filters']['type_1']['expose']['remember_roles'] = array(
+    2 => '2',
+    1 => 0,
+    5 => 0,
+    3 => 0,
+    4 => 0,
+  );
+  $handler->display->display_options['filters']['type_1']['expose']['reduce'] = TRUE;
 
   /* Display: Page */
   $handler = $view->new_display('page', 'Page', 'page');
@@ -384,6 +411,7 @@ function valghalla_user_tools_views_default_views() {
     t('Stigende'),
     t('Faldende'),
     t('<a class="btn btn-success" href="/valghalla/administration/notifications/add?destination=valghalla/administration/mail-skabeloner">+ Tilføj skabelon</a>'),
+    t('Type'),
     t('Emne'),
     t('Brødtekst'),
     t('Redigér-link'),
