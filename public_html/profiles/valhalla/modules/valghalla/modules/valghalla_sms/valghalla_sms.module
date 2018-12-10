@@ -121,6 +121,13 @@ function valghalla_sms_send_message($to, $params, $context) {
  * Get send to data callback.
  */
 function valghalla_sms_send_to($entity) {
+  // Call plugin send_to_callback if exist.
+  $sms_gateway = valghalla_sms_plugins(variable_get('valghalla_sms_default_gateway', FALSE));
+  if (!empty($sms_gateway['send_to_callback'])
+    && function_exists($sms_gateway['send_to_callback'])) {
+    return call_user_func($sms_gateway['send_to_callback'], $entity);
+  }
+
   if ($field = field_get_items('node', $entity, 'field_phone')) {
     return $field[0]['value'];
   }

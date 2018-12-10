@@ -15,9 +15,9 @@
           <h2 class="boxy__heading__title"><?php print $party_posts['party_name']; ?></h2>
 
           <?php foreach($parties_status[$party_tid]['status']['role_count'] as $role_count): ?>
-            <?php if ($role_count['total'] !== 0) : ?>
+            <?php if ($role_count['assigned'] !== 0) : ?>
               <div class="boxy__heading__meta-data">
-                <?php print $role_count['role_name'] . ': ' .$role_count['assigned'] . '/' . $role_count['total'] ?>
+                <?php print $role_count['role_name'] . ': ' . $role_count['total'] . '/' . $role_count['assigned']?>
               </div>
             <?php endif; ?>
           <?php endforeach; ?>

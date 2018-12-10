@@ -7,6 +7,7 @@
 
 $plugin = [
   'title' => t('Computopics SMS gateway'),
+  // Send plugin callback.
   'callback' => 'computopic_sms_send',
 ];
 
@@ -44,15 +45,14 @@ function computopic_sms_send($to, $message, $context) {
     $ch = curl_init();
     curl_setopt_array($ch, $options);
     $content = curl_exec($ch);
-    $err = curl_errno($ch);
-    $errmsg = curl_error($ch);
     $result = curl_getinfo($ch);
     curl_close($ch);
 
-    $result['errno']   = $err;
-    $result['errmsg']  = $errmsg;
-    $result['content'] = $content;
-    $result['response'] = $err . '|' . $errmsg . '|' . $content;
+    $responce = new SimpleXMLElement($content);
+    $status_code = (string) $responce->status->statusline->code;
+    $result['status'] = (string) $status_code == '0';
+    $message = response_status_mesage($status_code);
+    $result['response'] = $message ?: $content;
   }
   catch (Exception $e) {
     return array(
