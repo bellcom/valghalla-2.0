@@ -33,7 +33,11 @@ unset($form['terms_agreement']);
   <!-- End - nemid login -->
 
   <!-- Begin - form -->
-  <?php print drupal_render_children($form); ?>
+  <div class="partial">
+    <div class="partial__body">
+      <?php print drupal_render_children($form); ?>
+    </div>
+  </div>
   <!-- End - form -->
 
   <!-- Begin - bottom text -->
