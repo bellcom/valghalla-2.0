@@ -154,7 +154,7 @@ function valghalla_election_handle_polling_stations_fc($node) {
 
   // Deleting the field collections that are not relevant anymore.
   if (!$node->is_new) {
-    $VPPSPIdsToDelete = array();
+    $vppspIdsToDelete = array();
     foreach ($node->field_volunteers_pr_pol_st_party['und'] as $key => $value) {
       if (isset($value['entity'])) {
         $vppsp = $value['entity'];
@@ -166,7 +166,7 @@ function valghalla_election_handle_polling_stations_fc($node) {
       $vppspPollingStationId = $vppsp->field_ppsp_polling_station['und'][0]['nid'];
       if (!in_array($vppspPollingStationId, $pollingStationsIds)) {
         // Add to array for deletion.
-        $VPPSPIdsToDelete[] = $vppsp->item_id;
+        $vppspIdsToDelete[] = $vppsp->item_id;
         // Unset them from node.
         unset($node->field_volunteers_pr_pol_st_party[LANGUAGE_NONE][$key]);
       }
@@ -176,7 +176,7 @@ function valghalla_election_handle_polling_stations_fc($node) {
     }
 
     // Delete field collection items.
-    entity_delete_multiple('field_collection_item', $VPPSPIdsToDelete);
+    entity_delete_multiple('field_collection_item', $vppspIdsToDelete);
   }
 
   // Adding new field collections.
