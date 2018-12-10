@@ -353,7 +353,7 @@ function valghalla_external_server_signup_terminate_signup() {
 /**
  * Create node for volunteer and adding to volunteer to post.
  */
-function valghalla_external_server_signup_signup_form_submit($form, $form_state) {
+function valghalla_external_server_signup_signup_form_submit($form, &$form_state) {
   $election_nid = $form_state['election']->nid;
   $party_tid = $form_state['party']->tid;
   $role_nid = ($form_state['role']->nid) ? $form_state['role']->nid : $role_nid = $form_state['values']['role_select'];
@@ -375,11 +375,14 @@ function valghalla_external_server_signup_signup_form_submit($form, $form_state)
     node_save($volunteer_node);
     $post_info = valghalla_volunteers_add_volunteer_to_post($volunteer_node->nid, $polling_station_nid, $role_nid, $party_tid, $election_nid, 1);
     $post = entity_load('field_collection_item', array($post_info['fcid']));
+
     if ($post) {
       $post = reset($post);
       $post->field_rsvp_comment[LANGUAGE_NONE][]['value'] = $form_state['values']['comment'];
       $post->save();
     }
+
+    $form_state['redirect'] = 'valghalla/external-signup-success';
   }
 }
 
@@ -516,4 +519,14 @@ function valghalla_external_server_signup_settings_form($form, $form_state) {
   /* Party, role & polling station END */
 
   return system_settings_form($form);
+}
+
+/*
+ * External signup success page.
+ */
+function _external_signup_success_page() {
+  drupal_set_title(t('Tilmeldt'));
+  $output = '<p>' . t('Du kan nu lukke siden.') . '</p>';
+
+  return $output;
 }

@@ -21,6 +21,12 @@ function valghalla_external_server_signup_menu() {
     'type' => MENU_NORMAL_ITEM,
   );
 
+  $items['valghalla/external-signup-success'] = array(
+    'page callback' => '_external_signup_success_page',
+    'access callback' => TRUE,
+    'type' => MENU_NORMAL_ITEM,
+  );
+
   $items['admin/valghalla/settings/external_server_signup'] = array(
     'title' => 'External server signup settings',
     'description' => 'Various setting for external server signup',
