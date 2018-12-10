@@ -19,7 +19,9 @@ function computopic_sms_send($to, $message, $context) {
   $service_url = 'https://smssys.dk/';
   $user = variable_get('valghalla_sms_computopic_user', FALSE);
   $pass = variable_get('valghalla_sms_computopic_pass', FALSE);
-  $callback_url = $base_url . '/valghalla-sms-computopic';
+  $notification = entity_valghalla_notification_load($context['notification_id']);
+
+  $callback_url = $base_url . '/valghalla-sms-computopic/' . $notification->created;
   $landekode = 45;
 
   try {
@@ -50,7 +52,15 @@ function computopic_sms_send($to, $message, $context) {
 
     $responce = new SimpleXMLElement($content);
     $status_code = (string) $responce->status->statusline->code;
-    $result['status'] = (string) $status_code == '0';
+    if (intval($status_code) == 0) {
+      $result['status'] = 'Sent';
+    }
+    elseif (intval($status_code) > 0 && intval($status_code) < 2000) {
+      $result['status'] = FALSE;
+    }
+    else {
+      $result['status'] = $status_code;
+    }
     $message = response_status_mesage($status_code);
     $result['response'] = $message ?: $content;
   }
@@ -141,7 +151,32 @@ function response_status_mesage($status_code) {
 /**
  * Computopic service callback.
  */
-function valghalla_sms_computopic() {
+function valghalla_sms_computopic($created) {
   $params = drupal_get_query_parameters();
-  error_log(__FILE__ . ' : ' . __LINE__ . ': ' .  print_r($params, 1));
+  if (empty($params['msg_id'])) {
+    return drupal_not_found();
+  }
+  $query = new EntityFieldQuery();
+  $query->entityCondition('entity_type', 'entity_valghalla_notification')
+    ->propertyCondition('id', $params['msg_id'])
+    ->propertyCondition('created', $created);
+  $result = $query->execute();
+  if (empty($result)) {
+    return drupal_not_found();
+  }
+
+  $notification = entity_valghalla_notification_load($params['msg_id']);
+
+  $status_code = $params['status'];
+  if (intval($status_code) == 0) {
+    $notification->status = 'Succeed';
+  }
+  elseif (intval($status_code) > 0 && intval($status_code) < 2000) {
+    $notification->status = 'Failed';
+  }
+  else {
+    $notification->status = check_markup($status_code);
+  }
+  $notification->status_info = check_markup($params['status_description']);
+  $notification->save();
 }

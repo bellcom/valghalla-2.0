@@ -13,9 +13,12 @@ include_once 'valghalla_sms.features.inc';
  * Implements hook_menu().
  */
 function valghalla_sms_menu() {
-  $items['valghalla-sms-computopic'] = array(
+  $items['valghalla-sms-computopic/%'] = array(
     'page callback' => 'valghalla_sms_computopic',
-    'access arguments' => array('access content'),
+    'page arguments' => array(1),
+    'type' => MENU_CALLBACK,
+    'access callback' => TRUE,
+    'file' => 'plugins/valghalla_sms_gateway/ComputopicsSMS.inc',
   );
   return $items;
 }
@@ -109,8 +112,11 @@ function valghalla_sms_send_message($to, $params, $context) {
   }
 
   $result = call_user_func($sms_gateway['callback'], $to, $message_body, $params);
-  if ($result['status']) {
+  if ($result['status'] === TRUE) {
     $notification->status = 'Success';
+  }
+  else {
+    $notification->status = $result['status'];
   }
   $notification->status_info = $result['response'];
   $notification->save();
