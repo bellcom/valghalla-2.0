@@ -543,7 +543,7 @@ function valghalla_volunteers_to_polling_station($station_nid = NULL) {
   $markup .= '</div>';
 
   $modal = '
-    <div class="modal fade">
+    <div class="modal fade js-add-volunteer-modal">
       <div class="modal-dialog modal-lg">
         <div class="modal-content">
           <div class="modal-header">

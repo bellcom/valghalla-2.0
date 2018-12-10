@@ -43,7 +43,7 @@ var valghalla_volunteers = valghalla_volunteers || [];
         volunteer_info.pollingstation_nid = $el.attr('data-pollingstation_nid');
         volunteer_info.role_nid = $el.attr('data-role_nid');
         volunteer_info.party_tid = $el.attr('data-party_tid');
-        $('.modal').modal();
+        $('.js-add-volunteer-modal').modal();
       });
 
       // Remove volunteer from post
