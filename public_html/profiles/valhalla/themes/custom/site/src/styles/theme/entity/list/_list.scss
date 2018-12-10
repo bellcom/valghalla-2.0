@@ -32,14 +32,12 @@
   }
 }
 
-.entity-list__form {
-  flex-grow: 1;
-}
-
 .entity-list__data {
   display: flex;
 
-  flex-grow: 1;
+  + .entity-list__form {
+    margin-left: 8px;
+  }
 }
 .entity-list__data__item {
 
@@ -48,9 +46,14 @@
   }
 }
 
-.entity-list__data__item--role {
-  min-width: 25px;
+.entity-list__data__item--status {
+  min-width: 15px;
 }
+
+.entity-list__data__item--role {
+  min-width: 30px;
+}
+
 .entity-list__data__item--name {}
 
 .entity-list__controls {
@@ -78,6 +81,10 @@
   .btn-default {
     background-color: darken($btn-default-bg, 10%);
   }
+
+  .entity-list__form {
+    flex-grow: 1;
+  }
 }
 
 .entity-list--volunteer {
@@ -88,6 +95,10 @@
     margin-top: 0;
 
     border-top: 1px solid $border-color;
+  }
+
+  .entity-list__data {
+    flex-grow: 1;
   }
 }
 
