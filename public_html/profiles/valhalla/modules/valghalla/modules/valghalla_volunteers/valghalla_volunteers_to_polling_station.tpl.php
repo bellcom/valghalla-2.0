@@ -55,18 +55,8 @@
               data-post="<?php print $post['role_nid'] . $post['party_tid'] . $i; ?>"
             >
 
-              <!-- Begin - form -->
-              <?php if (! isset($post['existing_post'])): ?>
-              <div class="entity-list__form">
-                <input type="text" class="form-control input-sm" placeholder="<?=t('Vælg en deltager'); ?>"/>
-              </div>
-              <?php endif; ?>
-              <!-- End - form -->
-
               <!-- Begin - data -->
-              <?php if (isset($post['existing_post'])): ?>
                 <div class="entity-list__data">
-
                   <div class="entity-list__data__item entity-list__data__item--status">
                     <?php
                     //0 => t('unknown') - yellow
@@ -115,12 +105,22 @@
                     <strong><?php print $post['role_title'] ?></strong>
                   </div>
 
-                  <div class="entity-list__data__item entity-list__data__item--name">
-                    <?php print $post['existing_post']['name']; ?>
-                  </div>
+                  <?php if (isset($post['existing_post'])): ?>
+                    <div class="entity-list__data__item entity-list__data__item--name">
+                      <?php print $post['existing_post']['name']; ?>
+                    </div>
+                  <?php endif; ?>
+
                 </div>
-              <?php endif; ?>
               <!-- End - data -->
+
+              <!-- Begin - form -->
+              <?php if (! isset($post['existing_post'])): ?>
+              <div class="entity-list__form">
+                <input type="text" class="form-control input-sm" placeholder="<?=t('Vælg en deltager'); ?>"/>
+              </div>
+              <?php endif; ?>
+              <!-- End - form -->
 
               <!-- Begin - controls -->
               <div class="entity-list__controls">

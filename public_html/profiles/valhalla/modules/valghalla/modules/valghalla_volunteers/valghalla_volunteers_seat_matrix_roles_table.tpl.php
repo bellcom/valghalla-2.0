@@ -23,12 +23,14 @@
             </a>
           </td>
 
-          <?php foreach ($party_status['status']['role_count'] as $role_nid => $role_count): ?>
-            <?php if (array_key_exists($role_nid, $existing_roles)): ?>
-              <td>
-                <?php print $role_count['total'] . '/' . $role_count['assigned']; ?>
-              </td>
-            <?php endif; ?>
+          <?php foreach ($existing_roles as $existing_role_nid => $existing_role): ?>
+            <td>
+              <?php if ($party_status['status']['role_count'][$existing_role_nid]['assigned'] !== 0): ?>
+                <?php print $party_status['status']['role_count'][$existing_role_nid]['total'] . '/' . $party_status['status']['role_count'][$existing_role_nid]['assigned'] ?>
+              <?php else: ?>
+                -
+              <?php endif; ?>
+            </td>
           <?php endforeach; ?>
 
         </tr>
