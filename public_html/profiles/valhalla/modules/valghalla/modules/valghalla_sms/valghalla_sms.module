@@ -23,6 +23,14 @@ function valghalla_sms_menu() {
   return $items;
 }
 
+
+/**
+ * Implements hook_valghalla_allowed_uris_alter().
+ */
+function valghalla_sms_valghalla_allowed_uris_alter(&$allowed_uris) {
+  $allowed_uris[] = '/valghalla-sms-computopic/*';
+}
+
 /**
  * Implements hook_notifications_info().
  */

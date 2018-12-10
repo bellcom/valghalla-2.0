@@ -175,8 +175,8 @@ function valghalla_sms_computopic($created) {
     $notification->status = 'Failed';
   }
   else {
-    $notification->status = check_markup($status_code);
+    $notification->status = check_plain($status_code);
   }
-  $notification->status_info = check_markup($params['status_description']);
+  $notification->status_info = check_plain($params['status_description']);
   $notification->save();
 }
