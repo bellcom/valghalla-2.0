@@ -780,13 +780,6 @@ function valghalla_volunteers_polling_station_posts_to_fill($polling_station, $p
     }
   }
 
-  if (empty($party_posts_to_fill[$party_tid]['posts'])) {
-    return array(
-      'party_posts_to_fill' => array(),
-      'station_nid' => $station_id,
-    );
-  }
-
   // Finally returning our result.
   return array(
     'party_posts_to_fill' => $party_posts_to_fill,
