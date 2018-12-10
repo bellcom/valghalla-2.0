@@ -301,3 +301,27 @@ function valghalla_election_update_7100() {
     db_create_table('field_election_roles_diaet', $schema['field_election_roles_diaet']);
   }
 }
+
+/**
+ * Implements hook_cron().
+ */
+function valghalla_election_cron() {
+  // Load all election that happens today and unpublish it.
+  $query = new EntityFieldQuery();
+  $election_ids = $query->entityCondition('entity_type', 'node')
+    ->entityCondition('bundle', 'election')
+    ->propertyCondition('status', 1)
+    ->execute();
+  if (empty($election_ids['node'])) {
+    return;
+  }
+
+  foreach (node_load_multiple(array_keys($election_ids['node'])) as $election) {
+    $election_date = field_get_items('node', $election, 'field_date');
+    if (empty($election_date[0]['value'])
+      || strtotime($election_date[0]['value']) < REQUEST_TIME) {
+      $election->status = 0;
+      node_save($election);
+    }
+  }
+}
