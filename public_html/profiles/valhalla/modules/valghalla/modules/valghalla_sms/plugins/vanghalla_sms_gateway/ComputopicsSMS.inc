@@ -7,6 +7,7 @@
 
 $plugin = [
   'title' => t('Computopics SMS gateway'),
+  // Send plugin callback.
   'callback' => 'computopic_sms_send',
 ];
 
