@@ -51,9 +51,8 @@ function valghalla_election_field_group_info() {
     'weight' => '5',
     'children' => array(
       0 => 'field_volunteers_pr_pol_st_party',
-      1 => 'group_settings',
-      2 => 'group_diaet',
-      3 => 'group_general',
+      1 => 'group_diaet',
+      2 => 'group_general',
     ),
     'format_type' => 'htabs',
     'format_settings' => array(
@@ -86,6 +85,7 @@ function valghalla_election_field_group_info() {
       4 => 'field_polling_stations',
       5 => 'field_election_report_broadcast',
       6 => 'title',
+      7 => 'field_signup_comment',
     ),
     'format_type' => 'htab',
     'format_settings' => array(

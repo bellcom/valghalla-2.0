@@ -297,18 +297,27 @@ function valghalla_volunteers_login_form_submit($form, &$form_state) {
  */
 function valghalla_volunteers_rsvp_form($form, &$form_state) {
   global $language;
+  $form = array();
+  $rsvp = 1;
 
   $fc = _valghalla_volunteers_validate_key(arg(2));
 
   $rsvp_field = field_get_items('field_collection_item', $fc, 'field_rsvp');
   $pollingstation_field = field_get_items('field_collection_item', $fc, 'field_vlnt_station');
 
-  $rsvp = 1;
   if(!empty($rsvp_field)){
     $rsvp = 1;
   }
 
-  $form = array();
+  // Load election.
+  if ($election_nid = $_SESSION['election_nid']) {
+    $election_node = node_load($election_nid);
+
+    if ($field = field_get_items('node', $election_node, 'field_signup_comment')) {
+      $allow_comments = (bool) $field[0]['value'];
+    }
+  }
+
   $form['rsvp'] = array(
       '#type' => 'select',
       '#title' => t('Vælg'),
@@ -320,12 +329,15 @@ function valghalla_volunteers_rsvp_form($form, &$form_state) {
       '#default_value' => $rsvp,
   );
 
-  $form['rsvp_comment'] = array(
+  // Don't allow for a comment, as it's disallowed.
+  if ($allow_comments) {
+    $form['rsvp_comment'] = array(
       '#type' => 'textarea',
       '#title' => t('Kommentar'),
       '#prefix' => '<div class="poll-form"">',
       '#suffix' => '</div>',
-  );
+    );
+  }
 
   $form['submit'] = array(
       '#type' => 'submit',
@@ -766,13 +778,6 @@ function valghalla_volunteers_polling_station_posts_to_fill($polling_station, $p
         $party_posts_to_fill[$party_tid]['posts'][$id]['post_subscribe_url'] = valghalla_internal_server_generate_external_subscribe_url($election, $party, $role_loaded, $polling_station);
       }
     }
-  }
-
-  if (empty($party_posts_to_fill[$party_tid]['posts'])) {
-    return array(
-      'party_posts_to_fill' => array(),
-      'station_nid' => $station_id,
-    );
   }
 
   // Finally returning our result.

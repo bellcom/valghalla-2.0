@@ -51,7 +51,7 @@ jQuery(function ($) {
 
   // Sticky.
   $('.sticky').stickySidebar({
-    topSpacing: 30,
+    topSpacing: 70,
     bottomSpacing: 30
   });
 
@@ -62,8 +62,6 @@ jQuery(function ($) {
     var $modal = $('#modal-clipboard');
     var $input = $modal.find('.modal-clipboard__input');
     var $link = $modal.find('.modal-clipboard__external-link');
-
-    console.log(endpoint);
 
     // Set endpoint inside input.
     $input.val(endpoint);
