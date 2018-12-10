@@ -68,6 +68,7 @@ function valghalla_volunteers_invite_select_submit(&$form, &$form_state) {
 
   $fc_query->entityCondition('entity_type', 'field_collection_item')
     ->entityCondition('bundle', 'field_electioninfo')
+    ->propertyCondition('archived', 0)
     ->fieldCondition('field_post_party', 'target_id', $parties, 'IN')
     ->fieldCondition('field_election', 'target_id', $old_election_nid)
     ->fieldCondition('field_post_role', 'target_id', $role_nid);

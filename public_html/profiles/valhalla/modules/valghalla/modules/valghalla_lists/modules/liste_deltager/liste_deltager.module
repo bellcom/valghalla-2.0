@@ -322,7 +322,8 @@ function liste_deltager_get_volunteers($values) {
   // Prepare statement.
   $volunteer_query = new EntityFieldQuery();
   $volunteer_query->entityCondition('entity_type', 'field_collection_item')
-      ->entityCondition('bundle', 'field_electioninfo');
+      ->entityCondition('bundle', 'field_electioninfo')
+      ->propertyCondition('archived', 0);
 
   $roles = count($values['roles']) > 0 ? $values['roles'] : FALSE;
   $party_selected = $party = count($values['party']) > 0 ? $values['party'] : FALSE;

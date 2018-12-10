@@ -156,6 +156,7 @@ function liste_valghalla_kvittering_listpage_station($station_id) {
 
   $volunteer_query->entityCondition('entity_type', 'field_collection_item')
       ->entityCondition('bundle', 'field_electioninfo')
+      ->propertyCondition('archived', 0)
       ->fieldCondition('field_election', 'target_id', $default_election)
       ->fieldCondition('field_vlnt_station', 'target_id', $station_id);
   $result = $volunteer_query->execute();

@@ -57,6 +57,7 @@ function valghalla_notifications_rsvp_reminder($last_run_ts) {
     $volunteer_query = new EntityFieldQuery();
     $volunteer_query->entityCondition('entity_type', 'field_collection_item')
                     ->entityCondition('bundle', 'field_electioninfo')
+                    ->propertyCondition('archived', 0)
                     ->fieldCondition('field_election', 'target_id', $election->nid);
 
     $volunteer_result = $volunteer_query->execute();
@@ -129,6 +130,7 @@ function valghalla_notifications_togo_reminder($last_run_ts) {
     $volunteer_query = new EntityFieldQuery();
     $volunteer_query->entityCondition('entity_type', 'field_collection_item')
                     ->entityCondition('bundle', 'field_electioninfo')
+                    ->propertyCondition('archived', 0)
                     ->fieldCondition('field_election', 'target_id', $election->nid);
 
     $volunteer_result = $volunteer_query->execute();

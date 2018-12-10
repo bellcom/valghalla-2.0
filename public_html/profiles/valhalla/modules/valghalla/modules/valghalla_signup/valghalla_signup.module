@@ -511,7 +511,7 @@ function valghalla_signup_add_volunteer($volunteer, $polling_station_nid) {
 /**
  * Helper, get a list of polling stations with enough free spots.
  */
-function valghalla_signup_get_avaiable_polling_stations($election_nid, $qty, $role_nid) {
+function valghalla_signup_get_avaiable_polling_stations($election_nid, $qty, $role_nid, $party_tid = NULL) {
   $election_node = node_load($election_nid);
 
   $roles[$role_nid] = $role_nid;
@@ -527,7 +527,7 @@ function valghalla_signup_get_avaiable_polling_stations($election_nid, $qty, $ro
   $constituencies = array();
   $polling_stations = array();
   foreach (node_load_multiple($polling_station_nids) as $polling_station) {
-    $count = odin_get_volunteers_count($election_node->nid, array($polling_station->nid), $roles);
+    $count = odin_get_volunteers_count($election_node->nid, array($polling_station->nid), $roles, $party_tid);
 
     if (($count['total_count']['assigned'] - $count['total_count']['total']) >= $qty) {
       if ($constituency_field = field_get_items('node', $polling_station, 'field_constituency')) {

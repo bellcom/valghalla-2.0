@@ -253,6 +253,7 @@ function valghalla_election_field_volunteers_pr_pol_st_party_form_validate($form
         $volunteer_query = new EntityFieldQuery();
         $volunteer_query->entityCondition('entity_type', 'field_collection_item')
           ->entityCondition('bundle', 'field_electioninfo')
+          ->propertyCondition('archived', 0)
           ->fieldCondition('field_election', 'target_id', $election_nid)
           ->fieldCondition('field_post_role', 'target_id', $role_nid)
           ->fieldCondition('field_post_party', 'target_id', $party_tid)

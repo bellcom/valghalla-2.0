@@ -153,7 +153,7 @@
                     data-toggle="tooltip"
                     data-placement="top"
                     title="<?= t('Link til ekstern tilmelding'); ?>"
-                    data-external-url="<?=$post['existing_post']['reply_link']; ?>"
+                    data-external-url="<?=$post['post_subscribe_url']; ?>"
                   >
                     <span class="glyphicon glyphicon-link"></span>
                   </button>

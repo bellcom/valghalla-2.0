@@ -73,6 +73,7 @@ function _valghalla_volunteers_validate_key($token) {
   $volunteer_query = new EntityFieldQuery();
   $volunteer_query->entityCondition('entity_type', 'field_collection_item')
     ->entityCondition('bundle', 'field_electioninfo')
+    ->propertyCondition('archived', 0)
     ->fieldCondition('field_token', 'value', $token);
   $result = $volunteer_query->execute();
 

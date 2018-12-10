@@ -127,6 +127,7 @@ function odin_get_volunteers_count($election_nid, $polling_station_nids, $roles,
 
     $volunteer_query->entityCondition('entity_type', 'field_collection_item')
       ->entityCondition('bundle', 'field_electioninfo')
+      ->propertyCondition('archived', 0)
       ->fieldCondition('field_election', 'target_id', $election_nid)
       ->fieldCondition('field_vlnt_station', 'target_id', $polling_station_nids)
       ->fieldCondition('field_post_role', 'target_id', $role_nid);
@@ -148,6 +149,7 @@ function odin_get_volunteers_count($election_nid, $polling_station_nids, $roles,
 
     $volunteer_query->entityCondition('entity_type', 'field_collection_item')
       ->entityCondition('bundle', 'field_electioninfo')
+      ->propertyCondition('archived', 0)
       ->fieldCondition('field_election', 'target_id', $election_nid)
       ->fieldCondition('field_vlnt_station', 'target_id', $polling_station_nids)
       ->fieldCondition('field_post_role', 'target_id', $role_nid)
@@ -171,6 +173,7 @@ function odin_get_volunteers_count($election_nid, $polling_station_nids, $roles,
 
     $volunteer_query->entityCondition('entity_type', 'field_collection_item')
       ->entityCondition('bundle', 'field_electioninfo')
+      ->propertyCondition('archived', 0)
       ->fieldCondition('field_election', 'target_id', $election_nid)
       ->fieldCondition('field_vlnt_station', 'target_id', $polling_station_nids)
       ->fieldCondition('field_post_role', 'target_id', $role_nid)
@@ -324,6 +327,7 @@ function odin_volunteer_has_post_on_election($volunteer_nid, $election_nid) {
 
   $fc_query->entityCondition('entity_type', 'field_collection_item')
     ->entityCondition('bundle', 'field_electioninfo')
+    ->propertyCondition('archived', 0)
     ->fieldCondition('field_election', 'target_id', $election_nid);
 
   $result = $fc_query->execute();
