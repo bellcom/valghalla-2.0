@@ -249,7 +249,7 @@ function valghalla_notifications_admin_settings_validate(&$elements, &$form_stat
   }
 
   // Reminder days.
-  if (preg_match('/[^\d|,| ]/', $form_state['values']['valghalla_rsvp_reminder_days'])) {
+  if (preg_match('/[^\d|,| ]/', $form_state['values']['valghalla_notifications_rsvp_reminder_days'])) {
     // Found illigal chars in the form.
     form_set_error('valghalla_rsvp_reminder_days', 'Dette felt skal være en komma-separeret liste af hele tal.');
   }

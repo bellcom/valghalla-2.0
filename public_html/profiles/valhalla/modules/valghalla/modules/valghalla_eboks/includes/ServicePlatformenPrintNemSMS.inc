@@ -31,6 +31,7 @@ class ServicePlatformenPrintNemSMS extends ServicePlatformenPrint {
    * Set receiver callback.
    */
   public function setTo($to) {
+    $to = str_replace('-', '', $to);
     $this->request['BrevSPBody']['ForsendelseI']['ForsendelseModtager'] = array(
       'AfsendelseModtager' => array('CPRnummerIdentifikator' => $to),
     );
@@ -49,14 +50,15 @@ class ServicePlatformenPrintNemSMS extends ServicePlatformenPrint {
     $this->request['BrevSPBody'] = array(
       'Kanalvalg' => 'S',
       'Prioritet' => 'D',
-      'DigitalPostParametre' => array(
-        'MeddelelseIndholdstypeIdentifikator' => $this->materialeId,
-      ),
       'ForsendelseI' => array(
         'AfsendelseIdentifikator' => $this->getId($params),
         'FilformatNavn' => 'TXT',
         'MeddelelseIndholdData' => $message_data,
         'DokumentParametre' => array(),
+        'DigitalPostParametre' => array(
+          'MeddelelseIndholdstypeIdentifikator' => $this->materialeId,
+          'MedsendDokumentRegistreringIndikator' => 0,
+        ),
       ),
     );
   }

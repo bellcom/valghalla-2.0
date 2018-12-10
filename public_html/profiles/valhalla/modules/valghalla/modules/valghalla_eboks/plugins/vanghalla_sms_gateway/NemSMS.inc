@@ -6,7 +6,11 @@
 
 $plugin = [
   'title' => t('NemSMS gateway'),
+  // Send plugin callback.
   'callback' => 'nemsms_send',
+  // Optional send to callback.
+  // @see valghalla_sms_send_to().
+  'send_to_callback' => 'nemsms_send_to',
 ];
 
 /**
@@ -23,4 +27,20 @@ function nemsms_send($to, $message, $context) {
   }
 
   return $result;
+}
+
+/**
+ * Send to callback.
+ *
+ * @param object $entity
+ *   Volunteer node entity.
+ *
+ * @return string
+ *   CPR field value or FALSE.
+ */
+function nemsms_send_to($entity) {
+  if ($field = field_get_items('node', $entity, 'field_cpr_number')) {
+    return $field[0]['value'];
+  }
+  return FALSE;
 }
