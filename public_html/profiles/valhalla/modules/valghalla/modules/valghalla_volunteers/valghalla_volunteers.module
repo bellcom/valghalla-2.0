@@ -811,7 +811,7 @@ function valghalla_volunteers_seat_matrix_roles_table_markup($polling_station, $
     foreach (odin_get_roles() as $role_nid => $role) {
       $status = odin_get_volunteers_count($_SESSION['election_nid'], array($polling_station->nid), array($role_nid => $role), $party_tid);
 
-      if ($status['total_count']['total'] !== 0) {
+      if ($status['total_count']['assigned'] !== 0) {
         $existing_roles[$role_nid] = $status['role_count'][$role_nid]['role_name'];
       }
     }
