@@ -39,7 +39,7 @@ function valghalla_sms_notifications_info() {
  */
 function valghalla_sms_plugins($id = NULL) {
   ctools_include('plugins');
-  return ctools_get_plugins('valghalla_sms', 'vanghalla_sms_gateway', $id);
+  return ctools_get_plugins('valghalla_sms', 'valghalla_sms_gateway', $id);
 }
 
 /**
@@ -56,7 +56,7 @@ function valghalla_sms_ctools_plugin_directory($module, $plugin) {
  */
 function valghalla_sms_ctools_plugin_type() {
   return [
-    'vanghalla_sms_gateway' => [
+    'valghalla_sms_gateway' => [
       'label' => 'sms_gateway',
       'use hooks' => FALSE,
     ],
