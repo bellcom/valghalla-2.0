@@ -29,7 +29,7 @@ function valghalla_notifications_rsvp_reminder($last_run_ts) {
       ->fetchAll(PDO::FETCH_COLUMN);
 
   if (empty($nids)) {
-    watchdog('valghalla_notification', 'RSVP reminder: Der blev ikke fundet noget aktict valg - aktiver dit valg. ', WATCHDOG_NOTICE);
+    watchdog('valghalla_notification', 'RSVP reminder: Der blev ikke fundet noget aktict valg - aktiver dit valg. ', array(), WATCHDOG_NOTICE);
     return;
   }
 
@@ -104,7 +104,7 @@ function valghalla_notifications_togo_reminder($last_run_ts) {
       ->fetchAll(PDO::FETCH_COLUMN);
 
   if (empty($nids)) {
-    watchdog('valghalla_notification', 'ToGO påmindelse: Der blev ikke fundet noget aktict valg - aktiver dit valg. ', WATCHDOG_NOTICE);
+    watchdog('valghalla_notification', 'ToGO påmindelse: Der blev ikke fundet noget aktict valg - aktiver dit valg. ', array(), WATCHDOG_NOTICE);
     return;
   }
 
