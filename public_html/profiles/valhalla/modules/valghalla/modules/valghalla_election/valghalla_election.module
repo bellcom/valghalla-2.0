@@ -310,7 +310,7 @@ function valghalla_election_cron() {
   $query = new EntityFieldQuery();
   $election_ids = $query->entityCondition('entity_type', 'node')
     ->entityCondition('bundle', 'election')
-    ->propertyCondition('status', 1)
+    ->fieldCondition('field_election_status', 'value', 1)
     ->execute();
   if (empty($election_ids['node'])) {
     return;
@@ -320,7 +320,7 @@ function valghalla_election_cron() {
     $election_date = field_get_items('node', $election, 'field_date');
     if (empty($election_date[0]['value'])
       || strtotime($election_date[0]['value']) < REQUEST_TIME) {
-      $election->status = 0;
+      $election->field_election_status[$election->language][0]['value'] = 0;
       node_save($election);
     }
   }
