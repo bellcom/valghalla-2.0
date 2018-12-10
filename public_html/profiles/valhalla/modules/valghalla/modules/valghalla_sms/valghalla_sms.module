@@ -17,6 +17,7 @@ function valghalla_sms_menu() {
     'page callback' => 'valghalla_sms_computopic',
     'access arguments' => array('access content'),
   );
+  return $items;
 }
 
 /**

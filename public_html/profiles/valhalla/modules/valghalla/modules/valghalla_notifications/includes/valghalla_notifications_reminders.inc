@@ -29,7 +29,7 @@ function valghalla_notifications_rsvp_reminder($last_run_ts) {
       ->fetchAll(PDO::FETCH_COLUMN);
 
   if (empty($nids)) {
-    watchdog('valghalla_notification', 'RSVP reminder: Der blev ikke fundet noget aktict valg - aktiver dit valg. ', WATCHDOG_NOTICE);
+    watchdog('valghalla_notification', 'RSVP reminder: Der blev ikke fundet noget aktict valg - aktiver dit valg. ', array(), WATCHDOG_NOTICE);
     return;
   }
 
@@ -104,7 +104,7 @@ function valghalla_notifications_togo_reminder($last_run_ts) {
       ->fetchAll(PDO::FETCH_COLUMN);
 
   if (empty($nids)) {
-    watchdog('valghalla_notification', 'ToGO påmindelse: Der blev ikke fundet noget aktict valg - aktiver dit valg. ', WATCHDOG_NOTICE);
+    watchdog('valghalla_notification', 'ToGO påmindelse: Der blev ikke fundet noget aktict valg - aktiver dit valg. ', array(), WATCHDOG_NOTICE);
     return;
   }
 
@@ -118,7 +118,7 @@ function valghalla_notifications_togo_reminder($last_run_ts) {
 
     // Check dates.
     $togo_notification_days = variable_get('valghalla_notifications_reminder_togo_days');
-    if ((int) $togo_notification_days != $days_to_election) {
+    if (intval($togo_notification_days) != $days_to_election) {
       watchdog('valghalla_notification', 'ToGO påmindelse blev ikke kørt idet idag ikke er nogen rykker dag. Valg: %election_date Dage til valget: %todays Rykkerdage: %godays', array(
         '%todays' => $days_to_election,
         '%godays' => $togo_notification_days,
