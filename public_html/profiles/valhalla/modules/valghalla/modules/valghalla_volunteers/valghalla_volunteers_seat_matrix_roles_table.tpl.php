@@ -15,7 +15,7 @@
     </tr>
 
     <?php foreach ($parties_status as $party_status): ?>
-      <?php if ($party_status['status']['total_count']['total'] !== 0): ?>
+      <?php if ($party_status['status']['total_count']['assigned'] !== 0): ?>
         <tr class="<?php print $party_status['party_status_label']; ?>">
           <td>
             <a href="#" data-scroll-to="#party_<?=strtolower($party_status['party_name']); ?>">
@@ -26,7 +26,7 @@
           <?php foreach ($party_status['status']['role_count'] as $role_nid => $role_count): ?>
             <?php if (array_key_exists($role_nid, $existing_roles)): ?>
               <td>
-                <?php print $role_count['total']; ?>
+                <?php print $role_count['total'] . '/' . $role_count['assigned']; ?>
               </td>
             <?php endif; ?>
           <?php endforeach; ?>
