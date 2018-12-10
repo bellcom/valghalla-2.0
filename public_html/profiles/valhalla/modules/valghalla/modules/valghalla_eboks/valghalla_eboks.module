@@ -145,16 +145,25 @@ function valghalla_eboks_form_valghalla_notifications_admin_settings_alter(&$for
     '#default_value' => variable_get('valghalla_eboks_accountinginfo', ''),
   );
 
+  $form['print_service']['valghalla_eboks_sys_id'] = array(
+    '#type' => 'textfield',
+    '#title' => t('SystemID'),
+    '#default_value' => variable_get('valghalla_eboks_sys_id', ''),
+    '#description' => t('SystemID er et samlende begreb for SysID hos Digital post og AfsenderSystemID hos Fjernprintleverandøren.'),
+  );
+
   $form['print_service']['valghalla_eboks_materiale_id_dp'] = array(
     '#type' => 'textfield',
     '#title' => t('MaterialeID Digital POST'),
     '#default_value' => variable_get('valghalla_eboks_materiale_id_dp', ''),
+    '#description' => t('ID på en brevtype i Digital post bred forstand. Afsender opretter brevtypen, som tildeles et entydig ID.'),
   );
 
   $form['print_service']['valghalla_eboks_materiale_id_nemsms'] = array(
     '#type' => 'textfield',
     '#title' => t('MaterialeID NemSMS'),
     '#default_value' => variable_get('valghalla_eboks_materiale_id_nemsms', ''),
+    '#description' => t('ID på en brevtype i NemSMS bred forstand. Afsender opretter brevtypen, som tildeles et entydig ID.'),
   );
 
   $form['print_service']['valghalla_eboks_certfile_passphrase'] = array(

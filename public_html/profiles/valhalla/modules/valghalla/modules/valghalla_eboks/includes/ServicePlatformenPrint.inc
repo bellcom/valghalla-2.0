@@ -23,6 +23,14 @@ class ServicePlatformenPrint {
    */
   protected $request;
 
+
+  /**
+   * System ID.
+   *
+   * @var string
+   */
+  protected $systemId;
+
   /**
    * ServiceplatformenPrint constructor.
    */
@@ -46,6 +54,8 @@ class ServicePlatformenPrint {
     $useruuid = variable_get('valghalla_eboks_useruuid');
     $serviceuuid = variable_get('valghalla_eboks_serviceuuid');
     $accountinginfo = variable_get('valghalla_eboks_accountinginfo');
+
+    $this->systemId = variable_get('valghalla_eboks_sys_id');
 
     $this->request = array(
       'InvocationContext' => array(
@@ -109,6 +119,20 @@ class ServicePlatformenPrint {
   public function renderMessage(array $params) {
     $message = format_string($params['body'], $params['tokens']);
     return check_markup($message, isset($params['format']) ? $params['format'] : NULL);
+  }
+
+  /**
+   * Generate unique ID for message.
+   *
+   * @param array $params
+   *   Message parameters.
+   *
+   * @return string
+   *   Message id.
+   */
+  protected function getId(array $params) {
+    $message_id = empty($params['notification_id']) ? strtotime('now') : $params['notification_id'];
+    return sprintf('%06d', $this->systemId) . 'VLB' . sprintf('%021d', $message_id);
   }
 
 }

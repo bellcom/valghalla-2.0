@@ -61,18 +61,4 @@ class ServicePlatformenPrintNemSMS extends ServicePlatformenPrint {
     );
   }
 
-  /**
-   * Generate unique ID for message.
-   *
-   * @param array $params
-   *   Message parameters.
-   *
-   * @return string
-   *   Message id.
-   */
-  private function getId(array $params) {
-    $message_id = empty($params['notification_id']) ? strtotime('now') : $params['notification_id'];
-    return $this->materialeId . 'BBR' . sprintf('%021d', $message_id);
-  }
-
 }
