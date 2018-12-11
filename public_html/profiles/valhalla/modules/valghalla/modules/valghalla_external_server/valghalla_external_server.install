@@ -26,5 +26,8 @@ function valghalla_external_server_install() {
   foreach ($volunteers as $volunteer) {
     $volunteer = valghalla_synch_node_export_anonymize_node($volunteer);
     node_save($volunteer);
+
+    // Remove this node from synch queue.
+    valghalla_synch_queue_remove_item($volunteer->uuid);
   }
 }
