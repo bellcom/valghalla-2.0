@@ -206,7 +206,8 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
       '#prefix' => '<div id="js-polling-station-details" class="no-content">',
       '#suffix' => '</div>',
     );
-  } else {
+  }
+  else {
     $form['polling_station_details'] = array(
       '#prefix' => '<div id="js-polling-station-details">',
       '#suffix' => '</div>',
@@ -351,6 +352,25 @@ function valghalla_external_server_signup_terminate_signup() {
 }
 
 /**
+ * Validates the CPR in the form.
+ *
+ * Also changes the format of CPR, if needed.
+ */
+function valghalla_external_server_signup_signup_form_validate($form, &$form_state) {
+  $cpr = $form_state['values']['cpr'];
+
+  // Adding dash, if missing. E.g. 123456-7890.
+  if (preg_match('/[0-9]{10}/', $cpr)) {
+    $cpr = substr($cpr, 0, 6) . '-' . substr($cpr, 6, 4);
+    $form_state['values']['cpr'] = $cpr;
+  }
+
+  if (!preg_match('/[0-9]{6}-[0-9]{4}/', $cpr)) {
+    form_set_error('cpr', t('Wrong CPR format, correct format is 123456-7890'));
+  }
+}
+
+/**
  * Create node for volunteer and adding to volunteer to post.
  */
 function valghalla_external_server_signup_signup_form_submit($form, &$form_state) {
@@ -360,29 +380,38 @@ function valghalla_external_server_signup_signup_form_submit($form, &$form_state
   $polling_station_nid = ($form_state['polling_station']) ? $form_state['polling_station']->nid : $form_state['values']['polling_station_select'];
 
   if ($polling_station_nid && $role_nid && $party_tid && $election_nid) {
-    $volunteer_node = new stdClass();
-    $volunteer_node->type = 'volunteers';
-    $volunteer_node->language = LANGUAGE_NONE;
-    node_object_prepare($volunteer_node);
-    $volunteer_node->status = 1;
-
     $cpr = $form_state['values']['cpr'];
-    $volunteer_node->title = "New volunteer, CPR: " . $cpr;
 
-    $volunteer_node->field_cpr_number[LANGUAGE_NONE][]['value'] = $cpr;
-    $volunteer_node->field_external_signup[LANGUAGE_NONE][]['value'] = 1;
+    $volunteer_node = odin_load_volunteer_by_cpr($cpr);
 
-    node_save($volunteer_node);
-    $post_info = valghalla_volunteers_add_volunteer_to_post($volunteer_node->nid, $polling_station_nid, $role_nid, $party_tid, $election_nid, 1);
-    $post = entity_load('field_collection_item', array($post_info['fcid']));
-
-    if ($post) {
-      $post = reset($post);
-      $post->field_rsvp_comment[LANGUAGE_NONE][]['value'] = $form_state['values']['comment'];
-      $post->save();
+    if (!$volunteer_node) {
+      $volunteer_node = new stdClass();
+      $volunteer_node->type = 'volunteers';
+      $volunteer_node->language = LANGUAGE_NONE;
+      node_object_prepare($volunteer_node);
+      $volunteer_node->title = "New volunteer, CPR: " . $cpr;
     }
 
-    $form_state['redirect'] = 'valghalla/external-signup-success';
+    if (!$volunteer_node->nid || !odin_volunteer_has_post_on_election($volunteer_node->nid, $election_nid)) {
+      $volunteer_node->status = 1;
+      $volunteer_node->field_cpr_number[LANGUAGE_NONE][]['value'] = $cpr;
+      $volunteer_node->field_external_signup[LANGUAGE_NONE][]['value'] = 1;
+
+      node_save($volunteer_node);
+      $post_info = valghalla_volunteers_add_volunteer_to_post($volunteer_node->nid, $polling_station_nid, $role_nid, $party_tid, $election_nid, 1);
+      $post = entity_load('field_collection_item', array($post_info['fcid']));
+
+      if ($post) {
+        $post = reset($post);
+        $post->field_rsvp_comment[LANGUAGE_NONE][]['value'] = $form_state['values']['comment'];
+        $post->save();
+      }
+
+      $form_state['redirect'] = 'valghalla/external-signup-success';
+    }
+    else {
+      drupal_set_message(t('This volunteer already has a seat in the selected election'), 'warning');
+    }
   }
 }
 
