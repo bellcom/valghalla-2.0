@@ -31,6 +31,25 @@ function valghalla_status_report_menu() {
 }
 
 /**
+ * Implements hook_theme().
+ */
+function valghalla_status_report_theme($existing, $type, $theme, $path) {
+  $items = array();
+
+  $items['valghalla_status_report_polling_station'] = array(
+    'variables' => array(
+      'parties_status' => NULL,
+      'pollingstation_nid' => NULL,
+      'party_posts_to_fill' => NULL,
+      'existing_roles' => NULL,
+    ),
+    'template' => 'valghalla_status_report__polling_station',
+  );
+
+  return $items;
+}
+
+/**
  * Generates a PDF report
  */
 function valghalla_status_report_generator() {
@@ -38,7 +57,7 @@ function valghalla_status_report_generator() {
 
   // Generate PDF.
   $content = _generate_pdf_content();
-  $pdf->writeHTML(t('<h1>Valghalla status report</h1>'));
+  $pdf->writeHTML('<h1>' . t('Status rapport') . '</h1>');
   $pdf->WriteHTML($content);
 
   // Sent PDF to the browser.
@@ -264,14 +283,24 @@ function _generate_pdf_content() {
   $polling_station_nids = odin_get_polling_stations($election_node->nid);
 
   if (empty($polling_station_nids)) {
-    return t('Der er ingen valgsteder på dette valg');
+    return t('Der er ingen valgsteder på dette valg.');
   }
   if (!is_object($election_node)) {
-    return t('Der er ikke valgt noget valg');
+    return t('Der er ikke valgt et valg.');
   }
 
+  // Party status.
   $markup .= _generate_pdf_content__party_status($polling_station_nids);
+
+  // Constituency status.
   $markup .= _generate_pdf_content__party_constituency_status($polling_station_nids);
+
+  // Volunteer list.
+  $markup .= '<pagebreak>';
+  $markup .= '<h1>' . t('Deltagerliste') . '</h1>';
+  foreach($polling_station_nids as $nid => $name) {
+    $markup .= _generate_pdf_content__volunteer_list_from_polling_station($nid);
+  }
 
   return $markup;
 }
@@ -288,6 +317,7 @@ function _generate_pdf_content__party_status($polling_station_nids) {
 
   // Get polling stations user is allowed to see.
   $restrict_polling_stations = array();
+
   if (!empty ($user_entity->field_polling_station[LANGUAGE_NONE])) {
     foreach ($user_entity->field_polling_station[LANGUAGE_NONE] as $station) {
       $restrict_polling_stations[] = $station['nid'];
@@ -310,8 +340,8 @@ function _generate_pdf_content__party_status($polling_station_nids) {
  * Generate content for party constituency status.
  */
 function _generate_pdf_content__party_constituency_status($polling_station_nids) {
-  $markup = '';
   global $user;
+  $markup = '';
 
   $user_entity = user_load($user->uid);
   $user_party_id = empty($user_entity->field_party[LANGUAGE_NONE][0]['tid']) ? FALSE : $user_entity->field_party[LANGUAGE_NONE][0]['tid'];
@@ -330,10 +360,10 @@ function _generate_pdf_content__party_constituency_status($polling_station_nids)
   // We need info on the polling station nodes (constituency)
   // So we just load them all.
   foreach ($polling_station_nids as $polling_station_nid => $polling_station_title) {
+
     // If the array of restricting stations is not empty we only let the
     // user see the polling stations in this array.
-    if (!empty($restrict_polling_stations) &&
-        !in_array($polling_station_nid, $restrict_polling_stations)) {
+    if (!empty($restrict_polling_stations) && !in_array($polling_station_nid, $restrict_polling_stations)) {
       continue;
     }
 
@@ -347,4 +377,84 @@ function _generate_pdf_content__party_constituency_status($polling_station_nids)
   $markup .= _valghalla_status_report_generate_constituency_markup($constituency_nids, $polling_station_count);
 
   return $markup;
+}
+
+/*
+ * Generates a list of volunteers.
+ */
+function _generate_pdf_content__volunteer_list_from_polling_station($polling_station_nid) {
+  global $user;
+
+  $user = user_load($user->uid);
+  $polling_station = node_load($polling_station_nid);
+  $user_party_id = empty($user->field_party[LANGUAGE_NONE][0]['tid']) ? FALSE : $user->field_party[LANGUAGE_NONE][0]['tid'];
+  $restrict_polling_stations = FALSE;
+  $markup = '<h2>' . $polling_station->title . '</h2>';
+
+  if (!empty ($user->field_polling_station[LANGUAGE_NONE])) {
+    $restrict_polling_stations = array();
+
+    foreach ($user->field_polling_station[LANGUAGE_NONE] as $station) {
+      $restrict_polling_stations[] = $station['nid'];
+    }
+  }
+
+  if (user_access('valghalla see all parties') && !$user_party_id) {
+    // If the user is administrator and theres no party chosen, show all parties!
+    $parties = odin_get_parties();
+
+    foreach ($parties  as $party_tid => $party_name) {
+      if (is_array($restrict_polling_stations) && !in_array($polling_station->nid, $restrict_polling_stations)) {
+        continue;
+      }
+
+      // Polling stations.
+      if ($output = _generate_pdf_content__volunteer_list__markup($polling_station, $party_tid)) {
+        $markup .= $output;
+      }
+    }
+  }
+  else {
+
+    // Polling stations.
+    if ($output = _generate_pdf_content__volunteer_list__markup($polling_station, $user_party_id)) {
+      $markup .= $output;
+    }
+  }
+
+  // Let the user edit the node, if he/she has sufficient permissions.
+  $node_edit = '';
+
+  if (node_access('update', node_load(arg(2)))) {
+    $node_edit_url = '/node/' . arg(2) . '/edit?destination=' . current_path();
+    $node_edit = '<div><a class="btn btn-secondary edit-polling-station hidden" href="' . $node_edit_url . '">' . t('Rediger valgsted') . '</a></div>';
+  }
+
+  return $node_edit . $markup;
+}
+
+/**
+ * Generate list markup for polling station.
+ */
+function _generate_pdf_content__volunteer_list__markup($polling_station, $user_party_id) {
+  $posts_array = valghalla_volunteers_polling_station_posts_to_fill($polling_station, $user_party_id);
+
+  if (!empty($posts_array['party_posts_to_fill'])) {
+    $parties_status = array();
+
+    // Filling party status information.
+    $status = odin_get_volunteers_count($_SESSION['election_nid'], array($polling_station->nid), odin_get_roles(), $user_party_id);
+
+    $parties_status[$user_party_id] = array(
+      'party_status_label' => _valhalla_blocks_get_label($status['total_count']),
+      'status' => $status
+    );
+
+    // Return the themed values.
+    return theme('valghalla_status_report_polling_station', array(
+      'parties_status' => $parties_status,
+      'pollingstation_nid' => $posts_array['station_nid'],
+      'party_posts_to_fill' => $posts_array['party_posts_to_fill'],
+    ));
+  }
 }
