@@ -1,4 +1,3 @@
-; $Id$
 name = 'Valghalla status report'
 description = 'Provides PDF status reports of elections'
 package = Valghalla
