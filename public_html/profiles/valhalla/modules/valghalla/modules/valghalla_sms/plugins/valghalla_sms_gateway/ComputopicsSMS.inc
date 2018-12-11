@@ -50,8 +50,8 @@ function computopic_sms_send($to, $message, $context) {
     $result = curl_getinfo($ch);
     curl_close($ch);
 
-    $responce = new SimpleXMLElement($content);
-    $status_code = (string) $responce->status->statusline->code;
+    $response = new SimpleXMLElement($content);
+    $status_code = (string) $response->status->statusline->code;
     if (intval($status_code) == 0) {
       $result['status'] = 'Sent';
     }

@@ -75,8 +75,8 @@ function valghalla_eboks_send_message($to, $params, $multistep_values) {
     watchdog('valghalla_eboks', 'WS request failed. Error message: %message', array('%message' => $result['text']), WATCHDOG_ERROR);
   }
 
-  $notification->message = $params['rendered_message'];
   $notification->status = $result['status'] ? 'Succeed' : 'Failed';
+  $notification->message = $params['rendered_message'];
   $notification->status_info = $result['response'];
   $notification->save();
   return $result['status'];

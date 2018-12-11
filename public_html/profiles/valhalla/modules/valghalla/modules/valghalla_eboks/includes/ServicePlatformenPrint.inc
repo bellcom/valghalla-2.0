@@ -83,8 +83,15 @@ class ServicePlatformenPrint {
     ini_set('soap.wsdl_cache_enabled', 0);
     ini_set('soap.wsdl_cache_ttl', 0);
     try {
-      $response = $this->client->afsendBrev($this->request);
-      $response['status'] = TRUE;
+      $result = $this->client->afsendBrev($this->request);
+      $xml_result = new SimpleXMLElement($this->client->afsendBrev($this->request));
+      $response = array(
+        'status' => FALSE,
+        'response' => $result,
+      );
+      if (!empty($xml_result->AfsendBreveResponse->resultat) && $xml_result->AfsendBreveResponse->resultat) {
+        $response['status'] = TRUE;
+      }
     }
     catch (Exception $e) {
       $response = array(
