@@ -23,7 +23,6 @@ function valghalla_sms_menu() {
   return $items;
 }
 
-
 /**
  * Implements hook_valghalla_allowed_uris_alter().
  */
@@ -124,7 +123,7 @@ function valghalla_sms_send_message($to, $params, $context) {
     $notification->status = 'Success';
   }
   else {
-    $notification->status = $result['status'];
+    $notification->status = $result['status'] ?: 'Failed';
   }
   $notification->status_info = $result['response'];
   $notification->save();
