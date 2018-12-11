@@ -16,3 +16,26 @@ function valghalla_volunteers_update_7000() {
     }
   }
 }
+
+/**
+ * Implements hook_N_update().
+ *
+ * Update field_cpr_number max length to 255.
+ */
+function valghalla_volunteers_7101() {
+  $field_name = 'field_cpr_number';
+  $maxlength = 255;
+
+  db_query("ALTER TABLE field_data_" . $field_name . " CHANGE " . $field_name . "_value " . $field_name . "_value VARCHAR( " . $maxlength . " ) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL");
+  db_query("ALTER TABLE field_revision_" . $field_name . " CHANGE " . $field_name . "_value " . $field_name . "_value VARCHAR( " . $maxlength . " ) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL");
+
+  $qry = "SELECT data FROM field_config WHERE field_name = :field_name";
+  $result = db_query($qry, array(':field_name' => $field_name))->fetchObject();
+
+  $data = unserialize($result->data);
+  $data['settings']['max_length'] = (string) $maxlength;
+  $data = serialize($data);
+
+  $qry = "UPDATE field_config SET data = :data WHERE field_name = :field_name";
+  db_query($qry, array(':data' => $data, ':field_name' => $field_name));
+}

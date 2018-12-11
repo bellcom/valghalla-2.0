@@ -242,5 +242,5 @@ function _valghalla_resource_export_resource_index($page, $fields, $parameters, 
   $results = services_resource_execute_index_query($taxonomy_select);
   $terms = services_resource_build_index_list($results, 'taxonomy_term', 'tid');
 
-  return array_merge($nodes, $terms);
+  return array_merge($nodes, $terms, array(array('checksum' => valghalla_synch_node_export_get_encrypt('success'))));
 }

@@ -15,3 +15,25 @@ function valghalla_external_server_install() {
   variable_set('node_export_dependency_attach_nodes', FALSE);
   variable_set('node_export_existing', 'revision');
 }
+
+/**
+ * Implements hook_N_update().
+ *
+ * Anonymizes the existing volunteer nodes.
+ */
+function valghalla_external_server_update_7101() {
+  // Load all volunteers.
+  $query = new EntityFieldQuery();
+  $result = $query->entityCondition('entity_type', 'node')
+    ->entityCondition('bundle', 'volunteers')
+    ->execute();
+
+  // Anonymize the volunteer node.
+  $volunteers = node_load_multiple(array_keys($result['node']));
+  foreach ($volunteers as $volunteer) {
+    $volunteer = valghalla_synch_node_export_anonymize_node($volunteer);
+    node_save($volunteer);
+  }
+}
+
+
