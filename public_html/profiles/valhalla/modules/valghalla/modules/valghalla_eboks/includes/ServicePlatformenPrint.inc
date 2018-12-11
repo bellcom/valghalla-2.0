@@ -138,8 +138,9 @@ class ServicePlatformenPrint {
    *   Message id.
    */
   protected function getId(array $params) {
-    $message_id = empty($params['notification_id']) ? strtotime('now') : $params['notification_id'];
-    return sprintf('%06d', $this->systemId) . 'VLB' . sprintf('%021d', $message_id);
+    $date = date('Ymd', strtotime('now'));
+    $message_id = empty($params['notification_id']) ? strtotime('now') : ($params['notification_id']);
+    return sprintf('%06d', $this->systemId) . 'VLB' . $date . sprintf('%013d', $message_id);
   }
 
 }

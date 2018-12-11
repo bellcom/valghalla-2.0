@@ -40,6 +40,13 @@ function valghalla_eboks_get_message($template_node) {
   $body_field = field_get_items('node', $template_node, 'body');
   $subject_field = field_get_items('node', $template_node, 'field_eboks_subject');
 
+  $attachments = array();
+  $files = field_get_items('node', $template_node, 'field_eboks_attachments');
+  if (!empty($files)) {
+    foreach ($files as $file_info) {
+      $attachments[] = file_load($file_info['fid']);
+    }
+  }
   $body = $body_field[0]['value'];
   $format = $body_field[0]['format'];
   $subject = $subject_field[0]['value'];
@@ -47,6 +54,7 @@ function valghalla_eboks_get_message($template_node) {
     'subject' => $subject,
     'body' => $body,
     'format' => $format,
+    'attachments' => $attachments,
   );
 }
 
