@@ -381,6 +381,7 @@ function valghalla_external_server_signup_signup_form_submit($form, &$form_state
 
   if ($polling_station_nid && $role_nid && $party_tid && $election_nid) {
     $cpr = $form_state['values']['cpr'];
+    $cpr = valghalla_synch_node_export_get_encrypt($cpr);
 
     $volunteer_node = odin_load_volunteer_by_cpr($cpr);
 

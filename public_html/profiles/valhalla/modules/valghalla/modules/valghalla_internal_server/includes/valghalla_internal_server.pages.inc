@@ -59,6 +59,14 @@ function valghalla_internal_server_form_alter(&$form, &$form_state, $form_id) {
       '#description' => t('The webservice password. Leave blank if not changed'),
     );
 
+    $form['valghalla_internal_server_fs']['valghalla_external_server_hash_salt'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Endpoint hash salt'),
+      '#default_value' => variable_get('valghalla_external_server_hash_salt'),
+      '#description' => t('The webservice hash salt. NB! You have to specify the correct hash salt of your external server, otherwise the communication will not work'),
+      '#required' => TRUE,
+    );
+
     $form['valghalla_internal_server_fs']['valghalla_external_server_synch_frequency'] = array(
       '#type' => 'select',
       '#title' => t('Synch frequency'),
