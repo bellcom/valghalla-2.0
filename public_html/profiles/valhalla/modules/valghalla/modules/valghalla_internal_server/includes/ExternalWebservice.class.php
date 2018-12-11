@@ -19,11 +19,22 @@ class ExternalWebservice {
   /**
    * Checks if the webservice can be accessed successfully.
    *
+   * Fetches the checksum, decrypts is and checks if it a "success" word.
+   *
    * @return bool
    *   TRUE or FALSE.
    */
   public function heartbeat() {
-    return (is_array($this->fetchContent()));
+    $checksum = NULL;
+    $fetchedContent = $this->fetchContent();
+    foreach ($fetchedContent as $content) {
+      if (isset($content->checksum)) {
+        $checksum = $content->checksum;
+      }
+    }
+    $decryptedText = valghalla_synch_node_export_get_decrypt($checksum, variable_get('valghalla_external_server_hash_salt'));
+
+    return (strcasecmp($decryptedText, 'success') === 0);
   }
 
   /**
