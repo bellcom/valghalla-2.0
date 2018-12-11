@@ -142,6 +142,13 @@ function valghalla_synch_node_export_get_encryption_method() {
 }
 
 /**
+ * Returns initialization vector.
+ */
+function valghalla_synch_node_export_get_iv() {
+  return '1234567890';
+}
+
+/**
  * Encrypts the data.
  *
  * If key is not provided, site hash salt is used.
@@ -158,8 +165,9 @@ function valghalla_synch_node_export_get_encrypt($data, $key = NULL) {
   if (!$key) {
     $key = drupal_get_hash_salt();
   }
+  $iv = valghalla_synch_node_export_get_iv();
   $method = valghalla_synch_node_export_get_encryption_method();
-  return openssl_encrypt($data, $method, $key);
+  return openssl_encrypt($data, $method, $key, 0, $iv);
 }
 
 /**
@@ -179,8 +187,9 @@ function valghalla_synch_node_export_get_decrypt($encrypted_data, $key = NULL) {
   if (!$key) {
     $key = drupal_get_hash_salt();
   }
+  $iv = valghalla_synch_node_export_get_iv();
   $method = valghalla_synch_node_export_get_encryption_method();
-  return openssl_decrypt($encrypted_data, $method, $key);
+  return openssl_decrypt($encrypted_data, $method, $key, 0, $iv);
 }
 
 /**

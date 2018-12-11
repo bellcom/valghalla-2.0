@@ -18,11 +18,11 @@ function valghalla_volunteers_update_7000() {
 }
 
 /**
- * Implements hook_N_update().
+ * Implements hook_update_N().
  *
  * Update field_cpr_number max length to 255.
  */
-function valghalla_volunteers_7101() {
+function valghalla_volunteers_update_7101() {
   $field_name = 'field_cpr_number';
   $maxlength = 255;
 
