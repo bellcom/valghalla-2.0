@@ -145,7 +145,7 @@ function valghalla_synch_node_export_get_encryption_method() {
  * Returns initialization vector.
  */
 function valghalla_synch_node_export_get_iv() {
-  return '1234567890';
+  return '1234567890123456';
 }
 
 /**
@@ -208,7 +208,6 @@ function valghalla_synch_node_export_get_decrypt($encrypted_data, $key = NULL) {
 function valghalla_synch_node_export_anonymize_node($node, $cipherKey = NULL) {
   // Do the anonymization for volunteers only.
   if ($node->type == 'volunteers') {
-    $node->title = 'Anonymized volunteer node';
     $node->field_address_bnummer = array();
     $node->field_address_city = array();
     $node->field_address_coname = array();
@@ -224,9 +223,12 @@ function valghalla_synch_node_export_anonymize_node($node, $cipherKey = NULL) {
     $node->field_phone2 = array();
 
     // Encrypting CPR field.
-    $cpr = $node->field_cpr_number['da'][0]['value'];
-    $node->field_cpr_number['da'][0]['value'] = valghalla_synch_node_export_get_encrypt($cpr, $cipherKey);
-    $node->field_cpr_number['da'][0]['safe_value'] = valghalla_synch_node_export_get_encrypt($cpr, $cipherKey);
+    $cpr = $node->field_cpr_number[$node->language][0]['value'];
+    $cpr_encrypted = valghalla_synch_node_export_get_encrypt($cpr, $cipherKey);
+    $node->field_cpr_number[$node->language][0]['value'] = $cpr_encrypted;
+    $node->field_cpr_number[$node->language][0]['safe_value'] = $cpr_encrypted;
+
+    $node->title = 'Anonymized volunteer node, CPR: ' . $cpr_encrypted;
   }
   return $node;
 }

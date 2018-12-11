@@ -131,38 +131,6 @@ function valghalla_internal_server_term_to_json($term) {
 }
 
 /**
- * Anonymizes the volunteer node.
- *
- * Unsets the sensitive values.
- *
- * @param mixed $node
- *   Volunteer node.
- *
- * @return mixed
- *   Anonymized volunteer node.
- */
-function valghalla_internal_server_anonymize_node($node) {
-  // Do the anonymization for volunteers only.
-  if ($node->type == 'volunteers') {
-    $node->title = 'Anonymized volunteer node';
-    unset($node->field_address_bnummer);
-    unset($node->field_address_city);
-    unset($node->field_address_coname);
-    unset($node->field_address_door);
-    unset($node->field_address_floor);
-    unset($node->field_address_road);
-    unset($node->field_address_road_no);
-    unset($node->field_address_zipcode);
-    unset($node->field_cpr_valid_date);
-    unset($node->field_email);
-    unset($node->field_municipality);
-    unset($node->field_phone);
-    unset($node->field_phone2);
-  }
-  return $node;
-}
-
-/**
  * Unsets the last selected seat from the volunteer.
  *
  * @param mixed $volunteer
