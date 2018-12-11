@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * valghalla_eboks.features.field_instance.inc
@@ -56,6 +57,48 @@ function valghalla_eboks_field_default_field_instances() {
     'widget_type' => 'text_textarea_with_summary',
   );
 
+  // Exported field_instance: 'node-eboks-field_eboks_attachments'.
+  $field_instances['node-eboks-field_eboks_attachments'] = array(
+    'bundle' => 'eboks',
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'file',
+        'settings' => array(),
+        'type' => 'file_default',
+        'weight' => 2,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_eboks_attachments',
+    'label' => 'Vedhæftede filer',
+    'required' => 0,
+    'settings' => array(
+      'description_field' => 0,
+      'file_directory' => 'eboks-template-attachments',
+      'file_extensions' => 'txt pdf doc docx odt ppt pptx xls xlsx',
+      'max_filesize' => '5MB',
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'file',
+      'settings' => array(
+        'progress_indicator' => 'throbber',
+      ),
+      'type' => 'file_generic',
+      'weight' => 3,
+    ),
+  );
+
   // Exported field_instance: 'node-eboks-field_eboks_subject'.
   $field_instances['node-eboks-field_eboks_subject'] = array(
     'bundle' => 'eboks',
@@ -100,6 +143,7 @@ function valghalla_eboks_field_default_field_instances() {
   // Included for use with string extractors like potx.
   t('Emne');
   t('Indhold');
+  t('Vedhæftede filer');
 
   return $field_instances;
 }

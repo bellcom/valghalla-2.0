@@ -51,7 +51,6 @@ class ServicePlatformenPrintDP extends ServicePlatformenPrint {
     $pdf = new Pdf();
     $pdf->WriteHTML($params['rendered_message']);
     $pdf_output = $pdf->Output(FALSE, Destination::STRING_RETURN);
-    $message_data = base64_encode($pdf_output);
     $title_text = format_string($params['subject'], $params['tokens']);
 
     $this->request['BrevSPBody'] = array(
@@ -60,7 +59,7 @@ class ServicePlatformenPrintDP extends ServicePlatformenPrint {
       'ForsendelseI' => array(
         'AfsendelseIdentifikator' => $this->getId($params),
         'FilformatNavn' => 'PDF',
-        'MeddelelseIndholdData' => $message_data,
+        'MeddelelseIndholdData' => $pdf_output,
         'DokumentParametre' => array(
           'TitelTekst' => $title_text,
         ),
@@ -70,6 +69,21 @@ class ServicePlatformenPrintDP extends ServicePlatformenPrint {
         ),
       ),
     );
+
+    if (!empty($params['attachments'])) {
+      $attachments = array();
+      foreach ($params['attachments'] as $key => $file) {
+        $path = drupal_realpath($file->uri);
+        $parts = pathinfo($path);
+        $attachments[] = array(
+          'BilagNavn' => $file->filename,
+          'BilagSorteringsIndeksIdentifikator' => $key,
+          'FilformatNavn' => $parts['extension'],
+          'VedhaeftningIndholdData' => file_get_contents($file->uri),
+        );
+      }
+      $this->request['BrevSPBody']['ForsendelseI']['BilagSamling'] = $attachments;
+    }
   }
 
 }

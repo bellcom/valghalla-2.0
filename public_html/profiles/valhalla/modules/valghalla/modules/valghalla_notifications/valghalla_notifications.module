@@ -207,9 +207,13 @@ function valghalla_notifications_menu_block_page() {
   module_load_include('inc', 'system', 'system.admin');
   $item = menu_get_item();
   if ($content = system_admin_menu_block($item)) {
-    foreach ($content as &$item) {
-      $item['localized_options']['query'] = drupal_get_destination();
+    if (isset($_GET['destination'])) {
+      $destination = array('destination' => $_GET['destination']);
+      foreach ($content as &$item) {
+        $item['localized_options']['query'] = $destination;
+      }
     }
+
     $output = theme('admin_block_content', array('content' => $content));
   }
   else {

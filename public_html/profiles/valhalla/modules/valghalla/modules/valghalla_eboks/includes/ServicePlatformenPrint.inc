@@ -83,8 +83,15 @@ class ServicePlatformenPrint {
     ini_set('soap.wsdl_cache_enabled', 0);
     ini_set('soap.wsdl_cache_ttl', 0);
     try {
-      $response = $this->client->afsendBrev($this->request);
-      $response['status'] = TRUE;
+      $result = $this->client->afsendBrev($this->request);
+      $xml_result = new SimpleXMLElement($this->client->afsendBrev($this->request));
+      $response = array(
+        'status' => FALSE,
+        'response' => $result,
+      );
+      if (!empty($xml_result->AfsendBreveResponse->resultat) && $xml_result->AfsendBreveResponse->resultat) {
+        $response['status'] = TRUE;
+      }
     }
     catch (Exception $e) {
       $response = array(
@@ -131,8 +138,9 @@ class ServicePlatformenPrint {
    *   Message id.
    */
   protected function getId(array $params) {
-    $message_id = empty($params['notification_id']) ? strtotime('now') : $params['notification_id'];
-    return sprintf('%06d', $this->systemId) . 'VLB' . sprintf('%021d', $message_id);
+    $date = date('Ymd', strtotime('now'));
+    $message_id = empty($params['notification_id']) ? strtotime('now') : ($params['notification_id']);
+    return sprintf('%06d', $this->systemId) . 'VLB' . $date . sprintf('%013d', $message_id);
   }
 
 }

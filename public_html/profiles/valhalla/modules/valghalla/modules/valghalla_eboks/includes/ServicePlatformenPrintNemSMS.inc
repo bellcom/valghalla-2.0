@@ -46,14 +46,13 @@ class ServicePlatformenPrintNemSMS extends ServicePlatformenPrint {
    *   Request array.
    */
   public function prepareRequest($message, array $params) {
-    $message_data = base64_encode($message);
     $this->request['BrevSPBody'] = array(
       'Kanalvalg' => 'S',
       'Prioritet' => 'D',
       'ForsendelseI' => array(
         'AfsendelseIdentifikator' => $this->getId($params),
         'FilformatNavn' => 'TXT',
-        'MeddelelseIndholdData' => $message_data,
+        'MeddelelseIndholdData' => $message,
         'DokumentParametre' => array(),
         'DigitalPostParametre' => array(
           'MeddelelseIndholdstypeIdentifikator' => $this->materialeId,
