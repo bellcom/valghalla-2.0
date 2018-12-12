@@ -123,7 +123,10 @@ function valghalla_internal_server_batch_clone_op($uuid, $operation_details, &$c
             )),
             'type' => 'status',
           );
-          // TODO: notify volunteer.
+
+          // Notify volunteer.
+          valghalla_internal_server_notify_volunteer_last_seat($node);
+
           // Delete the item from queue server.
           valghalla_synch_queue_remove_item($node->uuid);
         }
@@ -142,6 +145,12 @@ function valghalla_internal_server_batch_clone_op($uuid, $operation_details, &$c
 
           // Freeing the seat and pushing node.
           valghalla_internal_server_free_last_selected_seat($node);
+
+          // If it a new volunteer, make the node unpublished.
+          if (!$existingNode) {
+            $node->status = 0;
+            node_save($node);
+          }
 
           // Exporting with serialize formatter, and pushing the node.
           $export = node_export(intval($node->nid), 'serialize');
