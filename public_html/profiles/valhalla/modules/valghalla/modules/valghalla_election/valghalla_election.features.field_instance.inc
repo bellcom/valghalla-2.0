@@ -742,9 +742,48 @@ function valghalla_election_field_default_field_instances() {
     ),
   );
 
+  // Exported field_instance:
+  // 'taxonomy_term-partier-field_recieve_pdf_broadcast'.
+  $field_instances['taxonomy_term-partier-field_recieve_pdf_broadcast'] = array(
+    'bundle' => 'partier',
+    'default_value' => array(
+      0 => array(
+        'value' => 1,
+      ),
+    ),
+    'deleted' => 0,
+    'description' => 'Angiv om dette parti skal modtage PDF rapporter.',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'list',
+        'settings' => array(),
+        'type' => 'list_default',
+        'weight' => 10,
+      ),
+    ),
+    'entity_type' => 'taxonomy_term',
+    'field_name' => 'field_recieve_pdf_broadcast',
+    'label' => 'Modtag PDF rapport',
+    'required' => 1,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'options',
+      'settings' => array(
+        'display_label' => 0,
+      ),
+      'type' => 'options_buttons',
+      'weight' => 9,
+    ),
+  );
+
   // Translatables
   // Included for use with string extractors like potx.
   t(' Terms and conditions text');
+  t('Angiv om dette parti skal modtage PDF rapporter.');
   t('Body');
   t('Bogstav');
   t('CVR nummer');
@@ -755,6 +794,7 @@ function valghalla_election_field_default_field_instances() {
   t('Emails sendt');
   t('Fuldt partinavn');
   t('Logo');
+  t('Modtag PDF rapport');
   t('Partisekretær');
   t('Party');
   t('Polling Station');
