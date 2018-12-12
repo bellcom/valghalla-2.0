@@ -296,26 +296,30 @@ function valghalla_volunteers_login_form_submit($form, &$form_state) {
  * @return array
  */
 function valghalla_volunteers_rsvp_form($form, &$form_state) {
-  global $language;
   $form = array();
   $rsvp = 1;
+  $allow_comments = TRUE;
 
   $fc = _valghalla_volunteers_validate_key(arg(2));
 
   $rsvp_field = field_get_items('field_collection_item', $fc, 'field_rsvp');
-  $pollingstation_field = field_get_items('field_collection_item', $fc, 'field_vlnt_station');
+
+  // Load party.
+  if ($field_post_party = field_get_items('field_collection_item', $fc, 'field_post_party')) {
+
+    // Load party.
+    if ($party_tid = $field_post_party[0]['target_id']) {
+      $party_term = taxonomy_term_load($party_tid);
+
+      // Load "allow comments field" on term
+      if ($field_allow_comments = field_get_items('taxonomy_term', $party_term, 'field_party_subsc_accept_comment')) {
+        $allow_comments = (bool) $field_allow_comments[0]['value'];
+      }
+    }
+  }
 
   if(!empty($rsvp_field)){
     $rsvp = 1;
-  }
-
-  // Load election.
-  if ($election_nid = $_SESSION['election_nid']) {
-    $election_node = node_load($election_nid);
-
-    if ($field = field_get_items('node', $election_node, 'field_signup_comment')) {
-      $allow_comments = (bool) $field[0]['value'];
-    }
   }
 
   $form['rsvp'] = array(
