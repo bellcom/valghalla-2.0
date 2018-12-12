@@ -364,8 +364,16 @@ function _valghalla_helper_get_token_values($entity) {
   // RSVP link.
   //
   if ($field = field_get_items('field_collection_item', $entity, 'field_token')) {
-    global $base_url;
-    $url = $base_url . '/volunteers/rsvp/' . $field[0]['value'];
+    $link_base_url = NULL;
+    if (module_exists('valghalla_internal_server') && variable_get('valghalla_internal_server_enable')) {
+      $link_base_url = valghalla_internal_server_get_external_server_url();
+    }
+    else {
+      global $base_url;
+      $link_base_url = $base_url;
+    }
+
+    $url = $link_base_url . '/volunteers/rsvp/' . $field[0]['value'];
     $link = '<a href="' . $url . '">' . $url . '</a>';
   }
 
