@@ -181,7 +181,7 @@ function entity_valghalla_notification_list_entities($vol_nid = FALSE) {
       $row['data'] = $row_data;
       if (strtolower($entity->status) == 'failed') {
         $row['style'] = 'background-color:#ffdddd;';
-        $row['class'] = 'failed';
+        $row['class'] = 'failed warning';
       }
       $rows[] = $row;
     }
