@@ -253,6 +253,20 @@ function odin_get_elections() {
 }
 
 /**
+ * Get active elections.
+ */
+function odin_get_active_elections() {
+  $nids = db_select('field_data_field_election_status', 'es')
+    ->fields('es', array('entity_id'))
+    ->condition('es.bundle', 'election')
+    ->condition('es.field_election_status_value', 1)
+    ->execute()
+    ->fetchAll(PDO::FETCH_COLUMN);
+
+  return $nids;
+}
+
+/**
  * Retrieve constituencies for the election.
  */
 function odin_get_constituencies($election_nid) {

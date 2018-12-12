@@ -26,6 +26,11 @@ function valghalla_status_report_menu() {
     'page callback' => 'valghalla_status_report_generator',
     'access callback' => 'user_is_logged_in',
   );
+  $items['valghalla/test-cron'] = array(
+    'title' => t('Cron test'),
+    'page callback' => '_valghalla_status_report_cron',
+    'access callback' => 'user_is_logged_in',
+  );
 
   return $items;
 }
@@ -57,7 +62,6 @@ function valghalla_status_report_generator() {
 
   // Generate PDF.
   $content = _generate_pdf_content();
-  $pdf->writeHTML('<h1>' . t('Status rapport') . '</h1>');
   $pdf->WriteHTML($content);
 
   // Sent PDF to the browser.
@@ -274,9 +278,19 @@ function _valghalla_status_report_get_label($count) {
 /**
  * Generate PDF content.
  */
-function _generate_pdf_content() {
+function _generate_pdf_content($election_nid = NULL, $party_tid = NULL) {
   $markup = '';
-  $election_node = node_load($_SESSION['election_nid']);
+
+  // If we didnt pass an election nid, TRY to use the one from the session.
+  if (! $election_nid) {
+
+    if (isset($_SESSION['election_nid'])) {
+      $election_nid = $_SESSION['election_nid'];
+    }
+  }
+
+  // Load election.
+  $election_node = node_load($election_nid);
 
   // We need to know what polling stations are active in this
   // election.
@@ -289,17 +303,59 @@ function _generate_pdf_content() {
     return t('Der er ikke valgt et valg.');
   }
 
+  $markup .= '<h1>' . t('Status rapport') . '</h1>';
+
   // Party status.
-  $markup .= _generate_pdf_content__party_status($polling_station_nids);
+  $markup .= _generate_pdf_content__party_status($party_tid, $polling_station_nids);
 
   // Constituency status.
-  $markup .= _generate_pdf_content__party_constituency_status($polling_station_nids);
+  $markup .= _generate_pdf_content__party_constituency_status($party_tid, $polling_station_nids);
+
+  // We are requiring a specific party.
+  if ($party_tid) {
+
+    // External links.
+    $markup .= '<pagebreak>';
+
+    $markup .= '<h1>' . t('Eksterne links') . '</h1>';
+    $markup .= _generate_pdf_content__party_external_links($party_tid);
+  }
 
   // Volunteer list.
   $markup .= '<pagebreak>';
   $markup .= '<h1>' . t('Deltagerliste') . '</h1>';
-  foreach($polling_station_nids as $nid => $name) {
-    $markup .= _generate_pdf_content__volunteer_list_from_polling_station($nid);
+
+  $markup .= _generate_pdf_content__volunteer_list_from_polling_station($party_tid, $polling_station_nids);
+
+  return $markup;
+}
+
+/*
+ * Generate markup for external links part of PDF.
+ */
+function _generate_pdf_content__party_external_links($party_tid = NULL) {
+  $roles = odin_get_roles();
+
+  // Link to external signup link for this party.
+  $party_url = 'http://someurl.com?party_id=' . $party_tid;
+
+  $markup = '<h3 style="margin-bottom: 0;">' . t('Parti:') . '</h3>';
+  $markup .= '- <a href="' . $party_url . '">' . $party_url . '</a>';
+
+  $markup .= '<br><br>';
+
+  // Loop through all roles, and create an "external signup" link for this role.
+  if ($roles) {
+    $markup .= '<h3>' . t('Parti og roller:') . '</h3>';
+
+    foreach($roles as $role_nid => $role_title) {
+      $role_url = 'http://someurl.com?role_id=' . $role_nid;
+
+      $markup .= '<div>';
+      $markup .=   '<h4 style="margin-bottom: 0;"><strong>' . $role_title . ':</strong></h4>';
+      $markup .=   '- <a href="' . $role_url . '">' . $role_url . '</a>';
+      $markup .= '</div>';
+    }
   }
 
   return $markup;
@@ -308,7 +364,7 @@ function _generate_pdf_content() {
 /**
  * Generate content for party status.
  */
-function _generate_pdf_content__party_status($polling_station_nids) {
+function _generate_pdf_content__party_status($party_tid, $polling_station_nids) {
   $markup = '';
   global $user;
 
@@ -339,7 +395,7 @@ function _generate_pdf_content__party_status($polling_station_nids) {
 /**
  * Generate content for party constituency status.
  */
-function _generate_pdf_content__party_constituency_status($polling_station_nids) {
+function _generate_pdf_content__party_constituency_status($party_tid, $polling_station_nids) {
   global $user;
   $markup = '';
 
@@ -382,14 +438,17 @@ function _generate_pdf_content__party_constituency_status($polling_station_nids)
 /*
  * Generates a list of volunteers.
  */
-function _generate_pdf_content__volunteer_list_from_polling_station($polling_station_nid) {
+function _generate_pdf_content__volunteer_list_from_polling_station($party_tid = NULL, $polling_station_nids) {
   global $user;
 
-  $user = user_load($user->uid);
-  $polling_station = node_load($polling_station_nid);
-  $user_party_id = empty($user->field_party[LANGUAGE_NONE][0]['tid']) ? FALSE : $user->field_party[LANGUAGE_NONE][0]['tid'];
   $restrict_polling_stations = FALSE;
-  $markup = '<h2>' . $polling_station->title . '</h2>';
+  $user = user_load($user->uid);
+  $selected_party_tid = $party_tid;
+
+  // Try to load a selected party tid from the user.
+  if (! $party_tid) {
+    $selected_party_tid = $user_party_id = empty($user->field_party[LANGUAGE_NONE][0]['tid']) ? FALSE : $user->field_party[LANGUAGE_NONE][0]['tid'];
+  }
 
   if (!empty ($user->field_polling_station[LANGUAGE_NONE])) {
     $restrict_polling_stations = array();
@@ -399,38 +458,48 @@ function _generate_pdf_content__volunteer_list_from_polling_station($polling_sta
     }
   }
 
-  if (user_access('valghalla see all parties') && !$user_party_id) {
-    // If the user is administrator and theres no party chosen, show all parties!
-    $parties = odin_get_parties();
+  $final_output = '';
 
-    foreach ($parties  as $party_tid => $party_name) {
-      if (is_array($restrict_polling_stations) && !in_array($polling_station->nid, $restrict_polling_stations)) {
-        continue;
+  // Run through all polling stations.
+  foreach($polling_station_nids as $polling_station_nid => $name) {
+    $polling_station = node_load($polling_station_nid);
+
+    $markup = '<h2>' . $polling_station->title . '</h2>';
+
+    if (user_access('valghalla see all parties') && !$selected_party_tid) {
+      // If the user is administrator and theres no party chosen, show all parties!
+      $parties = odin_get_parties();
+
+      foreach ($parties  as $party_tid => $party_name) {
+        if (is_array($restrict_polling_stations) && !in_array($polling_station->nid, $restrict_polling_stations)) {
+          continue;
+        }
+
+        // Polling stations.
+        if ($output = _generate_pdf_content__volunteer_list__markup($polling_station, $party_tid)) {
+          $markup .= $output;
+        }
       }
+    }
+    else {
 
-      // Polling stations.
-      if ($output = _generate_pdf_content__volunteer_list__markup($polling_station, $party_tid)) {
+      if ($output = _generate_pdf_content__volunteer_list__markup($polling_station, $selected_party_tid)) {
         $markup .= $output;
       }
     }
-  }
-  else {
 
-    // Polling stations.
-    if ($output = _generate_pdf_content__volunteer_list__markup($polling_station, $user_party_id)) {
-      $markup .= $output;
+    // Let the user edit the node, if he/she has sufficient permissions.
+    $node_edit = '';
+
+    if (node_access('update', node_load(arg(2)))) {
+      $node_edit_url = '/node/' . arg(2) . '/edit?destination=' . current_path();
+      $node_edit = '<div><a class="btn btn-secondary edit-polling-station hidden" href="' . $node_edit_url . '">' . t('Rediger valgsted') . '</a></div>';
     }
+
+    $final_output .= $node_edit . $markup;
   }
 
-  // Let the user edit the node, if he/she has sufficient permissions.
-  $node_edit = '';
-
-  if (node_access('update', node_load(arg(2)))) {
-    $node_edit_url = '/node/' . arg(2) . '/edit?destination=' . current_path();
-    $node_edit = '<div><a class="btn btn-secondary edit-polling-station hidden" href="' . $node_edit_url . '">' . t('Rediger valgsted') . '</a></div>';
-  }
-
-  return $node_edit . $markup;
+  return $final_output;
 }
 
 /**
@@ -456,5 +525,78 @@ function _generate_pdf_content__volunteer_list__markup($polling_station, $user_p
       'pollingstation_nid' => $posts_array['station_nid'],
       'party_posts_to_fill' => $posts_array['party_posts_to_fill'],
     ));
+  }
+}
+
+/**
+ * Send out notifications via cron.
+ */
+function _valghalla_status_report_cron() {
+  $elections = odin_get_active_elections();
+  $report_broadcast = FALSE;
+
+  // Run through all elections.
+  foreach ($elections as $election_nid) {
+    $election = node_load($election_nid);
+
+    // We are supposed to sent out emails to parties.
+    if ($field_report_broadcast = field_get_items('node', $election, 'field_election_report_broadcast')) {
+      $report_broadcast = (bool) $field_report_broadcast[0]['value'];
+    }
+
+    // If we are not supposed to sent out emails, we abort!
+    if ($report_broadcast !== TRUE) {
+      return;
+    }
+
+    // Load all parties.
+    $parties = odin_get_parties();
+
+    // Run through all parties.
+    foreach($parties as $party_tid => $party_name) {
+      $party = taxonomy_term_load($party_tid);
+      $party_should_recieve_emails = FALSE;
+      $recipient = NULL;
+      $cvr_number = NULL;
+      $pdf = new Pdf();
+      $content = '';
+      $file = NULL;
+
+      // Check if this party should receive emails.
+      if ($field_allow_broadcast = field_get_items('taxonomy_term', $party, 'field_recieve_pdf_broadcast')) {
+        $party_should_recieve_emails = (bool) $field_allow_broadcast[0]['value'];
+      }
+      if ($party_should_recieve_emails !== TRUE) {
+        return;
+      }
+
+      // Collect details necessary for sending out notifications.
+      if ($field_email = field_get_items('taxonomy_term', $party, 'field_email_address')) {
+        $recipient = $field_email[0]['email'];
+      }
+      if ($field_cvr_number = field_get_items('taxonomy_term', $party, 'field_cvr_number')) {
+        $cvr_number = $field_cvr_number[0]['safe_value'];
+      }
+      if (! $recipient OR ! $cvr_number) {
+        return;
+      }
+
+      // Generate PDF.
+      $content = _generate_pdf_content($election_nid, $party_tid);
+      $pdf->WriteHTML($content);
+
+//      $file = $pdf->Output('', 'S');
+      $pdf->Output();
+
+      if (!$pdf) {
+        return;
+      }
+
+      // Send PDF to e-boks.
+      if ($cvr_number) {}
+
+      // Send PDF via e-mail.
+      else if($recipient) {}
+    }
   }
 }
