@@ -53,6 +53,24 @@ function valghalla_internal_server_node_update($node) {
 }
 
 /**
+ * Implements hook_node_delete().
+ */
+function valghalla_internal_server_node_delete($node) {
+  if (in_array($node->type,
+    array(
+      'volunteers',
+      'roles',
+      'election',
+      'constituency',
+      'polling_station',
+    ))
+  ) {
+    // Adding item, and marking it as deleted.
+    valghalla_synch_queue_add_item($node, TRUE);
+  }
+}
+
+/**
  * Implements hook_taxonomy_term_insert().
  */
 function valghalla_internal_server_taxonomy_term_insert($term) {
@@ -64,6 +82,13 @@ function valghalla_internal_server_taxonomy_term_insert($term) {
  */
 function valghalla_internal_server_taxonomy_term_update($term) {
   valghalla_synch_queue_add_item($term);
+}
+
+/**
+ * Implements hook_taxonomy_term_delete().
+ */
+function valghalla_internal_server_taxonomy_term_delete($term) {
+  valghalla_synch_queue_add_item($term, TRUE);
 }
 
 /**

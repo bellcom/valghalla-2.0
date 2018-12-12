@@ -138,7 +138,8 @@ function valghalla_internal_server_term_to_json($term) {
  */
 function valghalla_internal_server_free_last_selected_seat($volunteer) {
   if (!empty($volunteer->field_electioninfo) && is_array($volunteer->field_electioninfo)) {
-    $fc_field = end($volunteer->field_electioninfo['und']);
+    $lang = $volunteer->language;
+    $fc_field = end($volunteer->field_electioninfo[$lang]);
     if ($fc_field['value']) {
       $fc = entity_load_single('field_collection_item', $fc_field['value']);
       $fc->delete();
@@ -200,4 +201,35 @@ function valghalla_internal_server_get_external_server_url() {
   }
 
   return $external_server_url;
+}
+
+/**
+ * Notifies volunteer about the last created seat, with status 'confirmed'.
+ *
+ * @param mixed $node
+ *   Volunteer node.
+ */
+function valghalla_internal_server_notify_volunteer_last_seat($node) {
+  $electionInfo = NULL;
+
+  $lang = $node->language;
+  if (!empty($node->field_electioninfo) && $node->field_electioninfo[$lang]) {
+    $lastElement = end($node->field_electioninfo[$lang]);
+    $electionInfo = entity_load_single('field_collection_item', $lastElement['value']);
+  }
+
+  if ($electionInfo) {
+    $field_election = field_get_items('field_collection_item', $electionInfo, 'field_election');
+    if (!empty($field_election)) {
+      $election_nid = $field_election[0]['target_id'];
+    }
+    $field_post_role = field_get_items('field_collection_item', $electionInfo, 'field_post_role');
+    if (!empty($field_post_role)) {
+      $role_nid = $field_post_role[0]['target_id'];
+    }
+
+    if ($election_nid && $role_nid) {
+      valghalla_volunteers_notify_volunteer($election_nid, $role_nid, $electionInfo, 'confirmed');
+    }
+  }
 }

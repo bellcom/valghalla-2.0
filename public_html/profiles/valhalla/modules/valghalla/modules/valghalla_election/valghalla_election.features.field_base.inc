@@ -425,13 +425,13 @@ function valghalla_election_field_default_field_bases() {
     'type' => 'node_reference',
   );
 
-  // Exported field_base: 'field_signup_comment'.
-  $field_bases['field_signup_comment'] = array(
+  // Exported field_base: 'field_recieve_pdf_broadcast'.
+  $field_bases['field_recieve_pdf_broadcast'] = array(
     'active' => 1,
     'cardinality' => 1,
     'deleted' => 0,
     'entity_types' => array(),
-    'field_name' => 'field_signup_comment',
+    'field_name' => 'field_recieve_pdf_broadcast',
     'indexes' => array(
       'value' => array(
         0 => 'value',
