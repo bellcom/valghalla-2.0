@@ -39,15 +39,6 @@ function valghalla_external_server_rest_default_services_endpoint() {
   $endpoint->resources = array(
     'node' => array(
       'operations' => array(
-        'retrieve' => array(
-          'enabled' => '1',
-        ),
-        'create' => array(
-          'enabled' => '1',
-        ),
-        'update' => array(
-          'enabled' => '1',
-        ),
         'delete' => array(
           'enabled' => '1',
         ),
@@ -58,9 +49,6 @@ function valghalla_external_server_rest_default_services_endpoint() {
     ),
     'taxonomy_term' => array(
       'operations' => array(
-        'retrieve' => array(
-          'enabled' => '1',
-        ),
         'create' => array(
           'enabled' => '1',
         ),

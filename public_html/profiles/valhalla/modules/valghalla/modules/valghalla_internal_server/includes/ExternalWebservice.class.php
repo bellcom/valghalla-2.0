@@ -40,6 +40,9 @@ class ExternalWebservice {
   /**
    * Calling webservice endpoint: /valghalla_resource_export.
    *
+   * @param int $page
+   *   Number of page to return.
+   *
    * @return array
    *   Result array.
    */
@@ -56,6 +59,9 @@ class ExternalWebservice {
 
   /**
    * Calling webservice endpoint : POST /valghalla_resource_export.
+   *
+   * @param string $data
+   *   Serialized node data.
    *
    * @return array
    *   Contains an array of
@@ -79,6 +85,9 @@ class ExternalWebservice {
    *
    * Also checks if the term with the same uuid is already present in the
    * system, then it will be updated. If not - new term will be created.
+   *
+   * @param mixed $term
+   *   The term object.
    *
    * @return int
    *   1 - is term was created, 2 - term was updated.
@@ -112,8 +121,11 @@ class ExternalWebservice {
   /**
    * Calling webservice endpoint : GET /taxonomy_term.
    *
-   * @return string
-   *   Taxonomy term as json string.
+   * @param string $uuid
+   *   Uuid of the term.
+   *
+   * @return mixed
+   *   Taxonomy term object.
    */
   public function getTermByUuid($uuid) {
     $params = http_build_query(array(
@@ -131,7 +143,88 @@ class ExternalWebservice {
   }
 
   /**
+   * Calling webservice endpoint: DELETE /taxonomy_term/tid.
+   *
+   * @param string $uuid
+   *   Uuid of the term.
+   *
+   * @return int
+   *   3 - is term was deleted..
+   */
+  public function deleteTerm($uuid) {
+    $remoteTerm = $this->getTermByUuid($uuid);
+
+    if ($remoteTerm) {
+      $remoteTermTid = $remoteTerm->tid;
+
+      $options = array();
+      $options['method'] = 'DELETE';
+
+      $requestUrl = $this->endpoint . '/taxonomy_term/' . $remoteTermTid . '.json';
+      $result = $this->requestWrapper($requestUrl, $options);
+
+      if (!empty($result) && is_array($result)) {
+        return array_pop($result);
+      }
+    }
+  }
+
+  /**
+   * Calling webservice endpoint : GET /node.
+   *
+   * @param string $uuid
+   *   Uuid of the node.
+   *
+   * @return mixed
+   *   Node object.
+   */
+  public function getNodeByUuid($uuid) {
+    $params = http_build_query(array(
+      'parameters' => array(
+        'uuid' => $uuid,
+      ),
+    ));
+
+    $requestUrl = $this->endpoint . '/node.json?' . $params;
+    $result = $this->requestWrapper($requestUrl);
+
+    if (!empty($result) && is_array($result)) {
+      return array_pop($result);
+    }
+  }
+
+  /**
+   * Calling webservice endpoint : DELETE /node/nid.
+   *
+   * @param string $uuid
+   *   Uuid of the node.
+   *
+   * @return bool
+   *   TRUE if node has been deleted.
+   */
+  public function deleteNode($uuid) {
+    $remoteNode = $this->getNodeByUuid($uuid);
+
+    if ($remoteNode) {
+      $remoteNodeNid = $remoteNode->nid;
+
+      $options = array();
+      $options['method'] = 'DELETE';
+
+      $requestUrl = $this->endpoint . '/node/' . $remoteNodeNid . '.json';
+      $result = $this->requestWrapper($requestUrl, $options);
+
+      if (!empty($result) && is_array($result)) {
+        return array_pop($result);
+      }
+    }
+  }
+
+  /**
    * Calling webservice endpoint : GET /valghalla_resource_export/uuid.
+   *
+   * @param string $uuid
+   *   Uuid of the resource.
    *
    * @return string
    *   Serialized object formatted as string.
@@ -147,6 +240,9 @@ class ExternalWebservice {
 
   /**
    * Calling webservice endpoint : DELETE /valghalla_resource_export/uuid.
+   *
+   * @param string $uuid
+   *   Uuid of the resource.
    *
    * @return bool
    *   Always TRUE.
