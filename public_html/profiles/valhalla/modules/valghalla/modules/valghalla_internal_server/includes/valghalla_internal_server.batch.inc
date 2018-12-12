@@ -297,89 +297,133 @@ function valghalla_internal_server_batch_push($items) {
  *   Array for context.
  */
 function valghalla_internal_server_batch_push_op($item, $operation_details, &$context) {
-  $existingItem = NULL;
-  $entities = entity_uuid_load($item->type, array($item->target_uuid));
-  if (!empty($entities) && is_array($entities)) {
-    $existingItem = reset($entities);
-  }
+  $ws = new ExternalWebservice();
 
-  if ($existingItem) {
-    $ws = new ExternalWebservice();
-
+  // Deleting the item.
+  if ($item->deleted) {
     if ($item->type == 'taxonomy_term') {
       // Report progress.
-      ValghallaLogger::info(sprintf('Pushing taxonomy term %s', $existingItem->name));
-      $context['message'] = t('Pushing taxonomy term @title', array('@title' => $existingItem->name));
+      ValghallaLogger::info(sprintf('Deleting taxonomy term %s', $item->target_uuid));
+      $context['message'] = t('Deleting taxonomy term @uuid', array('@uuid' => $item->target_uuid));
 
       // Actual webservice call.
-      $result = $ws->pushTerm($existingItem);
-      if ($result === 1) {
-        ValghallaLogger::info(sprintf('Term %s is successfully pushed and created on external server', $existingItem->name));
+      $result = $ws->deleteTerm($item->target_uuid);
+      if ($result === 3) {
+        ValghallaLogger::info(sprintf('Term %s is successfully deleted on external server', $item->target_uuid));
         $context['results'][] = array(
-          'message' => t('Term "@title" is successfully pushed and created on external server', array(
-            '@title' => $existingItem->name,
+          'message' => t('Term "@uuid" is successfully pushed and created on external server', array(
+            '@uuid' => $item->target_uuid,
           )),
           'type' => 'status',
         );
 
-        valghalla_synch_queue_remove_item($existingItem->uuid);
-      }
-      elseif ($result === 2) {
-        ValghallaLogger::info(sprintf('Term %s is successfully pushed and updated on external server', $existingItem->name));
-        $context['results'][] = array(
-          'message' => t('Term "@title" is successfully pushed and updated on external server', array(
-            '@title' => $existingItem->name,
-          )),
-          'type' => 'status',
-        );
-
-        valghalla_synch_queue_remove_item($existingItem->uuid);
-      }
-      else {
-        ValghallaLogger::error(sprintf('Term %s push failed, error: %s', $existingItem->name, implode(' ', $result)));
-        $context['results'][] = array(
-          'message' => t('Term "@title" push failed, message: @message', array(
-            '@title' => $existingItem->name,
-            '@message' => implode(' ', $result),
-          )),
-          'type' => 'warning',
-        );
+        valghalla_synch_queue_remove_item($item->target_uuid);
       }
     }
     elseif ($item->type == 'node') {
       // Report progress.
-      ValghallaLogger::info(sprintf('Pushing node %s', $existingItem->title));
-      $context['message'] = t('Pushing node @title', array('@title' => $existingItem->title));
-
-      // Exporting with serialize formatter.
-      $export = node_export(intval($existingItem->nid), 'serialize');
-      $data = $export['output'];
+      ValghallaLogger::info(sprintf('Deleting node %s', $item->target_uuid));
+      $context['message'] = t('Deleting node @uuid', array('@uuid' => $item->target_uuid));
 
       // Actual webservice call.
-      $result = $ws->pushNodeSerialized($data);
-
-      // Operation was successful.
-      if ($result->nid) {
-        ValghallaLogger::info(sprintf('Node %s is successfully pushed, and its remote nid is %d', $existingItem->title, $result->nid));
+      $result = $ws->deleteNode($item->target_uuid);
+      if ($result === TRUE) {
+        ValghallaLogger::info(sprintf('Node %s is successfully deleted on external server', $item->target_uuid));
         $context['results'][] = array(
-          'message' => t('Node "@title" is successfully pushed, and its remote nid is @rnid', array(
-            '@title' => $existingItem->title,
-            '@rnid' => $result->nid,
+          'message' => t('Node "@uuid" is successfully pushed and created on external server', array(
+            '@uuid' => $item->target_uuid,
           )),
           'type' => 'status',
         );
 
-        valghalla_synch_queue_remove_item($existingItem->uuid);
+        valghalla_synch_queue_remove_item($item->target_uuid);
       }
-      else {
-        ValghallaLogger::error(sprintf('Node %s push failed, error: %s', $existingItem->title, $result));
-        $context['results'][] = array(
-          'message' => t('Node "@title" push failed, message: @message', array(
-            '@title' => $existingItem->title,
-            '@message' => implode(' ', $result),
-          )),
-          'type' => 'warning',
-        );
+    }
+  }
+  // Pushing the created/updated item.
+  else {
+    $existingItem = NULL;
+    $entities = entity_uuid_load($item->type, array($item->target_uuid));
+    if (!empty($entities) && is_array($entities)) {
+      $existingItem = reset($entities);
+    }
+
+    if ($existingItem) {
+      if ($item->type == 'taxonomy_term') {
+        // Report progress.
+        ValghallaLogger::info(sprintf('Pushing taxonomy term %s', $existingItem->name));
+        $context['message'] = t('Pushing taxonomy term @title', array('@title' => $existingItem->name));
+
+        // Actual webservice call.
+        $result = $ws->pushTerm($existingItem);
+        if ($result === 1) {
+          ValghallaLogger::info(sprintf('Term %s is successfully pushed and created on external server', $existingItem->name));
+          $context['results'][] = array(
+            'message' => t('Term "@title" is successfully pushed and created on external server', array(
+              '@title' => $existingItem->name,
+            )),
+            'type' => 'status',
+          );
+
+          valghalla_synch_queue_remove_item($existingItem->uuid);
+        }
+        elseif ($result === 2) {
+          ValghallaLogger::info(sprintf('Term %s is successfully pushed and updated on external server', $existingItem->name));
+          $context['results'][] = array(
+            'message' => t('Term "@title" is successfully pushed and updated on external server', array(
+              '@title' => $existingItem->name,
+            )),
+            'type' => 'status',
+          );
+
+          valghalla_synch_queue_remove_item($existingItem->uuid);
+        }
+        else {
+          ValghallaLogger::error(sprintf('Term %s push failed, error: %s', $existingItem->name, implode(' ', $result)));
+          $context['results'][] = array(
+            'message' => t('Term "@title" push failed, message: @message', array(
+              '@title' => $existingItem->name,
+              '@message' => implode(' ', $result),
+            )),
+            'type' => 'warning',
+          );
+        }
+      }
+      elseif ($item->type == 'node') {
+        // Report progress.
+        ValghallaLogger::info(sprintf('Pushing node %s', $existingItem->title));
+        $context['message'] = t('Pushing node @title', array('@title' => $existingItem->title));
+
+        // Exporting with serialize formatter.
+        $export = node_export(intval($existingItem->nid), 'serialize');
+        $data = $export['output'];
+
+        // Actual webservice call.
+        $result = $ws->pushNodeSerialized($data);
+
+        // Operation was successful.
+        if ($result->nid) {
+          ValghallaLogger::info(sprintf('Node %s is successfully pushed, and its remote nid is %d', $existingItem->title, $result->nid));
+          $context['results'][] = array(
+            'message' => t('Node "@title" is successfully pushed, and its remote nid is @rnid', array(
+              '@title' => $existingItem->title,
+              '@rnid' => $result->nid,
+            )),
+            'type' => 'status',
+          );
+
+          valghalla_synch_queue_remove_item($existingItem->uuid);
+        }
+        else {
+          ValghallaLogger::error(sprintf('Node %s push failed, error: %s', $existingItem->title, $result));
+          $context['results'][] = array(
+            'message' => t('Node "@title" push failed, message: @message', array(
+              '@title' => $existingItem->title,
+              '@message' => implode(' ', $result),
+            )),
+            'type' => 'warning',
+          );
+        }
       }
     }
   }

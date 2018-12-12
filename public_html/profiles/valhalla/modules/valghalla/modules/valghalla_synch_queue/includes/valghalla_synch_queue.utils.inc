@@ -10,8 +10,10 @@
  *
  * @param mixed $resource
  *   Term or node to add.
+ * @param bool $deleted
+ *   Is resource deleted.
  */
-function valghalla_synch_queue_add_item($resource) {
+function valghalla_synch_queue_add_item($resource, $deleted = FALSE) {
   $data = array();
   if ($resource->nid) {
     $data['target_id'] = $resource->nid;
@@ -23,6 +25,7 @@ function valghalla_synch_queue_add_item($resource) {
     $data['type'] = 'taxonomy_term';
     $data['changed'] = $_SERVER['REQUEST_TIME'];
   }
+  $data['deleted'] = ($deleted) ? 1 : 0;
 
   if ($data['target_id']) {
     $data['target_uuid'] = $resource->uuid;
@@ -65,6 +68,7 @@ function valghalla_synch_queue_remove_item($uuid) {
 function valghalla_synch_queue_get_items_ordered() {
   $itemsOrdered = array();
 
+  // Adding deleted and updated/new terms.
   // Taxonomy terms do not have any relationship, safe to push them as they are.
   $query = db_select('valghalla_synch_queue', 'v')
     ->fields('v')
@@ -72,6 +76,17 @@ function valghalla_synch_queue_get_items_ordered() {
   $taxonomy_terms = $query->execute()->fetchAll();
   $itemsOrdered = array_merge($itemsOrdered, $taxonomy_terms);
 
+  // Adding Deleted nodes.
+  $query = db_select('valghalla_synch_queue', 'v')
+    ->fields('v');
+
+  $query->condition('v.type', 'node')
+    ->condition('v.deleted', 1);
+
+  $deleted_nodes = $query->execute()->fetchAll();
+  $itemsOrdered = array_merge($itemsOrdered, $deleted_nodes);
+
+  // Adding New nodes.
   // Correct node order is: Role, Constituency,
   // Polling station, Election, Volunteer.
   $contentTypes = array(
@@ -88,7 +103,8 @@ function valghalla_synch_queue_get_items_ordered() {
 
     $query->join('node', 'n', 'n.nid = v.target_id');
     $query->condition('v.type', 'node')
-      ->condition('n.type', $type);
+      ->condition('n.type', $type)
+      ->condition('v.deleted', 0);
 
     $nodes = $query->execute()->fetchAll();
     $itemsOrdered = array_merge($itemsOrdered, $nodes);

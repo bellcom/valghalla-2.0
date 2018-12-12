@@ -34,9 +34,28 @@ function valghalla_synch_queue_schema() {
         'not null' => TRUE,
         'default' => 0,
       ),
+      'deleted' => array(
+        'description' => 'Indicates if resource is deleted.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
     ),
     'primary key' => array('target_uuid'),
   );
 
   return $schema;
+}
+
+/**
+ * Add deleted field to valghalla_synch_queue table.
+ */
+function valghalla_synch_queue_update_7101() {
+  $field = array(
+    'description' => 'Indicates if resource is deleted.',
+    'type' => 'int',
+    'not null' => TRUE,
+    'default' => 0,
+  );
+  db_add_field('valghalla_synch_queue', 'deleted', $field);
 }
