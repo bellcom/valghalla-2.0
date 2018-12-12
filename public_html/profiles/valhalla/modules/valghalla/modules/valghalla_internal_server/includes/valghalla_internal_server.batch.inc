@@ -311,7 +311,7 @@ function valghalla_internal_server_batch_push_op($item, $operation_details, &$co
       if ($result === 3) {
         ValghallaLogger::info(sprintf('Term %s is successfully deleted on external server', $item->target_uuid));
         $context['results'][] = array(
-          'message' => t('Term "@uuid" is successfully pushed and created on external server', array(
+          'message' => t('Term "@uuid" is successfully deleted on external server', array(
             '@uuid' => $item->target_uuid,
           )),
           'type' => 'status',
@@ -330,7 +330,7 @@ function valghalla_internal_server_batch_push_op($item, $operation_details, &$co
       if ($result === TRUE) {
         ValghallaLogger::info(sprintf('Node %s is successfully deleted on external server', $item->target_uuid));
         $context['results'][] = array(
-          'message' => t('Node "@uuid" is successfully pushed and created on external server', array(
+          'message' => t('Node "@uuid" is successfully deleted on external server', array(
             '@uuid' => $item->target_uuid,
           )),
           'type' => 'status',
