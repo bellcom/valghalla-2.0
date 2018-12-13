@@ -180,7 +180,7 @@
   <main class="layout__content" role="main">
     <a id="main-content"></a>
 
-    <section class="sectioned sectioned--page-header">
+    <section class="sectioned sectioned--page-header sectioned--small-inner-spacing">
       <div class="sectioned__inner">
         <div class="container-fluid">
           <div class="row">
