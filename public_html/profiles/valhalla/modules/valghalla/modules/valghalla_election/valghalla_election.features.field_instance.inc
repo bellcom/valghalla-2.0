@@ -326,6 +326,45 @@ function valghalla_election_field_default_field_instances() {
     ),
   );
 
+  // Exported field_instance: 'node-election-field_election_notif_conf_export'.
+  $field_instances['node-election-field_election_notif_conf_export'] = array(
+    'bundle' => 'election',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 8,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_election_notif_conf_export',
+    'label' => 'Notification config export (system field)',
+    'required' => 0,
+    'settings' => array(
+      'text_processing' => 0,
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'text',
+      'settings' => array(
+        'rows' => 1,
+      ),
+      'type' => 'text_textarea',
+      'weight' => 10,
+    ),
+  );
+
   // Exported field_instance: 'node-election-field_election_report_broadcast'.
   $field_instances['node-election-field_election_report_broadcast'] = array(
     'bundle' => 'election',
@@ -1031,6 +1070,7 @@ function valghalla_election_field_default_field_instances() {
   t('Kommentar ved tilmelding');
   t('Logo');
   t('Modtag PDF rapport');
+  t('Notification config export (system field)');
   t('Partisekretær');
   t('Party');
   t('Polling Station');
