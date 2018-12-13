@@ -157,7 +157,7 @@ function valghalla_notifications_admin_settings() {
   $roles = db_query('SELECT name, rid FROM {role} WHERE rid > 2');
   $form['valghalla_notifications'] = array(
     '#type' => 'fieldset',
-    '#title' => t('General settings'),
+    '#title' => t('Generelle indstillinger'),
     '#collapsible' => FALSE,
   );
 
@@ -219,16 +219,8 @@ function valghalla_notifications_admin_settings() {
     '#default_value' => variable_get('valghalla_notifications_reminder_togo_days', FALSE),
   );
 
-  // Status report settings.
-  $form['valghalla_notifications']['valghalla_status_report_days'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Status rapport'),
-    '#description' => t('Liste af dage før valg der skal udsendes en status rapport til valgets partier. Dage skal være adskilt af komma ( , ). f.eks. 14, 7, 5, 3'),
-    '#default_value' => variable_get('valghalla_status_report_days', '14, 7, 5, 3'),
-  );
-
   $form['valghalla_notifications']['valghalla_notifications_send_invitation_on_add'] = array(
-    '#title' => t('Send besked(invitation) til deltager når denne tilføjes på et valgsted.'),
+    '#title' => t('Send besked (invitation) til deltager når denne tilføjes på et valgsted.'),
     '#default_value' => variable_get('valghalla_notification_send_invitation_on_add', TRUE),
     '#type' => 'checkbox',
   );
@@ -252,11 +244,5 @@ function valghalla_notifications_admin_settings_validate(&$elements, &$form_stat
   if (preg_match('/[^\d|,| ]/', $form_state['values']['valghalla_notifications_rsvp_reminder_days'])) {
     // Found illigal chars in the form.
     form_set_error('valghalla_rsvp_reminder_days', 'Dette felt skal være en komma-separeret liste af hele tal.');
-  }
-
-  // Status report.
-  if (preg_match('/[^\d|,| ]/', $form_state['values']['valghalla_status_report_days'])) {
-    // Found illigal chars in the form.
-    form_set_error('valghalla_status_report_days', 'Dette felt skal være en komma-separeret liste af hele tal.');
   }
 }

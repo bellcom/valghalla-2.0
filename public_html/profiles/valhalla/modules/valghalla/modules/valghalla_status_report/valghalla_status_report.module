@@ -54,6 +54,39 @@ function valghalla_status_report_theme($existing, $type, $theme, $path) {
   return $items;
 }
 
+/*
+ * Implements hook_form_alter().
+ */
+function valghalla_status_report_form_alter(&$form, $form_state, $form_id) {
+
+  // First, check for the node type configuration form.
+  if ($form_id == 'valghalla_notifications_admin_settings') {
+
+    // Status report settings.
+    $form['valghalla_notifications']['valghalla_status_report_days'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Status rapport'),
+      '#description' => t('Liste af dage før valg der skal udsendes en status rapport til valgets partier. Dage skal være adskilt af komma ( , ). f.eks. 14, 7, 5, 3'),
+      '#default_value' => variable_get('valghalla_status_report_days', '14, 7, 5, 3'),
+    );
+
+    // Add validate function.
+    $form['#validate'][] = 'valghalla_status_report_form_validate';
+  }
+}
+
+/*
+ * Implements hook_form_validate().
+ */
+function valghalla_status_report_form_validate($form, &$form_state) {
+
+  // Status report.
+  if (preg_match('/[^\d|,| ]/', $form_state['values']['valghalla_status_report_days'])) {
+    // Found illigal chars in the form.
+    form_set_error('valghalla_status_report_days', 'Dette felt skal være en komma-separeret liste af hele tal.');
+  }
+}
+
 /**
  * Generates a PDF report
  */
