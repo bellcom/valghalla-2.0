@@ -236,13 +236,15 @@ function valghalla_notifications_admin_settings_validate(&$elements, &$form_stat
   // Reminder days.
   $togo_reminder_days = $form_state['values']['valghalla_notifications_reminder_togo_days'];
   if (preg_match('/[^\d]/', $togo_reminder_days) && $togo_reminder_days != '') {
-    // Found illigal chars in the form.
+    
+    // Found illegal chars in the form.
     form_set_error('valghalla_notifications_reminder_togo_days', 'Dette felt skal være en hele tal.');
   }
 
   // Reminder days.
   if (preg_match('/[^\d|,| ]/', $form_state['values']['valghalla_notifications_rsvp_reminder_days'])) {
-    // Found illigal chars in the form.
+
+    // Found illegal chars in the form.
     form_set_error('valghalla_rsvp_reminder_days', 'Dette felt skal være en komma-separeret liste af hele tal.');
   }
 }

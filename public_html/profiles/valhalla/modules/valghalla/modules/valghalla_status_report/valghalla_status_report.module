@@ -82,7 +82,8 @@ function valghalla_status_report_form_validate($form, &$form_state) {
 
   // Status report.
   if (preg_match('/[^\d|,| ]/', $form_state['values']['valghalla_status_report_days'])) {
-    // Found illigal chars in the form.
+
+    // Found illegal chars in the form.
     form_set_error('valghalla_status_report_days', 'Dette felt skal være en komma-separeret liste af hele tal.');
   }
 }
