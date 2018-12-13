@@ -233,3 +233,50 @@ function valghalla_internal_server_notify_volunteer_last_seat($node) {
     }
   }
 }
+
+/**
+ * Deanonymizes the node.
+ *
+ * Does that by decrypting the CPR, email and phone fields.
+ *
+ * @param mixed $node
+ *   The node to deanonymize.
+ */
+function valghalla_internal_server_deanonymize_node($node) {
+  if ($node->type == 'volunteers') {
+    $external_server_hash_salt = variable_get('valghalla_external_server_hash_salt');
+
+    $cpr_field_language = field_language('node', $node, 'field_cpr_number');
+    $cpr = $node->field_cpr_number[$cpr_field_language][0]['value'];
+
+    // If CPR format fails, try decrypting it.
+    if (!preg_match('/[0-9]{10}/', $cpr) && !preg_match('/[0-9]{6}-[0-9]{4}/', $cpr)) {
+      $cpr = valghalla_synch_node_export_get_decrypt($cpr, $external_server_hash_salt);
+
+      // Check the CPR format, after decryption.
+      if (preg_match('/[0-9]{10}/', $cpr) || preg_match('/[0-9]{6}-[0-9]{4}/', $cpr)) {
+        // Format passed, change the CPR in the node.
+        $node->field_cpr_number[$cpr_field_language][0]['value'] = $cpr;
+        $node->field_cpr_number[$cpr_field_language][0]['safe_value'] = $cpr;
+      }
+    }
+
+    // Email field.
+    $email_field_language = field_language('node', $node, 'field_email');
+    if (isset($node->field_email[$email_field_language])) {
+      $email = $node->field_email[$email_field_language][0]['email'];
+      $email = valghalla_synch_node_export_get_decrypt($email, $external_server_hash_salt);
+      $node->field_email[$email_field_language][0]['email'] = $email;
+    }
+
+    // Phone field.
+    $phone_field_language = field_language('node', $node, 'field_phone');
+    if (isset($node->field_phone[$phone_field_language])) {
+      $phone = $node->field_phone[$phone_field_language][0]['value'];
+      $phone = valghalla_synch_node_export_get_decrypt($phone, $external_server_hash_salt);
+      $node->field_phone[$phone_field_language][0]['value'] = $phone;
+    }
+  }
+
+  return $node;
+}

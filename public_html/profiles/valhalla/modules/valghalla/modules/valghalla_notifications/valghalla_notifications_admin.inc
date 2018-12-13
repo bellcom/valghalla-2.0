@@ -7,9 +7,10 @@
 /**
  * Notification settings form definition.
  */
-function valghalla_notifications_settings($form, $form_state, $election_nid = FALSE) {
+function valghalla_notifications_settings($form, &$form_state, $election_nid = FALSE) {
   drupal_add_css(drupal_get_path('module', 'valghalla_notifications') . '/css/valghalla_notifications.css');
   $election = node_load($election_nid);
+  $form_state['election_nid'] = $election_nid;
 
   $form['header'] = array(
     '#type' => 'item',
@@ -144,6 +145,8 @@ function valghalla_notifications_settings($form, $form_state, $election_nid = FA
     }
   }
 
+  $form['#submit'][] = 'valghalla_notifications_admin_settings_form_submit';
+
   return system_settings_form($form);
 }
 
@@ -245,4 +248,50 @@ function valghalla_notifications_admin_settings_validate(&$elements, &$form_stat
     // Found illigal chars in the form.
     form_set_error('valghalla_rsvp_reminder_days', 'Dette felt skal være en komma-separeret liste af hele tal.');
   }
+}
+
+/**
+ * Sets the election config export value as serialized object.
+ */
+function valghalla_notifications_admin_settings_form_submit($form, $form_state) {
+  $election_nid = $form_state['election_nid'];
+  $election = node_load($election_nid);
+
+  $notification_settings = array(
+    'general' => array(
+      'mail' => FALSE,
+      'sms' => FALSE,
+    )
+  );
+
+  foreach ($form_state['values'] as $value_key => $value) {
+    // Is general setting.
+    if (preg_match('/valghalla_notifications_' . $election_nid . '_[\D]*_gateway_id/', $value_key)) {
+      if (strcasecmp($value, 'mail') === 0) {
+        $notification_settings['general']['mail'] = TRUE;
+      }
+      elseif (strcasecmp($value, 'sms') === 0) {
+        $notification_settings['general']['sms'] = TRUE;
+      }
+    }
+    // Is role specific setting.
+    elseif (preg_match('/valghalla_notifications_' . $election_nid . '_(\d*)_[\D]*_gateway_id/', $value_key, $matches)) {
+      $role_nid = $matches[1];
+      $uuids = entity_get_uuid_by_id('node', array($role_nid));
+      if (!empty($uuids) && is_array($uuids)) {
+        $role_uuid = reset($uuids);
+        if (strcasecmp($value, 'mail') === 0) {
+          $notification_settings[$role_uuid]['mail'] = TRUE;
+        }
+        elseif (strcasecmp($value, 'sms') === 0) {
+          $notification_settings[$role_uuid]['sms'] = TRUE;
+        }
+      }
+    }
+  }
+
+  $field_language = field_language('node', $election, 'field_election_notif_conf_export');
+  $election->field_election_notif_conf_export[$field_language][0]['value'] = serialize($notification_settings);
+  $election->field_election_notif_conf_export[$field_language][0]['safe_value'] = serialize($notification_settings);
+  node_save($election);
 }
