@@ -137,6 +137,15 @@ function valghalla_volunteer_validator_node_validate($node, $form, &$form_state)
       form_set_value($form['title'], implode(' ', $names_arr), $form_state);
     }
 
+    if (variable_get('valghalla_volunteer_validator_get_subscription_status')) {
+      $subscriptions = valghalla_volunteer_validator_query_service('get_subscriptions_status', $cpr);
+      if (!empty($subscriptions[0]['status'])) {
+        form_set_value(array(
+          '#parents' => array('field_no_mail', $language, 0, 'value'),
+        ), $subscriptions[0]['digital_post'] == FALSE, $form_state);
+      }
+    }
+
     // run validator
     $messages = valghalla_volunteer_validator_query_service('validate_cpr', $cpr, 'single');
 
@@ -187,6 +196,11 @@ function valghalla_volunteer_validator_form_volunteers_node_form_alter(&$form, &
     $form['field_first_name']['#disabled'] = TRUE;
     $form['field_second_name']['#disabled'] = TRUE;
   }
+
+  if (variable_get('valghalla_volunteer_validator_get_subscription_status')) {
+    $form['field_no_mail']['#disabled'] = TRUE;
+  }
+
 }
 
 /**

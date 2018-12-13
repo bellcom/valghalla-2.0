@@ -37,6 +37,8 @@ function vcv_person_lookup_extended_valghalla_volunteer_validator_cpr_service(){
       // If the plugin implements CPR validation, the callback must be
       // specified here.
       'validate_cpr' => 'vcv_person_lookup_extended_validate_cpr',
+      // Fetching digital post and NemSMS subscription status.
+      'get_subscriptions_status' => 'vcv_person_lookup_extended_get_subscription_status',
       // Same as above, but just for fetching the address for the
       // volunteer.
       'get_status' => 'vcv_person_lookup_extended_get_status',
@@ -300,6 +302,36 @@ function vcv_person_lookup_extended_get_status($cpr){
       'status' => TRUE,
       'citizenship' => $message['persondata']->statsborgerskab->landekode,
       'civil_status' => $message['persondata']->status->status
+    );
+  }
+  else {
+    return $message;
+  }
+}
+
+/**
+ * Fetch Digital post and NemSMS status
+ *
+ * @param
+ *  String - PSN (cpr) ([0-9]{6}\-[0-9]{4})
+ *
+ * @return
+ *  Array
+ *  (
+ *    [status] => TRUE/FALSE
+ *    [digital_post] => TRUE/FALSE
+ *    [nemsms] => TRUE/FALSE
+ *  )
+ */
+function vcv_person_lookup_extended_get_subscription_status($cpr){
+  $message = vcv_person_lookup_extended_query($cpr);
+
+  // If all goes well we return de address as valghalla wants it.
+  if ($message['status']) {
+    return array(
+      'status' => TRUE,
+      'digital_post' => $message['persondata']->tilmeldtDigitalpost,
+      'nem_sms' => $message['persondata']->tilmeldtNemsms,
     );
   }
   else {

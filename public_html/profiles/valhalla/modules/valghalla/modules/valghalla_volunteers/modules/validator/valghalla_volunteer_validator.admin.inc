@@ -48,6 +48,12 @@ function valghalla_volunteer_validator_settings() {
       '#default_value' => variable_get('valghalla_volunteer_validator_get_name', FALSE),
   );
 
+  $form['valghalla_volunteer_validator_get_subscription_status'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Hent deltagerens Digital post tilmeldingstatus fra CPR service.'),
+      '#default_value' => variable_get('valghalla_volunteer_validator_get_subscription_status', FALSE),
+  );
+
   $header = ['CPR service', 'Beskrivelse', 'Understøtter', 'Valgmuligheder'];
 
   $form['valghalla_volunteer_validator_cpr_service'] = array(
