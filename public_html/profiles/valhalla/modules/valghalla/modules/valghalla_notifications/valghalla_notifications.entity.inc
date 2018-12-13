@@ -131,7 +131,8 @@ function entity_valghalla_notification_notification_tab_title() {
     ->propertyOrderBy('created', 'DESC')
     ->propertyCondition('vol_id', arg(1))
     ->execute();
-  return t('Notifications (@count)', array('@count' => count(reset($notification_ids))));
+  $count = empty($notification_ids) ? 0 : count(reset($notification_ids));
+  return t('Notifications (@count)', array('@count' => $count));
 }
 
 /**
@@ -181,7 +182,7 @@ function entity_valghalla_notification_list_entities($vol_nid = FALSE) {
       $row['data'] = $row_data;
       if (strtolower($entity->status) == 'failed') {
         $row['style'] = 'background-color:#ffdddd;';
-        $row['class'] = 'failed';
+        $row['class'] = 'failed warning';
       }
       $rows[] = $row;
     }

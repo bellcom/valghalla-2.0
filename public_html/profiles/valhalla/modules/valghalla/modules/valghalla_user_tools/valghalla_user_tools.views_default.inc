@@ -147,6 +147,14 @@ function valghalla_user_tools_views_default_views() {
   $handler->display->display_options['fields']['field_party']['table'] = 'field_data_field_party';
   $handler->display->display_options['fields']['field_party']['field'] = 'field_party';
   $handler->display->display_options['fields']['field_party']['type'] = 'taxonomy_term_reference_plain';
+  /* Felt: Indhold: Fritagelse for Digital Post */
+  $handler->display->display_options['fields']['field_no_mail']['id'] = 'field_no_mail';
+  $handler->display->display_options['fields']['field_no_mail']['table'] = 'field_data_field_no_mail';
+  $handler->display->display_options['fields']['field_no_mail']['field'] = 'field_no_mail';
+  $handler->display->display_options['fields']['field_no_mail']['label'] = '';
+  $handler->display->display_options['fields']['field_no_mail']['exclude'] = TRUE;
+  $handler->display->display_options['fields']['field_no_mail']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['field_no_mail']['type'] = 'list_key';
   /* Sorteringskriterie: Indhold: Oprettelsesdato */
   $handler->display->display_options['sorts']['created']['id'] = 'created';
   $handler->display->display_options['sorts']['created']['table'] = 'node';
@@ -484,7 +492,7 @@ function valghalla_user_tools_views_default_views() {
   $handler->display->display_options['fields']['edit_term']['table'] = 'taxonomy_term_data';
   $handler->display->display_options['fields']['edit_term']['field'] = 'edit_term';
   $handler->display->display_options['fields']['edit_term']['label'] = 'Rediger';
-  /* Filterkriterie: Ordforråd: Internt navn */
+  /* Filterkriterie: Ordforråd: Maskinnavn */
   $handler->display->display_options['filters']['machine_name']['id'] = 'machine_name';
   $handler->display->display_options['filters']['machine_name']['table'] = 'taxonomy_vocabulary';
   $handler->display->display_options['filters']['machine_name']['field'] = 'machine_name';
@@ -1026,7 +1034,7 @@ function valghalla_user_tools_views_default_views() {
   $handler->display->display_options['fields']['entity_id']['table'] = 'field_data_body';
   $handler->display->display_options['fields']['entity_id']['field'] = 'body';
   $handler->display->display_options['fields']['entity_id']['label'] = 'indhold';
-  /* Felt: : field_chairman */
+  /* Felt: Handler mangler eller er i stykker */
   $handler->display->display_options['fields']['entity_id_2']['id'] = 'entity_id_2';
   $handler->display->display_options['fields']['entity_id_2']['table'] = 'field_data_field_chairman';
   $handler->display->display_options['fields']['entity_id_2']['field'] = 'field_chairman';
@@ -1102,7 +1110,7 @@ function valghalla_user_tools_views_default_views() {
   $handler->display->display_options['fields']['nid']['element_type'] = 'h4';
   $handler->display->display_options['fields']['nid']['element_label_type'] = '0';
   $handler->display->display_options['fields']['nid']['element_wrapper_type'] = '0';
-  /* Felt: : field_chairman */
+  /* Felt: Handler mangler eller er i stykker */
   $handler->display->display_options['fields']['entity_id_2']['id'] = 'entity_id_2';
   $handler->display->display_options['fields']['entity_id_2']['table'] = 'field_data_field_chairman';
   $handler->display->display_options['fields']['entity_id_2']['field'] = 'field_chairman';
@@ -1212,7 +1220,7 @@ function valghalla_user_tools_views_default_views() {
   $handler->display->display_options['fields']['entity_id']['field'] = 'body';
   $handler->display->display_options['fields']['entity_id']['label'] = 'indhold';
   $handler->display->display_options['fields']['entity_id']['exclude'] = TRUE;
-  /* Felt: : field_chairman */
+  /* Felt: Handler mangler eller er i stykker */
   $handler->display->display_options['fields']['entity_id_2']['id'] = 'entity_id_2';
   $handler->display->display_options['fields']['entity_id_2']['table'] = 'field_data_field_chairman';
   $handler->display->display_options['fields']['entity_id_2']['field'] = 'field_chairman';
@@ -1317,7 +1325,7 @@ function valghalla_user_tools_views_default_views() {
   $handler->display->display_options['fields']['entity_id']['field'] = 'body';
   $handler->display->display_options['fields']['entity_id']['label'] = 'indhold';
   $handler->display->display_options['fields']['entity_id']['exclude'] = TRUE;
-  /* Felt: : field_chairman */
+  /* Felt: Handler mangler eller er i stykker */
   $handler->display->display_options['fields']['entity_id_2']['id'] = 'entity_id_2';
   $handler->display->display_options['fields']['entity_id_2']['table'] = 'field_data_field_chairman';
   $handler->display->display_options['fields']['entity_id_2']['field'] = 'field_chairman';
