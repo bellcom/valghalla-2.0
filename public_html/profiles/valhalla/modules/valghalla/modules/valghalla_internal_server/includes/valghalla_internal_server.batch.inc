@@ -98,13 +98,14 @@ function valghalla_internal_server_batch_clone_op($uuid, $operation_details, &$c
 
         // We have a conflict, the local node was modified after the last pull.
         // Return to the previous revision, as internal server always wins.
-        $logMessage = sprintf('Existing Node "%s" (revision %d) conflicts with the pulled node (revision %d). Reverting to previous revision %d', $existingNode->title, $existingNode->vid, $node->vid, $existingNode->vid);
+        $logMessage = sprintf('Existing Node (revision %d) conflicts with the pulled node (revision %d). Reverting to previous revision %d', $existingNode->vid, $node->vid, $existingNode->vid);
 
         $existingNodeRestored = entity_revision_load('node', $existingNode->vid);
         $existingNodeRestored->revision = TRUE;
         $existingNodeRestored->log = $logMessage;
         entity_save('node', $existingNodeRestored);
 
+        $logMessage = sprintf('Existing Node "%s" (revision %d) conflicts with the pulled node (revision %d). Reverting to previous revision %d', $existingNode->title, $existingNode->vid, $node->vid, $existingNode->vid);
         ValghallaLogger::warning($logMessage);
       }
       else {
