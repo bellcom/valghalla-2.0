@@ -1565,7 +1565,7 @@ function valghalla_volunteers_preprocess_views_view_table(&$variables) {
     if (isset($row->field_field_no_mail[0]['raw']['value'])
       && intval($row->field_field_no_mail[0]['raw']['value'])) {
       $variables['row_classes'][$key][] = 'no-digital-post';
-      $variables['rows'][$key]['title'] .= '(' . t('Fritaget for digital post') . ')';
+      $variables['rows'][$key]['title'] .= ' (' . t('Fritaget for digital post') . ')';
     }
   }
 }
