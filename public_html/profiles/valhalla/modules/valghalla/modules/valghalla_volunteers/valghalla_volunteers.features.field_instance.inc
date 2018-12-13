@@ -1347,7 +1347,7 @@ function valghalla_volunteers_field_default_field_instances() {
     'entity_type' => 'node',
     'field_name' => 'field_first_name',
     'label' => 'Fornavn',
-    'required' => 0,
+    'required' => 1,
     'settings' => array(
       'text_processing' => 0,
       'user_register_form' => FALSE,
@@ -1772,7 +1772,7 @@ function valghalla_volunteers_field_default_field_instances() {
     'entity_type' => 'node',
     'field_name' => 'field_second_name',
     'label' => 'Efternavn',
-    'required' => 0,
+    'required' => 1,
     'settings' => array(
       'text_processing' => 0,
       'user_register_form' => FALSE,

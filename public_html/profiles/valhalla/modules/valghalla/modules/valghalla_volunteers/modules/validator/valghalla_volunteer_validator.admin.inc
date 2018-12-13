@@ -152,7 +152,7 @@ $form['validate_batch_bottom'] = array(
 
   $form['bottom'] = array(
       '#type' => 'item',
-      '#prefix' => '<div><a class="btn btn-default" href="/admin/valghalla/validator/batch/validate">Valider alle deltagere</a>'
+      '#prefix' => '<div><a class="btn btn-default" href="/admin/valghalla/validator/batch/validate">Valider alle deltagere</a>&nbsp;&nbsp;'
       . '<a class="btn btn-link" href="/admin/valghalla/validator/batch/address">Opdater alle deltageres adresser</a></div>',
   );
 
