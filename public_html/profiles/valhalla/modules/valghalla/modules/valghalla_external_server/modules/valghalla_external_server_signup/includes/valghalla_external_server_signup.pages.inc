@@ -9,16 +9,22 @@
  * Builds signup form.
  */
 function valghalla_external_server_signup_signup_form($form, &$form_state) {
-  // Getting election and party from state or URL.
+  // Getting election from state or URL.
   $election = isset($form_state['election']) ? $form_state['election'] : NULL;
   if (!$election) {
     $election = _valghalla_external_server_signup_fetch_entity_from_url('election', 'node');
     $form_state['election'] = $election;
   }
+
+  // Getting election notification config.
+  $field_election_notif_conf_export = field_get_items('node', $election, 'field_election_notif_conf_export');
+  $form_state['election_notif_conf_export'] = unserialize($field_election_notif_conf_export[0]['value']);
+
   // Setting the election nid into the session,
   // as some of the functionality depends on it.
   $_SESSION['election_nid'] = $election->nid;
 
+  // Getting party from state or URL.
   $party = isset($form_state['party']) ? $form_state['party'] : NULL;
   if (!$party) {
     $party = _valghalla_external_server_signup_fetch_entity_from_url('party', 'taxonomy_term');
@@ -75,6 +81,31 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
     '#attributes' => array(
       'placeholder' => 'Temporary field, until NemID login is added',
     ),
+  );
+
+  $form['email-container'] = array(
+    '#prefix' => '<div id="js-email-container" class="form-group">',
+    '#suffix' => '</div>',
+  );
+  $form['email-container']['email'] = array(
+    '#type' => 'textfield',
+    '#description' => t('Email'),
+    '#attributes' => array(
+      'placeholder' => t('Email'),
+    ),
+    '#access' => valghalla_external_server_signup_field_visibility($form_state, 'mail', ($role) ? $role->uuid : NULL),
+  );
+  $form['phone-container'] = array(
+    '#prefix' => '<div id="js-phone-container" class="form-group">',
+    '#suffix' => '</div>',
+  );
+  $form['phone-container']['phone'] = array(
+    '#type' => 'textfield',
+    '#description' => t('Telefon nr.'),
+    '#attributes' => array(
+      'placeholder' => t('Telefon nr.'),
+    ),
+    '#access' => valghalla_external_server_signup_field_visibility($form_state, 'sms', ($role) ? $role->uuid : NULL),
   );
 
   $form['comment'] = array(
@@ -154,10 +185,6 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
         'effect' => 'none',
       ),
     );
-
-    if (isset($form_state['polling_station_in_url'])) {
-      unset($form['role_select']['#ajax']);
-    }
 
     if (isset($form_state['values']) && isset($form_state['values']['role_select'])) {
       $role_selected = $form_state['values']['role_select'];
@@ -261,39 +288,53 @@ function valghalla_external_server_signup_role_select_callback($form, &$form_sta
   $commands = array();
 
   $role_selected = $form_state['values']['role_select'];
-  $polling_station_selected = $form_state['values']['polling_station_select'];
+  $uuids = entity_get_uuid_by_id('node', array($role_selected));
+  if (!empty($uuids) && is_array($uuids)) {
+    $role_uuid = reset($uuids);
+  }
 
-  // Updating polling station select.
-  if ($role_selected) {
-    $psExists = FALSE;
-    if ($polling_station_selected) {
-      foreach ($form_state['available_polling_stations'] as $cons => $psList) {
-        if (array_key_exists($polling_station_selected, $psList)) {
-          $psExists = TRUE;
+  // Updating the email and phone fields visibility.
+  $form['email-container']['email']['#access'] = valghalla_external_server_signup_field_visibility($form_state, 'mail', $role_uuid);
+  $commands[] = ajax_command_replace('#js-email-container', drupal_render($form['email-container']));
+
+  $form['phone-container']['phone']['#access'] = valghalla_external_server_signup_field_visibility($form_state, 'sms', $role_uuid);
+  $commands[] = ajax_command_replace('#js-phone-container', drupal_render($form['phone-container']));
+
+  if (!isset($form_state['polling_station_in_url'])) {
+    $polling_station_selected = $form_state['values']['polling_station_select'];
+
+    // Updating polling station select.
+    if ($role_selected) {
+      $psExists = FALSE;
+      if ($polling_station_selected) {
+        foreach ($form_state['available_polling_stations'] as $cons => $psList) {
+          if (array_key_exists($polling_station_selected, $psList)) {
+            $psExists = TRUE;
+          }
         }
       }
+
+      if (!$polling_station_selected || !$psExists) {
+        $polling_station_selected = 0;
+        $form['polling_station_select']['#value'] = $polling_station_selected;
+      }
+    }
+    $commands[] = ajax_command_replace('#js-polling-stations', drupal_render($form['polling_station_select']));
+
+    // Updating value in the form state.
+    $form_state['values']['polling_station_select'] = $polling_station_selected;
+
+    // Updating polling station details.
+    if ($polling_station_selected) {
+      $polling_station = node_load($polling_station_selected);
+      $form['polling_station_details']['#markup'] = _valghalla_external_server_signup_get_polling_station_detail_html($polling_station);
+    }
+    else {
+      $form['polling_station_details']['#markup'] = '';
     }
 
-    if (!$polling_station_selected || !$psExists) {
-      $polling_station_selected = 0;
-      $form['polling_station_select']['#value'] = $polling_station_selected;
-    }
+    $commands[] = ajax_command_replace('#js-polling-station-details', drupal_render($form['polling_station_details']));
   }
-  $commands[] = ajax_command_replace('#js-polling-stations', drupal_render($form['polling_station_select']));
-
-  // Updating value in the form state.
-  $form_state['values']['polling_station_select'] = $polling_station_selected;
-
-  // Updating polling station details.
-  if ($polling_station_selected) {
-    $polling_station = node_load($polling_station_selected);
-    $form['polling_station_details']['#markup'] = _valghalla_external_server_signup_get_polling_station_detail_html($polling_station);
-  }
-  else {
-    $form['polling_station_details']['#markup'] = '';
-  }
-
-  $commands[] = ajax_command_replace('#js-polling-station-details', drupal_render($form['polling_station_details']));
 
   return array('#type' => 'ajax', '#commands' => $commands);
 }
@@ -368,6 +409,23 @@ function valghalla_external_server_signup_signup_form_validate($form, &$form_sta
   if (!preg_match('/[0-9]{6}-[0-9]{4}/', $cpr)) {
     form_set_error('cpr', t('Wrong CPR format, correct format is 123456-7890'));
   }
+
+  if ($form['email-container']['email']['#access']) {
+    $email = $form_state['values']['email'];
+    if (!valid_email_address($email)) {
+      form_set_error('email', t('Wrong email format, test@gmail.com'));
+    }
+  }
+
+  if ($form['phone-container']['phone']['#access']) {
+    $phone = $form_state['values']['phone'];
+    if (empty($phone)) {
+      form_set_error('phone', t('Phone is empty'));
+    }
+    elseif (strlen($phone) > 12) {
+      form_set_error('phone', t('Phone number is too long'));
+    }
+  }
 }
 
 /**
@@ -376,8 +434,8 @@ function valghalla_external_server_signup_signup_form_validate($form, &$form_sta
 function valghalla_external_server_signup_signup_form_submit($form, &$form_state) {
   $election_nid = $form_state['election']->nid;
   $party_tid = $form_state['party']->tid;
-  $role_nid = ($form_state['role']->nid) ? $form_state['role']->nid : $role_nid = $form_state['values']['role_select'];
-  $polling_station_nid = ($form_state['polling_station']) ? $form_state['polling_station']->nid : $form_state['values']['polling_station_select'];
+  $role_nid = isset($form_state['role']->nid) ? $form_state['role']->nid : $form_state['values']['role_select'];
+  $polling_station_nid = isset($form_state['polling_station']) ? $form_state['polling_station']->nid : $form_state['values']['polling_station_select'];
 
   if ($polling_station_nid && $role_nid && $party_tid && $election_nid) {
     $cpr = $form_state['values']['cpr'];
@@ -393,10 +451,19 @@ function valghalla_external_server_signup_signup_form_submit($form, &$form_state
       $volunteer_node->title = "New volunteer, CPR: " . $cpr;
     }
 
-    if (!$volunteer_node->nid || !odin_volunteer_has_post_on_election($volunteer_node->nid, $election_nid)) {
+    if (!isset($volunteer_node->nid) || !odin_volunteer_has_post_on_election($volunteer_node->nid, $election_nid)) {
       $volunteer_node->status = 1;
       $volunteer_node->field_cpr_number[LANGUAGE_NONE][]['value'] = $cpr;
       $volunteer_node->field_external_signup[LANGUAGE_NONE][]['value'] = 1;
+
+      if (isset($form_state['values']['email'])) {
+        $email_encrypted = valghalla_synch_node_export_get_encrypt($form_state['values']['email']);
+        $volunteer_node->field_email[LANGUAGE_NONE][]['email'] = $email_encrypted;
+      }
+      if (isset($form_state['values']['phone'])) {
+        $phone_encrypted = valghalla_synch_node_export_get_encrypt($form_state['values']['phone']);
+        $volunteer_node->field_phone[LANGUAGE_NONE][]['value'] = $phone_encrypted;
+      }
 
       node_save($volunteer_node);
       $post_info = valghalla_volunteers_add_volunteer_to_post($volunteer_node->nid, $polling_station_nid, $role_nid, $party_tid, $election_nid, 1);
@@ -551,7 +618,33 @@ function valghalla_external_server_signup_settings_form($form, $form_state) {
   return system_settings_form($form);
 }
 
-/*
+/**
+ * Returns the visibility status for email or phone field.
+ *
+ * Used both on form rendering and the ajax call.
+ *
+ * @param mixed $form_state
+ *   Form state.
+ * @param string $propery_name
+ *   Name of the property to check for.
+ * @param string $role_uuid
+ *   The UUID of the role, can be null.
+ *
+ * @return bool
+ *   TRUE or FALSE.
+ */
+function valghalla_external_server_signup_field_visibility($form_state, $propery_name, $role_uuid = NULL) {
+  $conf_export = $form_state['election_notif_conf_export'];
+
+  if ($role_uuid && array_key_exists($role_uuid, $conf_export) && isset($conf_export[$role_uuid][$propery_name])) {
+    return $conf_export[$role_uuid][$propery_name] === TRUE;
+  }
+  else {
+    return $conf_export['general'][$propery_name] === TRUE;
+  }
+}
+
+/**
  * External signup success page.
  */
 function _external_signup_success_page() {
