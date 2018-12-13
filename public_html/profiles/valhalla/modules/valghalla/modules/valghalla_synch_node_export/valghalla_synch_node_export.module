@@ -208,6 +208,9 @@ function valghalla_synch_node_export_get_decrypt($encrypted_data, $key = NULL) {
 function valghalla_synch_node_export_anonymize_node($node, $cipherKey = NULL) {
   // Do the anonymization for volunteers only.
   if ($node->type == 'volunteers') {
+    // Deleting field content.
+    $node->field_first_name = array();
+    $node->field_second_name = array();
     $node->field_address_bnummer = array();
     $node->field_address_city = array();
     $node->field_address_coname = array();
