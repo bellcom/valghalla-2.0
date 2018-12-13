@@ -24,7 +24,7 @@
 
           <div class="flexy-spacer"></div>
 
-          <?php if ($party_posts['party_subscribe_url']): ?>
+          <?php if (isset($party_posts['party_subscribe_url'])): ?>
             <button type="button"
                     class="btn btn-default btn-xs"
                     data-toggle="tooltip"
@@ -36,9 +36,11 @@
             </button>
           <?php endif; ?>
 
-          <a href="<?php print $party_posts['edit_url']; ?>" class="btn btn-default btn-xs" data-toggle="tooltip" data-placement="top" title="<?=t('Redigér'); ?>">
-            <span class="glyphicon glyphicon-edit"></span>
-          </a>
+          <?php if (isset($party_posts['edit_url'])): ?>
+            <a href="<?php print $party_posts['edit_url']; ?>" class="btn btn-default btn-xs" data-toggle="tooltip" data-placement="top" title="<?=t('Redigér'); ?>">
+              <span class="glyphicon glyphicon-edit"></span>
+            </a>
+          <?php endif; ?>
 
         </div>
       </div>
@@ -146,7 +148,7 @@
                 <!-- End - response -->
 
                 <!-- Begin - external seat link -->
-                <?php if ($post['post_subscribe_url']): ?>
+                <?php if (isset($post['post_subscribe_url'])): ?>
                   <button
                     type="button"
                     class="btn btn-default btn-xs"

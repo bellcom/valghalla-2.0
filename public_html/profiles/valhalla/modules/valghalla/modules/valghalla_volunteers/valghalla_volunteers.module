@@ -958,6 +958,8 @@ function valghalla_volunteers_to_polling_station_ajax($action) {
  * Fetch a list of volunteers, without a post
  */
 function valghalla_volunteers_get_volunteers(){
+  $volunteer_result = array();
+  
   $volunteers = db_query('
     SELECT * FROM `node` n
     LEFT JOIN `field_data_field_party` p ON p.entity_id = n.nid
@@ -1002,6 +1004,7 @@ function valghalla_volunteers_get_volunteers(){
 
     $volunteer_result[$value->nid] = array('volunteer_nid' => $value->nid, 'volunteer_name' => $value->title, 'volunteer_party' => $volunteer_party);
   }
+
   return $volunteer_result;
 }
 
