@@ -12,6 +12,114 @@ function valghalla_election_field_default_field_instances() {
   $field_instances = array();
 
   // Exported field_instance:
+  // 'field_collection_item-field_election_role_config-field_erc_role'.
+  $field_instances['field_collection_item-field_election_role_config-field_erc_role'] = array(
+    'bundle' => 'field_election_role_config',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'node_reference',
+        'settings' => array(),
+        'type' => 'node_reference_default',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'field_collection_item',
+    'field_name' => 'field_erc_role',
+    'label' => 'Role',
+    'required' => 1,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'options',
+      'settings' => array(),
+      'type' => 'options_select',
+      'weight' => 1,
+    ),
+  );
+
+  // Exported field_instance:
+  // 'field_collection_item-field_election_role_config-field_etc_collect_email'.
+  $field_instances['field_collection_item-field_election_role_config-field_etc_collect_email'] = array(
+    'bundle' => 'field_election_role_config',
+    'default_value' => array(
+      0 => array(
+        'value' => 0,
+      ),
+    ),
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'list',
+        'settings' => array(),
+        'type' => 'list_default',
+        'weight' => 2,
+      ),
+    ),
+    'entity_type' => 'field_collection_item',
+    'field_name' => 'field_etc_collect_email',
+    'label' => 'Collect email',
+    'required' => 0,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'options',
+      'settings' => array(
+        'display_label' => 1,
+      ),
+      'type' => 'options_onoff',
+      'weight' => 3,
+    ),
+  );
+
+  // Exported field_instance:
+  // 'field_collection_item-field_election_role_config-field_etc_collect_phone'.
+  $field_instances['field_collection_item-field_election_role_config-field_etc_collect_phone'] = array(
+    'bundle' => 'field_election_role_config',
+    'default_value' => array(
+      0 => array(
+        'value' => 0,
+      ),
+    ),
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'list',
+        'settings' => array(),
+        'type' => 'list_default',
+        'weight' => 1,
+      ),
+    ),
+    'entity_type' => 'field_collection_item',
+    'field_name' => 'field_etc_collect_phone',
+    'label' => 'Collect phone',
+    'required' => 0,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'options',
+      'settings' => array(
+        'display_label' => 1,
+      ),
+      'type' => 'options_onoff',
+      'weight' => 2,
+    ),
+  );
+
+  // Exported field_instance:
   // 'field_collection_item-field_volunteers_pr_pol_st_party-field_ppsp_party'.
   $field_instances['field_collection_item-field_volunteers_pr_pol_st_party-field_ppsp_party'] = array(
     'bundle' => 'field_volunteers_pr_pol_st_party',
@@ -259,6 +367,49 @@ function valghalla_election_field_default_field_instances() {
     ),
   );
 
+  // Exported field_instance: 'node-election-field_election_role_config'.
+  $field_instances['node-election-field_election_role_config'] = array(
+    'bundle' => 'election',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'field_collection',
+        'settings' => array(
+          'add' => 'Tilføj',
+          'delete' => 'Slet',
+          'description' => TRUE,
+          'edit' => 'Redigér',
+          'view_mode' => 'full',
+        ),
+        'type' => 'field_collection_view',
+        'weight' => 9,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_election_role_config',
+    'label' => 'Role config',
+    'required' => 0,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 0,
+      'module' => 'field_collection',
+      'settings' => array(),
+      'type' => 'field_collection_embed',
+      'weight' => 10,
+    ),
+  );
+
   // Exported field_instance: 'node-election-field_election_status'.
   $field_instances['node-election-field_election_status'] = array(
     'bundle' => 'election',
@@ -339,6 +490,45 @@ function valghalla_election_field_default_field_instances() {
     ),
   );
 
+  // Exported field_instance: 'node-election-field_email_address'.
+  $field_instances['node-election-field_email_address'] = array(
+    'bundle' => 'election',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => 'Benyttes til videresendelse af tilmeldinger, hvor der er udfyldt kommentarer',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'email',
+        'settings' => array(),
+        'type' => 'email_default',
+        'weight' => 10,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_email_address',
+    'label' => 'E-mail adresse',
+    'required' => 0,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'email',
+      'settings' => array(
+        'size' => 60,
+      ),
+      'type' => 'email_textfield',
+      'weight' => 3,
+    ),
+  );
+
   // Exported field_instance: 'node-election-field_polling_stations'.
   $field_instances['node-election-field_polling_stations'] = array(
     'bundle' => 'election',
@@ -376,6 +566,47 @@ function valghalla_election_field_default_field_instances() {
       'settings' => array(),
       'type' => 'options_buttons',
       'weight' => 1,
+    ),
+  );
+
+  // Exported field_instance: 'node-election-field_signup_comment'.
+  $field_instances['node-election-field_signup_comment'] = array(
+    'bundle' => 'election',
+    'default_value' => array(
+      0 => array(
+        'value' => 1,
+      ),
+    ),
+    'deleted' => 0,
+    'description' => 'Angiv om det er muligt at tilføje en kommentar ved tilmelding til valget.',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'list',
+        'settings' => array(),
+        'type' => 'list_default',
+        'weight' => 8,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_signup_comment',
+    'label' => 'Kommentar ved tilmelding',
+    'required' => 1,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'options',
+      'settings' => array(),
+      'type' => 'options_buttons',
+      'weight' => 2,
     ),
   );
 
@@ -783,21 +1014,28 @@ function valghalla_election_field_default_field_instances() {
   // Translatables
   // Included for use with string extractors like potx.
   t(' Terms and conditions text');
+  t('Angiv om det er muligt at tilføje en kommentar ved tilmelding til valget.');
   t('Angiv om dette parti skal modtage PDF rapporter.');
+  t('Benyttes til videresendelse af tilmeldinger, hvor der er udfyldt kommentarer');
   t('Body');
   t('Bogstav');
   t('CVR nummer');
+  t('Collect email');
+  t('Collect phone');
   t('Commenting enabled');
   t('Dato');
   t('Deltagere pr. parti');
   t('E-mail adresse');
   t('Emails sendt');
   t('Fuldt partinavn');
+  t('Kommentar ved tilmelding');
   t('Logo');
   t('Modtag PDF rapport');
   t('Partisekretær');
   t('Party');
   t('Polling Station');
+  t('Role');
+  t('Role config');
   t('Subscription comment');
   t('Sæt igang');
   t('Type');
