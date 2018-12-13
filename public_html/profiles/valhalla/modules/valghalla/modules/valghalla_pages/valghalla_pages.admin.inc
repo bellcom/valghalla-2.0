@@ -13,7 +13,7 @@ function valghalla_pages_admin_valghalla() {
     <div><h3>' . t('Liste over valg') . '</h3></div>';
 
   // Fetch all elecitons.
-  $rows = '';
+  $rows = array();
   $query = new EntityFieldQuery();
   $query->entityCondition('entity_type', 'node')
         ->entityCondition('bundle', 'election')
