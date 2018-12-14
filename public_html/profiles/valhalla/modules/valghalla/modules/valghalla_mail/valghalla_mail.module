@@ -158,11 +158,12 @@ function valghalla_mail_get_message($template_node) {
   if (!empty($files)) {
     foreach ($files as $file_info) {
       $file = file_load($file_info['fid']);
-      $uri = drupal_realpath($file->uri);
+      $parts = pathinfo($file->uri);
       $attachments[] = array(
-        'filecontent' => $uri,
+        'filecontent' => file_get_contents($file->uri),
         'filename' => $file->filename,
         'filemime' => $file->filemime,
+        'extension' => $parts['extension'],
       );
     }
   }

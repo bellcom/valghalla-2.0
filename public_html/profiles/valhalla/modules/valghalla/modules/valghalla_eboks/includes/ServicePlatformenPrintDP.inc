@@ -72,14 +72,12 @@ class ServicePlatformenPrintDP extends ServicePlatformenPrint {
 
     if (!empty($params['attachments'])) {
       $attachments = array();
-      foreach ($params['attachments'] as $key => $file) {
-        $path = drupal_realpath($file->uri);
-        $parts = pathinfo($path);
+      foreach ($params['attachments'] as $key => $attachment) {
         $attachments[] = array(
-          'BilagNavn' => $file->filename,
+          'BilagNavn' => $attachment['filename'],
           'BilagSorteringsIndeksIdentifikator' => $key,
-          'FilformatNavn' => $parts['extension'],
-          'VedhaeftningIndholdData' => file_get_contents($file->uri),
+          'FilformatNavn' => $attachment['extension'],
+          'VedhaeftningIndholdData' => $attachment['filecontent'],
         );
       }
       $this->request['BrevSPBody']['ForsendelseI']['BilagSamling'] = $attachments;
