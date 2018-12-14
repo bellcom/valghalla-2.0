@@ -133,3 +133,115 @@ function valghalla_internal_server_settings_form_submit($form, &$form_state) {
   $ws = new ExternalWebservice();
   variable_set('valgalla_internal_server_heartbeat', $ws->heartbeat());
 }
+
+/**
+ * Admin form for searching log messages.
+ */
+function valghalla_internal_server_logs_table_form($form, &$form_state) {
+  $header = array(
+    'target_id' => array(
+      'data' => t('Volunteer'),
+      'type' => 'property',
+    ),
+    'cpr' => array(
+      'data' => t('CPR'),
+      'type' => 'property',
+      'field' => 'cpr',
+    ),
+    'message' => array('data' => t('Message')),
+    'timestamp' => array(
+      'data' => t('Timestamp'),
+      'type' => 'property',
+      'field' => 'timestamp',
+      'sort' => 'asc'
+    ),
+  );
+
+  $query = db_select('valghalla_internal_server_logs', 'v')
+    ->fields('v');
+
+  $search_params = array();
+  if (!empty($_GET['date_filter'])) {
+    $search_params['date_filter'] = $_GET['date_filter'];
+
+    switch ($search_params['date_filter']) {
+      case 'last_hour':
+        $query->condition('timestamp', strtotime('-1 hour'), '>=');
+        break;
+
+      case 'today':
+        $query->condition('timestamp', strtotime('today midnight'), '>=');
+        break;
+
+      case 'last_30_days':
+        $query->condition('timestamp', strtotime('-30 days'), '>=');
+        break;
+    }
+  }
+
+  $query = $query->extend('PagerDefault')
+    ->extend('TableSort')
+    ->limit(10)
+    ->orderByHeader($header);
+
+  $result = $query->execute()->fetchAllAssoc('target_id');
+  $nodes = node_load_multiple(array_keys($result));
+
+  $options = array();
+  foreach ($result as $log) {
+    $node = isset($nodes[$log->target_id]) ? $nodes[$log->target_id] : NULL;
+    $options[$log->id] = array(
+      'target_id' => $node ? '<a href=' . url('node/' . $node->nid) . '>' . $node->title . '</a>' : t('Deleted'),
+      'cpr' => $log->cpr,
+      'message' => implode('<br/>', unserialize($log->message)),
+      'timestamp' => format_date($log->timestamp, 'short'),
+    );
+  }
+
+  $form['search'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Basic Search'),
+    '#collapsible' => TRUE,
+    '#collapsed' => FALSE,
+  );
+  $form['search']['date_filter'] = array(
+    '#type' => 'select',
+    '#title' => t('Date filter'),
+    '#options' => array(
+      'last_hour' => t('Last hour'),
+      'today' => t('Today'),
+      'last_30_days' => t('Last 30 days'),
+      'all' => t('Show all'),
+    ),
+    '#default_value' => !empty($search_params['date_filter']) ? $search_params['date_filter'] : 'last_hour',
+  );
+
+  $form['search']['search_submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Search'),
+  );
+
+  $form['entities'] = array(
+    '#type' => 'tableselect',
+    '#header' => $header,
+    '#options' => $options,
+    '#attributes' => array('class' => array('entity-sort-table')),
+    '#empty' => t('No content.'),
+  );
+  $form['pager'] = array('#theme' => 'pager');
+
+  return $form;
+}
+
+/**
+ * Logs messages table for submit method.
+ */
+function valghalla_internal_server_logs_table_form_submit($form, &$form_state) {
+  $values = $form_state['input'];
+
+  drupal_goto('admin/valghalla/validator/internal_server_logs', array(
+    'query' => array(
+      'date_filter' => $values['date_filter'],
+    )
+  ));
+}
