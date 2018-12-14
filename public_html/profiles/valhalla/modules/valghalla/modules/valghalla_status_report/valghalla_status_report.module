@@ -1,7 +1,8 @@
 <?php
+
 /**
  * @file
- * Valhalla blocks module
+ * Valhalla blocks module.
  *
  * @author Thomas Thune Hansen <tth@bellcom.dk>
  * @copyright Bellcom Open Source aps.
@@ -55,7 +56,41 @@ function valghalla_status_report_theme($existing, $type, $theme, $path) {
 }
 
 /**
- * Generates a PDF report
+ * Implements hook_form_alter().
+ */
+function valghalla_status_report_form_alter(&$form, $form_state, $form_id) {
+
+  // First, check for the node type configuration form.
+  if ($form_id == 'valghalla_notifications_admin_settings') {
+
+    // Status report settings.
+    $form['valghalla_notifications']['valghalla_status_report_days'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Status rapport'),
+      '#description' => t('Liste af dage før valg der skal udsendes en status rapport til valgets partier. Dage skal være adskilt af komma ( , ). f.eks. 14, 7, 5, 3'),
+      '#default_value' => variable_get('valghalla_status_report_days', '14, 7, 5, 3'),
+    );
+
+    // Add validate function.
+    $form['#validate'][] = 'valghalla_status_report_form_validate';
+  }
+}
+
+/**
+ * Implements hook_form_validate().
+ */
+function valghalla_status_report_form_validate($form, &$form_state) {
+
+  // Status report.
+  if (preg_match('/[^\d|,| ]/', $form_state['values']['valghalla_status_report_days'])) {
+
+    // Found illegal chars in the form.
+    form_set_error('valghalla_status_report_days', 'Dette felt skal være en komma-separeret liste af hele tal.');
+  }
+}
+
+/**
+ * Generates a PDF report.
  */
 function valghalla_status_report_generator() {
   $pdf = new Pdf();
@@ -177,9 +212,9 @@ function _valghalla_status_report_generate_constituency_markup($constituency_nid
             );
           }
           $constituency_total['role_count'][$role_nid]['assigned'] += isset($role_count['assigned']) ? $role_count['assigned'] : 0;
-          $constituency_total['role_count'][$role_nid]['total']    += isset($role_count['total'])    ? $role_count['total'] : 0;
-          $constituency_total['role_count'][$role_nid]['rsvp_ok']  += isset($role_count['rsvp_ok'])  ? $role_count['rsvp_ok'] : 0;
-          $constituency_total['role_count'][$role_nid]['rsvp_no']  += isset($role_count['rsvp_no'])  ? $role_count['rsvp_no'] : 0;
+          $constituency_total['role_count'][$role_nid]['total']    += isset($role_count['total']) ? $role_count['total'] : 0;
+          $constituency_total['role_count'][$role_nid]['rsvp_ok']  += isset($role_count['rsvp_ok']) ? $role_count['rsvp_ok'] : 0;
+          $constituency_total['role_count'][$role_nid]['rsvp_no']  += isset($role_count['rsvp_no']) ? $role_count['rsvp_no'] : 0;
         }
       }
     }
@@ -236,7 +271,7 @@ function _valghalla_status_report_generate_polling_station_markup($polling_stati
 
     // Check if there is no assigned roles to the statation, and total count is zero.
     if ($polling_station_count[$polling_station_nid]['total_count']['total'] == 0 &&
-        $polling_station_count[$polling_station_nid]['total_count']['assigned'] == 0 ) {
+        $polling_station_count[$polling_station_nid]['total_count']['assigned'] == 0) {
       continue;
     }
 
@@ -245,12 +280,12 @@ function _valghalla_status_report_generate_polling_station_markup($polling_stati
     foreach ($polling_station_count[$polling_station_nid]['role_count'] as $role_nid => $role_count) {
       $label = _valghalla_status_report_get_label($role_count);
 
-      $markup .= '<td class="column-count ' . $label . '">'  .    $role_count['total'] . '/' . $role_count['assigned'] . '</td>';
+      $markup .= '<td class="column-count ' . $label . '">' . $role_count['total'] . '/' . $role_count['assigned'] . '</td>';
     }
 
     $label = _valghalla_status_report_get_label($polling_station_count[$polling_station_nid]['total_count']);
 
-    $markup .= '<td class="column-count ' . $label . '">'  .  $polling_station_count[$polling_station_nid]['total_count']['total'];
+    $markup .= '<td class="column-count ' . $label . '">' . $polling_station_count[$polling_station_nid]['total_count']['total'];
     $markup .= '/' . $polling_station_count[$polling_station_nid]['total_count']['assigned'] . '</td>';
 
     $markup .= '</tr>';
@@ -282,7 +317,7 @@ function _generate_pdf_content($election_nid = NULL, $party_tid = NULL) {
   $markup = '';
 
   // If we didnt pass an election nid, TRY to use the one from the session.
-  if (! $election_nid) {
+  if (!$election_nid) {
 
     if (isset($_SESSION['election_nid'])) {
       $election_nid = $_SESSION['election_nid'];
@@ -330,7 +365,7 @@ function _generate_pdf_content($election_nid = NULL, $party_tid = NULL) {
   return $markup;
 }
 
-/*
+/**
  * Generate markup for external links part of PDF.
  */
 function _generate_pdf_content__party_external_links($party_tid = NULL) {
@@ -348,12 +383,12 @@ function _generate_pdf_content__party_external_links($party_tid = NULL) {
   if ($roles) {
     $markup .= '<h3>' . t('Parti og roller:') . '</h3>';
 
-    foreach($roles as $role_nid => $role_title) {
+    foreach ($roles as $role_nid => $role_title) {
       $role_url = 'http://someurl.com?role_id=' . $role_nid;
 
       $markup .= '<div>';
-      $markup .=   '<h4 style="margin-bottom: 0;"><strong>' . $role_title . ':</strong></h4>';
-      $markup .=   '- <a href="' . $role_url . '">' . $role_url . '</a>';
+      $markup .= '<h4 style="margin-bottom: 0;"><strong>' . $role_title . ':</strong></h4>';
+      $markup .= '- <a href="' . $role_url . '">' . $role_url . '</a>';
       $markup .= '</div>';
     }
   }
@@ -374,7 +409,7 @@ function _generate_pdf_content__party_status($party_tid, $polling_station_nids) 
   // Get polling stations user is allowed to see.
   $restrict_polling_stations = array();
 
-  if (!empty ($user_entity->field_polling_station[LANGUAGE_NONE])) {
+  if (!empty($user_entity->field_polling_station[LANGUAGE_NONE])) {
     foreach ($user_entity->field_polling_station[LANGUAGE_NONE] as $station) {
       $restrict_polling_stations[] = $station['nid'];
     }
@@ -404,7 +439,7 @@ function _generate_pdf_content__party_constituency_status($party_tid, $polling_s
 
   // Get polling stations user is allowed to see.
   $restrict_polling_stations = array();
-  if (!empty ($user_entity->field_polling_station[LANGUAGE_NONE])) {
+  if (!empty($user_entity->field_polling_station[LANGUAGE_NONE])) {
     foreach ($user_entity->field_polling_station[LANGUAGE_NONE] as $station) {
       $restrict_polling_stations[] = $station['nid'];
     }
@@ -435,7 +470,7 @@ function _generate_pdf_content__party_constituency_status($party_tid, $polling_s
   return $markup;
 }
 
-/*
+/**
  * Generates a list of volunteers.
  */
 function _generate_pdf_content__volunteer_list_from_polling_station($party_tid = NULL, $polling_station_nids) {
@@ -446,11 +481,11 @@ function _generate_pdf_content__volunteer_list_from_polling_station($party_tid =
   $selected_party_tid = $party_tid;
 
   // Try to load a selected party tid from the user.
-  if (! $party_tid) {
+  if (!$party_tid) {
     $selected_party_tid = $user_party_id = empty($user->field_party[LANGUAGE_NONE][0]['tid']) ? FALSE : $user->field_party[LANGUAGE_NONE][0]['tid'];
   }
 
-  if (!empty ($user->field_polling_station[LANGUAGE_NONE])) {
+  if (!empty($user->field_polling_station[LANGUAGE_NONE])) {
     $restrict_polling_stations = array();
 
     foreach ($user->field_polling_station[LANGUAGE_NONE] as $station) {
@@ -461,7 +496,7 @@ function _generate_pdf_content__volunteer_list_from_polling_station($party_tid =
   $final_output = '';
 
   // Run through all polling stations.
-  foreach($polling_station_nids as $polling_station_nid => $name) {
+  foreach ($polling_station_nids as $polling_station_nid => $name) {
     $polling_station = node_load($polling_station_nid);
 
     $markup = '<h2>' . $polling_station->title . '</h2>';
@@ -470,7 +505,7 @@ function _generate_pdf_content__volunteer_list_from_polling_station($party_tid =
       // If the user is administrator and theres no party chosen, show all parties!
       $parties = odin_get_parties();
 
-      foreach ($parties  as $party_tid => $party_name) {
+      foreach ($parties as $party_tid => $party_name) {
         if (is_array($restrict_polling_stations) && !in_array($polling_station->nid, $restrict_polling_stations)) {
           continue;
         }
@@ -516,7 +551,7 @@ function _generate_pdf_content__volunteer_list__markup($polling_station, $user_p
 
     $parties_status[$user_party_id] = array(
       'party_status_label' => _valhalla_blocks_get_label($status['total_count']),
-      'status' => $status
+      'status' => $status,
     );
 
     // Return the themed values.
@@ -553,7 +588,7 @@ function _valghalla_status_report_cron() {
     $parties = odin_get_parties();
 
     // Run through all parties.
-    foreach($parties as $party_tid => $party_name) {
+    foreach ($parties as $party_tid => $party_name) {
       $party = taxonomy_term_load($party_tid);
       $party_should_recieve_emails = FALSE;
       $recipient = NULL;
@@ -577,7 +612,7 @@ function _valghalla_status_report_cron() {
       if ($field_cvr_number = field_get_items('taxonomy_term', $party, 'field_cvr_number')) {
         $cvr_number = $field_cvr_number[0]['safe_value'];
       }
-      if (! $recipient OR ! $cvr_number) {
+      if (!$recipient or !$cvr_number) {
         return;
       }
 
@@ -585,7 +620,7 @@ function _valghalla_status_report_cron() {
       $content = _generate_pdf_content($election_nid, $party_tid);
       $pdf->WriteHTML($content);
 
-//      $file = $pdf->Output('', 'S');
+      // $file = $pdf->Output('', 'S');.
       $pdf->Output();
 
       if (!$pdf) {
@@ -593,10 +628,14 @@ function _valghalla_status_report_cron() {
       }
 
       // Send PDF to e-boks.
-      if ($cvr_number) {}
+      if ($cvr_number) {
+
+      }
 
       // Send PDF via e-mail.
-      else if($recipient) {}
+      elseif ($recipient) {
+
+      }
     }
   }
 }

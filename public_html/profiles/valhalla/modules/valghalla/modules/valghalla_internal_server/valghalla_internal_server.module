@@ -218,24 +218,12 @@ function valghalla_internal_server_node_export_node_alter(&$node, $original_node
 /**
  * Implements hook_node_export_node_import_alter().
  *
- * Decrypts the CPR, if needed.
+ * Decrypts the CPR, email and phone.
+ *
+ * @see valghalla_internal_server_deanonymize_node()
  */
 function valghalla_internal_server_node_export_node_import_alter(&$node, $original_node, $save) {
-  if ($node->type == 'volunteers') {
-    $cpr = $node->field_cpr_number[$node->language][0]['value'];
-
-    // If CPR format fails, try decrypting it.
-    if (!preg_match('/[0-9]{10}/', $cpr) && !preg_match('/[0-9]{6}-[0-9]{4}/', $cpr)) {
-      $cpr = valghalla_synch_node_export_get_decrypt($cpr, variable_get('valghalla_external_server_hash_salt'));
-
-      // Check the CPR format, after decryption.
-      if (preg_match('/[0-9]{10}/', $cpr) || preg_match('/[0-9]{6}-[0-9]{4}/', $cpr)) {
-        // Format passed, change the CPR in the node.
-        $node->field_cpr_number[$node->language][0]['value'] = $cpr;
-        $node->field_cpr_number[$node->language][0]['safe_value'] = $cpr;
-      }
-    }
-  }
+  $node = valghalla_internal_server_deanonymize_node($node);
 }
 
 /**

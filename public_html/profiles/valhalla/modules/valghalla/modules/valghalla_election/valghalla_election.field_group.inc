@@ -84,8 +84,9 @@ function valghalla_election_field_group_info() {
       3 => 'field_election_type',
       4 => 'field_polling_stations',
       5 => 'field_election_report_broadcast',
-      6 => 'title',
-      7 => 'field_signup_comment',
+      6 => 'field_signup_comment',
+      7 => 'field_email_address',
+      8 => 'title',
     ),
     'format_type' => 'htab',
     'format_settings' => array(

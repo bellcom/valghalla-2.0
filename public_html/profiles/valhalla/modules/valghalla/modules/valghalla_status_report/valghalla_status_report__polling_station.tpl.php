@@ -72,7 +72,7 @@
                 &nbsp;
                 &nbsp;
                 <!-- Begin - external seat link -->
-                <?php if ($post['post_subscribe_url']): ?>
+                <?php if (isset($post['post_subscribe_url'])): ?>
                   <a href="<?=$post['post_subscribe_url']; ?>">
                     <?= t('Ekstern tilmelding'); ?>
                   </a>

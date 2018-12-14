@@ -58,7 +58,7 @@ function valghalla_internal_server_validate_volunteer($volunteer_node) {
 /**
  * Updates the name and address of volunteer.
  *
- * Fetches the values from from serviceplatform.
+ * Fetches the values from serviceplatform.
  * Saves the node with new values.
  *
  * @param mixed $volunteer_node
@@ -67,24 +67,59 @@ function valghalla_internal_server_validate_volunteer($volunteer_node) {
 function valghalla_internal_server_volunteer_update_name_and_address($volunteer_node) {
   $cpr_field = field_get_items('node', $volunteer_node, 'field_cpr_number');
   $cpr = $cpr_field[0]['value'];
+  $saveNode = FALSE;
 
-  $get_address_messages = valghalla_volunteer_validator_query_service('get_address', $cpr);
-  $lang = $volunteer_node->language;
+  // Fetching the name and address.
+  if (variable_get('valghalla_volunteer_validator_get_address', FALSE)) {
+    $get_address_messages = valghalla_volunteer_validator_query_service('get_address', $cpr);
 
-  foreach ($get_address_messages as $get_address_message) {
-    if ($get_address_message['status']) {
-      $volunteer_node->title = $get_address_message['name'];
-      $volunteer_node->field_address_road[$lang][0]['value'] = $get_address_message['road'];
-      $volunteer_node->field_address_road_no[$lang][0]['value'] = $get_address_message['road_no'];
-      $volunteer_node->field_address_floor[$lang][0]['value'] = $get_address_message['floor'];
-      $volunteer_node->field_address_door[$lang][0]['value'] = $get_address_message['door'];
-      $volunteer_node->field_address_zipcode[$lang][0]['value'] = $get_address_message['zipcode'];
-      $volunteer_node->field_address_city[$lang][0]['value'] = $get_address_message['city'];
-      $volunteer_node->field_address_coname[$lang][0]['value'] = $get_address_message['coname'];
-      $volunteer_node->field_municipality['und'][0]['value'] = $get_address_message['municipality'];
+    foreach ($get_address_messages as $get_address_message) {
+      if ($get_address_message['status']) {
+        $field_map = array(
+          'field_address_road' => 'road',
+          'field_address_road_no' => 'road_no',
+          'field_address_floor' => 'floor',
+          'field_address_door' => 'door',
+          'field_address_zipcode' => 'zipcode',
+          'field_address_city' => 'city',
+          'field_address_coname' => 'coname',
+          'field_municipality' => 'municipality',
+        );
 
-      node_save($volunteer_node);
+        foreach ($field_map as $field => $index) {
+          $lang = field_language('node', $volunteer_node, $field);
+          $volunteer_node->{$field}[$lang][0]['value'] = $get_address_message[$index];
+        }
+
+        $volunteer_node->title = $get_address_message['name'];
+        $saveNode = TRUE;
+      }
     }
+  }
+
+  // Fetching names split.
+  if (variable_get('valghalla_volunteer_validator_get_name')) {
+    $field_map = array(
+      'field_first_name' => 'fornavn',
+      'field_second_name' => 'efternavn',
+    );
+
+    $data = vcv_person_lookup_extended_query($cpr);
+
+    $names_arr = array();
+    foreach ($field_map as $field => $index) {
+      $lang = field_language('node', $volunteer_node, $field);
+
+      $volunteer_node->{$field}[$lang][0]['value'] = $data['persondata']->navn->{$index};
+      $names_arr[] = $data['persondata']->navn->{$index};
+    }
+
+    $volunteer_node->title = implode(' ', $names_arr);
+    $saveNode = TRUE;
+  }
+
+  if ($saveNode) {
+    node_save($volunteer_node);
   }
 }
 
@@ -232,4 +267,51 @@ function valghalla_internal_server_notify_volunteer_last_seat($node) {
       valghalla_volunteers_notify_volunteer($election_nid, $role_nid, $electionInfo, 'confirmed');
     }
   }
+}
+
+/**
+ * Deanonymizes the node.
+ *
+ * Does that by decrypting the CPR, email and phone fields.
+ *
+ * @param mixed $node
+ *   The node to deanonymize.
+ */
+function valghalla_internal_server_deanonymize_node($node) {
+  if ($node->type == 'volunteers') {
+    $external_server_hash_salt = variable_get('valghalla_external_server_hash_salt');
+
+    $cpr_field_language = field_language('node', $node, 'field_cpr_number');
+    $cpr = $node->field_cpr_number[$cpr_field_language][0]['value'];
+
+    // If CPR format fails, try decrypting it.
+    if (!preg_match('/[0-9]{10}/', $cpr) && !preg_match('/[0-9]{6}-[0-9]{4}/', $cpr)) {
+      $cpr = valghalla_synch_node_export_get_decrypt($cpr, $external_server_hash_salt);
+
+      // Check the CPR format, after decryption.
+      if (preg_match('/[0-9]{10}/', $cpr) || preg_match('/[0-9]{6}-[0-9]{4}/', $cpr)) {
+        // Format passed, change the CPR in the node.
+        $node->field_cpr_number[$cpr_field_language][0]['value'] = $cpr;
+        $node->field_cpr_number[$cpr_field_language][0]['safe_value'] = $cpr;
+      }
+    }
+
+    // Email field.
+    $email_field_language = field_language('node', $node, 'field_email');
+    if (isset($node->field_email[$email_field_language])) {
+      $email = $node->field_email[$email_field_language][0]['email'];
+      $email = valghalla_synch_node_export_get_decrypt($email, $external_server_hash_salt);
+      $node->field_email[$email_field_language][0]['email'] = $email;
+    }
+
+    // Phone field.
+    $phone_field_language = field_language('node', $node, 'field_phone');
+    if (isset($node->field_phone[$phone_field_language])) {
+      $phone = $node->field_phone[$phone_field_language][0]['value'];
+      $phone = valghalla_synch_node_export_get_decrypt($phone, $external_server_hash_salt);
+      $node->field_phone[$phone_field_language][0]['value'] = $phone;
+    }
+  }
+
+  return $node;
 }
