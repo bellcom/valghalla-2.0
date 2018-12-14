@@ -33,10 +33,15 @@ function valghalla_internal_server_schema() {
       ),
       'target_uuid' => uuid_schema_field_definition(),
       'target_id' => array(
-        'description' => 'The primary identifier for a node or taxonomy_term',
+        'description' => 'The primary identifier for a node',
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
+      ),
+      'cpr' => array(
+        'description' => 'The CPR of the volunteer',
+        'type' => 'varchar',
+        'length' => 255,
       ),
       'message' => array(
         'description' => 'The actual log message',
@@ -53,4 +58,18 @@ function valghalla_internal_server_schema() {
   );
 
   return $schema;
+}
+
+/**
+ * Implements hook_update_N().
+ *
+ * Add CPR field to valghalla_internal_server_logs table.
+ */
+function valghalla_internal_server_update_7101() {
+  $field = array(
+    'description' => 'The CPR of the volunteer',
+    'type' => 'varchar',
+    'length' => 255,
+  );
+  db_add_field('valghalla_internal_server_logs', 'cpr', $field);
 }
