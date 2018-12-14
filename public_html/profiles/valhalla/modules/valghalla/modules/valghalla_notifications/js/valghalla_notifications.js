@@ -1,3 +1,8 @@
+/**
+ * @file
+ * Provides valghallaNotification behavior.
+ */
+
 (function ($) {
   "use strict";
 
@@ -17,7 +22,7 @@
 
       $form.find('.js-show-volunteer-message').click(function(event){
         var id = $(this).attr('id');
-        jQuery.get("/valghalla_notifications/ajax/view/"+id, function(data){
+        jQuery.get("/valghalla_notifications/ajax/view/" + id, function(data){
           $('.js-volunteer-preview-message').html(data);
         });
         return false;

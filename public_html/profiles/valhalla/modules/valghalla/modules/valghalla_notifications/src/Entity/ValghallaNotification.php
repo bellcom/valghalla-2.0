@@ -31,13 +31,6 @@ class ValghallaNotification extends Entity {
   public $status;
 
   /**
-   * The status details.
-   *
-   * @var string
-   */
-  public $status_info;
-
-  /**
    * The Unix timestamp when the task was created.
    *
    * @var int

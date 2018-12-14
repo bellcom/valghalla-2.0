@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * Contains install function for Valghalla notifications module
+ * Contains install function for Valghalla notifications module.
  */
 
 /**
@@ -150,4 +150,3 @@ function valghalla_notifications_schema() {
 
   return $schema;
 }
-
