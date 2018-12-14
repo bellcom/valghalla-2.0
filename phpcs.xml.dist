@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ruleset name="loop">
   <description>PHP CodeSniffer configuration for Valghalla</description>
+  <arg name="extensions" value="inc,install,module,php,profile,test,theme"/>
 
   <!-- General -->
   <file>public_html/profiles/valhalla/modules/valghalla/src</file>
