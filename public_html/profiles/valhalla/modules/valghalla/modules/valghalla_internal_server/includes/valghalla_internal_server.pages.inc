@@ -178,6 +178,10 @@ function valghalla_internal_server_logs_table_form($form, &$form_state) {
         break;
     }
   }
+  else {
+    // Last hour is default filtering.
+    $query->condition('timestamp', strtotime('-1 hour'), '>=');
+  }
 
   $query = $query->extend('PagerDefault')
     ->extend('TableSort')
