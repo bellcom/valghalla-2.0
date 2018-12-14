@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ruleset name="loop">
+  <description>PHP CodeSniffer configuration for Valghalla</description>
+
+  <!-- General -->
+  <file>public_html/profiles/valhalla/modules/valghalla/src</file>
+  <file>public_html/profiles/valhalla/modules/valghalla/valghalla.install</file>
+  <file>public_html/profiles/valhalla/modules/valghalla/modules/valghalla_gdpr_dump</file>
+
+  <!-- External/internal servers and communication -->
+  <file>public_html/profiles/valhalla/modules/valghalla/modules/valghalla_external_server</file>
+  <file>public_html/profiles/valhalla/modules/valghalla/modules/valghalla_internal_server</file>
+  <file>public_html/profiles/valhalla/modules/valghalla/modules/valghalla_synch_node_export</file>
+  <file>public_html/profiles/valhalla/modules/valghalla/modules/valghalla_synch_queue</file>
+
+  <!-- Notifications -->
+  <file>public_html/profiles/valhalla/modules/valghalla/modules/valghalla_eboks</file>
+  <file>public_html/profiles/valhalla/modules/valghalla/modules/valghalla_sms</file>
+  <file>public_html/profiles/valhalla/modules/valghalla/modules/valghalla_mail</file>
+  <file>public_html/profiles/valhalla/modules/valghalla/modules/valghalla_notifications</file>
+
+  <!-- Theme -->
+  <file>public_html/profiles/valhalla/themes/custom/bellcom</file>
+  <file>public_html/profiles/valhalla/themes/custom/site</file>
+
+  <exclude-pattern>*.features.*</exclude-pattern>
+  <exclude-pattern>*.pages_default.inc</exclude-pattern>
+  <exclude-pattern>*.strongarm.inc</exclude-pattern>
+  <exclude-pattern>*.views_default.inc</exclude-pattern>
+  <exclude-pattern>public_html/profiles/valhalla/themes/custom/site/dist/*</exclude-pattern>
+  <exclude-pattern>public_html/profiles/valhalla/themes/custom/site/node_modules/*</exclude-pattern>
+
+  <!-- Show progress -->
+  <arg value="p"/>
+
+  <rule ref="Drupal"/>
+</ruleset>
