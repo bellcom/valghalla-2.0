@@ -2,7 +2,7 @@
   <?php foreach ($party_posts_to_fill as $party_tid => $party_posts): ?>
 
     <!-- Begin - heading -->
-    <h3><?php print $party_posts['party_name']; ?></h3>
+    <h3><?php print t('Parti') . ' ' . $party_posts['party_name']; ?>:</h3>
     <!-- End - heading -->
 
     <!-- Begin - body -->
