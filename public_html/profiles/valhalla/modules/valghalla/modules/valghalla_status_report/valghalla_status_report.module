@@ -336,7 +336,7 @@ function _generate_pdf_content($election_nid = NULL, $party_tid = NULL) {
     $markup .= '<pagebreak>';
 
     $markup .= '<h1>' . t('Eksterne links') . '</h1>';
-    $markup .= _generate_pdf_content__party_external_links($party_tid);
+    $markup .= _generate_pdf_content__party_external_links($election_node->nid, $party_tid);
   }
 
   // Volunteer list.
@@ -351,28 +351,69 @@ function _generate_pdf_content($election_nid = NULL, $party_tid = NULL) {
 /**
  * Generate markup for external links part of PDF.
  */
-function _generate_pdf_content__party_external_links($party_tid = NULL) {
+function _generate_pdf_content__party_external_links($election_nid = NULL, $party_tid = NULL) {
+  $election = node_load($election_nid);
   $roles = odin_get_roles();
+  $polling_station_nids = odin_get_polling_stations($election_nid);
 
-  // Link to external signup link for this party.
-  $party_url = 'http://someurl.com?party_id=' . $party_tid;
+  // Party.
+  $party = taxonomy_term_load($party_tid);
+  $party_url = valghalla_internal_server_generate_external_subscribe_url($election, $party, $role = NULL, $polling_station = NULL);
 
-  $markup = '<h3 style="margin-bottom: 0;">' . t('Parti:') . '</h3>';
-  $markup .= '- <a href="' . $party_url . '">' . $party_url . '</a>';
+  $markup = '<h2 style="margin-bottom: 0;">' . t('Parti') . ' ' . $party->name . ': <a href="' . $party_url . '">' . t('Link til tilmelding') . '</a></h2>';
 
-  $markup .= '<br><br>';
-
-  // Loop through all roles, and create an "external signup" link for this role.
+  // Roles.
   if ($roles) {
-    $markup .= '<h3>' . t('Parti og roller:') . '</h3>';
+    $markup .= '<br>';
+    $markup .= '<h2>' . t('Roller:') . '</h2>';
+
+    $markup .= '<table>';
+    $markup .= '<tr>';
+    $markup .= '  <th>' . t('Rolle') . '</th>';
+    $markup .= '  <th>' . t('Eksternt link') . '</th>';
+    $markup .= '</tr>';
 
     foreach ($roles as $role_nid => $role_title) {
-      $role_url = 'http://someurl.com?role_id=' . $role_nid;
+      $role = node_load($role_nid);
+      $role_url = valghalla_internal_server_generate_external_subscribe_url($election, $party, $role, $polling_station = NULL);
 
-      $markup .= '<div>';
-      $markup .= '<h4 style="margin-bottom: 0;"><strong>' . $role_title . ':</strong></h4>';
-      $markup .= '- <a href="' . $role_url . '">' . $role_url . '</a>';
-      $markup .= '</div>';
+      $markup .= '<tr>';
+      $markup .= '  <td>' . $role_title . ':</td>';
+      $markup .= '  <td><a href="' . $role_url . '">' . t('Link til tilmelding') . '</a></td>';
+      $markup .= '</tr>';
+    }
+
+    $markup .= '</table>';
+  }
+
+  // Polling station.
+  if ($polling_station_nids) {
+    $markup .= '<h2>' . t('Afstemningssteder:') . '</h2>';
+
+    // Run through all polling stations.
+    foreach($polling_station_nids as $polling_station_nid => $polling_station_title) {
+      $polling_station = node_load($polling_station_nid);
+      $polling_station_url = valghalla_internal_server_generate_external_subscribe_url($election, $party, $role = NULL, $polling_station);
+
+      $markup .= '<h3>' . $polling_station_title . ' (<a href="' . $polling_station_url . '">' . t('Link til tilmelding') . '</a>)</h3>';
+
+      $markup .= '<table>';
+      $markup .= '<tr>';
+      $markup .= '  <th>' . t('Rolle') . '</th>';
+      $markup .= '  <th>' . t('Eksternt link') . '</th>';
+      $markup .= '</tr>';
+
+      foreach ($roles as $role_nid => $role_title) {
+        $role = node_load($role_nid);
+        $polling_station_role_url = valghalla_internal_server_generate_external_subscribe_url($election, $party, $role, $polling_station);
+
+        $markup .= '<tr>';
+        $markup .= '  <td>' . $role_title . ':</td>';
+        $markup .= '  <td><a href="' . $polling_station_role_url . '">' . t('Link til tilmelding') . '</a></td>';
+        $markup .= '</tr>';
+      }
+
+      $markup .= '</table>';
     }
   }
 

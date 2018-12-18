@@ -3,12 +3,6 @@
 
     <!-- Begin - heading -->
     <h3><?php print $party_posts['party_name']; ?></h3>
-
-    <?php if ($party_posts['party_subscribe_url']): ?>
-      <a href="<?php print $party_posts['party_subscribe_url'] ?>">
-        <?=t('Eksternt link'); ?>
-      </a>
-    <?php endif; ?>
     <!-- End - heading -->
 
     <!-- Begin - body -->
@@ -18,7 +12,6 @@
         <th><?=t('Status'); ?></th>
         <th><?=t('Rolle'); ?></th>
         <th><?=t('Navn'); ?></th>
-        <th></th>
       </tr>
       </thead>
 
@@ -67,28 +60,13 @@
               </td>
               <!-- End - name -->
 
-              <!-- Begin - controls -->
-              <td>
-                &nbsp;
-                &nbsp;
-                <!-- Begin - external seat link -->
-                <?php if (isset($post['post_subscribe_url'])): ?>
-                  <a href="<?=$post['post_subscribe_url']; ?>">
-                    <?= t('Ekstern tilmelding'); ?>
-                  </a>
-                <?php endif; ?>
-                <!-- End - external seat link -->
-
-              </td>
-              <!-- End - controls -->
-
             </tr>
           <?php endforeach; ?>
         </tbody>
       <?php else: ?>
         <tbody>
         <tr>
-          <td colspan="4">
+          <td colspan="3">
             <?=t('Dette parti har ingen tildelte pladser.'); ?>
           </td>
         </tr>
