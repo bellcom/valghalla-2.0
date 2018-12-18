@@ -6,7 +6,7 @@
 function site_preprocess_html(&$variables) {
   $theme_path = path_to_theme();
 
-  // Add javascript files
+  // Add javascript files.
   drupal_add_js($theme_path . '/dist/javascripts/modernizr.js',
     [
       'type' => 'file',
@@ -31,9 +31,9 @@ function site_preprocess_html(&$variables) {
 function site_preprocess_page(&$variables) {
   $current_theme = variable_get('theme_default', 'none');
   $primary_navigation_name = variable_get('menu_main_links_source', 'main-menu');
-  $secondary_navigation_name = variable_get('menu_secondary_links_source', 'user-menu');
 
-  // Overriding the one set by mother theme, as we want to limit the number of levels shown
+  // Overriding the one set by mother theme, as we want to limit the
+  // number of levels shown.
   $variables['theme_path'] = base_path() . drupal_get_path('theme', $current_theme);
 
   // Navigation.
@@ -52,7 +52,7 @@ function site_preprocess_page(&$variables) {
   $variables['valghalla_lists']['navigation'] = valghalla_bs_theme_navbarmenu('valghalla_lists');
   $variables['admin_valghalla']['navigation'] = valghalla_bs_theme_navbarmenu('admin/valghalla');
 
-  // Election party switcher
+  // Election party switcher.
   $variables['election_party_switcher'] = module_invoke('valghalla', 'block_view', 'election_party_switcher');
 }
 
@@ -76,7 +76,7 @@ function site_preprocess_node(&$variables) {
   }
 }
 
-/*
+/**
  * Implements template_preprocess_taxonomy_term().
  */
 function site_preprocess_taxonomy_term(&$variables) {
@@ -87,11 +87,13 @@ function site_preprocess_taxonomy_term(&$variables) {
   // Add taxonomy-term--view_mode.tpl.php suggestions.
   $variables['theme_hook_suggestions'][] = 'taxonomy_term__' . $view_mode;
 
-  // Make "taxonomy-term--TERMTYPE--VIEWMODE.tpl.php" templates available for terms.
+  // Make "taxonomy-term--TERMTYPE--VIEWMODE.tpl.php" templates
+  // available for terms.
   $variables['theme_hook_suggestions'][] = 'taxonomy_term__' . $vocabulary_machine_name . '__' . $view_mode;
 
-  // Optionally, run node-type-specific preprocess functions, like
-  // foo_preprocess_taxonomy_term_page() or foo_preprocess_taxonomy_term_story().
+  // Optionally, run node-type-specific preprocess functions,
+  // like foo_preprocess_taxonomy_term_page()
+  // or foo_preprocess_taxonomy_term_story().
   $function_taxonomy_term_type = __FUNCTION__ . '__' . $vocabulary_machine_name;
   $function_view_mode = __FUNCTION__ . '__' . $view_mode;
 
@@ -130,10 +132,10 @@ function valghalla_bs_theme_navbarmenu($path) {
       $items[] = array(
         'class' => 'flexy-navigation__item__dropdown-menu__item',
         'data' => l($item_data['#title'], $item_data['#href'], array(
-            'attributes' => $item_data['#attributes'],
-            'html'       => TRUE,
-          )
+          'attributes' => $item_data['#attributes'],
+          'html'       => TRUE,
         )
+        ),
       );
     }
   }
@@ -172,14 +174,20 @@ function valhalla_bs_last_editor($node) {
   return $account->name;
 }
 
-function valhalla_bs_vol_mail($node) {
+/**
+ * Helper function for generating content.
+ */
+function _theme_generate_mail($node) {
   if ($field = field_get_items('node', $node, 'field_email')) {
     return l($field[0]['email'], 'mailto:' . $field[0]['email']);
   }
   return '';
 }
 
-function valhalla_bs_vol_address($node) {
+/**
+ * Helper function for generating content.
+ */
+function _theme_generate_address($node) {
   $address = '';
 
   if ($field = field_get_items('node', $node, 'field_address_road')) {
@@ -209,23 +217,34 @@ function valhalla_bs_vol_address($node) {
   return $address;
 }
 
-function valhalla_bs_vol_phone($node) {
+/**
+ * Helper function for generating content.
+ */
+function _theme_generate_phone($node) {
   if ($field = field_get_items('node', $node, 'field_phone')) {
     return $field[0]['value'];
   }
+
   return '';
 }
 
-function valhalla_bs_vol_no_mail($node) {
+/**
+ * Helper function for generating content.
+ */
+function _theme_generate_no_mail($node) {
   if ($field = field_get_items('node', $node, 'field_no_mail')) {
     if ($field[0]['value']) {
       return '<b>Deltageren er fritaget for digital post</b>';
     }
   }
+
   return '';
 }
 
-function valhalla_bs_vol_cpr($node) {
+/**
+ * Helper function for generating content.
+ */
+function _theme_generate_cpr($node) {
   if ($field = field_get_items('node', $node, 'field_cpr_number')) {
     $cpr = $field[0]['value'];
   }
@@ -240,7 +259,10 @@ function valhalla_bs_vol_cpr($node) {
   return substr($cpr, 0, 6) . $age;
 }
 
-function valhalla_bs_vol_election_info($node) {
+/**
+ * Helper function for generating content.
+ */
+function _theme_generate_election_info($node) {
   $output = '';
 
   if ($field = field_get_items('node', $node, 'field_electioninfo')) {
