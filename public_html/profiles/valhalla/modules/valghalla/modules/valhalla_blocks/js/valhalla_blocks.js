@@ -54,6 +54,11 @@ function lazyLoadContent(delta) {
     jQuery('#valhalla_block-' + delta + ' .progress').css({visibility: 'hidden'});
     jQuery('#valhalla_block-' + delta + ' .content').html(data);
 
+    // If nothing is returned, don't re-add the button.
+    if (data === 'Der er ikke valgt noget valg' || data === 'Der er ingen valgsteder på dette valg') {
+      return;
+    }
+
     // Add button.
     _addButton();
   });
