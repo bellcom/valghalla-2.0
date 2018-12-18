@@ -1,21 +1,4 @@
 <?php
-
-/**
- * @file
- * Valhalla blocks module.
- *
- * @author Thomas Thune Hansen <tth@bellcom.dk>
- * @copyright Bellcom Open Source aps.
- *
- * This module is responsible for the overview/status blocks.
- *  - These blocks are fetched asynchronously. The 2 Drupal
- *    blocks just insert a placeholder to be filled out, and
- *    instansiate rendering of the markup.
- * As well as the change election and change party blocks.
- *  - These 2, do not rely on the frontpage, and can be used
- *    wherever.
- */
-
 use Drupal\Valghalla\Pdf;
 
 /**
@@ -620,21 +603,25 @@ function _valghalla_status_report_cron() {
       $content = _generate_pdf_content($election_nid, $party_tid);
       $pdf->WriteHTML($content);
 
-      // $file = $pdf->Output('', 'S');.
-      $pdf->Output();
+//      $file = $pdf->Output('', 'S');
+      $file = $pdf->Output();
 
-      if (!$pdf) {
+      if (!$file) {
         return;
       }
 
       // Send PDF to e-boks.
       if ($cvr_number) {
-
+        $cvr_number = $cvr_number;
       }
 
       // Send PDF via e-mail.
       elseif ($recipient) {
+        $email_to = $recipient;
+        $file = $file;
 
+        $email_subject = t('Status rapport');
+        $email_content = t('Et øjebliksbillede er genereret og vedhæftet pr. mail.');
       }
     }
   }
