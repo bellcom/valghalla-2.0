@@ -265,9 +265,9 @@ function _theme_generate_cpr($node) {
 function _theme_generate_election_info($node) {
   $output = '';
 
-  if ($field = field_get_items('node', $node, 'field_electioninfo')) {
+  if ($fields = field_get_items('node', $node, 'field_electioninfo')) {
 
-    foreach ($field as $data) {
+    foreach ($fields as $data) {
       $fc = field_collection_item_load($data['value']);
 
       // Election.

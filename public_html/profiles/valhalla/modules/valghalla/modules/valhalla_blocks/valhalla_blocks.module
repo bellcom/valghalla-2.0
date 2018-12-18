@@ -102,6 +102,7 @@ function valhalla_block_ajax_view($delta = '') {
 
   if (!is_object($election_node)) {
     print t('Der er ikke valgt noget valg');
+
     return;
   }
 
@@ -111,6 +112,7 @@ function valhalla_block_ajax_view($delta = '') {
 
   if (empty($polling_station_nids)) {
     print t('Der er ingen valgsteder på dette valg');
+
     return;
   }
 
