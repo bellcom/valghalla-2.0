@@ -30,6 +30,7 @@
   <exclude-pattern>*.views_default.inc</exclude-pattern>
   <exclude-pattern>public_html/profiles/valhalla/themes/custom/site/dist/*</exclude-pattern>
   <exclude-pattern>public_html/profiles/valhalla/themes/custom/site/node_modules/*</exclude-pattern>
+  <exclude-pattern>public_html/profiles/valhalla/themes/custom/site/layouts/grid.css</exclude-pattern>
 
   <!-- Show progress -->
   <arg value="p"/>
