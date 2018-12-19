@@ -153,7 +153,7 @@ function valghalla_internal_server_logs_table_form($form, &$form_state) {
       'data' => t('Timestamp'),
       'type' => 'property',
       'field' => 'timestamp',
-      'sort' => 'asc'
+      'sort' => 'asc',
     ),
   );
 
@@ -246,6 +246,6 @@ function valghalla_internal_server_logs_table_form_submit($form, &$form_state) {
   drupal_goto('admin/valghalla/validator/internal_server_logs', array(
     'query' => array(
       'date_filter' => $values['date_filter'],
-    )
+    ),
   ));
 }
