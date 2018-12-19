@@ -9,6 +9,7 @@ module_load_include('inc', 'valghalla_notifications', 'includes/valghalla_notifi
 module_load_include('inc', 'valghalla_notifications', 'includes/valghalla_notifications_form');
 module_load_include('inc', 'valghalla_notifications', 'includes/valghalla_notifications_submit');
 module_load_include('inc', 'valghalla_notifications', 'valghalla_notifications.entity');
+module_load_include('php', 'valghalla_notifications', 'src/Entity/ValghallaNotificationController');
 
 /**
  * Implements hook_menu().
