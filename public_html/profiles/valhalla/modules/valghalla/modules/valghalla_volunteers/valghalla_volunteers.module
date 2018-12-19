@@ -218,7 +218,7 @@ function valghalla_volunteers_rsvp() {
   $allow_update = variable_get('valghalla_allow_rsvp_update', FALSE);
   $user_access = user_access('change volunteers rsvp');
 
-  if (!$rsvp || $allow_update || $user_acces) {
+  if (!$rsvp || $allow_update || $user_access) {
     $post_script = drupal_render($form);
   }
 
@@ -326,8 +326,8 @@ function valghalla_volunteers_rsvp_form($form, &$form_state) {
       '#type' => 'select',
       '#title' => t('Vælg'),
       '#options' => array(
-          1 => t('Ja'),
-          2 => t('Nej, ikke denne gang'),
+          1 => t('Ja.'),
+          2 => t('Nej, ikke denne gang.'),
           3 => t('Nej og jeg vil gerne fjernes fra listen.')
       ),
       '#default_value' => $rsvp,
@@ -372,7 +372,7 @@ function valghalla_volunteers_rsvp_form_submit($form, &$form_state) {watchdog('d
   $election_nid = $election_field[0]['target_id'];
   $election_node = node_load($election_nid);
 
-  //sending mail if 'Sæt igang' is enabled in current election node
+  // Sending mail if 'Sæt igang' is enabled in current election node
   if ($election_node AND $election_node->field_election_status['da'][0]['value'] == TRUE) {
 
     switch ($form_state['values']['rsvp']) {
@@ -396,6 +396,34 @@ function valghalla_volunteers_rsvp_form_submit($form, &$form_state) {watchdog('d
   }
   else {
     //Do not need to send email. 'Sæt igang' is disabled in current election node
+  }
+
+  // Send e-mail to email-address set on election.
+  if (isset($form_state['values']['rsvp_comment']) && $form_state['values']['rsvp_comment'] !== '') {
+    $comment = $form_state['values']['rsvp_comment'];
+
+    // Get e-mail address.
+    if ($field_email = field_get_items('node', $election_node, 'field_email_address')) {
+      $recipient = $field_email[0]['email'];
+    }
+    if (! $recipient) {
+      return;
+    }
+
+    // Send email via notification system.
+    if (module_exists('valghalla_mail')) {
+      $params = array(
+        'subject' => t('Ny tilmelding til !valgtitle', array('!valgtitle' => $election_node->title)),
+        'body' => t('Der er oprettet en ny tilmelding til !valgtitle med kommentaren: ' . $comment, array('!valgtitle' => $election_node->title)),
+        'format' => 'html',
+        // We are no going to use token replacement here.
+        'tokens' => array(),
+        'volunteer_nid' => 0,
+        'notification_type' => 'direct',
+      );
+
+      valghalla_notifications_direct_send('mail', $recipient, $params);
+    }
   }
 }
 
