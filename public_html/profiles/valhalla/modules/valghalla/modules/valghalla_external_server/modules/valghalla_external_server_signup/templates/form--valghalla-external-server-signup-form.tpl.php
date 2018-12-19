@@ -1,4 +1,8 @@
 <?php
+
+/**
+ * @file
+ */
 $comment_field = $form['comment'];
 $submit = $form['submit'];
 $term_agreement = $form['terms_agreement'];
