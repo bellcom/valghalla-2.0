@@ -1,4 +1,9 @@
 <?php
+
+/**
+ * @file
+ * Search result page template.
+ */
 $title = (strlen($title) > 45) ? substr($title, 0, 45) . '...' : $title;
 ?>
 
@@ -12,22 +17,12 @@ $title = (strlen($title) > 45) ? substr($title, 0, 45) . '...' : $title;
           <h3
             class="entity-list-advanced__heading__title heading-h4"><?php print check_plain($title); ?></h3>
         </div>
-<!---->
-<!--        <span class="entity-list-advanced__path">-->
-<!--          --><?php //print t('Located at: !path', ['!path' => drupal_get_path_alias($url['path'])]); ?>
-<!--        </span>-->
-
-        <?php if ($snippet OR $info) : ?>
+        <?php if ($snippet or $info) : ?>
           <div class="entity-list-advanced__search-snippet">
 
             <?php if ($snippet) : ?>
               <p><?php print strip_tags($snippet, '<br>'); ?></p>
             <?php endif; ?>
-
-            <?php if ($info) : ?>
-<!--              <p>--><?php //print strip_tags($info, '<br>'); ?><!--</p>-->
-            <?php endif; ?>
-
           </div>
         <?php endif; ?>
 

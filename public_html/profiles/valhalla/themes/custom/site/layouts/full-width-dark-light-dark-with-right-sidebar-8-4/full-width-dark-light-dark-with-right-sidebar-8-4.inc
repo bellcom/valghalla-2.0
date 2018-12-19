@@ -1,7 +1,10 @@
 <?php
+
 /**
- * implementation of hook_panels_layouts().
+ * @file
+ * Implementation of hook_panels_layouts().
  */
+
 $plugin = array(
   'title' => t('Full width - dark/light/dark with right sidebar (8/4)'),
   'category' => t('OS2'),

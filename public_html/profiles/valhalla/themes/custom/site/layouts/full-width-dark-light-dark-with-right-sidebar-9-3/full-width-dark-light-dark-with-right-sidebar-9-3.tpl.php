@@ -1,8 +1,12 @@
-<div <?php if (!empty($css_id)) {
-    echo "id=\"$css_id\"";
-} ?>>
+<?php
 
-  <?php if ($content['content'] or $content['sidebar']): ?>
+/**
+ * @file
+ * Template for 9-3 layout panel.
+ */
+?>
+<div <?php print !empty($css_id) ? "id=\"$css_id\"" : ""; ?>>
+<?php if ($content['content'] or $content['sidebar']): ?>
     <!-- Begin - light section -->
     <div class="sectioned sectioned--light">
       <div class="sectioned__inner">
@@ -38,7 +42,7 @@
       </div>
     </div>
     <!-- End - light section -->
-  <?php endif ?>
+<?php endif ?>
 
   <?php if ($content['light_section_1']): ?>
     <!-- Begin - light section no. 1 -->

@@ -13,7 +13,6 @@
  *
  * @see template_preprocess_search_api_page()
  */
-
 ?>
 
 <div class="search-results">

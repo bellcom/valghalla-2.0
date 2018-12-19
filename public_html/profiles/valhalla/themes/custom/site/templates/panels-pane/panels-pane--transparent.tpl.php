@@ -1,3 +1,10 @@
+<?php
+
+/**
+ * @file
+ * Overrides transparent panel template.
+ */
+?>
 <?php if ($pane_prefix): ?>
     <?php print $pane_prefix; ?>
 <?php endif; ?>

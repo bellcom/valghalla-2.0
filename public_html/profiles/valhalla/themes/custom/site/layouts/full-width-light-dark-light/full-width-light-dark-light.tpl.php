@@ -1,8 +1,11 @@
-<!-- full-width-light-dark-light.tpl.php -->
-<div <?php if (!empty($css_id)) {
-    echo "id=\"$css_id\"";
-} ?>>
+<?php
 
+/**
+ * @file
+ * Template for full width light dark layout panel.
+ */
+?>
+<div <?php print !empty($css_id) ? "id=\"$css_id\"" : ""; ?>>
   <?php if ($content['light_section_1']): ?>
     <!-- Begin - light section no. 1 -->
     <div class="sectioned sectioned--light sectioned--light--no-1">

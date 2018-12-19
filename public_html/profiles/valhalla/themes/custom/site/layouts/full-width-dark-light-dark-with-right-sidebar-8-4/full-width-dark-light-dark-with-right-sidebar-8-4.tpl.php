@@ -1,7 +1,11 @@
-<div <?php if (!empty($css_id)) {
-  echo "id=\"$css_id\"";
-} ?>>
+<?php
 
+/**
+ * @file
+ * Template for full-width-dark-light-dark-with-right-sidebar 8-4 layout panel.
+ */
+?>
+<div <?php print !empty($css_id) ? "id=\"$css_id\"" : ""; ?>>
   <?php if ($content['light_section_0']): ?>
     <!-- Begin - light section no. 0 -->
     <div class="sectioned sectioned--light">

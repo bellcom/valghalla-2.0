@@ -1,7 +1,11 @@
-<div <?php if (!empty($css_id)) {
-    echo "id=\"$css_id\"";
-} ?>>
+<?php
 
+/**
+ * @file
+ * Template for full-width-dark-light-dark-light layout panel.
+ */
+?>
+<div <?php print !empty($css_id) ? "id=\"$css_id\"" : ""; ?>>
   <?php if ($content['dark_section_1']): ?>
     <!-- Begin - dark section no. 1 -->
     <div class="sectioned sectioned--dark">
