@@ -18,7 +18,8 @@ class ServicePlatformenPrintDP extends ServicePlatformenPrint {
   /**
    * MaterialeID variable.
    *
-   * Also used as MeddelelsesIndholdstypeIdentifikator or SysID.
+   * @var string
+   *   Also used as MeddelelsesIndholdstypeIdentifikator or SysID.
    */
   private $materialeId;
 

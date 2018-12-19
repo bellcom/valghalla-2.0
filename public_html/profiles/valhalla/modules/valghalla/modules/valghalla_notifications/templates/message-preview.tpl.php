@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Valghalla notification preview message template.

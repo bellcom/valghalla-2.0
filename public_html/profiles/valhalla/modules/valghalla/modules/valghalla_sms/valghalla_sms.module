@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Valghalla sms module.
@@ -87,6 +88,7 @@ function valghalla_sms_get_message($template_node) {
     'format' => $format,
   );
 }
+
 /**
  * Send message callback.
  */

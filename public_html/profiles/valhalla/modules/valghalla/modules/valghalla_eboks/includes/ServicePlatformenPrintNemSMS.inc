@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * The wrapper class to work with Serviceplatformen Print service.
@@ -14,7 +15,8 @@ class ServicePlatformenPrintNemSMS extends ServicePlatformenPrint {
   /**
    * MaterialeID variable.
    *
-   * Also used as MeddelelsesIndholdstypeIdentifikator or SysID.
+   * @var string
+   *   Also used as MeddelelsesIndholdstypeIdentifikator or SysID.
    */
   private $materialeId;
 

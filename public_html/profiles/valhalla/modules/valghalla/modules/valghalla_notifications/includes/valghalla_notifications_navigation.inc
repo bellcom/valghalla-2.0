@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Handles the navigation of the valghalla_notification_send_message form.

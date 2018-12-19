@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Contains install function for Valghalla notifications module.
