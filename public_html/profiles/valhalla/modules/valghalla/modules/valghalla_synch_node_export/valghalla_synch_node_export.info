@@ -4,6 +4,4 @@ package = Valghalla - Synch
 dependencies[] = node_export
 dependencies[] = node_export_dependency
 
-version = "7.x-1.0"
 core = "7.x"
-project = "valghalla_synch_node_export"
