@@ -2,16 +2,23 @@
 
 /**
  * @file
+ * Menu functionality.
  */
 
 /**
- * @param $menu_name
+ * Menu generator function.
+ *
+ * @param string $menu_name
+ *   Manu name.
  * @param bool|false $menu_type
+ *   Menu type.
  * @param bool|false $full_menu
- * @param null $max_depth
+ *   Full menu flag.
+ * @param int $max_depth
  *   Menu type: "navigation-list" or "sidebar".
  *
  * @return array
+ *   Menu render array.
  */
 function _bellcom_generate_menu($menu_name, $menu_type = NULL, $full_menu = FALSE, $max_depth = NULL) {
   if (empty($menu_name)) {
@@ -28,22 +35,6 @@ function _bellcom_generate_menu($menu_name, $menu_type = NULL, $full_menu = FALS
 
   $output = menu_tree_output($menu_tree);
 
-  // // Start level
-  //  if ($start_level !== NULL) {
-  //
-  //    while ($start_level-- > 0 && $menu_tree) {
-  //
-  //      // Loop through the current level's items until we find one that is in trail.
-  //      while ($item = array_shift($menu_tree)) {
-  //        if ($item['link']['in_active_trail']) {
-  //
-  //          // If the item is in the active trail, we continue in the subtree.
-  //          $menu_tree = empty($item['below']) ? array() : $item['below'];
-  //          break;
-  //        }
-  //      }
-  //    }
-  //  }.
   // Change theme function for tree and links.
   if ($menu_type !== NULL) {
 
@@ -68,11 +59,14 @@ function _bellcom_generate_menu($menu_name, $menu_type = NULL, $full_menu = FALS
 /**
  * Alter menu theme function suggestions.
  *
- * @param $item
- * @param $key
- * @param $theme_functions
+ * @param string $item
+ *   Item function.
+ * @param string $key
+ *   Function key.
+ * @param array $theme_functions
+ *   Functiona array.
  */
-function _bellcom_alter_menu_theme_function(&$item, $key, $theme_functions) {
+function _bellcom_alter_menu_theme_function(&$item, $key, array $theme_functions) {
   $old_theme_function = $theme_functions['old'];
   $new_theme_function = $theme_functions['new'];
 
@@ -87,10 +81,10 @@ function _bellcom_alter_menu_theme_function(&$item, $key, $theme_functions) {
  * This is based on the code in the core toolbar module
  * /modules/toolbar/toolbar.module function toolbar_in_active_trail($path)
  *
- * @param
- *   The path of a menu item we're evaluating
+ * @param string $link_path
+ *   The path of a menu item we're evaluating.
  *
- * @return
+ * @return array
  *   An array of classes if active or in the active trail.
  *   An empty array if not active or in the active trail.
  *
@@ -115,7 +109,8 @@ function _bellcom_in_active_trail($link_path) {
     $classes[] = 'active';
     return $classes;
   }
-  // If we're not on the front page and the current link is not the current page,
+  // If we're not on the front page and the current link is not
+  // the current page.
   // The we need to check the whole active trail. Since Drupal caches the result
   // of menu_get_active_trail(), this is not too costly.
   $active_trail = menu_get_active_trail();

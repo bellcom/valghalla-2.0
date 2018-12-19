@@ -2,10 +2,12 @@
 
 /**
  * @file
+ * Helper functions.
  */
 
 /**
- * Seperated dates
+ * Seperated dates.
+ *
  * Heavily inspired by drupals format_date() function.
  */
 function _bellcom_seperated_dates($timestamp) {
@@ -42,13 +44,13 @@ function _bellcom_seperated_dates($timestamp) {
   $seperated_dates = array(
     'day' => array(
       'integer' => date_format($date_time, 'd'),
-      'short' => t(date_format($date_time, 'D')),
-      'full' => t(date_format($date_time, 'l')),
+      'short' => date_format($date_time, 'D'),
+      'full' => date_format($date_time, 'l'),
     ),
     'month' => array(
       'integer' => date_format($date_time, 'm'),
-      'short' => t(date_format($date_time, 'M')),
-      'full' => t(date_format($date_time, 'F')),
+      'short' => date_format($date_time, 'M'),
+      'full' => date_format($date_time, 'F'),
     ),
     'year' => array(
       'short' => date_format($date_time, 'y'),
