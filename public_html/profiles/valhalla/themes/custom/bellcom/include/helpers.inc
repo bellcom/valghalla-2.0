@@ -1,6 +1,10 @@
 <?php
 
-/*
+/**
+ * @file
+ */
+
+/**
  * Seperated dates
  * Heavily inspired by drupals format_date() function.
  */
@@ -34,7 +38,7 @@ function _bellcom_seperated_dates($timestamp) {
   // Set the time zone for the DateTime object.
   date_timezone_set($date_time, $timezones[$timezone]);
 
-  // Seperated dates
+  // Seperated dates.
   $seperated_dates = array(
     'day' => array(
       'integer' => date_format($date_time, 'd'),
@@ -56,8 +60,8 @@ function _bellcom_seperated_dates($timestamp) {
   return $seperated_dates;
 }
 
-/*
- * Text shortener
+/**
+ * Text shortener.
  */
 function _bellcom_text_shortener($text_string, $max_length) {
   $alter = array(
@@ -72,15 +76,15 @@ function _bellcom_text_shortener($text_string, $max_length) {
   return $shortened_string;
 }
 
-/*
- * Search for value in multi-dimensional array
+/**
+ * Search for value in multi-dimensional array.
  */
 function in_array_recursive($needle, $haystack, $strict = FALSE) {
   foreach ($haystack as $item) {
     if (($strict ? $item === $needle : $item == $needle) || (is_array($item) && in_array_recursive($needle, $item, $strict))) {
-      return true;
+      return TRUE;
     }
   }
 
-  return false;
+  return FALSE;
 }

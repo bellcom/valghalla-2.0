@@ -1,41 +1,47 @@
 <?php
-include( dirname(__FILE__) . '/include/helpers.inc');
-include( dirname(__FILE__) . '/include/menu.inc');
-include( dirname(__FILE__) . '/include/settings.inc');
+
+/**
+ * @file
+ * Functionality for bellcom base theme.
+ */
+
+include dirname(__FILE__) . '/include/helpers.inc';
+include dirname(__FILE__) . '/include/menu.inc';
+include dirname(__FILE__) . '/include/settings.inc';
 
 /**
  * Implements theme_preprocess_html().
  */
 function bellcom_preprocess_html(&$variables) {
-  $current_theme = variable_get('theme_default','none');
+  $current_theme = variable_get('theme_default', 'none');
 
-  // Paths
+  // Paths.
   $variables['path_js']   = base_path() . drupal_get_path('theme', $current_theme) . '/dist/js';
   $variables['path_img']  = base_path() . drupal_get_path('theme', $current_theme) . '/dist/img';
   $variables['path_css']  = base_path() . drupal_get_path('theme', $current_theme) . '/dist/css';
   $variables['path_font'] = base_path() . drupal_get_path('theme', $current_theme) . '/dist/font';
 
-  // Panels display
+  // Panels display.
   if ($page = page_manager_get_current_page()) {
     $panels_layout = $page['handler']->conf['display']->layout;
     $panels_display = ($page['handler']->conf['name'] == '') ? 'standard' : $page['handler']->conf['name'];
 
-    // Panels layout
+    // Panels layout.
     $variables['classes_array'][] = drupal_html_class('panels-layout');
     $variables['classes_array'][] = drupal_html_class('panels-layout--' . $panels_layout);
     $variables['classes_array'][] = drupal_html_class('panels-display--' . $panels_display);
   }
 }
 
-/*
+/**
  * Implements theme_preprocess_page().
  */
 function bellcom_preprocess_page(&$variables) {
-  $current_theme = variable_get('theme_default','none');
+  $current_theme = variable_get('theme_default', 'none');
   $primary_navigation_name = variable_get('menu_main_links_source', 'main-menu');
   $secondary_navigation_name = variable_get('menu_secondary_links_source', 'user-menu');
 
-  // Navigation
+  // Navigation.
   $variables['flexy_navigation__primary'] = _bellcom_generate_menu($primary_navigation_name, 'flexy_navigation', TRUE);
   $variables['flexy_navigation__secondary'] = _bellcom_generate_menu($secondary_navigation_name, 'flexy_navigation', TRUE);
 
@@ -48,13 +54,13 @@ function bellcom_preprocess_page(&$variables) {
   $variables['flexy_list__primary'] = _bellcom_generate_menu($primary_navigation_name, 'flexy_list', FALSE, 1);
   $variables['flexy_list__secondary'] = _bellcom_generate_menu($secondary_navigation_name, 'flexy_list', FALSE, 1);
 
-  // Paths
+  // Paths.
   $variables['path_js']   = base_path() . drupal_get_path('theme', $current_theme) . '/dist/js';
   $variables['path_img']  = base_path() . drupal_get_path('theme', $current_theme) . '/dist/img';
   $variables['path_css']  = base_path() . drupal_get_path('theme', $current_theme) . '/dist/css';
   $variables['path_font'] = base_path() . drupal_get_path('theme', $current_theme) . '/dist/font';
 
-  // Theme settings
+  // Theme settings.
   $variables['theme_settings'] = _bellcom_collect_theme_settings();
 }
 
@@ -66,7 +72,7 @@ function bellcom_preprocess_node(&$variables) {
   $view_mode = $variables['view_mode'];
   $content_type = $node->type;
 
-  // Entity variables
+  // Entity variables.
   $variables['classes_array'][] = drupal_html_class('entity-' . $view_mode);
   $variables['classes_array'][] = drupal_html_class('entity-' . $view_mode . '--' . $content_type);
 
@@ -85,7 +91,7 @@ function bellcom_preprocess_node(&$variables) {
     $function($variables);
   }
 
-  // Updated at
+  // Updated at.
   if ($updated_at = $variables['node']->changed) {
     $variables['updated_at_short'] = format_date($updated_at, 'short');
     $variables['updated_at_medium'] = format_date($updated_at, 'medium');
@@ -94,7 +100,7 @@ function bellcom_preprocess_node(&$variables) {
     $variables['updated_at_seperated'] = _bellcom_seperated_dates($updated_at);
   }
 
-  // Created at
+  // Created at.
   if ($created_at = $variables['node']->created) {
     $variables['created_at_short'] = format_date($created_at, 'short');
     $variables['created_at_medium'] = format_date($created_at, 'medium');
@@ -104,12 +110,12 @@ function bellcom_preprocess_node(&$variables) {
   }
 }
 
-/*
+/**
  * Implements template_preprocess_comment().
  */
 function bellcom_preprocess_comment(&$variables) {
 
-  // Updated at
+  // Updated at.
   if ($updated_at = $variables['comment']->changed) {
     $variables['updated_at_short'] = format_date($updated_at, 'short');
     $variables['updated_at_medium'] = format_date($updated_at, 'medium');
@@ -118,7 +124,7 @@ function bellcom_preprocess_comment(&$variables) {
     $variables['updated_at_seperated'] = _bellcom_seperated_dates($updated_at);
   }
 
-  // Created at
+  // Created at.
   if ($created_at = $variables['comment']->created) {
     $variables['created_at_short'] = format_date($created_at, 'short');
     $variables['created_at_medium'] = format_date($created_at, 'medium');
@@ -128,7 +134,7 @@ function bellcom_preprocess_comment(&$variables) {
   }
 }
 
-/*
+/**
  * Implements template_preprocess_taxonomy_term().
  */
 function bellcom_preprocess_taxonomy_term(&$variables) {
@@ -138,14 +144,14 @@ function bellcom_preprocess_taxonomy_term(&$variables) {
   // Add taxonomy-term--view_mode.tpl.php suggestions.
   $variables['theme_hook_suggestions'][] = 'taxonomy-term__' . $view_mode;
 
-  // Entity variables
+  // Entity variables.
   $variables['classes_array'][] = drupal_html_class('entity-' . $view_mode);
   $variables['classes_array'][] = drupal_html_class('entity-' . $view_mode . '--' . $vocabulary_machine_name);
 
   $variables['classes_array'][] = drupal_html_class('taxonomy-term--' . $vocabulary_machine_name . '--' . $view_mode);
 }
 
-/*
+/**
  * Implements template_preprocess_paragraphs_items().
  */
 function bellcom_preprocess_paragraphs_items(&$variables, $hook) {
@@ -155,53 +161,57 @@ function bellcom_preprocess_paragraphs_items(&$variables, $hook) {
   // Add paragraphs-items--view_mode.tpl.php suggestions.
   $variables['theme_hook_suggestions'][] = 'paragraphs_items__' . $view_mode;
 
-  // Entity variables
+  // Entity variables.
   $variables['classes_array'][] = drupal_html_class('entity-' . $view_mode);
   $variables['classes_array'][] = drupal_html_class('entity-' . $view_mode . '--' . $field_name);
 
   $variables['classes_array'][] = drupal_html_class('paragraphs-items--' . $field_name . '--' . $view_mode);
 }
 
-/*
+/**
  * Implements theme_preprocess_block().
  */
 function bellcom_preprocess_block(&$variables) {
-  $variables ['classes_array'][] = drupal_html_class('block-' . $variables ['block']->module);
+  $variables['classes_array'][] = drupal_html_class('block-' . $variables['block']->module);
 }
 
-/*
+/**
  * Implements theme_menu_tree().
+ *
  * For slinky menu types.
  */
 function bellcom_menu_tree__flexy_navigation(&$variables) {
   return '<ul class="flexy-navigation">' . $variables['tree'] . '</ul>';
 }
 
-/*
+/**
  * Implements theme_menu_tree().
+ *
  * For slinky menu types.
  */
 function bellcom_menu_tree__slinky(&$variables) {
   return $variables['tree'];
 }
 
-/*
+/**
  * Implements theme_menu_tree().
+ *
  * For custom slinky menu types.
  */
 function bellcom_menu_tree__slinky_custom(&$variables) {
   return $variables['tree'];
 }
 
-/*
+/**
  * Implements theme_menu_tree().
+ *
  * For slinky menu types.
  */
 function bellcom_menu_tree__flexy_list(&$variables) {
   return '<ul class="flexy-list">' . $variables['tree'] . '</ul>';
 }
 
-/*
+/**
  * Implements theme_menu_link().
  */
 function bellcom_menu_link__flexy_navigation(array $variables) {
@@ -210,13 +220,13 @@ function bellcom_menu_link__flexy_navigation(array $variables) {
 
   // @TODO - current level
   // --- https://drupal.stackexchange.com/questions/32873/how-to-theme-only-top-level-menu
-  // If we are on second level or below, we need to add other classes to the list items.
-
-  // The navbar
+  // If we are on second level or below,
+  // we need to add other classes to the list items.
+  // The navbar.
   if ($element['#original_link']['depth'] > 1) {
     $element['#attributes']['class'][] = 'flexy-navigation__item__dropdown-menu__item';
 
-    // Has a dropdown menu
+    // Has a dropdown menu.
     if ($element['#below']) {
 
       if (($element['#original_link']['menu_name'] == 'management') && (module_exists('navbar'))) {
@@ -235,11 +245,11 @@ function bellcom_menu_link__flexy_navigation(array $variables) {
     }
   }
 
-  // Inside dropdown menu
+  // Inside dropdown menu.
   else {
     $element['#attributes']['class'][] = 'flexy-navigation__item';
 
-    // Has a dropdown menu
+    // Has a dropdown menu.
     if ($element['#below']) {
 
       if (($element['#original_link']['menu_name'] == 'management') && (module_exists('navbar'))) {
@@ -278,7 +288,7 @@ function bellcom_menu_link__flexy_navigation(array $variables) {
   return '<li' . drupal_attributes($element['#attributes']) . '>' . $output . $sub_menu . "</li>\n";
 }
 
-/*
+/**
  * Implements theme_menu_link().
  */
 function bellcom_menu_link__slinky(array $variables) {
@@ -298,12 +308,12 @@ function bellcom_menu_link__slinky(array $variables) {
       // Add our own wrapper.
       unset($element['#below']['#theme_wrappers']);
 
-      // Submenu classes
+      // Submenu classes.
       $sub_menu = ' <ul>' . drupal_render($element['#below']) . '</ul>';
     }
   }
 
-  // If this is a parent link, slinky require is to just link to a #
+  // If this is a parent link, slinky require is to just link to a #.
   if ($element['#below']) {
     $element['#href'] = '';
 
@@ -316,7 +326,7 @@ function bellcom_menu_link__slinky(array $variables) {
   return '<li>' . $output . $sub_menu . "</li>\n";
 }
 
-/*
+/**
  * Implements theme_menu_link().
  */
 function bellcom_menu_link__slinky_custom(array $variables) {
@@ -336,7 +346,7 @@ function bellcom_menu_link__slinky_custom(array $variables) {
       // Add our own wrapper.
       unset($element['#below']['#theme_wrappers']);
 
-      // Submenu classes
+      // Submenu classes.
       $sub_menu = ' <ul>' . drupal_render($element['#below']) . '</ul>';
     }
   }
@@ -346,7 +356,7 @@ function bellcom_menu_link__slinky_custom(array $variables) {
   return '<li>' . $output . $sub_menu . "</li>\n";
 }
 
-/*
+/**
  * Implements theme_menu_link().
  */
 function bellcom_menu_link__flexy_list(array $variables) {
@@ -366,12 +376,12 @@ function bellcom_menu_link__flexy_list(array $variables) {
       // Add our own wrapper.
       unset($element['#below']['#theme_wrappers']);
 
-      // Submenu classes
+      // Submenu classes.
       $sub_menu = ' <ul>' . drupal_render($element['#below']) . '</ul>';
     }
   }
 
-  // If this is a parent link, slinky require is to just link to a #
+  // If this is a parent link, slinky require is to just link to a #.
   if ($element['#below']) {
     $element['#href'] = '';
 

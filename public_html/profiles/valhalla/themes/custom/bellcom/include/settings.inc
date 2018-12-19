@@ -1,6 +1,10 @@
 <?php
 
 /**
+ * @file
+ */
+
+/**
  * Collect and assemble theme settings.
  *
  * @return array
@@ -8,7 +12,7 @@
 function _bellcom_collect_theme_settings() {
   $settings = [];
 
-  // Contact information
+  // Contact information.
   $settings['contact_information']['business_owner_name'] = theme_get_setting('business_owner_name');
   $settings['contact_information']['business_startup_year'] = theme_get_setting('business_startup_year');
   $settings['contact_information']['address'] = theme_get_setting('address');
@@ -19,7 +23,7 @@ function _bellcom_collect_theme_settings() {
   $settings['contact_information']['email'] = theme_get_setting('email');
   $settings['contact_information']['working_hours'] = theme_get_setting('working_hours');
 
-  // Social links
+  // Social links.
   $settings['social_links']['facebook']['active'] = theme_get_setting('facebook');
   $settings['social_links']['facebook']['url'] = theme_get_setting('facebook_url');
   $settings['social_links']['facebook']['tooltip'] = t(theme_get_setting('facebook_tooltip'));

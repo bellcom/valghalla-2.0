@@ -1,20 +1,24 @@
 <?php
 
 /**
+ * @file
+ */
+
+/**
  * @param $menu_name
- * @param bool|FALSE $menu_type
- * @param bool|FALSE $full_menu
+ * @param bool|false $menu_type
+ * @param bool|false $full_menu
  * @param null $max_depth
- * Menu type: "navigation-list" or "sidebar"
+ *   Menu type: "navigation-list" or "sidebar".
  *
  * @return array
  */
-function _bellcom_generate_menu($menu_name, $menu_type = NULL, $full_menu = false, $max_depth = NULL) {
+function _bellcom_generate_menu($menu_name, $menu_type = NULL, $full_menu = FALSE, $max_depth = NULL) {
   if (empty($menu_name)) {
     return array();
   }
 
-  // Menu type
+  // Menu type.
   if ($full_menu) {
     $menu_tree = menu_tree_all_data($menu_name, NULL, $max_depth);
   }
@@ -24,7 +28,7 @@ function _bellcom_generate_menu($menu_name, $menu_type = NULL, $full_menu = fals
 
   $output = menu_tree_output($menu_tree);
 
-  //  // Start level
+  // // Start level
   //  if ($start_level !== NULL) {
   //
   //    while ($start_level-- > 0 && $menu_tree) {
@@ -39,19 +43,18 @@ function _bellcom_generate_menu($menu_name, $menu_type = NULL, $full_menu = fals
   //        }
   //      }
   //    }
-  //  }
-
-  // Change theme function for tree and links
+  //  }.
+  // Change theme function for tree and links.
   if ($menu_type !== NULL) {
 
-    // Tree
+    // Tree.
     $menu_tree_function_names = array(
       'menu_tree__' . strtr($menu_type, '-', '_'),
       'menu_tree__' . strtr($menu_name, '-', '_') . '__' . strtr($menu_type, '-', '_'),
     );
     $output['#theme_wrappers'] = $menu_tree_function_names;
 
-    // Links
+    // Links.
     $menu_link_function_names = array(
       'old' => 'menu_link__' . strtr($menu_name, '-', '_'),
       'new' => 'menu_link__' . strtr($menu_type, '-', '_'),
@@ -118,7 +121,7 @@ function _bellcom_in_active_trail($link_path) {
   $active_trail = menu_get_active_trail();
   $front = array_shift($active_trail);
   foreach ($active_trail as $item) {
-    if(!empty($item['link_path'])) {
+    if (!empty($item['link_path'])) {
       $active_paths[$item['link_path']] = TRUE;
     }
   }
