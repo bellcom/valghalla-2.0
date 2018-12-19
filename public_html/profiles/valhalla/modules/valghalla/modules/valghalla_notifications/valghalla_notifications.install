@@ -108,6 +108,12 @@ function valghalla_notifications_schema() {
         'length' => 255,
         'default' => '',
       ),
+      'recipient' => array(
+        'description' => 'Notification receiver',
+        'type' => 'varchar',
+        'length' => 255,
+        'default' => '',
+      ),
       'message' => array(
         'description' => 'Notification message',
         'type' => 'text',
@@ -149,4 +155,17 @@ function valghalla_notifications_schema() {
   );
 
   return $schema;
+}
+
+/**
+ * Add recipient field to {entity_valghalla_notification} table.
+ */
+function valghalla_notifications_update_7002() {
+  $spec = array(
+    'description' => 'Notification recipient',
+    'type' => 'varchar',
+    'length' => 255,
+    'default' => '',
+  );
+  db_add_field('entity_valghalla_notification', 'recipient', $spec);
 }

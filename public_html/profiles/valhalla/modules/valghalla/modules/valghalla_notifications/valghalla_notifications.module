@@ -1,6 +1,8 @@
 <?php
+
 /**
- * @file Contaion main functional code for Valghalla notifications.
+ * @file
+ * Contains main functional code for Valghalla notifications.
  */
 
 module_load_include('inc', 'valghalla_notifications', 'includes/valghalla_notifications_navigation');
@@ -449,12 +451,9 @@ function valghalla_notifications_notify_volunteer($election_nid, $role_nid, $fc,
   // Send email to roles or other email address, if user cancelled to attend.
   if ($type == 'rsvp_no' || $type == 'rsvp_never') {
     $to_admin = valghalla_volunteers_add_email_to_list();
-    $mail_gateway = valghalla_notifications_gateway('mail');
     $copy_params = $params;
     $copy_params['volunteer_nid'] = -1;
-    if (!empty($to_admin) && !call_user_func($mail_gateway['send_message_callback'], $to_admin, $copy_params)) {
-      watchdog('valghalla_notifications', 'Failed sending copy of message nid = %nid via mail gateway', $placeholders, WATCHDOG_ERROR);
-    }
+    valghalla_notifications_direct_send('mail', $to_admin, $copy_params);
   }
 
   if (!call_user_func($gateway['send_message_callback'], $to, $params)) {
@@ -474,4 +473,21 @@ function valghalla_notifications_volunteer_no_notification($volunteer_node) {
   }
 
   return FALSE;
+}
+
+/**
+ * Send direct notification.
+ */
+function valghalla_notifications_direct_send($gateway_id, $to, $params, $context = array()) {
+  $gateway = valghalla_notifications_gateway($gateway_id);
+  if (empty($gateway)) {
+    watchdog('valghalla_notifications', 'Gateway %gateway not found', array('%gateway' => $gateway_id), WATCHDOG_ERROR);
+    return;
+  }
+  if (!empty($to) && !call_user_func($gateway['send_message_callback'], $to, $params, $context)) {
+    watchdog('valghalla_notifications', 'Failed sending direct notification to %to via %gateway gateway', array(
+      '%gateway' => $gateway_id,
+      '%to' => $to,
+    ), WATCHDOG_ERROR);
+  }
 }

@@ -30,10 +30,10 @@ class ServicePlatformenPrintNemSMS extends ServicePlatformenPrint {
   /**
    * Set receiver callback.
    */
-  public function setTo($to) {
+  public function setTo($to, $type = 'CPR') {
     $to = str_replace('-', '', $to);
     $this->request['BrevSPBody']['ForsendelseI']['ForsendelseModtager'] = array(
-      'AfsendelseModtager' => array('CPRnummerIdentifikator' => $to),
+      'AfsendelseModtager' => array($type . 'nummerIdentifikator' => $to),
     );
   }
 
