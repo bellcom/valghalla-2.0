@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Handles the Valghalla notifications entity.

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Valghalla notifications rsvp reminder.
@@ -22,11 +23,11 @@ function valghalla_notifications_rsvp_reminder($last_run_ts) {
 
   // Find active election.
   $nids = db_select('field_data_field_election_status', 'es')
-      ->fields('es', array('entity_id'))
-      ->condition('es.bundle', 'election')
-      ->condition('es.field_election_status_value', 1)
-      ->execute()
-      ->fetchAll(PDO::FETCH_COLUMN);
+    ->fields('es', array('entity_id'))
+    ->condition('es.bundle', 'election')
+    ->condition('es.field_election_status_value', 1)
+    ->execute()
+    ->fetchAll(PDO::FETCH_COLUMN);
 
   if (empty($nids)) {
     watchdog('valghalla_notification', 'RSVP reminder: Der blev ikke fundet noget aktict valg - aktiver dit valg. ', array(), WATCHDOG_NOTICE);
@@ -49,16 +50,17 @@ function valghalla_notifications_rsvp_reminder($last_run_ts) {
       watchdog('valghalla_notification', 'RSVP reminder blev ikke kørt idet idag ikke er nogen rykker dag. Valg: %election_date Dage til valget: %todays Rykkerdage: %godays', array(
         '%todays' => $days_to_election,
         '%godays' => $notification_days_arr,
-        '%election_date' => $election_date), WATCHDOG_NOTICE
+        '%election_date' => $election_date,
+      ), WATCHDOG_NOTICE
       );
       return;
     }
 
     $volunteer_query = new EntityFieldQuery();
     $volunteer_query->entityCondition('entity_type', 'field_collection_item')
-                    ->entityCondition('bundle', 'field_electioninfo')
-                    ->propertyCondition('archived', 0)
-                    ->fieldCondition('field_election', 'target_id', $election->nid);
+      ->entityCondition('bundle', 'field_electioninfo')
+      ->propertyCondition('archived', 0)
+      ->fieldCondition('field_election', 'target_id', $election->nid);
 
     $volunteer_result = $volunteer_query->execute();
 
@@ -97,11 +99,11 @@ function valghalla_notifications_togo_reminder($last_run_ts) {
 
   // Find active election.
   $nids = db_select('field_data_field_election_status', 'es')
-      ->fields('es', array('entity_id'))
-      ->condition('es.bundle', 'election')
-      ->condition('es.field_election_status_value', 1)
-      ->execute()
-      ->fetchAll(PDO::FETCH_COLUMN);
+    ->fields('es', array('entity_id'))
+    ->condition('es.bundle', 'election')
+    ->condition('es.field_election_status_value', 1)
+    ->execute()
+    ->fetchAll(PDO::FETCH_COLUMN);
 
   if (empty($nids)) {
     watchdog('valghalla_notification', 'ToGO påmindelse: Der blev ikke fundet noget aktict valg - aktiver dit valg. ', array(), WATCHDOG_NOTICE);
@@ -122,16 +124,17 @@ function valghalla_notifications_togo_reminder($last_run_ts) {
       watchdog('valghalla_notification', 'ToGO påmindelse blev ikke kørt idet idag ikke er nogen rykker dag. Valg: %election_date Dage til valget: %todays Rykkerdage: %godays', array(
         '%todays' => $days_to_election,
         '%godays' => $togo_notification_days,
-        '%election_date' => $election_date), WATCHDOG_NOTICE
+        '%election_date' => $election_date,
+      ), WATCHDOG_NOTICE
       );
       return;
     }
 
     $volunteer_query = new EntityFieldQuery();
     $volunteer_query->entityCondition('entity_type', 'field_collection_item')
-                    ->entityCondition('bundle', 'field_electioninfo')
-                    ->propertyCondition('archived', 0)
-                    ->fieldCondition('field_election', 'target_id', $election->nid);
+      ->entityCondition('bundle', 'field_electioninfo')
+      ->propertyCondition('archived', 0)
+      ->fieldCondition('field_election', 'target_id', $election->nid);
 
     $volunteer_result = $volunteer_query->execute();
 

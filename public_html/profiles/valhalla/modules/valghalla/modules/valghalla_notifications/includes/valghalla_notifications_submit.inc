@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Handles the form submission of the valghalla_notifications_send_message_form.
@@ -73,7 +74,8 @@ function valghalla_notifications_send_confirm_submit($form, &$form_state) {
     $operations[] = array(
       'valghalla_notifications_send_batch', array(
         $batch,
-        $form_state),
+        $form_state,
+      ),
     );
   }
 

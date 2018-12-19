@@ -1,7 +1,8 @@
 <?php
 
 /**
- * @file Valghalla notification admin extension.
+ * @file
+ * Valghalla notification admin extension.
  */
 
 /**
@@ -52,7 +53,7 @@ function valghalla_notifications_settings($form, &$form_state, $election_nid = F
         '@gateway_name' => $gateway['name'],
         '@type_title' => $type_title,
       ));
-      $variable_name = 'valghalla_notifications_'  . $election_nid . '_' . $type . '_' . $gateway_id;
+      $variable_name = 'valghalla_notifications_' . $election_nid . '_' . $type . '_' . $gateway_id;
       $tpl_nid = variable_get($variable_name, FALSE);
 
       if ($tpl_nid) {
@@ -149,7 +150,6 @@ function valghalla_notifications_settings($form, &$form_state, $election_nid = F
 
   return system_settings_form($form);
 }
-
 
 /**
  * General mail settings.

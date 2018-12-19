@@ -1,9 +1,10 @@
 <?php
 
 /**
+ * @file
  * Valghalla mail module.
  *
- * @file valghalla_mail.module
+ *  Valghalla_mail.module.
  *
  * @copyright 2012 OS2 - Offentligt Digitaliseringsfællesskab.
  * See README.md at https://github.com/os2web/valghalla_mail

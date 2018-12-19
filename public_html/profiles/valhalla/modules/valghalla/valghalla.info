@@ -68,7 +68,6 @@ dependencies[] = system
 dependencies[] = taxonomy
 dependencies[] = text
 dependencies[] = token
-dependencies[] = toolbar
 dependencies[] = trigger
 dependencies[] = user
 dependencies[] = user_reference
