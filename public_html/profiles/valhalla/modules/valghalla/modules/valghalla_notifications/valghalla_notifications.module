@@ -418,9 +418,20 @@ function valghalla_notifications_get_message_by_nid($template_nid) {
 function valghalla_notifications_notify_volunteer($election_nid, $role_nid, $fc, $type) {
   $volunteer = $fc->hostEntity();
   $no_mail = valghalla_notifications_volunteer_no_notification($volunteer);
+  if ($no_mail) {
+    watchdog('valghalla_notifications', 'Notification %type has not send. Volunteer is excused from digital notifications.', array(
+      '%type' => $type,
+    ));
+    return FALSE;
+  }
+
   $election_node = node_load($election_nid);
   $field_status = field_get_items('node', $election_node, 'field_election_status');
-  if ($no_mail || empty($field_status)) {
+  if (empty($field_status[0]['value'])) {
+    watchdog('valghalla_notifications', 'Notification %type has not send. Election %title is not active.', array(
+      '%type' => $type,
+      '%title' => $election_node->title,
+    ));
     return FALSE;
   }
 
