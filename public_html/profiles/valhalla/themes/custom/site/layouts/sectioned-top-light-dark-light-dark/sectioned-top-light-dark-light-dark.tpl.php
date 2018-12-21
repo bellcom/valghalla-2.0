@@ -1,7 +1,11 @@
-<div <?php if (!empty($css_id)) {
-  echo "id=\"$css_id\"";
-} ?>>
+<?php
 
+/**
+ * @file
+ * Template for sectioned top dark layout panel.
+ */
+?>
+<div <?php print !empty($css_id) ? "id=\"$css_id\"" : ""; ?>>
   <?php if ($content['top']): ?>
     <!-- Begin - top -->
     <div class="panels-pane-region panels-pane-region--top">

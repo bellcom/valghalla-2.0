@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Handles the form elements of valghalla_notifications.
@@ -77,7 +78,7 @@ function valghalla_notifications_send_form_step(&$form, &$form_state) {
  * Stage switch.
  *
  * Step 2 : get_recipients
- * Step 3 : send_confirm
+ * Step 3 : send_confirm.
  */
 function valghalla_notifications_send_message_form($form, &$form_state, $nid) {
   drupal_add_css(drupal_get_path('module', 'valghalla_notifications') . '/css/valghalla_notifications.css');

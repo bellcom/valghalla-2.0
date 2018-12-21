@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Override color settings.
+ */
+
 $info = [];
 
 // Define the CSS file(s) that we want the Color module to use as a base.
@@ -21,7 +26,7 @@ $info['schemes'] = [
     // Scheme title.
     'title' => t('Default colouring'),
 
-    // Scheme colors
+    // Scheme colors.
     'colors' => [
       'base' => '#007ca3',
       'primary' => '#007ca3',
@@ -38,7 +43,7 @@ $info['preview_css'] = '';
 $info['preview_js'] = '';
 $info['preview_html'] = '';
 
-// Gradients
+// Gradients.
 $info['gradients'] = [];
 
 // Color areas to fill (x, y, width, height).

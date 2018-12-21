@@ -1,9 +1,10 @@
 <?php
 
 /**
+ * @file
  * Valghalla mail module.
  *
- * @file valghalla_mail.module
+ *  Valghalla_mail.module.
  *
  * @copyright 2012 OS2 - Offentligt Digitaliseringsfællesskab.
  * See README.md at https://github.com/os2web/valghalla_mail
@@ -44,7 +45,7 @@ function valghalla_mail_mail($key, &$message, $params) {
   switch ($key) {
     // "default" case for sending mail.
     case 'mail':
-            $params += array('tokens' => array());
+      $params += array('tokens' => array());
 
       // Html mail.
       if (strstr($params['format'], 'html')) {
@@ -68,13 +69,13 @@ function valghalla_mail_mail($key, &$message, $params) {
       }
       /** @var EntityInterface $notification */
       $notification = $params['notification_entity'];
-      $notification->message = $message_body;
+      $notification->message = $message['subject'] . '<br>' . $message_body;
       if (!empty($params['attachments'])) {
         $files = array();
         foreach ($params['attachments'] as $attachment) {
           $files[] = $attachment['filename'];
         }
-        $notification->message .= theme('item_list', array('items' => $files, 'title' => t('Attachments')));
+        $notification->message .= t('Attachments:') . theme('item_list', array('items' => $files));
       }
       $notification->save();
       break;
@@ -192,6 +193,7 @@ function valghalla_mail_send_message($to, $params, $context = array()) {
   $notification = entity_get_controller('entity_valghalla_notification')->create(array(
     'type' => $params['notification_type'],
     'vol_id' => $params['volunteer_nid'],
+    'recipient' => $to,
     'gateway' => 'mail',
     'status' => 'Failed',
   ));

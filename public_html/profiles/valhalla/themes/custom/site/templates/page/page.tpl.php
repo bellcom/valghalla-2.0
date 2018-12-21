@@ -1,3 +1,10 @@
+<?php
+
+/**
+ * @file
+ * Overrides page template.
+ */
+?>
 <!-- Begin - wrapper -->
 <div class="layout__wrapper">
 
@@ -257,7 +264,7 @@
     <div class="container-fluid">
       <div class="layout__footer__inner">
         <div class="text-center">
-          &copy; <?=date('Y'); ?> <?php print t('OS2valghalla'); ?>
+          &copy; <?php echo date('Y'); ?> <?php print t('OS2valghalla'); ?>
         </div>
       </div>
     </div>

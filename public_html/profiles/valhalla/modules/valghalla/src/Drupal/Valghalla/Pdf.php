@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * The wrapper class for PDF generation.
- */
 
 namespace Drupal\Valghalla;
 
@@ -23,4 +19,5 @@ class Pdf extends Mpdf {
       $this->WriteHTML(file_get_contents($stylesheet), 1);
     }
   }
+
 }

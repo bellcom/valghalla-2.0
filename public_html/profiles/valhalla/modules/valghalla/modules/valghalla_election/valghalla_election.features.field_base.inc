@@ -469,31 +469,6 @@ function valghalla_election_field_default_field_bases() {
     'type' => 'list_boolean',
   );
 
-  // Exported field_base: 'field_signup_comment'.
-  $field_bases['field_signup_comment'] = array(
-    'active' => 1,
-    'cardinality' => 1,
-    'deleted' => 0,
-    'entity_types' => array(),
-    'field_name' => 'field_signup_comment',
-    'indexes' => array(
-      'value' => array(
-        0 => 'value',
-      ),
-    ),
-    'locked' => 0,
-    'module' => 'list',
-    'settings' => array(
-      'allowed_values' => array(
-        0 => 'Nej',
-        1 => 'Ja',
-      ),
-      'allowed_values_function' => '',
-    ),
-    'translatable' => 0,
-    'type' => 'list_boolean',
-  );
-
   // Exported field_base: 'field_volunteers_pr_pol_st_party'.
   $field_bases['field_volunteers_pr_pol_st_party'] = array(
     'active' => 1,

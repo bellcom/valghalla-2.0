@@ -1,11 +1,16 @@
 <?php
 
 /**
+ * @file
+ * Settings for base Bellcom theme.
+ */
+
+/**
  * Implements hook_form_FORM_ID_alter().
  */
 function bellcom_form_system_theme_settings_alter(&$form, $form_state, $form_id = NULL) {
 
-  // Vertical tabs
+  // Vertical tabs.
   $form['options'] = [
     '#type' => 'vertical_tabs',
     '#default_tab' => 'main',
@@ -14,58 +19,51 @@ function bellcom_form_system_theme_settings_alter(&$form, $form_state, $form_id 
     '#title' => t('Bellcom indstillinger'),
   ];
 
-  /*
-  |--------------------------------------------------------------------------
-  | Contact information
-  |--------------------------------------------------------------------------
-  |
-  | Sets all necessary options to save data.
-  |
-  */
-
-  // Fieldset
+  // Contact information
+  // Sets all necessary options to save data.
+  // Fieldset.
   $form['options']['contact_information'] = [
     '#type' => 'fieldset',
     '#title' => t('Kontakt information'),
   ];
 
-  // Business owner name
+  // Business owner name.
   $form['options']['contact_information']['business_owner_name'] = [
     '#type' => 'textfield',
     '#title' => t('Navn'),
     '#default_value' => theme_get_setting('business_owner_name'),
   ];
 
-  // Business startup year
+  // Business startup year.
   $form['options']['contact_information']['business_startup_year'] = [
     '#type' => 'textfield',
     '#title' => t('Opstartsår'),
-    '#description' => t('Det årstal der vises i copyright. <br>Eks. Copyright <strong><u>2011</u></strong> - ' . date('Y')),
+    '#description' => t('Det årstal der vises i copyright. <br>Eks. Copyright <strong><u>2011</u></strong>') . ' - ' . date('Y'),
     '#default_value' => theme_get_setting('business_startup_year'),
   ];
 
-  // Address
+  // Address.
   $form['options']['contact_information']['address'] = [
     '#type' => 'textfield',
     '#title' => t('Adresse'),
     '#default_value' => theme_get_setting('address'),
   ];
 
-  // Zipcode
+  // Zipcode.
   $form['options']['contact_information']['zipcode'] = [
     '#type' => 'textfield',
     '#title' => t('Postnr'),
     '#default_value' => theme_get_setting('zipcode'),
   ];
 
-  // City
+  // City.
   $form['options']['contact_information']['city'] = [
     '#type' => 'textfield',
     '#title' => t('By'),
     '#default_value' => theme_get_setting('city'),
   ];
 
-  // Phone number
+  // Phone number.
   $form['options']['contact_information']['phone_system'] = [
     '#type' => 'textfield',
     '#title' => t('Telefon'),
@@ -73,7 +71,7 @@ function bellcom_form_system_theme_settings_alter(&$form, $form_state, $form_id 
     '#default_value' => theme_get_setting('phone_system'),
   ];
 
-  // Phone number - readable
+  // Phone number - readable.
   $form['options']['contact_information']['phone_readable'] = [
     '#type' => 'textfield',
     '#title' => t('Vist telefon nummer'),
@@ -81,36 +79,29 @@ function bellcom_form_system_theme_settings_alter(&$form, $form_state, $form_id 
     '#default_value' => theme_get_setting('phone_readable'),
   ];
 
-  // E-mail address
+  // E-mail address.
   $form['options']['contact_information']['email'] = [
     '#type' => 'textfield',
     '#title' => t('E-mail'),
     '#default_value' => theme_get_setting('email'),
   ];
 
-  // Working hours
+  // Working hours.
   $form['options']['contact_information']['working_hours'] = [
     '#type' => 'textfield',
     '#title' => t('Åbningstid eller anden info'),
     '#default_value' => theme_get_setting('working_hours'),
   ];
 
-  /*
-  |--------------------------------------------------------------------------
-  | Social links
-  |--------------------------------------------------------------------------
-  |
-  | Sets all necessary options to save data.
-  |
-  */
-
-  // Fieldset
+  // Social links
+  // Sets all necessary options to save data.
+  // Fieldset.
   $form['options']['social_links'] = [
     '#type' => 'fieldset',
     '#title' => t('Sociale tjenester'),
   ];
 
-  // Facebook
+  // Facebook.
   $form['options']['social_links']['facebook'] = [
     '#type' => 'checkbox',
     '#title' => t('Facebook'),
@@ -143,7 +134,7 @@ function bellcom_form_system_theme_settings_alter(&$form, $form_state, $form_id 
     ],
   ];
 
-  // Twitter
+  // Twitter.
   $form['options']['social_links']['twitter'] = [
     '#type' => 'checkbox',
     '#title' => t('Twitter'),
@@ -176,7 +167,7 @@ function bellcom_form_system_theme_settings_alter(&$form, $form_state, $form_id 
     ],
   ];
 
-  // Google plus
+  // Google plus.
   $form['options']['social_links']['googleplus'] = [
     '#type' => 'checkbox',
     '#title' => t('Google plus'),
@@ -209,7 +200,7 @@ function bellcom_form_system_theme_settings_alter(&$form, $form_state, $form_id 
     ],
   ];
 
-  // Instagram
+  // Instagram.
   $form['options']['social_links']['instagram'] = [
     '#type' => 'checkbox',
     '#title' => t('Instagram'),
@@ -242,7 +233,7 @@ function bellcom_form_system_theme_settings_alter(&$form, $form_state, $form_id 
     ],
   ];
 
-  // LinkedIn
+  // LinkedIn.
   $form['options']['social_links']['linkedin'] = [
     '#type' => 'checkbox',
     '#title' => t('LinkedIn'),
@@ -275,7 +266,7 @@ function bellcom_form_system_theme_settings_alter(&$form, $form_state, $form_id 
     ],
   ];
 
-  // Pinterest
+  // Pinterest.
   $form['options']['social_links']['pinterest'] = [
     '#type' => 'checkbox',
     '#title' => t('Pinterest'),
@@ -308,7 +299,7 @@ function bellcom_form_system_theme_settings_alter(&$form, $form_state, $form_id 
     ],
   ];
 
-  // Vimeo
+  // Vimeo.
   $form['options']['social_links']['vimeo'] = [
     '#type' => 'checkbox',
     '#title' => t('Vimeo'),
@@ -341,7 +332,7 @@ function bellcom_form_system_theme_settings_alter(&$form, $form_state, $form_id 
     ],
   ];
 
-  // Youtube
+  // Youtube.
   $form['options']['social_links']['youtube'] = [
     '#type' => 'checkbox',
     '#title' => t('Youtube'),

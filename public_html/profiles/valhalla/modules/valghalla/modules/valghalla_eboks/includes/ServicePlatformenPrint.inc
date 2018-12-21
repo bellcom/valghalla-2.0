@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * The wrapper class to work with Serviceplatformen Print service.

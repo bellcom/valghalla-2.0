@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Valghalla sms module.
@@ -93,7 +94,8 @@ function valghalla_sms_get_message($template_node) {
  */
 function valghalla_sms_send_message($to, $params, $context) {
   $from = variable_get('valghalla_sms_from', FALSE);
-  $sms_gateway = valghalla_sms_plugins(variable_get('valghalla_sms_default_gateway', FALSE));
+  $sms_gateway_id = variable_get('valghalla_sms_default_gateway', FALSE);
+  $sms_gateway = valghalla_sms_plugins($sms_gateway_id);
   $message_body = format_string($params['body'], $params['tokens']);
 
   if (empty($sms_gateway)) {
@@ -101,9 +103,15 @@ function valghalla_sms_send_message($to, $params, $context) {
     return FALSE;
   }
 
+  $notification_recipient = substr($to, 0, 6) . '-' . str_repeat('x', 4);
+  if ($sms_gateway_id != 'NemSMS' || !empty($context['CVR'])) {
+    $notification_recipient = $to;
+  }
+
   /** @var EntityInterface $notification */
   $notification = entity_get_controller('entity_valghalla_notification')->create(array(
     'type' => $params['notification_type'],
+    'recipient' => $notification_recipient,
     'gateway' => 'SMS ' . $sms_gateway['title'],
     'vol_id' => $params['volunteer_nid'],
     'message' => $message_body,

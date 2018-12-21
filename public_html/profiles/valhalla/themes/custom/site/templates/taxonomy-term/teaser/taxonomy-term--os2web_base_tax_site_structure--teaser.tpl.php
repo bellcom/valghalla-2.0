@@ -1,3 +1,10 @@
+<?php
+
+/**
+ * @file
+ * Site structure taxonomy term template.
+ */
+?>
 <?php if ($view_mode == 'teaser'): ?>
   <!-- Begin - teaser -->
   <div id="taxonomy-term-<?php print $term->tid; ?>" class="<?php print $classes; ?>">

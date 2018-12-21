@@ -3,6 +3,4 @@ description = Provides functionality to store queue of resources that need to by
 package = Valghalla - Synch
 dependencies[] = uuid
 
-version = "7.x-1.0"
 core = "7.x"
-project = "valghalla_synch_queue"

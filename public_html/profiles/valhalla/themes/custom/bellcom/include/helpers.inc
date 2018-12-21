@@ -1,7 +1,13 @@
 <?php
 
-/*
- * Seperated dates
+/**
+ * @file
+ * Helper functions.
+ */
+
+/**
+ * Seperated dates.
+ *
  * Heavily inspired by drupals format_date() function.
  */
 function _bellcom_seperated_dates($timestamp) {
@@ -34,17 +40,17 @@ function _bellcom_seperated_dates($timestamp) {
   // Set the time zone for the DateTime object.
   date_timezone_set($date_time, $timezones[$timezone]);
 
-  // Seperated dates
+  // Seperated dates.
   $seperated_dates = array(
     'day' => array(
       'integer' => date_format($date_time, 'd'),
-      'short' => t(date_format($date_time, 'D')),
-      'full' => t(date_format($date_time, 'l')),
+      'short' => date_format($date_time, 'D'),
+      'full' => date_format($date_time, 'l'),
     ),
     'month' => array(
       'integer' => date_format($date_time, 'm'),
-      'short' => t(date_format($date_time, 'M')),
-      'full' => t(date_format($date_time, 'F')),
+      'short' => date_format($date_time, 'M'),
+      'full' => date_format($date_time, 'F'),
     ),
     'year' => array(
       'short' => date_format($date_time, 'y'),
@@ -56,8 +62,8 @@ function _bellcom_seperated_dates($timestamp) {
   return $seperated_dates;
 }
 
-/*
- * Text shortener
+/**
+ * Text shortener.
  */
 function _bellcom_text_shortener($text_string, $max_length) {
   $alter = array(
@@ -72,15 +78,15 @@ function _bellcom_text_shortener($text_string, $max_length) {
   return $shortened_string;
 }
 
-/*
- * Search for value in multi-dimensional array
+/**
+ * Search for value in multi-dimensional array.
  */
 function in_array_recursive($needle, $haystack, $strict = FALSE) {
   foreach ($haystack as $item) {
     if (($strict ? $item === $needle : $item == $needle) || (is_array($item) && in_array_recursive($needle, $item, $strict))) {
-      return true;
+      return TRUE;
     }
   }
 
-  return false;
+  return FALSE;
 }

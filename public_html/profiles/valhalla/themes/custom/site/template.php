@@ -1,6 +1,11 @@
 <?php
 
 /**
+ * @file
+ * Main theme functionality.
+ */
+
+/**
  * Implements template_preprocess_html().
  */
 function site_preprocess_html(&$variables) {

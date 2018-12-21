@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * The wrapper class to work with Serviceplatformen Print service.
@@ -14,7 +15,8 @@ class ServicePlatformenPrintNemSMS extends ServicePlatformenPrint {
   /**
    * MaterialeID variable.
    *
-   * Also used as MeddelelsesIndholdstypeIdentifikator or SysID.
+   * @var string
+   *   Also used as MeddelelsesIndholdstypeIdentifikator or SysID.
    */
   private $materialeId;
 
@@ -30,10 +32,10 @@ class ServicePlatformenPrintNemSMS extends ServicePlatformenPrint {
   /**
    * Set receiver callback.
    */
-  public function setTo($to) {
+  public function setTo($to, $type = 'CPR') {
     $to = str_replace('-', '', $to);
     $this->request['BrevSPBody']['ForsendelseI']['ForsendelseModtager'] = array(
-      'AfsendelseModtager' => array('CPRnummerIdentifikator' => $to),
+      'AfsendelseModtager' => array($type . 'nummerIdentifikator' => $to),
     );
   }
 

@@ -1,7 +1,10 @@
 <?php
+
 /**
- * implementation of hook_panels_layouts().
+ * @file
+ * Implementation of hook_panels_layouts().
  */
+
 $plugin = array(
   'title' => t('Sectioned - top/dark/light/dark/light'),
   'category' => t('OS2'),

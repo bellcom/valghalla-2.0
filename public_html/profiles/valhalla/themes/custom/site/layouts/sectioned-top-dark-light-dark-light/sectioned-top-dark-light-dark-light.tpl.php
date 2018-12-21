@@ -1,14 +1,18 @@
-<div <?php if (!empty($css_id)) {
-    echo "id=\"$css_id\"";
-} ?>>
+<?php
 
+/**
+ * @file
+ * Template for sectioned top dark layout panel.
+ */
+?>
+<div <?php print !empty($css_id) ? "id=\"$css_id\"" : ""; ?>>
   <?php if ($content['top']): ?>
     <!-- Begin - top -->
     <div class="panels-pane-region panels-pane-region--top">
       <?php print $content['top']; ?>
     </div>
     <!-- End - top -->
-  <?php endif ?>
+  <?php endif; ?>
 
   <?php if ($content['dark_section_1']): ?>
     <!-- Begin - dark section no. 1 -->
@@ -82,7 +86,7 @@
     <!-- End - light section no. 2 -->
   <?php endif; ?>
 
-  <?php if ($content['dark_section_3_1'] OR $content['dark_section_3_2']): ?>
+  <?php if ($content['dark_section_3_1'] || $content['dark_section_3_2']): ?>
     <!-- Begin - dark section no. 3 -->
     <div class="sectioned sectioned--dark">
       <div class="sectioned__inner">
@@ -106,7 +110,7 @@
     <!-- End - dark section no. 3 -->
   <?php endif; ?>
 
-  <?php if ($content['light_section_3_1'] OR $content['light_section_3_2']): ?>
+  <?php if ($content['light_section_3_1'] || $content['light_section_3_2']): ?>
     <!-- Begin - light section no. 3 -->
     <div class="sectioned sectioned--light">
       <div class="sectioned__inner">

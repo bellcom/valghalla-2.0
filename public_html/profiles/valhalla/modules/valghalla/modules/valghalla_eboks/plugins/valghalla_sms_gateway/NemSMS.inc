@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Ctools plugin for Valghalla notification NemSMS gateway .
@@ -20,7 +21,11 @@ function nemsms_send($to, $message, $context) {
   module_load_include('inc', 'valghalla_eboks', 'includes/ServicePlatformenPrintNemSMS');
   $service = new ServicePlatformenPrintNemSMS();
   $service->prepareRequest($message, $context);
-  $service->setTo($to);
+  $type = 'CPR';
+  if (!empty($context['CVR'])) {
+    $type = 'CVR';
+  }
+  $service->setTo($to, $type);
   $result = $service->sendMessage();
   if (!$result['status']) {
     watchdog('valghalla_eboks', 'WS request failed. Error message: %message', array('%message' => $result['text']), WATCHDOG_ERROR);

@@ -1,22 +1,38 @@
 <?php
+
+/**
+ * @file
+ * Contains main functional code for Valghalla status report.
+ */
+
 use Drupal\Valghalla\Pdf;
+use Mpdf\Output\Destination;
 
 /**
  * Implements hook_menu().
  */
 function valghalla_status_report_menu() {
   $items['valghalla/report'] = array(
-    'title' => t('Status rapport'),
+    'title' => 'Status rapport',
     'page callback' => 'valghalla_status_report_generator',
-    'access callback' => 'user_is_logged_in',
-  );
-  $items['valghalla/test-cron'] = array(
-    'title' => t('Cron test'),
-    'page callback' => '_valghalla_status_report_cron',
     'access callback' => 'user_is_logged_in',
   );
 
   return $items;
+}
+
+/**
+ * Implements hook_cron().
+ */
+function valghalla_status_report_cron() {
+  $last_run = variable_get('valghalla_status_report_last_run');
+  // Only run once a day.
+  if (date('Ymd') <= date('Ymd', $last_run)) {
+    watchdog('valghalla_status_report', 'Status report no blev ikke kørt da den allerede er kørt i dag: %last_run', array('%last_run' => $last_run), WATCHDOG_NOTICE);
+    return;
+  }
+  _valghalla_status_report_cron();
+  variable_set('valghalla_status_report_last_run', REQUEST_TIME);
 }
 
 /**
@@ -252,7 +268,8 @@ function _valghalla_status_report_generate_polling_station_markup($polling_stati
 
   foreach ($polling_station_nids as $polling_station_nid => $polling_station_title) {
 
-    // Check if there is no assigned roles to the statation, and total count is zero.
+    // Check if there is no assigned roles to the statation,
+    // and total count is zero.
     if ($polling_station_count[$polling_station_nid]['total_count']['total'] == 0 &&
         $polling_station_count[$polling_station_nid]['total_count']['assigned'] == 0) {
       continue;
@@ -391,7 +408,7 @@ function _generate_pdf_content__party_external_links($election_nid = NULL, $part
     $markup .= '<h2>' . t('Afstemningssteder:') . '</h2>';
 
     // Run through all polling stations.
-    foreach($polling_station_nids as $polling_station_nid => $polling_station_title) {
+    foreach ($polling_station_nids as $polling_station_nid => $polling_station_title) {
       $polling_station = node_load($polling_station_nid);
       $polling_station_url = valghalla_internal_server_generate_external_subscribe_url($election, $party, $role = NULL, $polling_station);
 
@@ -526,7 +543,8 @@ function _generate_pdf_content__volunteer_list_from_polling_station($party_tid =
     $markup = '<h2>' . $polling_station->title . '</h2>';
 
     if (user_access('valghalla see all parties') && !$selected_party_tid) {
-      // If the user is administrator and theres no party chosen, show all parties!
+      // If the user is administrator and theres no party chosen,
+      // show all parties!
       $parties = odin_get_parties();
 
       foreach ($parties as $party_tid => $party_name) {
@@ -594,6 +612,13 @@ function _valghalla_status_report_cron() {
   $elections = odin_get_active_elections();
   $report_broadcast = FALSE;
 
+  if (!module_exists('valghalla_notifications')) {
+    watchdog('valghalla_status_report', 'Can not send report. Notification system not found', array(), WATCHDOG_ERROR);
+    return;
+  }
+
+
+
   // Run through all elections.
   foreach ($elections as $election_nid) {
     $election = node_load($election_nid);
@@ -605,7 +630,26 @@ function _valghalla_status_report_cron() {
 
     // If we are not supposed to sent out emails, we abort!
     if ($report_broadcast !== TRUE) {
-      return;
+      continue;
+    }
+
+    $election_date = field_get_items('node', $election, 'field_date');
+    list($election_date, $time) = preg_split("|T|", $election_date[0]['value']);
+    $today_date = strtotime(date('Y-m-d'));
+    $election_date1 = strtotime($election_date);
+    $days_to_election = floor(($election_date1 - $today_date) / 86400);
+
+    // Check dates.
+    $days_arr = variable_get('valghalla_status_report_days');
+    $days = explode(',', $days_arr);
+    $days = array_map('trim', $days);
+    if (!in_array($days_to_election, $days)) {
+      watchdog('valghalla_notification', 'Status report blev ikke kørt idet idag ikke er nogen rykker dag. Valg: %election_date Dage til valget: %todays Report dage: %report_days', array(
+        '%todays' => $days_to_election,
+        '%report_days' => $days_arr,
+        '%election_date' => $election_date,
+      ), WATCHDOG_NOTICE);
+      continue;
     }
 
     // Load all parties.
@@ -618,7 +662,6 @@ function _valghalla_status_report_cron() {
       $recipient = NULL;
       $cvr_number = NULL;
       $pdf = new Pdf();
-      $content = '';
       $file = NULL;
 
       // Check if this party should receive emails.
@@ -626,7 +669,7 @@ function _valghalla_status_report_cron() {
         $party_should_recieve_emails = (bool) $field_allow_broadcast[0]['value'];
       }
       if ($party_should_recieve_emails !== TRUE) {
-        return;
+        continue;
       }
 
       // Collect details necessary for sending out notifications.
@@ -636,33 +679,50 @@ function _valghalla_status_report_cron() {
       if ($field_cvr_number = field_get_items('taxonomy_term', $party, 'field_cvr_number')) {
         $cvr_number = $field_cvr_number[0]['safe_value'];
       }
-      if (!$recipient or !$cvr_number) {
-        return;
+      if (!$recipient && !$cvr_number) {
+        continue;
       }
 
       // Generate PDF.
       $content = _generate_pdf_content($election_nid, $party_tid);
       $pdf->WriteHTML($content);
 
-//      $file = $pdf->Output('', 'S');
-      $file = $pdf->Output();
+      $file = $pdf->Output('', Destination::STRING_RETURN);
 
       if (!$file) {
-        return;
+        continue;
       }
 
+      $params = array(
+        'subject' => t('Status rapport: !valgtitle', array('!valgtitle' => $election->title)),
+        'body' => t('Et øjebliksbillede er genereret og vedhæftet. Se vedhæftede fil.'),
+        'format' => 'filtered_html',
+        // We are no going to use token replacement here.
+        'tokens' => array(),
+        'attachments' => array(
+          array(
+            'filecontent' => $file,
+            'filename' => 'report-' . date('Ymd-His') . '.pdf',
+            'filemime' => 'application/pdf',
+            'extension' => 'pdf',
+          ),
+        ),
+        'volunteer_nid' => 0,
+        'notification_type' => 'direct',
+      );
+
       // Send PDF to e-boks.
-      if ($cvr_number) {
-        $cvr_number = $cvr_number;
+      if ($cvr_number && module_exists('valghalla_eboks')) {
+        valghalla_notifications_direct_send('eboks', $cvr_number, $params, array('CVR' => TRUE));
       }
 
       // Send PDF via e-mail.
-      elseif ($recipient) {
-        $email_to = $recipient;
-        $file = $file;
+      elseif ($recipient && module_exists('valghalla_mail')) {
+        valghalla_notifications_direct_send('mail', $recipient, $params);
+      }
 
-        $email_subject = t('Status rapport');
-        $email_content = t('Et øjebliksbillede er genereret og vedhæftet pr. mail.');
+      else {
+        watchdog('valghalla_status_report', 'Not found enabled gateway to send status report', array(), WATCHDOG_ERROR);
       }
     }
   }

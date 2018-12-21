@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Handles the Valghalla notifications entity.
@@ -152,6 +153,7 @@ function entity_valghalla_notification_list_entities($vol_nid = FALSE) {
   else {
     $headers[] = t('Volunteer');
   }
+  $headers[] = t('Recipient');
   $headers[] = t('Message');
   $headers[] = t('Send time');
   $headers[] = t('Status');
@@ -164,14 +166,15 @@ function entity_valghalla_notification_list_entities($vol_nid = FALSE) {
       $message = strip_tags(str_replace('<br/>', '  ', $entity->message));
       $row = $row_data = array();
       $row_data['id'] = l($entity->id, 'valghalla/administration/notifications/' . $entity->id);
-      $row_data['gateway'] = $entity->gateway;
-      $row_data['type'] = $entity->type;
+      $row_data['gateway'] = check_plain($entity->gateway);
+      $row_data['type'] = check_plain($entity->type);
       if (!$vol_nid) {
         $row_data['volunteer'] = entity_valghalla_notification_volunteer_view($entity->vol_id);
       }
-      $row_data['message'] = substr($message, 0, 100);
+      $row_data['to'] = check_plain($entity->recipient);
+      $row_data['message'] = substr($message, 0, 50);
       $row_data['created'] = format_date($entity->created, 'short');
-      $row_data['status'] = $entity->status;
+      $row_data['status'] = check_plain($entity->status);
       $row_data['operations'] = theme('links__ctools_dropbutton', array(
         'links' => array(
           array('title' => t('View'), 'href' => 'valghalla/administration/notifications/' . $entity->id),
@@ -250,6 +253,11 @@ function entity_valghalla_notification_view($entity, $view_mode = 'default') {
     '#title' => t('Notification type'),
     '#markup' => $entity->type,
   );
+  $entity->content['recipient'] = array(
+    '#type' => 'item',
+    '#title' => t('Recipient'),
+    '#markup' => $entity->recipient,
+  );
   $entity->content['message'] = array(
     '#type' => 'item',
     '#title' => t('Message'),
@@ -306,6 +314,7 @@ function valghalla_notification_field_extra_fields() {
   $form_elements = array(
     'type' => array('label' => t('Notification type')),
     'vol_id' => array('label' => t('Volunteer id')),
+    'to' => array('label' => t('Notification receiver')),
     'message' => array('label' => t('Notification message')),
     'gateway' => array('label' => t('Gateway')),
     'status' => array('label' => t('Status')),
@@ -314,6 +323,7 @@ function valghalla_notification_field_extra_fields() {
   $display_elements = array(
     'type' => array('label' => t('Notification type')),
     'vol_id' => array('label' => t('Volunteer id')),
+    'to' => array('label' => t('Notification receiver')),
     'message' => array('label' => t('Notification message')),
     'gateway' => array('label' => t('Gateway')),
     'status' => array('label' => t('Status')),

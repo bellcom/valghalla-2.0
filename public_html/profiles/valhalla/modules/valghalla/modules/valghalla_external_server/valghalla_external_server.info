@@ -10,6 +10,4 @@ dependencies[] = valghalla_synch_node_export
 dependencies[] = valghalla_synch_queue
 dependencies[] = uuid
 
-version = "7.x-1.0"
 core = "7.x"
-project = "valghalla_external_server"

@@ -1,5 +1,12 @@
+<?php
+
+/**
+ * @file
+ * Overrides node template for volunteers node type.
+ */
+?>
 <div id="node-<?php print $node->nid; ?>" class="<?php print $classes; ?> clearfix"<?php print $attributes; ?>>
-  <span class="pull-right"><?php print t('Gemt: '); ?><?php print valhalla_bs_last_editor($node) . ' ' . format_date($node->changed); ?></span>
+  <span class="pull-right"><?php print t('Gemt:'); ?> <?php print valhalla_bs_last_editor($node) . ' ' . format_date($node->changed); ?></span>
 
   <br />
   <br />

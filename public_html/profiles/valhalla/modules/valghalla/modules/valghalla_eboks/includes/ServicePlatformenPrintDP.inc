@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * The wrapper class to work with Serviceplatformen Print service.
@@ -17,7 +18,8 @@ class ServicePlatformenPrintDP extends ServicePlatformenPrint {
   /**
    * MaterialeID variable.
    *
-   * Also used as MeddelelsesIndholdstypeIdentifikator or SysID.
+   * @var string
+   *   Also used as MeddelelsesIndholdstypeIdentifikator or SysID.
    */
   private $materialeId;
 
@@ -33,10 +35,10 @@ class ServicePlatformenPrintDP extends ServicePlatformenPrint {
   /**
    * Set receiver callback.
    */
-  public function setTo($to) {
+  public function setTo($to, $type = 'CPR') {
     $to = str_replace('-', '', $to);
     $this->request['BrevSPBody']['ForsendelseI']['ForsendelseModtager'] = array(
-      'AfsendelseModtager' => array('CPRnummerIdentifikator' => $to),
+      'AfsendelseModtager' => array($type . 'nummerIdentifikator' => $to),
     );
   }
 
@@ -51,7 +53,7 @@ class ServicePlatformenPrintDP extends ServicePlatformenPrint {
     $pdf = new Pdf();
     $pdf->WriteHTML($params['rendered_message']);
     $pdf_output = $pdf->Output(FALSE, Destination::STRING_RETURN);
-    $title_text = format_string($params['subject'], $params['tokens']);
+    $params['title_text'] = format_string($params['subject'], $params['tokens']);
 
     $this->request['BrevSPBody'] = array(
       'Kanalvalg' => 'D',
@@ -61,7 +63,7 @@ class ServicePlatformenPrintDP extends ServicePlatformenPrint {
         'FilformatNavn' => 'PDF',
         'MeddelelseIndholdData' => $pdf_output,
         'DokumentParametre' => array(
-          'TitelTekst' => $title_text,
+          'TitelTekst' => $params['title_text'],
         ),
         'DigitalPostParametre' => array(
           'MeddelelseIndholdstypeIdentifikator' => $this->materialeId,

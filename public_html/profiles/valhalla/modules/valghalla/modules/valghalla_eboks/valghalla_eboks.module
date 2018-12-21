@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Valghalla eboks module.
@@ -68,13 +69,14 @@ function valghalla_eboks_get_message($template_node) {
 /**
  * Send message callback.
  */
-function valghalla_eboks_send_message($to, $params, $multistep_values) {
+function valghalla_eboks_send_message($to, $params, $context) {
   module_load_include('inc', 'valghalla_eboks', 'includes/ServicePlatformenPrintDP');
 
   /** @var EntityInterface $notification */
   $notification = entity_get_controller('entity_valghalla_notification')->create(array(
     'type' => $params['notification_type'],
     'gateway' => 'eboks',
+    'recipient' => !empty($context['CVR']) ? $to : substr($to, 0, 6) . '-' . str_repeat('x', 4),
     'vol_id' => $params['volunteer_nid'],
     'status' => 'Failed',
   ));
@@ -84,14 +86,25 @@ function valghalla_eboks_send_message($to, $params, $multistep_values) {
 
   $service = new ServiceplatformenPrintDP();
   $service->prepareRequest($params);
-  $service->setTo($to);
+  $type = 'CPR';
+  if (!empty($context['CVR'])) {
+    $type = 'CVR';
+  }
+  $service->setTo($to, $type);
   $result = $service->sendMessage();
   if (!$result['status']) {
     watchdog('valghalla_eboks', 'WS request failed. Error message: %message', array('%message' => $result['text']), WATCHDOG_ERROR);
   }
 
   $notification->status = $result['status'] ? 'Succeed' : 'Failed';
-  $notification->message = $params['rendered_message'];
+  $notification->message = $params['title_text'] . '<br>' . $params['rendered_message'];
+  if (!empty($params['attachments'])) {
+    $files = array();
+    foreach ($params['attachments'] as $attachment) {
+      $files[] = $attachment['filename'];
+    }
+    $notification->message .= t('Attachments:') . theme('item_list', array('items' => $files));
+  }
   $notification->status_info = $result['response'];
   $notification->save();
   return $result['status'];

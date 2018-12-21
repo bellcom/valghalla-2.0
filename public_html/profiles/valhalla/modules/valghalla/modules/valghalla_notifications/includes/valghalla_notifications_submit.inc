@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Handles the form submission of the valghalla_notifications_send_message_form.
@@ -73,7 +74,8 @@ function valghalla_notifications_send_confirm_submit($form, &$form_state) {
     $operations[] = array(
       'valghalla_notifications_send_batch', array(
         $batch,
-        $form_state),
+        $form_state,
+      ),
     );
   }
 
@@ -125,6 +127,14 @@ function valghalla_notifications_send_batch(array $recipients, array $form_state
       $election_nid = $multistep_values['get_recipients']['election_nid'];
       $gateway = valghalla_notifications_get_gateway($election_nid, $tokens['!position_nid'], 'invitation');
       $template_nid = valghalla_notifications_get_template($gateway['id'], $election_nid, $tokens['!position_nid'], $notification_type);
+    }
+
+    if (!valghalla_notifications_notification_allowed($gateway['id'], $volunteer)) {
+      watchdog('valghalla_notifications', 'Notification has not send. Volunteer is excused from %gateway.', array(
+        '%gateway' => $gateway['id'],
+      ));
+      $context['results']['fails'][] = $volunteer->title;
+      continue;
     }
 
     $placeholders = array(
