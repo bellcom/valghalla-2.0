@@ -457,47 +457,6 @@ function valghalla_election_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-election-field_signup_comment'.
-  $field_instances['node-election-field_signup_comment'] = array(
-    'bundle' => 'election',
-    'default_value' => array(
-      0 => array(
-        'value' => 1,
-      ),
-    ),
-    'deleted' => 0,
-    'description' => 'Angiv om det er muligt at tilføje en kommentar ved tilmelding til valget.',
-    'display' => array(
-      'default' => array(
-        'label' => 'above',
-        'module' => 'list',
-        'settings' => array(),
-        'type' => 'list_default',
-        'weight' => 8,
-      ),
-      'teaser' => array(
-        'label' => 'above',
-        'settings' => array(),
-        'type' => 'hidden',
-        'weight' => 0,
-      ),
-    ),
-    'entity_type' => 'node',
-    'field_name' => 'field_signup_comment',
-    'label' => 'Kommentar ved tilmelding',
-    'required' => 1,
-    'settings' => array(
-      'user_register_form' => FALSE,
-    ),
-    'widget' => array(
-      'active' => 1,
-      'module' => 'options',
-      'settings' => array(),
-      'type' => 'options_buttons',
-      'weight' => 2,
-    ),
-  );
-
   // Exported field_instance: 'node-election-field_volunteers_pr_pol_st_party'.
   $field_instances['node-election-field_volunteers_pr_pol_st_party'] = array(
     'bundle' => 'election',
