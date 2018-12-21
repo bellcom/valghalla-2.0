@@ -743,6 +743,8 @@ function valghalla_volunteers_polling_station_posts_to_fill($polling_station, $p
       $volunteer_node = node_load($id);
       $fc_electionifo = entity_load_single('field_collection_item', $volunteer['fcid']);
 
+      $token = NULL;
+
       if (is_object($fc_electionifo)) {
         $rsvp_comment = field_get_items('field_collection_item', $fc_electionifo, 'field_rsvp_comment');
         $rsvp = field_get_items('field_collection_item', $fc_electionifo, 'field_rsvp');
@@ -757,7 +759,7 @@ function valghalla_volunteers_polling_station_posts_to_fill($polling_station, $p
         'name' => $volunteer_node->title,
         'rsvp' => $rsvp,
         'rsvp_comment' => $rsvp_comment[0]['value'],
-        'reply_link' => url("volunteers/rsvp/$token"),
+        'reply_link' => ($token) ? url("volunteers/rsvp/$token") : '',
         'nid' => $id,
         'fcid' => $volunteer['fcid'],
       );
