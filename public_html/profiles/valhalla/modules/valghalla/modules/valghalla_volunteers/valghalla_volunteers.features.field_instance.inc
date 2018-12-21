@@ -1519,6 +1519,49 @@ function valghalla_volunteers_field_default_field_instances() {
     ),
   );
 
+  // Exported field_instance: 'node-volunteers-field_no_sms'.
+  $field_instances['node-volunteers-field_no_sms'] = array(
+    'bundle' => 'volunteers',
+    'default_value' => array(
+      0 => array(
+        'value' => 0,
+      ),
+    ),
+    'deleted' => 0,
+    'description' => 'Deltageren er fritaget for NemSMS. Afkrydses dette felt, vil deltageren ikke modtage SMS fra Valghalla.',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'list',
+        'settings' => array(),
+        'type' => 'list_default',
+        'weight' => 29,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_no_sms',
+    'label' => 'Fritagelse for NemSMS',
+    'required' => 0,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'options',
+      'settings' => array(
+        'display_label' => 1,
+      ),
+      'type' => 'options_onoff',
+      'weight' => 30,
+    ),
+  );
+
   // Exported field_instance: 'node-volunteers-field_party'.
   $field_instances['node-volunteers-field_party'] = array(
     'bundle' => 'volunteers',
@@ -1896,6 +1939,7 @@ function valghalla_volunteers_field_default_field_instances() {
   t('CPR Opslag dato');
   t('CPR status');
   t('Deltageren er fritaget for Digital Post. Afkrydses dette felt, vil deltageren ikke modtage mails fra Valghalla.');
+  t('Deltageren er fritaget for NemSMS. Afkrydses dette felt, vil deltageren ikke modtage SMS fra Valghalla.');
   t('Diæt');
   t('Dør / side');
   t('Efternavn');
@@ -1903,6 +1947,7 @@ function valghalla_volunteers_field_default_field_instances() {
   t('Email');
   t('Fornavn');
   t('Fritagelse for Digital Post');
+  t('Fritagelse for NemSMS');
   t('Hus nr.');
   t('Invitation');
   t('Label');

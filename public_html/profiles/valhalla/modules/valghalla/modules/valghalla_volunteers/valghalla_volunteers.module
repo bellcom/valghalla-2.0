@@ -1619,10 +1619,20 @@ function valghalla_volunteers_field_group_hide_field_groups(&$element, $group_na
  */
 function valghalla_volunteers_preprocess_views_view_table(&$variables) {
   foreach ($variables['result'] as $key => $row) {
+    $details = array();
     if (isset($row->field_field_no_mail[0]['raw']['value'])
       && intval($row->field_field_no_mail[0]['raw']['value'])) {
       $variables['row_classes'][$key][] = 'no-digital-post';
-      $variables['rows'][$key]['title'] .= ' (' . t('Fritaget for digital post') . ')';
+      $details[] = t('Fritaget for digital post.');
+    }
+    if (isset($row->field_field_no_sms[0]['raw']['value'])
+      && intval($row->field_field_no_sms[0]['raw']['value'])) {
+      $variables['row_classes'][$key][] = 'no-nem-sms';
+      $details[] = t('Fritaget for NemSMS.');
+    }
+    
+    if (!empty($details)) {
+      $variables['rows'][$key]['title'] .= ' (' . implode(' ', $details) . ')';
     }
   }
 }

@@ -129,6 +129,14 @@ function valghalla_notifications_send_batch(array $recipients, array $form_state
       $template_nid = valghalla_notifications_get_template($gateway['id'], $election_nid, $tokens['!position_nid'], $notification_type);
     }
 
+    if (!valghalla_notifications_notification_allowed($gateway['id'], $volunteer)) {
+      watchdog('valghalla_notifications', 'Notification has not send. Volunteer is excused from %gateway.', array(
+        '%gateway' => $gateway['id'],
+      ));
+      $context['results']['fails'][] = $volunteer->title;
+      continue;
+    }
+
     $placeholders = array(
       '%nid' => $template_nid,
       '%name' => $tokens['!name'],
