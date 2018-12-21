@@ -110,7 +110,7 @@ function valghalla_internal_server_batch_clone_op($uuid, $operation_details, &$c
       }
       else {
         // Fetch name and address.
-        valghalla_internal_server_volunteer_update_data($node);
+        valghalla_internal_server_volunteer_update_data_from_serviceplatform($node);
 
         // Handle validation.
         $validationStatus = valghalla_internal_server_validate_volunteer($node);

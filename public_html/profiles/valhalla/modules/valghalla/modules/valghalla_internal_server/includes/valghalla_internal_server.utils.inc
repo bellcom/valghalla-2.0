@@ -64,7 +64,7 @@ function valghalla_internal_server_validate_volunteer($volunteer_node) {
  * @param mixed $volunteer_node
  *   Volunteer node.
  */
-function valghalla_internal_server_volunteer_update_data($volunteer_node) {
+function valghalla_internal_server_volunteer_update_data_from_serviceplatform($volunteer_node) {
   $cpr_field = field_get_items('node', $volunteer_node, 'field_cpr_number');
   $cpr = $cpr_field[0]['value'];
   $saveNode = FALSE;
