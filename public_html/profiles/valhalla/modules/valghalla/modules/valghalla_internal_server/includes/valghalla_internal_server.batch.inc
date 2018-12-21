@@ -126,7 +126,7 @@ function valghalla_internal_server_batch_clone_op($uuid, $operation_details, &$c
           );
 
           // Notify volunteer.
-          valghalla_internal_server_notify_volunteer_last_seat($node);
+          valghalla_internal_server_notify_volunteer_last_seat($node, $existingNode);
 
           // Delete the item from queue.
           valghalla_synch_queue_remove_item($node->uuid);

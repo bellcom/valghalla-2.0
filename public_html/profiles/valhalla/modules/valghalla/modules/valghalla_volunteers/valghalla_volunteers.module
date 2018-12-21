@@ -357,52 +357,32 @@ function valghalla_volunteers_rsvp_form($form, &$form_state) {
  * @param array $form
  * @param array $form_state
  */
-function valghalla_volunteers_rsvp_form_submit($form, &$form_state) {watchdog('dhm', 'hertil');
-  global $language;
+function valghalla_volunteers_rsvp_form_submit($form, &$form_state) {
   module_load_include('inc', 'valghalla_volunteers', 'valghalla_volunteers');
 
   $fc = _valghalla_volunteers_validate_key(arg(2));
-
   $fc->field_rsvp[LANGUAGE_NONE][0]['value'] = $form_state['values']['rsvp'];
   $fc->field_rsvp_comment[LANGUAGE_NONE][0]['value'] = $form_state['values']['rsvp_comment'];
-
   $fc->save();
-  
-  $election_field = field_get_items('field_collection_item', $fc, 'field_election');
-  $election_nid = $election_field[0]['target_id'];
-  $election_node = node_load($election_nid);
 
-  // Sending mail if 'Sæt igang' is enabled in current election node
-  if ($election_node AND $election_node->field_election_status['da'][0]['value'] == TRUE) {
-
-    switch ($form_state['values']['rsvp']) {
-      case 1:
-        $type = 'rsvp_yes';
-        break;
-
-      case 2:
-        $type = 'rsvp_no';
-        break;
-
-      case 3:
-        $type = 'rsvp_never';
-        break;
-    }
-
-    $role_field = field_get_items('field_collection_item', $fc, 'field_post_role');
-    $role_nid = $role_field[0]['target_id'];
-    valghalla_notifications_notify_volunteer($election_nid, $role_nid, $fc, $type);
-    drupal_set_message(t('Vi har modtaget dit svar.'));
+  // If external server is activated,
+  // the volunteer notification happens on internal server side.
+  if (!module_exists('valghalla_external_server')) {
+    valghalla_volunteers_notify_volunteer($fc);
   }
-  else {
-    //Do not need to send email. 'Sæt igang' is disabled in current election node
-  }
+  drupal_set_message(t('Vi har modtaget dit svar.'));
 
   // Send e-mail to email-address set on election.
   if (isset($form_state['values']['rsvp_comment']) && $form_state['values']['rsvp_comment'] !== '') {
     $comment = $form_state['values']['rsvp_comment'];
 
     // Get e-mail address.
+    $field_election = field_get_items('field_collection_item', $fc, 'field_election');
+    if (!empty($field_election)) {
+      $election_nid = $field_election[0]['target_id'];
+    }
+    $election_node = node_load($election_nid);
+
     if ($field_email = field_get_items('node', $election_node, 'field_email_address')) {
       $recipient = $field_email[0]['email'];
     }
@@ -1056,10 +1036,10 @@ function valghalla_volunteers_add_volunteer_to_post($volunteer_nid, $pollingstat
   $fc->save();
 
   if (variable_get('valghalla_notifications_send_invitation_on_add', TRUE) && !$confirmed) {
-    valghalla_volunteers_notify_volunteer($election_nid, $role_nid, $fc, 'invitation');
+    valghalla_notifications_notify_volunteer($election_nid, $role_nid, $fc, 'invitation');
   }
   else if ($confirmed) {
-    valghalla_volunteers_notify_volunteer($election_nid, $role_nid, $fc, 'confirmed');
+    valghalla_notifications_notify_volunteer($election_nid, $role_nid, $fc, 'confirmed');
   }
 
   return array('fcid' => $fc->item_id, 'html' => _valghalla_helper_wrap_name($volunteer_node, "p", $fc->item_id));
@@ -1079,7 +1059,7 @@ function valghalla_volunteers_remove_volunteer_from_post($fcid){
 
     // We send the notification. Only if a template is specified, will the
     // volunteer recieve a mail.
-    valghalla_volunteers_notify_volunteer($election_nid, $role_nid, $fc, 'remove');
+    valghalla_notifications_notify_volunteer($election_nid, $role_nid, $fc, 'remove');
 
     $fc->delete();
 
@@ -1090,9 +1070,53 @@ function valghalla_volunteers_remove_volunteer_from_post($fcid){
 
 /**
  * Notify volunteer of post change.
+ *
+ * @param mixed $electionInfo
+ *   Election info field collection.
+ * @param string $forceType
+ *   If we are forcing some notification type.
  */
-function valghalla_volunteers_notify_volunteer($election_nid, $role_nid, $fc, $type){
-  valghalla_notifications_notify_volunteer($election_nid, $role_nid, $fc, $type);
+function valghalla_volunteers_notify_volunteer($electionInfo, $forceType = NULL) {
+  $field_election = field_get_items('field_collection_item', $electionInfo, 'field_election');
+  if (!empty($field_election)) {
+    $election_nid = $field_election[0]['target_id'];
+  }
+  $field_post_role = field_get_items('field_collection_item', $electionInfo, 'field_post_role');
+  if (!empty($field_post_role)) {
+    $role_nid = $field_post_role[0]['target_id'];
+  }
+
+  if ($election_nid && $role_nid) {
+    $type = NULL;
+
+    // Force type is used.
+    if ($forceType) {
+      $type = $forceType;
+    }
+    // No forced type, extract the type from the RSVP reply.
+    else {
+      $field_rsvp = field_get_items('field_collection_item', $electionInfo, 'field_rsvp');
+      if (!empty($field_rsvp)) {
+        $rsvp = $field_rsvp[0]['value'];
+      }
+
+      switch ($rsvp) {
+        case 1:
+          $type = 'rsvp_yes';
+          break;
+
+        case 2:
+          $type = 'rsvp_no';
+          break;
+
+        case 3:
+          $type = 'rsvp_never';
+          break;
+      }
+    }
+
+    valghalla_notifications_notify_volunteer($election_nid, $role_nid, $electionInfo, $type);
+  }
 }
 
 /**
