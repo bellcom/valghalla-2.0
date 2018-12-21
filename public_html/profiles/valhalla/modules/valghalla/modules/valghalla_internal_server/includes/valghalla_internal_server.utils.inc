@@ -56,7 +56,7 @@ function valghalla_internal_server_validate_volunteer($volunteer_node) {
 }
 
 /**
- * Updates the name and address of volunteer.
+ * Updates volunteer data.
  *
  * Fetches the values from serviceplatform.
  * Saves the node with new values.
@@ -64,7 +64,7 @@ function valghalla_internal_server_validate_volunteer($volunteer_node) {
  * @param mixed $volunteer_node
  *   Volunteer node.
  */
-function valghalla_internal_server_volunteer_update_name_and_address($volunteer_node) {
+function valghalla_internal_server_volunteer_update_data($volunteer_node) {
   $cpr_field = field_get_items('node', $volunteer_node, 'field_cpr_number');
   $cpr = $cpr_field[0]['value'];
   $saveNode = FALSE;
@@ -116,6 +116,16 @@ function valghalla_internal_server_volunteer_update_name_and_address($volunteer_
 
     $volunteer_node->title = implode(' ', $names_arr);
     $saveNode = TRUE;
+  }
+
+  // Fetching subscription.
+  if (variable_get('valghalla_volunteer_validator_get_subscription_status')) {
+    $subscriptions = valghalla_volunteer_validator_query_service('get_subscriptions_status', $cpr);
+    if (!empty($subscriptions[0]['status'])) {
+      $volunteer_node->field_no_mail[$lang][0]['value'] = $subscriptions[0]['digital_post'] == FALSE;
+      $volunteer_node->field_no_sms[$lang][0]['value'] = $subscriptions[0]['nem_sms'] == FALSE;
+      $saveNode = TRUE;
+    }
   }
 
   if ($saveNode) {

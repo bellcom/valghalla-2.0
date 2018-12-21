@@ -155,6 +155,13 @@ function valghalla_user_tools_views_default_views() {
   $handler->display->display_options['fields']['field_no_mail']['exclude'] = TRUE;
   $handler->display->display_options['fields']['field_no_mail']['element_label_colon'] = FALSE;
   $handler->display->display_options['fields']['field_no_mail']['type'] = 'list_key';
+  /* Felt: Indhold: Fritagelse for NemSMS */
+  $handler->display->display_options['fields']['field_no_sms']['id'] = 'field_no_sms';
+  $handler->display->display_options['fields']['field_no_sms']['table'] = 'field_data_field_no_sms';
+  $handler->display->display_options['fields']['field_no_sms']['field'] = 'field_no_sms';
+  $handler->display->display_options['fields']['field_no_sms']['label'] = '';
+  $handler->display->display_options['fields']['field_no_sms']['exclude'] = TRUE;
+  $handler->display->display_options['fields']['field_no_sms']['element_label_colon'] = FALSE;
   /* Sorteringskriterie: Indhold: Oprettelsesdato */
   $handler->display->display_options['sorts']['created']['id'] = 'created';
   $handler->display->display_options['sorts']['created']['table'] = 'node';
@@ -492,7 +499,7 @@ function valghalla_user_tools_views_default_views() {
   $handler->display->display_options['fields']['edit_term']['table'] = 'taxonomy_term_data';
   $handler->display->display_options['fields']['edit_term']['field'] = 'edit_term';
   $handler->display->display_options['fields']['edit_term']['label'] = 'Rediger';
-  /* Filterkriterie: Ordforråd: Maskinnavn */
+  /* Filterkriterie: Ordforråd: Internt navn */
   $handler->display->display_options['filters']['machine_name']['id'] = 'machine_name';
   $handler->display->display_options['filters']['machine_name']['table'] = 'taxonomy_vocabulary';
   $handler->display->display_options['filters']['machine_name']['field'] = 'machine_name';

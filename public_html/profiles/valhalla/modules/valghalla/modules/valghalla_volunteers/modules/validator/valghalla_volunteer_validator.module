@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Volunteer validate module.
@@ -79,8 +80,8 @@ function valghalla_volunteer_validator_node_validate($node, $form, &$form_state)
 
       foreach ($get_address_messages as $get_address_message) {
         if ($get_address_message['status']) {
-          // If we successfully fetch address data from the service, save this to
-          // the volunteer.
+          // If we successfully fetch address data from the service,
+          // save this to the volunteer.
           // These are the fields, and their corresponding offsets from the
           // service message array.
           $field_map = array(
@@ -98,9 +99,8 @@ function valghalla_volunteer_validator_node_validate($node, $form, &$form_state)
             $language = field_language('node', $node, $field);
 
             form_set_value(array(
-                '#parents' => array($field, $language, 0, 'value')
-              ), $get_address_message[$index], $form_state
-            );
+              '#parents' => array($field, $language, 0, 'value'),
+            ), $get_address_message[$index], $form_state);
           }
         }
       }
@@ -113,16 +113,12 @@ function valghalla_volunteer_validator_node_validate($node, $form, &$form_state)
     // Fetch names from Serviceplatformen service.
     if (variable_get('valghalla_volunteer_validator_get_name')) {
       $data = vcv_person_lookup_extended_query($cpr);
-      $names_arr = array();
       foreach ($fields as $field => $index) {
         $language = field_language('node', $node, $field);
         form_set_value(array(
           '#parents' => array($field, $language, 0, 'value'),
         ), $data['persondata']->navn->{$index}, $form_state);
-        $names_arr[] = $data['persondata']->navn->{$index};
       }
-
-      form_set_value($form['title'], implode(' ', $names_arr), $form_state);
     }
 
     // Update title field from sources if it present.
@@ -143,10 +139,13 @@ function valghalla_volunteer_validator_node_validate($node, $form, &$form_state)
         form_set_value(array(
           '#parents' => array('field_no_mail', $language, 0, 'value'),
         ), $subscriptions[0]['digital_post'] == FALSE, $form_state);
+        form_set_value(array(
+          '#parents' => array('field_no_sms', $language, 0, 'value'),
+        ), $subscriptions[0]['nem_sms'] == FALSE, $form_state);
       }
     }
 
-    // run validator
+    // Run validator.
     $messages = valghalla_volunteer_validator_query_service('validate_cpr', $cpr, 'single');
 
     foreach ($messages as $message) {
@@ -199,6 +198,7 @@ function valghalla_volunteer_validator_form_volunteers_node_form_alter(&$form, &
 
   if (variable_get('valghalla_volunteer_validator_get_subscription_status')) {
     $form['field_no_mail']['#disabled'] = TRUE;
+    $form['field_no_sms']['#disabled'] = TRUE;
   }
 
 }
@@ -234,7 +234,7 @@ function valghalla_volunteer_validator_query_service($action, $cpr, $process = '
   $enabled_services = variable_get('valghalla_volunteer_validator_cpr_service', FALSE);
   $plugins = ctools_get_plugins('valghalla_volunteer_validator', 'cpr_service');
 
-  foreach($plugins as $plugin_key => $plugin) {
+  foreach ($plugins as $plugin_key => $plugin) {
     if ($enabled_services[$plugin_key] && isset($plugin[$action]) && function_exists($plugin[$action])) {
       $message = call_user_func($plugin[$action], $cpr, $process);
       $messages[] = $message;
