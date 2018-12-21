@@ -264,9 +264,18 @@ function valghalla_internal_server_notify_volunteer_last_seat($node, $previousNo
     $forceType = NULL;
 
     // No previous node, meaning that volunteer is using subscription form.
-    // In that case, the notification status is confirmed.
+    // In that case, the notification type is confirmed.
     if (!$previousNode) {
       $forceType = 'confirmed';
+    }
+    else {
+      // If the size of current electionInfo is bigger, it means a new election
+      // info has been added with positive reply.
+      // In this case, the notification type is confirmed.
+      $previousElectionInfo = field_get_items('node', $previousNode, 'field_electioninfo');
+      if (empty($previousElectionInfo) || count($field_electioninfo) != count($previousElectionInfo)) {
+        $forceType = 'confirmed';
+      }
     }
 
     valghalla_volunteers_notify_volunteer($electionInfo, $forceType);
