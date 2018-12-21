@@ -10,6 +10,7 @@ module_load_include('inc', 'valghalla_notifications', 'includes/valghalla_notifi
 module_load_include('inc', 'valghalla_notifications', 'includes/valghalla_notifications_submit');
 module_load_include('inc', 'valghalla_notifications', 'valghalla_notifications.entity');
 module_load_include('php', 'valghalla_notifications', 'src/Entity/ValghallaNotificationController');
+module_load_include('php', 'valghalla_notifications', 'src/Entity/ValghallaNotification');
 
 /**
  * Implements hook_menu().
@@ -413,17 +414,34 @@ function valghalla_notifications_get_message_by_nid($template_nid) {
 }
 
 /**
+ * Check if volunteer alowed to get notification.
+ */
+function valghalla_notifications_notification_allowed($gateway_id, $volunteer) {
+  switch ($gateway_id) {
+    case 'mail':
+    case 'eboks':
+      $no_mail = valghalla_notifications_volunteer_no_notification($volunteer);
+      if ($no_mail) {
+        return FALSE;
+      }
+      break;
+
+    case 'sms':
+      $no_sms = valghalla_notifications_volunteer_no_sms($volunteer);
+      if ($no_sms) {
+        return FALSE;
+      }
+      break;
+  }
+
+  return TRUE;
+}
+
+/**
  * Notify volunteer of post change.
  */
 function valghalla_notifications_notify_volunteer($election_nid, $role_nid, $fc, $type) {
   $volunteer = $fc->hostEntity();
-  $no_mail = valghalla_notifications_volunteer_no_notification($volunteer);
-  if ($no_mail) {
-    watchdog('valghalla_notifications', 'Notification %type has not send. Volunteer is excused from digital notifications.', array(
-      '%type' => $type,
-    ));
-    return FALSE;
-  }
 
   $election_node = node_load($election_nid);
   $field_status = field_get_items('node', $election_node, 'field_election_status');
@@ -436,6 +454,14 @@ function valghalla_notifications_notify_volunteer($election_nid, $role_nid, $fc,
   }
 
   $gateway = valghalla_notifications_get_gateway($election_nid, $role_nid, $type);
+  if (!valghalla_notifications_notification_allowed($gateway['id'], $volunteer)) {
+    watchdog('valghalla_notifications', 'Notification %type has not send. Volunteer is excused from %gateway.', array(
+      '%type' => $type,
+      '%gateway' => $gateway['id'],
+    ));
+    return FALSE;
+  }
+
   $template_nid = valghalla_notifications_get_template($gateway['id'], $election_nid, $role_nid, $type);
   $tokens = _valghalla_helper_get_token_values($fc);
   $placeholders = array(
@@ -477,10 +503,23 @@ function valghalla_notifications_notify_volunteer($election_nid, $role_nid, $fc,
 }
 
 /**
- * Check if the user should recieve notification.
+ * Check if the user should receive mail notification.
  */
 function valghalla_notifications_volunteer_no_notification($volunteer_node) {
-  if ($field = field_get_items('node', $volunteer_node, 'field_no_mail')) {
+  $field = field_get_items('node', $volunteer_node, 'field_no_mail');
+  if (!empty($field[0]['value'])) {
+    return $field[0]['value'] == 1;
+  }
+
+  return FALSE;
+}
+
+/**
+ * Check if the user should receive sms notification.
+ */
+function valghalla_notifications_volunteer_no_sms($volunteer_node) {
+  $field = field_get_items('node', $volunteer_node, 'field_no_sms');
+  if (!empty($field[0]['value'])) {
     return $field[0]['value'] == 1;
   }
 
