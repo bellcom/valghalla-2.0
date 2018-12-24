@@ -45,6 +45,68 @@ function valghalla_volunteer_validator_ctools_plugin_type() {
 }
 
 /**
+ * Implements hook_node_presave().
+ */
+function valghalla_volunteer_validator_node_presave($node) {
+  if ($node->type != 'volunteers') {
+    return;
+  }
+  $node_wrapper = entity_metadata_wrapper('node', $node);
+  $cpr = $node_wrapper->field_cpr_number->value();
+
+  // Fetching the name and address.
+  if (variable_get('valghalla_volunteer_validator_get_address', FALSE)) {
+    $get_address_messages = valghalla_volunteer_validator_query_service('get_address', $cpr);
+
+    foreach ($get_address_messages as $get_address_message) {
+      if ($get_address_message['status']) {
+        $field_map = array(
+          'field_address_road' => 'road',
+          'field_address_road_no' => 'road_no',
+          'field_address_floor' => 'floor',
+          'field_address_door' => 'door',
+          'field_address_zipcode' => 'zipcode',
+          'field_address_city' => 'city',
+          'field_address_coname' => 'coname',
+          'field_municipality' => 'municipality',
+        );
+
+        foreach ($field_map as $field => $index) {
+          $node_wrapper->{$field} = $get_address_message[$index];
+        }
+      }
+    }
+  }
+
+  // Fetching names split.
+  if (variable_get('valghalla_volunteer_validator_get_name')) {
+    $field_map = array(
+      'field_first_name' => 'fornavn',
+      'field_second_name' => 'efternavn',
+    );
+
+    $data = vcv_person_lookup_extended_query($cpr);
+
+    $names_arr = array();
+    foreach ($field_map as $field => $index) {
+      $node_wrapper->{$field} = $data['persondata']->navn->{$index};
+      $names_arr[] = $data['persondata']->navn->{$index};
+    }
+
+    $node_wrapper->title = implode(' ', $names_arr);
+  }
+
+  // Fetching subscription.
+  if (variable_get('valghalla_volunteer_validator_get_subscription_status')) {
+    $subscriptions = valghalla_volunteer_validator_query_service('get_subscriptions_status', $cpr);
+    if (!empty($subscriptions[0]['status'])) {
+      $node_wrapper->field_no_mail = (int) $subscriptions[0]['digital_post'] == FALSE ? '1' : '0';
+      $node_wrapper->field_no_sms = $subscriptions[0]['nem_sms'] == FALSE ? '1' : '0';
+    }
+  }
+}
+
+/**
  * Implements hook_node_validate().
  */
 function valghalla_volunteer_validator_node_validate($node, $form, &$form_state) {
@@ -73,78 +135,6 @@ function valghalla_volunteer_validator_node_validate($node, $form, &$form_state)
 
   // Query service.
   if (variable_get('valghalla_volunteer_validator_enable', FALSE)) {
-    // To reduce calls to the service, we fetch the address right away, if
-    // address querying is enabled.
-    if (variable_get('valghalla_volunteer_validator_get_address', FALSE)) {
-      $get_address_messages = valghalla_volunteer_validator_query_service('get_address', $cpr);
-
-      foreach ($get_address_messages as $get_address_message) {
-        if ($get_address_message['status']) {
-          // If we successfully fetch address data from the service,
-          // save this to the volunteer.
-          // These are the fields, and their corresponding offsets from the
-          // service message array.
-          $field_map = array(
-            'field_address_road' => 'road',
-            'field_address_road_no' => 'road_no',
-            'field_address_floor' => 'floor',
-            'field_address_door' => 'door',
-            'field_address_zipcode' => 'zipcode',
-            'field_address_city' => 'city',
-            'field_address_coname' => 'coname',
-            'field_municipality' => 'municipality',
-          );
-
-          foreach ($field_map as $field => $index) {
-            $language = field_language('node', $node, $field);
-
-            form_set_value(array(
-              '#parents' => array($field, $language, 0, 'value'),
-            ), $get_address_message[$index], $form_state);
-          }
-        }
-      }
-    }
-
-    $fields = array(
-      'field_first_name' => 'fornavn',
-      'field_second_name' => 'efternavn',
-    );
-    // Fetch names from Serviceplatformen service.
-    if (variable_get('valghalla_volunteer_validator_get_name')) {
-      $data = vcv_person_lookup_extended_query($cpr);
-      foreach ($fields as $field => $index) {
-        $language = field_language('node', $node, $field);
-        form_set_value(array(
-          '#parents' => array($field, $language, 0, 'value'),
-        ), $data['persondata']->navn->{$index}, $form_state);
-      }
-    }
-
-    // Update title field from sources if it present.
-    $names_arr = array();
-    foreach ($fields as $field => $index) {
-      if (isset($form_state['values'][$field][LANGUAGE_NONE][0]['value'])
-        && !empty(trim($form_state['values'][$field][LANGUAGE_NONE][0]['value']))) {
-        $names_arr[] = $form_state['values'][$field][LANGUAGE_NONE][0]['value'];
-      }
-    }
-    if (empty($names_arr)) {
-      form_set_value($form['title'], implode(' ', $names_arr), $form_state);
-    }
-
-    if (variable_get('valghalla_volunteer_validator_get_subscription_status')) {
-      $subscriptions = valghalla_volunteer_validator_query_service('get_subscriptions_status', $cpr);
-      if (!empty($subscriptions[0]['status'])) {
-        form_set_value(array(
-          '#parents' => array('field_no_mail', $language, 0, 'value'),
-        ), $subscriptions[0]['digital_post'] == FALSE, $form_state);
-        form_set_value(array(
-          '#parents' => array('field_no_sms', $language, 0, 'value'),
-        ), $subscriptions[0]['nem_sms'] == FALSE, $form_state);
-      }
-    }
-
     // Run validator.
     $messages = valghalla_volunteer_validator_query_service('validate_cpr', $cpr, 'single');
 
