@@ -397,3 +397,66 @@ function odin_get_future_elections() {
   }
   return FALSE;
 }
+
+/**
+ * Helper, get a list of polling stations with enough free spots.
+ */
+
+/**
+ * Helper to get a list of polling stations with enough free spots.
+ *
+ * @param int $election_nid
+ *   Nid of election
+ * @param int $qty
+ *   Number of seats that needs to be available.
+ * @param int $role_nid
+ *   Nid of the role.
+ * @param int $party_tid
+ *   Nid of the party, can be NULL.
+ *
+ * @return array
+ *   List of polling station grouped by constituency.
+ */
+function odin_get_signup_available_polling_stations($election_nid, $qty, $role_nid, $party_tid = NULL) {
+  $election_node = node_load($election_nid);
+
+  $roles[$role_nid] = $role_nid;
+
+  // Generate options list, with polling stations with enough free seats.
+  $polling_stations_field = field_get_items('node', $election_node, 'field_polling_stations');
+
+  foreach ($polling_stations_field as $data) {
+    $polling_station_nids[$data['target_id']] = $data['target_id'];
+  }
+
+  $options = array();
+  $constituencies = array();
+  $polling_stations = array();
+  foreach (node_load_multiple($polling_station_nids) as $polling_station) {
+    $count = odin_get_volunteers_count($election_node->nid, array($polling_station->nid), $roles, $party_tid);
+
+    if (($count['total_count']['assigned'] - $count['total_count']['total']) >= $qty) {
+      if ($constituency_field = field_get_items('node', $polling_station, 'field_constituency')) {
+        // We save the data in 2 arrays, and don't populate options yes, as we
+        // have to sort the options according to the title of the
+        // constituencies.
+        $constituency = node_load($constituency_field[0]['nid']);
+        $constituencies[$constituency->nid] = $constituency->title;
+        $polling_stations[$constituency->nid][$polling_station->nid] = $polling_station->title;
+      }
+      else {
+        $options[$polling_station->nid] = $polling_station->title;
+      }
+    }
+  }
+
+  if ($constituencies && $polling_stations) {
+    natsort($constituencies);
+
+    foreach ($constituencies as $constituency_nid => $constituency_title) {
+      $options[$constituency_title] = $polling_stations[$constituency_nid];
+    }
+  }
+
+  return $options;
+}

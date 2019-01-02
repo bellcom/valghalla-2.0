@@ -114,7 +114,7 @@ function _valghalla_external_server_signup_get_available_roles($election_nid, $p
 /**
  * Returns the list of available polling stations.
  *
- * Delegates the work to valghalla_signup_get_avaiable_polling_stations().
+ * Delegates the work to odin_get_signup_available_polling_stations().
  *
  * @param int $election_nid
  *   Node ID of election.
@@ -126,16 +126,16 @@ function _valghalla_external_server_signup_get_available_roles($election_nid, $p
  * @return array
  *   List of polling stations.
  *
- * @see valghalla_signup_get_avaiable_polling_stations()
+ * @see odin_get_signup_available_polling_stations()
  */
 function _valghalla_external_server_signup_get_available_polling_stations($election_nid, $party_tid, $role_nid = NULL) {
   $available_polling_stations = array();
   if ($role_nid) {
-    $available_polling_stations = valghalla_signup_get_avaiable_polling_stations($election_nid, 1, $role_nid, $party_tid);
+    $available_polling_stations = odin_get_signup_available_polling_stations($election_nid, 1, $role_nid, $party_tid);
   }
   else {
     foreach (odin_get_roles() as $role_nid => $role) {
-      $foundPollingStations = valghalla_signup_get_avaiable_polling_stations($election_nid, 1, $role_nid, $party_tid);
+      $foundPollingStations = odin_get_signup_available_polling_stations($election_nid, 1, $role_nid, $party_tid);
       foreach ($foundPollingStations as $constituency => $psList) {
         foreach ($psList as $ps_key => $ps_name) {
           $available_polling_stations[$constituency][$ps_key] = $ps_name;

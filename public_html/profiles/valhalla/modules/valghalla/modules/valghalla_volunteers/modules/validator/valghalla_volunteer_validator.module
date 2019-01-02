@@ -87,13 +87,15 @@ function valghalla_volunteer_validator_node_presave($node) {
 
     $data = vcv_person_lookup_extended_query($cpr);
 
-    $names_arr = array();
-    foreach ($field_map as $field => $index) {
-      $node_wrapper->{$field} = $data['persondata']->navn->{$index};
-      $names_arr[] = $data['persondata']->navn->{$index};
-    }
+    if ($data['status']) {
+      $names_arr = array();
+      foreach ($field_map as $field => $index) {
+        $node_wrapper->{$field} = $data['persondata']->navn->{$index};
+        $names_arr[] = $data['persondata']->navn->{$index};
+      }
 
-    $node_wrapper->title = implode(' ', $names_arr);
+      $node_wrapper->title = implode(' ', $names_arr);
+    }
   }
 
   // Fetching subscription.
