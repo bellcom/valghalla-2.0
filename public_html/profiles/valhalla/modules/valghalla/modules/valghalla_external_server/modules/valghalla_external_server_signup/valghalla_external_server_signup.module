@@ -27,7 +27,7 @@ function valghalla_external_server_signup_menu() {
     'type' => MENU_NORMAL_ITEM,
   );
 
-  $items['admin/valghalla/settings/external_server_signup'] = array(
+  $items['valghalla/administration/external_server_signup'] = array(
     'title' => 'External server signup settings',
     'description' => 'Various setting for external server signup',
     'page callback' => 'drupal_get_form',
