@@ -38,7 +38,7 @@ function valghalla_internal_server_validate_volunteer($volunteer_node) {
   }
 
   // Run validator.
-  $messages = valghalla_volunteer_validator_query_service('validate_cpr', $cpr, 'single');
+  $messages = valghalla_volunteer_validator_query_service('validate_cpr', $cpr, 'create');
 
   foreach ($messages as $message) {
     if ($message['status'] === FALSE) {
@@ -47,7 +47,7 @@ function valghalla_internal_server_validate_volunteer($volunteer_node) {
     }
   }
 
-  if ($errors = valghalla_volunteer_validator_validate($volunteer_node, 'single')) {
+  if ($errors = valghalla_volunteer_validator_validate($volunteer_node, 'create')) {
     $validationStatus['errors'][] = t('Det angivne CPR-nummer kan ikke valideres: @text', array('@text' => $message['text']));
     $validationStatus['valid'] = FALSE;
   }

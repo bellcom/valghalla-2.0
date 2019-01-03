@@ -213,7 +213,7 @@ function vcv_serviceplatformen_validate_cpr($cpr, $process ) {
   $status = vcv_serviceplatformen_get_address($cpr);
 
   //checking for municipality
-  if ( ($process == 'single' AND variable_get('validate_single_munitipallity', FALSE)) 
+  if ( ($process == 'create' AND variable_get('validate_create_municipality', FALSE))
           OR ( $process == 'batch' AND variable_get('validate_batch_munitipallity', FALSE) )) {
     if (strcmp($status['municipality'],variable_get('valhalla_settings_municipality')) != 0) {
       return array(

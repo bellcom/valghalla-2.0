@@ -1,20 +1,20 @@
 <?php
 
 /**
- * Page callback for admin settings page
+ * Page callback for admin settings page.
  */
 function valghalla_volunteer_validator_settings() {
   ctools_include('plugins');
 
-  // CPR validation plugins
+  // CPR validation plugins.
   $plugins = ctools_get_plugins('valghalla_volunteer_validator', 'cpr_service');
 
   $services = array(
-      'get_address' => t('Hent adresse'),
-      'validate_cpr' => t('Valider CPR'),
+    'get_address' => t('Hent adresse'),
+    'validate_cpr' => t('Valider CPR'),
   );
 
-  $map_services = function(&$value, $key, $services) {
+  $map_services = function (&$value, $key, $services) {
     $value = $services[$value];
   };
 
@@ -23,56 +23,56 @@ function valghalla_volunteer_validator_settings() {
     array_walk($implements, $map_services, $services);
 
     $cpr_service_options[$id] = array(
-        $plugin['label'],
-        $plugin['description'],
-        implode(', ', $implements),
-        l('Indstillinger', $plugin['config']),
+      $plugin['label'],
+      $plugin['description'],
+      implode(', ', $implements),
+      l(t('Indstillinger'), $plugin['config']),
     );
   }
 
   $form['valghalla_volunteer_validator_enable'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Aktiver CPR validering'),
-      '#default_value' => variable_get('valghalla_volunteer_validator_enable', FALSE),
+    '#type' => 'checkbox',
+    '#title' => t('Aktiver CPR validering'),
+    '#default_value' => variable_get('valghalla_volunteer_validator_enable', FALSE),
   );
 
   $form['valghalla_volunteer_validator_get_address'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Aktiver automatisk indhentning af adresse'),
-      '#default_value' => variable_get('valghalla_volunteer_validator_get_address', FALSE),
+    '#type' => 'checkbox',
+    '#title' => t('Aktiver automatisk indhentning af adresse'),
+    '#default_value' => variable_get('valghalla_volunteer_validator_get_address', FALSE),
   );
 
   $form['valghalla_volunteer_validator_get_name'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Hent deltagerens navn fra CPR service. Kræver indhentning af adresse.'),
-      '#default_value' => variable_get('valghalla_volunteer_validator_get_name', FALSE),
+    '#type' => 'checkbox',
+    '#title' => t('Hent deltagerens navn fra CPR service. Kræver indhentning af adresse.'),
+    '#default_value' => variable_get('valghalla_volunteer_validator_get_name', FALSE),
   );
 
   $form['valghalla_volunteer_validator_get_subscription_status'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Hent deltagerens Digital post tilmeldingstatus fra CPR service.'),
-      '#default_value' => variable_get('valghalla_volunteer_validator_get_subscription_status', FALSE),
+    '#type' => 'checkbox',
+    '#title' => t('Hent deltagerens Digital post tilmeldingstatus fra CPR service.'),
+    '#default_value' => variable_get('valghalla_volunteer_validator_get_subscription_status', FALSE),
   );
 
   $header = ['CPR service', 'Beskrivelse', 'Understøtter', 'Valgmuligheder'];
 
   $form['valghalla_volunteer_validator_cpr_service'] = array(
-      '#type' => 'tableselect',
-      '#header' => $header,
-      '#multiple' => TRUE,
-      '#options' => $cpr_service_options,
-      '#default_value' => variable_get('valghalla_volunteer_validator_cpr_service'),
-      '#empty' => t('Der er ikke installeret nogen cpr services')
+    '#type' => 'tableselect',
+    '#header' => $header,
+    '#multiple' => TRUE,
+    '#options' => $cpr_service_options,
+    '#default_value' => variable_get('valghalla_volunteer_validator_cpr_service'),
+    '#empty' => t('Der er ikke installeret nogen cpr services')
   );
 
-  // "Regular validation plugins"
+  // "Regular validation plugins".
   $plugins = ctools_get_plugins('valghalla_volunteer_validator', 'validate');
 
   $services = array(
-      'validate' => t('Valider deltager'),
+    'validate' => t('Valider deltager'),
   );
 
-  $map_services = function(&$value, $key, $services) {
+  $map_services = function (&$value, $key, $services) {
     $value = $services[$value];
   };
 
@@ -81,85 +81,51 @@ function valghalla_volunteer_validator_settings() {
     array_walk($implements, $map_services, $services);
 
     $service_options[$id] = array(
-        $plugin['label'],
-        $plugin['description'],
-        l('Indstillinger', $plugin['config']),
+      $plugin['label'],
+      $plugin['description'],
+      l(t('Indstillinger'), $plugin['config']),
     );
   }
 
-
-  $form['validate_single'] = array(
-      '#type' => 'item',
-      '#prefix' => t('<div class="validate-single" style="float: left; margin-right:100px;"><strong>Check deltagere ved oprettelse</strong>'),
+  $form['validate_create'] = array(
+    '#markup' => '<strong>Check deltagere ved oprettelse</strong>',
   );
-  
-  $form['validate_single_age'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Valider alder'),
-      '#default_value' => variable_get('validate_single_age', FALSE),
+  $form['validate_create_age'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Valider alder'),
+    '#default_value' => variable_get('validate_create_age', FALSE),
   );
-  $form['validate_single_munitipallity'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Valider bopæl i kommunen'),
-      '#default_value' => variable_get('validate_single_munitipallity', FALSE),
+  $form['validate_create_munitipallity'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Valider bopæl i kommunen'),
+    '#default_value' => variable_get('validate_create_municipality', FALSE),
   );
-  $form['validate_single_sitizenship'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Valider dansk statsborger'),
-      '#default_value' => variable_get('validate_single_sitizenship', FALSE),
+  $form['validate_create_citizenship'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Valider dansk statsborger'),
+    '#default_value' => variable_get('validate_create_citizenship', FALSE),
   );
-  $form['validate_single_civil_status'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Valider om person med personnummerer er levende'),
-      '#default_value' => variable_get('validate_single_civil_status', FALSE),
+  $form['validate_create_civil_status'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Valider om person med personnummerer er levende'),
+    '#default_value' => variable_get('validate_create_civil_status', FALSE),
   );
-  
-  $form['validate_batch'] = array(
-      '#type' => 'item',
-      '#prefix' => t('</div><div class = "validate-batch"><strong>Valder personer i forhold til det aktive valg</strong>'),
-  );
-  
-  $form['validate_batch_age'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Valider alder'),
-      '#default_value' => variable_get('validate_batch_age', FALSE),
-  );
-  $form['validate_batch_munitipallity'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Valider bopæl i kommunen'),
-      '#default_value' => variable_get('validate_batch_munitipallity', FALSE),
-  );
-  $form['validate_batch_sitizenship'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Valider dansk statsborger'),
-      '#default_value' => variable_get('validate_batch_sitizenship', FALSE),
-  );
-  $form['validate_batch_civil_status'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Valider om person med personnummerer er levende'),
-      '#default_value' => variable_get('validate_batch_civil_status', FALSE),
-  );
-$form['validate_batch_bottom'] = array(
-      '#type' => 'item',
-      '#prefix' => t('</div>'),
-  );
-
 
   $header = ['Plugin', 'Beskrivelse', 'Valgmuligheder'];
 
   $form['valghalla_volunteer_validator_services'] = array(
-      '#type' => 'tableselect',
-      '#header' => $header,
-      '#multiple' => TRUE,
-      '#options' => $service_options,
-      '#default_value' => variable_get('valghalla_volunteer_validator_services'),
-      '#empty' => t('Der er ikke installeret nogen validerings services')
+    '#type' => 'tableselect',
+    '#header' => $header,
+    '#multiple' => TRUE,
+    '#options' => $service_options,
+    '#default_value' => variable_get('valghalla_volunteer_validator_services'),
+    '#empty' => t('Der er ikke installeret nogen validerings services'),
   );
 
   $form['bottom'] = array(
-      '#type' => 'item',
-      '#prefix' => '<div><a class="btn btn-default" href="/admin/valghalla/validator/batch/validate">Valider alle deltagere</a>&nbsp;&nbsp;'
-      . '<a class="btn btn-link" href="/admin/valghalla/validator/batch/address">Opdater alle deltageres adresser</a></div>',
+    '#type' => 'item',
+    '#prefix' => '<div><a class="btn btn-default" href="/admin/valghalla/validator/batch/validate">Valider alle deltagere</a>&nbsp;&nbsp;'
+    . '<a class="btn btn-link" href="/admin/valghalla/validator/batch/address">Opdater alle deltageres adresser</a></div>',
   );
 
   return system_settings_form($form);

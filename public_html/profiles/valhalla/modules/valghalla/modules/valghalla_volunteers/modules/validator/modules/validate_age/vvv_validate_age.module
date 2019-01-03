@@ -64,7 +64,7 @@ function vvv_validate_age_settings() {
 function vvv_validate_age_validate($volunteer, $process) {
   
   // Do not validate, if disable
-  if ( ($process == 'single' AND !variable_get('validate_single_age', FALSE)) 
+  if ( ($process == 'create' AND !variable_get('validate_create_age', FALSE))
           OR ( $process == 'batch' AND !variable_get('validate_batch_age', FALSE) )) {
 // we do not validate if disable
     return array(
