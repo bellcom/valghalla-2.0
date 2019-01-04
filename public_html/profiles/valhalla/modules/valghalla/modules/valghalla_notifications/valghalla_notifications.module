@@ -242,7 +242,6 @@ function valghalla_notifications_get_types() {
     'confirmed' => t('Bekræftet (tak for din tilmeldelse)'),
     'reminder' => t('Påmindelse'),
     'reminder_togo' => t('Påmindelse toGo'),
-    'rsvp_yes' => t('RSVP Ja'),
     'rsvp_no' => t('RSVP Nej'),
     'rsvp_never' => t('RSVP Aldrig'),
     'remove' => t('Slet fra pladsen'),
