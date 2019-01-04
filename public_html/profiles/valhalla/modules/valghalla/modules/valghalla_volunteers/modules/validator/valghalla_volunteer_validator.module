@@ -27,6 +27,14 @@ function valghalla_volunteer_validator_menu() {
     'file' => 'valghalla_volunteer_validator.admin.inc',
   );
 
+  $items['admin/valghalla/validator/batch/validate/%'] = array(
+    'title' => 'Deltager validering',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('valghalla_volunteer_validator_validate_batch', 5),
+    'access arguments' => array('administer valghalla'),
+    'file' => 'valghalla_volunteer_validator.admin.inc',
+  );
+
   return $items;
 }
 
@@ -237,6 +245,26 @@ function valghalla_volunteer_validator_query_service($action, $cpr, $process = '
 }
 
 /**
+ * Validate volunteer, using enabled validate plugins.
+ */
+function valghalla_volunteer_validator_validate_service($action, $cpr, $context) {
+  $messages = array();
+  ctools_include('plugins');
+
+  $enabled_services = variable_get('valghalla_volunteer_validator_services', FALSE);
+  $plugins = ctools_get_plugins('valghalla_volunteer_validator', 'validate');
+
+  foreach ($plugins as $plugin_key => $plugin) {
+    if ($enabled_services[$plugin_key] && isset($plugin[$action]) && function_exists($plugin[$action])) {
+      $message = call_user_func($plugin[$action], $cpr, $context);
+      $messages[] = $message;
+    }
+  }
+
+  return $messages;
+}
+
+/**
  * Validate volunteer, using enabled plugins.
  */
 function valghalla_volunteer_validator_validate(&$volunteer, $cpr_message) {
@@ -320,16 +348,17 @@ function valghalla_volunteer_validator_get_cpr($volunteer) {
  * @param mixed $election
  *   Election node.
  * @param mixed $party
- *   Party taxonomy term.
+ *   Party taxonomy term if settings need to be retrieved with party override.
  *
  * @return array
  *   Validation configuration of election.
  */
-function valghalla_volunteer_validator_get_election_config($election, $party) {
+function valghalla_volunteer_validator_get_election_config($election, $party = NULL) {
   $election_config = array(
     'validate_municipality' => FALSE,
     'validate_citizenship' => FALSE,
     'validate_civil_status' => FALSE,
+    'validate_age' => FALSE,
   );
 
   $field_election_valid_municipal = field_get_items('node', $election, 'field_election_valid_municipal');
@@ -345,6 +374,15 @@ function valghalla_volunteer_validator_get_election_config($election, $party) {
   $field_election_valid_civ_status = field_get_items('node', $election, 'field_election_valid_civ_status');
   if (!empty($field_election_valid_civ_status)) {
     $election_config['validate_civil_status'] = ($field_election_valid_civ_status[0]['value'] == 1);
+  }
+
+  $field_election_valid_age = field_get_items('node', $election, 'field_election_valid_age');
+  if (!empty($field_election_valid_age)) {
+    $election_config['validate_age'] = ($field_election_valid_age[0]['value'] == 1);
+  }
+
+  if (empty($party)) {
+    return $election_config;
   }
 
   $field_party_skip_valid_municipal = field_get_items('taxonomy_term', $party, 'field_party_skip_valid_municipal');

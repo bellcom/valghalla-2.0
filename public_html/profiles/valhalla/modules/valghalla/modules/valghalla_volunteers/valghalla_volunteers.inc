@@ -471,11 +471,12 @@ function _valghalla_helper_get_volunteer_info_params($node) {
  * Returns the correct age from CPR number taking century into account
  *
  * @param string $cpr
+ * @param string $compare_date
  *
  * @return int
  * @author Henrik Farre <hf@bellcom.dk>
  */
-function _valghalla_helper_get_age_from_cpr($cpr)
+function _valghalla_helper_get_age_from_cpr($cpr, $compare_date = 'now')
 {
   // Based on http://kronsell.net/cpralder.htm
   // Also see http://da.wikipedia.org/wiki/CPR-nummer#Under_eller_over_100_.C3.A5r
@@ -514,7 +515,7 @@ function _valghalla_helper_get_age_from_cpr($cpr)
   $year  = $year_prefix . $year;
 
   $date     = DateTime::createFromFormat('d-m-Y', $day . '-' . $month . '-' . $year);
-  $now      = new DateTime();
+  $now      = new DateTime($compare_date);
   $interval = $now->diff($date);
 
   return $interval->y;
