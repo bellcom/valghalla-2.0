@@ -387,8 +387,9 @@ function valghalla_volunteer_validator_validate_batch_process($election, $fcids,
     $messages = valghalla_volunteer_validator_query_service('validate_cpr_per_election', $cpr, $election_config);
 
     $field_election_date = field_get_items('node', $election, 'field_date');
-    if ($election_config['validate_age'] && !empty($field_election_date[0]['value'])) {
-      $messages = array_merge($messages, valghalla_volunteer_validator_validate_service('validate_per_election', $cpr, array('election_date' => $field_election_date[0]['value'])));
+    if (!empty($field_election_date[0]['value'])) {
+      $context = array_merge(array('election_date' => $field_election_date[0]['value']), $election_config);
+      $messages = array_merge($messages, valghalla_volunteer_validator_validate_service('validate_per_election', $cpr, $context));
     }
 
     // Collect invalid volunteers messages.

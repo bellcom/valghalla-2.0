@@ -63,14 +63,11 @@ function vvv_validate_age_settings() {
 /**
  * Validation on age.
  */
-function vvv_validate_age_validate($volunteer, $process) {
+function vvv_validate_age_validate($volunteer) {
   // Do not validate, if disable.
-  if (($process == 'create' && !variable_get('validate_create_age', FALSE))
-     || ($process == 'batch' && !variable_get('validate_batch_age', FALSE))) {
+  if (!variable_get('validate_create_age', FALSE)) {
     // We do not validate if disable.
-    return array(
-      'valid' => TRUE,
-    );
+    return array('valid' => TRUE);
   }
 
   $date = &drupal_static(__FUNCTION__);
@@ -138,6 +135,12 @@ function vvv_validate_age_validate($volunteer, $process) {
  *   Result array.
  */
 function vvv_validate_age_validate_per_election($cpr, array $context) {
+  // Do not validate, if disable.
+  if (empty($context['validate_age'])) {
+    // We do not validate if disable.
+    return array('valid' => TRUE);
+  }
+
   try {
     $election_date = isset($context['election_date']) ? $context['election_date'] : NULL;
     $years = _valghalla_helper_get_age_from_cpr($cpr, $election_date ?: 'now');

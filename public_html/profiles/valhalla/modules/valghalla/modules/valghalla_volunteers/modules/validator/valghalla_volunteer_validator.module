@@ -154,7 +154,7 @@ function valghalla_volunteer_validator_node_validate($node, $form, &$form_state)
       }
     }
 
-    if ($errors = valghalla_volunteer_validator_validate($node, 'create')) {
+    if ($errors = valghalla_volunteer_validator_validate($node)) {
       form_set_error('field_cpr_number', t('Det angivne CPR-nummer kan ikke valideres: @text', array('@text' => $errors['age']['text'])));
     }
   }
@@ -267,7 +267,7 @@ function valghalla_volunteer_validator_validate_service($action, $cpr, $context)
 /**
  * Validate volunteer, using enabled plugins.
  */
-function valghalla_volunteer_validator_validate(&$volunteer, $cpr_message) {
+function valghalla_volunteer_validator_validate(&$volunteer) {
   ctools_include('plugins');
   $plugins = ctools_get_plugins('valghalla_volunteer_validator', 'validate');
 
@@ -277,7 +277,7 @@ function valghalla_volunteer_validator_validate(&$volunteer, $cpr_message) {
   foreach ($enabled as $service) {
     if (isset($plugins[$service])) {
       $callback = $plugins[$service]['validate'];
-      $message = call_user_func($callback, $volunteer, $cpr_message);
+      $message = call_user_func($callback, $volunteer);
 
       if (!$message['valid']) {
         $log[$service] = $message;
