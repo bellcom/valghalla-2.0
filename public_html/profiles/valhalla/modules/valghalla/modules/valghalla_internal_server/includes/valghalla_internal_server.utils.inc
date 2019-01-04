@@ -59,6 +59,12 @@ function valghalla_internal_server_validate_volunteer($volunteer_node) {
       $party_tid = $field_post_party[0]['target_id'];
       $party = taxonomy_term_load($party_tid);
     }
+
+    // Getting election date.
+    $field_election_date = field_get_items('node', $election, 'field_date');
+    if (!empty($field_election_date)) {
+      $election_date = $field_election_date[0]['value'];
+    }
   }
 
   if ($election && $party) {
@@ -73,9 +79,13 @@ function valghalla_internal_server_validate_volunteer($volunteer_node) {
     }
   }
 
-  if ($errors = valghalla_volunteer_validator_validate($volunteer_node)) {
-    $validationStatus['errors'][] = t('Det angivne CPR-nummer kan ikke valideres: @text', array('@text' => $message['text']));
-    $validationStatus['valid'] = FALSE;
+  if ($election_date) {
+    $context = array_merge(array('election_date' => $election_date), $election_config);
+
+    if ($errors = valghalla_volunteer_validator_validate_service('validate_per_election', $cpr, $context)) {
+      $validationStatus['errors'][] = t('Det angivne CPR-nummer kan ikke valideres: @text', array('@text' => $message['text']));
+      $validationStatus['valid'] = FALSE;
+    }
   }
 
   return $validationStatus;
