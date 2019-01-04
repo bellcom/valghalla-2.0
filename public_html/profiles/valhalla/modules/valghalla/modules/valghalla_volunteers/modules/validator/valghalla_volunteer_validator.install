@@ -1,0 +1,18 @@
+<?php
+
+/**
+ * @file
+ * Valghalla_volunteer_validator.install.
+ */
+
+/**
+ * Implements hook_update_N().
+ *
+ * Renaming the variable names, handling the migration.
+ */
+function valghalla_volunteer_validator_update_7101() {
+  variable_set('validate_create_age', variable_get('validate_single_age'));
+  variable_set('validate_create_municipality', variable_get('validate_single_munitipallity'));
+  variable_set('validate_create_citizenship', variable_get('validate_single_sitizenship'));
+  variable_set('validate_create_civil_status', variable_get('validate_single_civil_status'));
+}

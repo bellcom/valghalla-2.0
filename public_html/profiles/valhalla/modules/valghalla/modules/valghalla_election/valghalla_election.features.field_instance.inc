@@ -378,6 +378,178 @@ function valghalla_election_field_default_field_instances() {
     ),
   );
 
+  // Exported field_instance: 'node-election-field_election_valid_age'.
+  $field_instances['node-election-field_election_valid_age'] = array(
+    'bundle' => 'election',
+    'default_value' => array(
+      0 => array(
+        'value' => 0,
+      ),
+    ),
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'list',
+        'settings' => array(),
+        'type' => 'list_default',
+        'weight' => 11,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_election_valid_age',
+    'label' => 'Valider alder',
+    'required' => 0,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'options',
+      'settings' => array(
+        'display_label' => 1,
+      ),
+      'type' => 'options_onoff',
+      'weight' => 11,
+    ),
+  );
+
+  // Exported field_instance: 'node-election-field_election_valid_citizenship'.
+  $field_instances['node-election-field_election_valid_citizenship'] = array(
+    'bundle' => 'election',
+    'default_value' => array(
+      0 => array(
+        'value' => 0,
+      ),
+    ),
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'list',
+        'settings' => array(),
+        'type' => 'list_default',
+        'weight' => 13,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_election_valid_citizenship',
+    'label' => 'Valider dansk statsborger',
+    'required' => 0,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'options',
+      'settings' => array(
+        'display_label' => 1,
+      ),
+      'type' => 'options_onoff',
+      'weight' => 13,
+    ),
+  );
+
+  // Exported field_instance: 'node-election-field_election_valid_civ_status'.
+  $field_instances['node-election-field_election_valid_civ_status'] = array(
+    'bundle' => 'election',
+    'default_value' => array(
+      0 => array(
+        'value' => 0,
+      ),
+    ),
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'list',
+        'settings' => array(),
+        'type' => 'list_default',
+        'weight' => 14,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_election_valid_civ_status',
+    'label' => 'Valider om person med personnummerer er levende',
+    'required' => 0,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'options',
+      'settings' => array(
+        'display_label' => 1,
+      ),
+      'type' => 'options_onoff',
+      'weight' => 14,
+    ),
+  );
+
+  // Exported field_instance: 'node-election-field_election_valid_municipal'.
+  $field_instances['node-election-field_election_valid_municipal'] = array(
+    'bundle' => 'election',
+    'default_value' => array(
+      0 => array(
+        'value' => 0,
+      ),
+    ),
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'list',
+        'settings' => array(),
+        'type' => 'list_default',
+        'weight' => 12,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_election_valid_municipal',
+    'label' => 'Valider bopæl i kommunen',
+    'required' => 0,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'options',
+      'settings' => array(
+        'display_label' => 1,
+      ),
+      'type' => 'options_onoff',
+      'weight' => 12,
+    ),
+  );
+
   // Exported field_instance: 'node-election-field_email_address'.
   $field_instances['node-election-field_email_address'] = array(
     'bundle' => 'election',
@@ -714,6 +886,44 @@ function valghalla_election_field_default_field_instances() {
   );
 
   // Exported field_instance:
+  // 'taxonomy_term-partier-field_party_skip_valid_municipal'.
+  $field_instances['taxonomy_term-partier-field_party_skip_valid_municipal'] = array(
+    'bundle' => 'partier',
+    'default_value' => array(
+      0 => array(
+        'value' => 0,
+      ),
+    ),
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'list',
+        'settings' => array(),
+        'type' => 'list_default',
+        'weight' => 11,
+      ),
+    ),
+    'entity_type' => 'taxonomy_term',
+    'field_name' => 'field_party_skip_valid_municipal',
+    'label' => 'Valider ikke bopæl i kommunen',
+    'required' => 0,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'options',
+      'settings' => array(
+        'display_label' => 1,
+      ),
+      'type' => 'options_onoff',
+      'weight' => 10,
+    ),
+  );
+
+  // Exported field_instance:
   // 'taxonomy_term-partier-field_party_subsc_accept_comment'.
   $field_instances['taxonomy_term-partier-field_party_subsc_accept_comment'] = array(
     'bundle' => 'partier',
@@ -861,7 +1071,6 @@ function valghalla_election_field_default_field_instances() {
   // Translatables
   // Included for use with string extractors like potx.
   t(' Terms and conditions text');
-  t('Angiv om det er muligt at tilføje en kommentar ved tilmelding til valget.');
   t('Angiv om dette parti skal modtage PDF rapporter.');
   t('Benyttes til videresendelse af tilmeldinger, hvor der er udfyldt kommentarer');
   t('Body');
@@ -873,7 +1082,6 @@ function valghalla_election_field_default_field_instances() {
   t('E-mail adresse');
   t('Emails sendt');
   t('Fuldt partinavn');
-  t('Kommentar ved tilmelding');
   t('Logo');
   t('Modtag PDF rapport');
   t('Notification config export (system field)');
@@ -885,6 +1093,11 @@ function valghalla_election_field_default_field_instances() {
   t('Type');
   t('Udsend PDF rapport til partier');
   t('Valgsteder');
+  t('Valider alder');
+  t('Valider bopæl i kommunen');
+  t('Valider dansk statsborger');
+  t('Valider ikke bopæl i kommunen');
+  t('Valider om person med personnummerer er levende');
 
   return $field_instances;
 }

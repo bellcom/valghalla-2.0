@@ -53,13 +53,8 @@ function valghalla_external_server_enable() {
   variable_set('valghalla_volunteer_validator_get_name', 0);
   variable_set('valghalla_volunteer_validator_get_subscription_status', 0);
 
-  variable_set('validate_single_age', 0);
-  variable_set('validate_single_munitipallity', 0);
-  variable_set('validate_single_sitizenship', 0);
-  variable_set('validate_single_civil_status', 0);
-
-  variable_set('validate_batch_age', 0);
-  variable_set('validate_batch_munitipallity', 0);
-  variable_set('validate_batch_sitizenship', 0);
-  variable_set('validate_batch_civil_status', 0);
+  variable_set('validate_create_age', 0);
+  variable_set('validate_create_municipality', 0);
+  variable_set('validate_create_citizenship', 0);
+  variable_set('validate_create_civil_status', 0);
 }
