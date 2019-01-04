@@ -95,7 +95,7 @@ function valghalla_volunteer_validator_settings() {
     '#title' => t('Valider alder'),
     '#default_value' => variable_get('validate_create_age', FALSE),
   );
-  $form['validate_create_munitipallity'] = array(
+  $form['validate_create_municipality'] = array(
     '#type' => 'checkbox',
     '#title' => t('Valider bopæl i kommunen'),
     '#default_value' => variable_get('validate_create_municipality', FALSE),

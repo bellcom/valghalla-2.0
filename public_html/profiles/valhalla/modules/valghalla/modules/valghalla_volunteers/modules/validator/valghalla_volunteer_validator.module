@@ -138,7 +138,7 @@ function valghalla_volunteer_validator_node_validate($node, $form, &$form_state)
   // Query service.
   if (variable_get('valghalla_volunteer_validator_enable', FALSE)) {
     // Run validator.
-    $messages = valghalla_volunteer_validator_query_service('validate_cpr', $cpr, 'create');
+    $messages = valghalla_volunteer_validator_query_service('validate_cpr', $cpr);
 
     foreach ($messages as $message) {
       if ($message['status'] === FALSE) {
@@ -309,4 +309,50 @@ function valghalla_volunteer_validator_get_cpr($volunteer) {
       node_save($volunteer);
     }
   }
+}
+
+/**
+ * Composes an array of validation configurations saved on election.
+ *
+ * The party validation configurations can override the election validation
+ * configurations.
+ *
+ * @param mixed $election
+ *   Election node.
+ * @param mixed $party
+ *   Party taxonomy term.
+ *
+ * @return array
+ *   Validation configuration of election.
+ */
+function valghalla_volunteer_validator_get_election_config($election, $party) {
+  $election_config = array(
+    'validate_municipality' => FALSE,
+    'validate_citizenship' => FALSE,
+    'validate_civil_status' => FALSE,
+  );
+
+  $field_election_valid_municipal = field_get_items('node', $election, 'field_election_valid_municipal');
+  if (!empty($field_election_valid_municipal)) {
+    $election_config['validate_municipality'] = ($field_election_valid_municipal[0]['value'] == 1);
+  }
+
+  $field_election_valid_citizenship = field_get_items('node', $election, 'field_election_valid_citizenship');
+  if (!empty($field_election_valid_citizenship)) {
+    $election_config['validate_citizenship'] = ($field_election_valid_citizenship[0]['value'] == 1);
+  }
+
+  $field_election_valid_civ_status = field_get_items('node', $election, 'field_election_valid_civ_status');
+  if (!empty($field_election_valid_civ_status)) {
+    $election_config['validate_civil_status'] = ($field_election_valid_civ_status[0]['value'] == 1);
+  }
+
+  $field_party_skip_valid_municipal = field_get_items('taxonomy_term', $party, 'field_party_skip_valid_municipal');
+  if (!empty($field_party_skip_valid_municipal)) {
+    if ($field_party_skip_valid_municipal[0]['value'] == 1) {
+      $election_config['validate_municipality'] = FALSE;
+    }
+  }
+
+  return $election_config;
 }

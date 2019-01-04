@@ -37,6 +37,8 @@ function vcv_person_lookup_extended_valghalla_volunteer_validator_cpr_service(){
       // If the plugin implements CPR validation, the callback must be
       // specified here.
       'validate_cpr' => 'vcv_person_lookup_extended_validate_cpr',
+      // Validating CPR using the provided election validation criteria.
+      'validate_cpr_per_election' => 'vcv_person_lookup_extended_validate_cpr_per_election',
       // Fetching digital post and NemSMS subscription status.
       'get_subscriptions_status' => 'vcv_person_lookup_extended_get_subscription_status',
       // Same as above, but just for fetching the address for the
@@ -174,45 +176,72 @@ function vcv_person_lookup_extended_settings_submit(&$form, &$form_state) {
 }
 
 /**
- * Validate cpr callback
+ * Validate cpr callback.
  *
- * @param
- *  String - PSN (cpr) ([0-9]{6}\-[0-9]{4})
+ * @param string $cpr
+ *   CPR formatter like ([0-9]{6}\-[0-9]{4}).
  *
- * @return
- *  Array
- *  (
- *    [status] => TRUE/FALSE
- *    [text] => Descriptive text shown when CPR doesn't validate
- *  )
+ * @return array
+ *   [status] => TRUE/FALSE
+ *   [text] => Descriptive text shown when CPR doesn't validate
  */
-function vcv_person_lookup_extended_validate_cpr($cpr, $process){
-  
+function vcv_person_lookup_extended_validate_cpr($cpr) {
   $status = vcv_person_lookup_extended_get_status($cpr);
 
-  if ( ($process == 'create' AND variable_get('validate_create_civil_status', FALSE))
-          OR ( $process == 'batch' AND variable_get('validate_batch_civil_status', FALSE) )) {
-  //checking status
+  // Checking status.
+  if (variable_get('validate_create_civil_status', FALSE)) {
     if (intval($status['civil_status']) == 90) {
       return array(
         'status' => FALSE,
         'text' => t('Personen med angivne CPR-nummer er død'),
       );
     }
-  }else{
-// we do not validate if disable
   }
-  if ( ($process == 'create' AND variable_get('validate_create_citizenship', FALSE))
-          OR ( $process == 'batch' AND variable_get('validate_batch_sitizenship', FALSE) )) {
-    //checking citizenship
+
+  // Checking citizenship.
+  if (variable_get('validate_create_citizenship', FALSE)) {
     if (strcmp($status['citizenship'], '5100') != 0) {
       return array(
         'status' => FALSE,
         'text' => t('Den angivne CPR-nummer er ikke Dansk borger'),
       );
     }
-  }else{
-// we do not validate if disable
+  }
+}
+
+/**
+ * Validate cpr callback, using configuration set per election.
+ *
+ * @param string $cpr
+ *   CPR formatter like ([0-9]{6}\-[0-9]{4}).
+ * @param mixed $election_config
+ *   Array of the validation criteria.
+ *
+ * @return array
+ *   [status] => TRUE/FALSE
+ *   [text] => Descriptive text shown when CPR doesn't validate
+ */
+function vcv_person_lookup_extended_validate_cpr_per_election($cpr, $election_config) {
+  $status = vcv_person_lookup_extended_get_status($cpr);
+
+  // Checking civil status.
+  if ($election_config['validate_civil_status']) {
+    if (intval($status['civil_status']) == 90) {
+      return array(
+        'status' => FALSE,
+        'text' => t('Personen med angivne CPR-nummer er død'),
+      );
+    }
+  }
+
+  // Checking citizenship.
+  if ($election_config['validate_citizenship']) {
+    if (strcmp($status['citizenship'], '5100') != 0) {
+      return array(
+        'status' => FALSE,
+        'text' => t('Den angivne CPR-nummer er ikke Dansk borger'),
+      );
+    }
   }
 }
 
