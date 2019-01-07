@@ -92,6 +92,7 @@ dependencies[] = valhalla_field_volunteers_roles
 dependencies[] = valhalla_settings
 dependencies[] = valghalla_status_report
 dependencies[] = vcv_person_lookup_extended
+dependencies[] = vcv_serviceplatformen
 dependencies[] = vvv_validate_age
 dependencies[] = valghalla_volunteers_import
 dependencies[] = valghalla_signup
