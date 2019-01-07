@@ -20,8 +20,8 @@ function valghalla_external_server_nemlogin_menu() {
     'type' => MENU_NORMAL_ITEM,
   );
 
-  $items['admin/config/nemid/nemlogin'] = array(
-    'title' => 'Configure Nemlogin',
+  $items['admin/config/system/nemlogin'] = array(
+    'title' => 'Valghalla External Server Configure Nemlogin',
     'description' => 'Configure Nemlogin settings',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('valghalla_external_server_nemlogin_menu_settings_form'),
