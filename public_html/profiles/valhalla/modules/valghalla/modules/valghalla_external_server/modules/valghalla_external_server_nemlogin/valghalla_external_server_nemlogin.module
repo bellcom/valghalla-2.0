@@ -1,0 +1,81 @@
+<?php
+
+/**
+ * @file
+ * Valghalla external server nemlogin file.
+ */
+
+module_load_include('inc', 'valghalla_external_server_nemlogin', 'includes/valghalla_external_server_nemlogin');
+
+/**
+ * Implements hook_menu().
+ */
+function valghalla_external_server_nemlogin_menu() {
+  $items['nemlogin/require'] = array(
+    'title' => 'Nemlogin require authentication',
+    'description' => 'Nemlogin require authentication',
+    'page callback' => 'valghalla_external_server_nemlogin_require_auth',
+    'page arguments' => array(2),
+    'access arguments' => array('access content'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+  $items['admin/config/nemid/nemlogin'] = array(
+    'title' => 'Configure Nemlogin',
+    'description' => 'Configure Nemlogin settings',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('valghalla_external_server_nemlogin_menu_settings_form'),
+    'access arguments' => array('administer site configuration'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+  return $items;
+}
+
+/**
+ * Nemlogin settings form definition.
+ */
+function valghalla_external_server_nemlogin_menu_settings_form() {
+  $form = array();
+
+  $form['nemlogin_simplesaml_installdir'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Full path to simplesaml installation'),
+    '#default_value' => variable_get('nemlogin_simplesaml_installdir'),
+  );
+
+  $form['nemlogin_simplesaml_default_auth'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Simplesaml default auth method'),
+    '#default_value' => variable_get('nemlogin_simplesaml_default_auth', 'default-sp'),
+  );
+
+  return system_settings_form($form);
+}
+
+/**
+ * Nemlogin require authentication page callback.
+ *
+ * Creates SimpleSAML_Auth_Simple, sets up return to url and requires
+ * the authentication (actual redirect to IDP).
+ */
+function valghalla_external_server_nemlogin_require_auth() {
+  $params = drupal_get_query_parameters();
+  $return_to_url = $params['destination'];
+
+  try {
+    $as = valghalla_external_server_nemlogin_get_simple_saml_auth();
+    $as->requireAuth(
+      array(
+        'ReturnTo' => $return_to_url,
+      )
+    );
+  }
+  catch (Exception $e) {
+    watchdog("Valghalla nemlogin", 'Cannot initialize simplesaml request: @message', array('@message' => $e->getMessage()), WATCHDOG_ERROR);
+
+    // If for some reason the redirect didn't happen automatically,
+    // go back to node.
+    drupal_goto($return_to_url);
+  }
+}

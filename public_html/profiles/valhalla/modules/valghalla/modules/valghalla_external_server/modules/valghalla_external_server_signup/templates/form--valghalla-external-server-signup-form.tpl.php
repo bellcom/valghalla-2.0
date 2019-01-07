@@ -8,10 +8,14 @@
 $comment_field = $form['comment'];
 $submit = $form['submit'];
 $term_agreement = $form['terms_agreement'];
+$nemid_login_link = $form['nemid_login_link'];
+$nemid_logout_link = $form['nemid_logout_link'];
 
 unset($form['comment']);
 unset($form['submit']);
 unset($form['terms_agreement']);
+unset($form['nemid_login_link']);
+unset($form['nemid_logout_link']);
 ?>
 
 <div class="narrow-wrapper">
@@ -35,6 +39,13 @@ unset($form['terms_agreement']);
   <!-- Begin - nemid login -->
   <div>
     <p>NemID block</p>
+    <?php if ($form['#cpr']): ?>
+      <?php print drupal_render($nemid_logout_link); ?>
+      <p>Du er logget ind med NemID med følgende CPR nummer <?php print $form['#cpr'];?></p>
+    <?php else: ?>
+      <?php print drupal_render($nemid_login_link); ?>
+      <p>Login med NemLogin for at forsætte</p>
+    <?php endif; ?>
   </div>
   <!-- End - nemid login -->
 
