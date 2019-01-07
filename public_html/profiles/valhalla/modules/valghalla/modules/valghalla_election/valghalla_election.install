@@ -106,6 +106,9 @@ function valghalla_election_update_7101() {
       // 3. Load polling station field_volunteers_pr_party_1 field collections
       foreach ($pollingStations as $pollingStation) {
         $pollingStation = node_load($pollingStation['target_id']);
+        if (empty($pollingStation)) {
+          continue;
+        }
 
         $fieldVolunteerPrParty = field_get_items('node', $pollingStation, 'field_volunteers_pr_party_1');
         if (is_array($fieldVolunteerPrParty)) {
