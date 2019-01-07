@@ -16,6 +16,7 @@ function valghalla_menu() {
     'file path' => drupal_get_path('module', 'system'),
     'file' => 'system.admin.inc',
     'access callback' => array('user_is_logged_in'),
+    'type' => MENU_NORMAL_ITEM,
   );
 
   $items['valghalla/administration'] = array(
@@ -24,6 +25,7 @@ function valghalla_menu() {
     'file path' => drupal_get_path('module', 'system'),
     'file' => 'system.admin.inc',
     'access callback' => array('user_is_logged_in'),
+    'type' => MENU_NORMAL_ITEM,
   );
   return $items;
 }

@@ -6,6 +6,14 @@
  */
 
 /**
+ * Implements hook_install().
+ */
+function valghalla_election_install() {
+  valghalla_election_update_7101();
+  valghalla_election_update_7102();
+}
+
+/**
  * Implements hook_uninstall().
  */
 function valghalla_election_uninstall() {

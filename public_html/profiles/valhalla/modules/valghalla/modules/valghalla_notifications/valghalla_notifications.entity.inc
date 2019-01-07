@@ -56,7 +56,7 @@ function entity_valghalla_menu(&$items) {
   $items['valghalla/administration/notifications-list'] = array(
     'title' => 'Valghalla Notifications',
     'page callback' => 'entity_valghalla_notification_list_entities',
-    'access arguments' => array('view any entity_valghalla_notification entity'),
+    'access arguments' => array('view any valghalla notification entity'),
     'type' => MENU_NORMAL_ITEM,
 
   );
@@ -69,7 +69,7 @@ function entity_valghalla_menu(&$items) {
     'title arguments' => array(3),
     'page callback' => 'entity_valghalla_notification_view',
     'page arguments' => array(3),
-    'access arguments' => array('view any entity_valghalla_notification entity'),
+    'access arguments' => array('view any valghalla notification entity'),
   );
 
   // 'View' tab for an individual entity page.
@@ -117,7 +117,7 @@ function entity_valghalla_notification_info_page() {
 function entity_valghalla_notification_check_notification_tab_access() {
   $node = node_load(arg(1));
   if (($node->type == 'volunteers')
-    && user_access('view any entity_valghalla_notification entity')) {
+    && user_access('view any valghalla notification entity')) {
     return TRUE;
   }
   return FALSE;
