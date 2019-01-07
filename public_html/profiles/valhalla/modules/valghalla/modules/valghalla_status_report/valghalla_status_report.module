@@ -314,13 +314,26 @@ function _valghalla_status_report_get_label($count) {
  * Generate PDF content.
  */
 function _generate_pdf_content($election_nid = NULL, $party_tid = NULL) {
+  global $user;
   $markup = '';
 
-  // If we didnt pass an election nid, TRY to use the one from the session.
+  // If we didn't pass an election nid, TRY to use the one from the session.
   if (!$election_nid) {
 
     if (isset($_SESSION['election_nid'])) {
       $election_nid = $_SESSION['election_nid'];
+    }
+  }
+
+  // If we didn't pass an party tid, TRY to use the one set on the user.
+  if (!$party_tid) {
+
+    if ($user) {
+      $user = user_load($user->uid);
+
+      if ($field = field_get_items('user', $user, 'field_party')) {
+        $party_tid = $field[0]['tid'];
+      }
     }
   }
 
@@ -617,8 +630,6 @@ function _valghalla_status_report_cron() {
     return;
   }
 
-
-
   // Run through all elections.
   foreach ($elections as $election_nid) {
     $election = node_load($election_nid);
@@ -717,9 +728,9 @@ function _valghalla_status_report_cron() {
       }
 
       // Send PDF via e-mail.
-      elseif ($recipient && module_exists('valghalla_mail')) {
-        valghalla_notifications_direct_send('mail', $recipient, $params);
-      }
+//      elseif ($recipient && module_exists('valghalla_mail')) {
+//        valghalla_notifications_direct_send('mail', $recipient, $params);
+//      }
 
       else {
         watchdog('valghalla_status_report', 'Not found enabled gateway to send status report', array(), WATCHDOG_ERROR);
