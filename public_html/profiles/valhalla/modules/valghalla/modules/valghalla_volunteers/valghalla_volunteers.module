@@ -965,7 +965,7 @@ function valghalla_volunteers_to_polling_station_ajax($action) {
 }
 
 /**
- * Fetch a list of volunteers, without a post
+ * Fetch a list of volunteers, published and without a post.
  */
 function valghalla_volunteers_get_volunteers(){
   $volunteer_result = array();
@@ -985,6 +985,7 @@ function valghalla_volunteers_get_volunteers(){
       )
     )
     AND n.type = \'volunteers\'
+    AND n.status = 1
     ', array(':election_nid' => $_SESSION['election_nid']))->fetchAll();
 
   // Load user and fetch party id
@@ -1104,7 +1105,7 @@ function valghalla_volunteers_notify_volunteer($electionInfo, $forceType = NULL)
 
       switch ($rsvp) {
         case 1:
-          $type = 'rsvp_yes';
+          $type = 'confirmed';
           break;
 
         case 2:

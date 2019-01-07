@@ -1,6 +1,18 @@
 <?php
 
 /**
+ * @file
+ * Install file for valghalla_volunteer.install.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function valghalla_volunteers_install() {
+  valghalla_volunteers_update_7000();
+}
+
+/**
  * Assign permissions to roles.
  */
 function valghalla_volunteers_update_7000() {

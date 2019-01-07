@@ -6,6 +6,14 @@
  */
 
 /**
+ * Implements hook_install().
+ */
+function valghalla_election_install() {
+  valghalla_election_update_7101();
+  valghalla_election_update_7102();
+}
+
+/**
  * Implements hook_uninstall().
  */
 function valghalla_election_uninstall() {
@@ -98,6 +106,9 @@ function valghalla_election_update_7101() {
       // 3. Load polling station field_volunteers_pr_party_1 field collections
       foreach ($pollingStations as $pollingStation) {
         $pollingStation = node_load($pollingStation['target_id']);
+        if (empty($pollingStation)) {
+          continue;
+        }
 
         $fieldVolunteerPrParty = field_get_items('node', $pollingStation, 'field_volunteers_pr_party_1');
         if (is_array($fieldVolunteerPrParty)) {
@@ -171,7 +182,10 @@ function valghalla_election_update_7102() {
  * Adding new fields fields.
  *
  * New fields: field_party_subsc_accept_comment, field_party_subsc_message,
- * field_party_subsc_terms_text, field_election_notif_conf_export.
+ * field_party_subsc_terms_text, field_election_notif_conf_export,
+ * field_election_valid_age, field_election_valid_citizenship,
+ * field_election_valid_civ_status, field_election_valid_municipal,
+ * field_party_skip_valid_municipal.
  */
 function valghalla_election_update_7103() {
   // Reverting feature.

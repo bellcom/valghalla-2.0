@@ -37,8 +37,40 @@ function valghalla_internal_server_validate_volunteer($volunteer_node) {
     }
   }
 
-  // Run validator.
-  $messages = valghalla_volunteer_validator_query_service('validate_cpr', $cpr, 'single');
+  // Run volunteer create validator.
+  $messages = valghalla_volunteer_validator_query_service('validate_cpr', $cpr);
+
+  // Run volunteer validator per last election.
+  $field_electioninfo = field_get_items('node', $volunteer_node, 'field_electioninfo');
+  if (!empty($field_electioninfo)) {
+    $lastElement = end($field_electioninfo);
+    $electionInfo = entity_load_single('field_collection_item', $lastElement['value']);
+
+    // Getting election.
+    $field_election = field_get_items('field_collection_item', $electionInfo, 'field_election');
+    if (!empty($field_election)) {
+      $election_nid = $field_election[0]['target_id'];
+      $election = node_load($election_nid);
+    }
+
+    // Getting party.
+    $field_post_party = field_get_items('field_collection_item', $electionInfo, 'field_post_party');
+    if (!empty($field_post_party)) {
+      $party_tid = $field_post_party[0]['target_id'];
+      $party = taxonomy_term_load($party_tid);
+    }
+
+    // Getting election date.
+    $field_election_date = field_get_items('node', $election, 'field_date');
+    if (!empty($field_election_date)) {
+      $election_date = $field_election_date[0]['value'];
+    }
+  }
+
+  if ($election && $party) {
+    $election_config = valghalla_volunteer_validator_get_election_config($election, $party);
+    $messages = array_merge($messages, valghalla_volunteer_validator_query_service('validate_cpr_per_election', $cpr, $election_config));
+  }
 
   foreach ($messages as $message) {
     if ($message['status'] === FALSE) {
@@ -47,9 +79,13 @@ function valghalla_internal_server_validate_volunteer($volunteer_node) {
     }
   }
 
-  if ($errors = valghalla_volunteer_validator_validate($volunteer_node, 'single')) {
-    $validationStatus['errors'][] = t('Det angivne CPR-nummer kan ikke valideres: @text', array('@text' => $message['text']));
-    $validationStatus['valid'] = FALSE;
+  if ($election_date) {
+    $context = array_merge(array('election_date' => $election_date), $election_config);
+
+    if ($errors = valghalla_volunteer_validator_validate_service('validate_per_election', $cpr, $context)) {
+      $validationStatus['errors'][] = t('Det angivne CPR-nummer kan ikke valideres: @text', array('@text' => $message['text']));
+      $validationStatus['valid'] = FALSE;
+    }
   }
 
   return $validationStatus;

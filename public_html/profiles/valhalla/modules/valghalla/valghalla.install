@@ -39,12 +39,25 @@ function valghalla_update_7103() {
   $new_theme = 'site';
   $current_settings = variable_get('theme_' . $current_theme . '_settings', array());
 
+  // Enable site theme.
+  theme_enable(array(
+    $new_theme,
+  ));
+
+  // Alter old theme settings before applied to new theme.
+  $mutated_settings = $current_settings;
+  $mutated_settings['bootstrap_tooltip_descriptions'] = 0;
+  $mutated_settings['bootstrap_cdn'] = '';
+
   // Transfer settings.
   variable_set('theme_default', $new_theme);
-  variable_set('theme_' . $new_theme . '_settings', $current_settings);
+  variable_set('theme_' . $new_theme . '_settings', $mutated_settings);
 
   // Set new theme settings.
   variable_set('jquery_update_jquery_version', '1.10');
+  variable_set('jquery_update_jquery_cdn', 'none');
+  variable_set('jquery_update_compression_type', '');
+  variable_set('jquery_update_jquery_admin_version', '');
 }
 
 /**
