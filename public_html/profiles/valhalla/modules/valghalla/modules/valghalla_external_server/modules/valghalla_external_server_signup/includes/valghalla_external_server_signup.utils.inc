@@ -41,6 +41,7 @@ function _valghalla_external_server_signup_text_get_replacement_tokens($mode) {
   switch ($mode) {
     case 'party':
       return array(
+        '@municipality' => 'name of the municipality',
         '@election_name' => 'name of the election',
         '@election_time' => 'time of the election',
         '@party_name' => 'name of the party',
@@ -48,6 +49,7 @@ function _valghalla_external_server_signup_text_get_replacement_tokens($mode) {
 
     case 'party_role':
       return array(
+        '@municipality' => 'name of the municipality',
         '@election_name' => 'name of the election',
         '@election_time' => 'time of the election',
         '@party_name' => 'name of the party',
@@ -57,6 +59,7 @@ function _valghalla_external_server_signup_text_get_replacement_tokens($mode) {
 
     case 'party_polling_station':
       return array(
+        '@municipality' => 'name of the municipality',
         '@election_name' => 'name of the election',
         '@election_time' => 'time of the election',
         '@party_name' => 'name of the party',
@@ -65,6 +68,7 @@ function _valghalla_external_server_signup_text_get_replacement_tokens($mode) {
 
     case 'party_role_polling_station':
       return array(
+        '@municipality' => 'name of the municipality',
         '@election_name' => 'name of the election',
         '@election_time' => 'time of the election',
         '@party_name' => 'name of the party',
@@ -167,6 +171,24 @@ function _valghalla_external_server_signup_get_polling_station_detail_html($poll
 <p>$name</p>
 <p>$road $road_no</p>
 <p>$zip $city</p>
+EOD;
+
+  return $html;
+}
+
+/**
+ * HTML snippet for presenting role details.
+ *
+ * @param mixed $role
+ *   Role node.
+ *
+ * @return string
+ *   HTML snippet.
+ */
+function _valghalla_external_server_signup_get_role_detail_html($role) {
+  $meeting_time = $role->field_meetingtime['und'][0]['value'];
+  $html = <<<"EOD"
+  Rolle mødetidspunkt <b>$meeting_time</b>
 EOD;
 
   return $html;

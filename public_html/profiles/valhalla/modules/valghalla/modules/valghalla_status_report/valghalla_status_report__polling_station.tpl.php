@@ -53,7 +53,7 @@
                 &nbsp;&nbsp;
 
                 <?php if (! isset($post['existing_post'])): ?>
-                  <i><?=t('Denne plads er tom.'); ?></i>
+                  <i><span class="text-muted"><?php print t('Denne plads er tom.'); ?></span></i>
                 <?php else: ?>
                   <?php print $post['existing_post']['name']; ?>
                 <?php endif; ?>
