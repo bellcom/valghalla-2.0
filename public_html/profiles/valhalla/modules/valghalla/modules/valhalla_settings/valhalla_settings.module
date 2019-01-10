@@ -126,7 +126,6 @@ function _valhalla_settings_lock_field(&$form, &$form_state) {
 
     foreach ($roles as $role_id => $role) {
       $form["field_role_n" . $role_id]['#disabled'] = TRUE;
-      $form["field_role_n" . $role_id]['#disabled'] = TRUE;
     }
   }
 }
