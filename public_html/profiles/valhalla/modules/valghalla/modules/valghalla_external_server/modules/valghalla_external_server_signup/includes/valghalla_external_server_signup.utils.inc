@@ -41,6 +41,7 @@ function _valghalla_external_server_signup_text_get_replacement_tokens($mode) {
   switch ($mode) {
     case 'party':
       return array(
+        '@municipality' => 'name of the municipality',
         '@election_name' => 'name of the election',
         '@election_time' => 'time of the election',
         '@party_name' => 'name of the party',
@@ -48,6 +49,7 @@ function _valghalla_external_server_signup_text_get_replacement_tokens($mode) {
 
     case 'party_role':
       return array(
+        '@municipality' => 'name of the municipality',
         '@election_name' => 'name of the election',
         '@election_time' => 'time of the election',
         '@party_name' => 'name of the party',
@@ -57,6 +59,7 @@ function _valghalla_external_server_signup_text_get_replacement_tokens($mode) {
 
     case 'party_polling_station':
       return array(
+        '@municipality' => 'name of the municipality',
         '@election_name' => 'name of the election',
         '@election_time' => 'time of the election',
         '@party_name' => 'name of the party',
@@ -65,6 +68,7 @@ function _valghalla_external_server_signup_text_get_replacement_tokens($mode) {
 
     case 'party_role_polling_station':
       return array(
+        '@municipality' => 'name of the municipality',
         '@election_name' => 'name of the election',
         '@election_time' => 'time of the election',
         '@party_name' => 'name of the party',

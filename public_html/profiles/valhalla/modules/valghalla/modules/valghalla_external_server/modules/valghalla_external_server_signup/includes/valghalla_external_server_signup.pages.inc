@@ -121,6 +121,7 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
   if (!isset($form_state['role_in_url']) && !isset($form_state['polling_station_in_url'])) {
     $form_mode = 'party';
     $replacements = array(
+      odin_get_municipality(variable_get('valhalla_settings_municipality')),
       $election->title,
       $election_date_str,
       $party->name,
@@ -129,6 +130,7 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
   elseif (isset($form_state['role_in_url']) && !isset($form_state['polling_station_in_url'])) {
     $form_mode = 'party_role';
     $replacements = array(
+      odin_get_municipality(variable_get('valhalla_settings_municipality')),
       $election->title,
       $election_date_str,
       $party->name,
@@ -139,6 +141,7 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
   elseif (!isset($form_state['role_in_url']) && isset($form_state['polling_station_in_url'])) {
     $form_mode = 'party_polling_station';
     $replacements = array(
+      odin_get_municipality(variable_get('valhalla_settings_municipality')),
       $election->title,
       $election_date_str,
       $party->name,
@@ -148,6 +151,7 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
   elseif (isset($form_state['role_in_url']) && isset($form_state['polling_station_in_url'])) {
     $form_mode = 'party_role_polling_station';
     $replacements = array(
+      odin_get_municipality(variable_get('valhalla_settings_municipality')),
       $election->title,
       $election_date_str,
       $party->name,
