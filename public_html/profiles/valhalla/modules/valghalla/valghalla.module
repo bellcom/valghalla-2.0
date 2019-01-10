@@ -90,7 +90,18 @@ function valghalla_block_view($delta = '') {
     // Election switcher is just a normal block with a form.
     case 'election_party_switcher':
       if (user_is_logged_in()) {
+
+        // Set election session from cookie, if none set.
+        if (!isset($_SESSION['election_nid'])) {
+
+          if (isset($_COOKIE['election_nid'])) {
+            $_SESSION['election_nid'] = $_COOKIE['election_nid'];
+          }
+        }
+
+        // Grab form.
         $election_form = drupal_get_form('valghalla_change_election_party_form');
+
         return array("content" => drupal_render($election_form));
       }
       break;
@@ -177,8 +188,11 @@ function valghalla_change_election_party_form() {
  * Set election nid in $_SESSION. And update user party tid.
  */
 function valghalla_change_election_party_form_submit(&$form, $form_state) {
+  $election_nid = $form_state['values']['election'];
+
   // Set election to watch.
-  $_SESSION['election_nid'] = $form_state['values']['election'];
+  setcookie('election_nid', $election_nid, strtotime('+30 days'));
+  $_SESSION['election_nid'] = $election_nid;
 
   if (user_access('valghalla change party')) {
     // Set party.
