@@ -186,10 +186,17 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
       ),
     );
 
+    $form['role_details'] = array(
+      '#prefix' => '<div id="js-role-details">',
+      '#suffix' => '</div>',
+    );
+
     if (isset($form_state['values']) && isset($form_state['values']['role_select'])) {
       $role_selected = $form_state['values']['role_select'];
       $role = node_load($role_selected);
       $form_state['role'] = $role;
+
+      $form['role_details']['#markup'] = _valghalla_external_server_signup_get_role_detail_html($role);
     }
   }
 
@@ -288,17 +295,18 @@ function valghalla_external_server_signup_role_select_callback($form, &$form_sta
   $commands = array();
 
   $role_selected = $form_state['values']['role_select'];
-  $uuids = entity_get_uuid_by_id('node', array($role_selected));
-  if (!empty($uuids) && is_array($uuids)) {
-    $role_uuid = reset($uuids);
-  }
+  $role = node_load($role_selected);
 
   // Updating the email and phone fields visibility.
-  $form['email-container']['email']['#access'] = valghalla_external_server_signup_field_visibility($form_state, 'mail', $role_uuid);
+  $form['email-container']['email']['#access'] = valghalla_external_server_signup_field_visibility($form_state, 'mail', $role->uuid);
   $commands[] = ajax_command_replace('#js-email-container', drupal_render($form['email-container']));
 
-  $form['phone-container']['phone']['#access'] = valghalla_external_server_signup_field_visibility($form_state, 'sms', $role_uuid);
+  $form['phone-container']['phone']['#access'] = valghalla_external_server_signup_field_visibility($form_state, 'sms', $role->uuid);
   $commands[] = ajax_command_replace('#js-phone-container', drupal_render($form['phone-container']));
+
+  // Updating role details.
+  $form['role_details']['#markup'] = ($role) ? _valghalla_external_server_signup_get_role_detail_html($role) : '';
+  $commands[] = ajax_command_replace('#js-role-details', drupal_render($form['role_details']));
 
   if (!isset($form_state['polling_station_in_url'])) {
     $polling_station_selected = $form_state['values']['polling_station_select'];
@@ -375,6 +383,11 @@ function valghalla_external_server_signup_polling_station_select_callback($form,
 
     // Updating value in the form state.
     $form_state['values']['role_select'] = $role_selected;
+
+    // Updating role details.
+    $role = ($role_selected) ? node_load($role_selected) : NULL;
+    $form['role_details']['#markup'] = ($role) ? _valghalla_external_server_signup_get_role_detail_html($role) : '';
+    $commands[] = ajax_command_replace('#js-role-details', drupal_render($form['role_details']));
   }
 
   return array('#type' => 'ajax', '#commands' => $commands);

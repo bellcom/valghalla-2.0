@@ -171,3 +171,21 @@ EOD;
 
   return $html;
 }
+
+/**
+ * HTML snippet for presenting role details.
+ *
+ * @param mixed $role
+ *   Role node.
+ *
+ * @return string
+ *   HTML snippet.
+ */
+function _valghalla_external_server_signup_get_role_detail_html($role) {
+  $meeting_time = $role->field_meetingtime['und'][0]['value'];
+  $html = <<<"EOD"
+  Rolle mødetidspunkt <b>$meeting_time</b>
+EOD;
+
+  return $html;
+}
