@@ -89,7 +89,7 @@ function valghalla_volunteer_validator_node_presave($node) {
   // Fetching names split.
   if (variable_get('valghalla_volunteer_validator_get_name')) {
     $field_map = array(
-      'field_first_name' => 'fornavn',
+      'field_first_name' => array('fornavn', 'mellemnavn'),
       'field_second_name' => 'efternavn',
     );
 
@@ -97,9 +97,17 @@ function valghalla_volunteer_validator_node_presave($node) {
 
     if ($data['status']) {
       $names_arr = array();
-      foreach ($field_map as $field => $index) {
-        $node_wrapper->{$field} = $data['persondata']->navn->{$index};
-        $names_arr[] = $data['persondata']->navn->{$index};
+      foreach ($field_map as $field => $index_keys) {
+        if (!is_array($index_keys)) {
+          $index_keys = array($index_keys);
+        }
+        $value_arr = [];
+        foreach ($index_keys as $index) {
+          $value_arr[] = $data['persondata']->navn->{$index};
+        }
+        $value = implode(' ', $value_arr);
+        $node_wrapper->{$field} = $value;
+        $names_arr[] = $value;
       }
 
       $node_wrapper->title = implode(' ', $names_arr);
