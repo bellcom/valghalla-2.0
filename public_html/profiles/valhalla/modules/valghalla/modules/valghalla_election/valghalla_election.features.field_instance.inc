@@ -29,7 +29,7 @@ function valghalla_election_field_default_field_instances() {
     ),
     'entity_type' => 'field_collection_item',
     'field_name' => 'field_ppsp_party',
-    'label' => 'Party',
+    'label' => 'Parti',
     'required' => 1,
     'settings' => array(
       'user_register_form' => FALSE,
@@ -61,7 +61,7 @@ function valghalla_election_field_default_field_instances() {
     ),
     'entity_type' => 'field_collection_item',
     'field_name' => 'field_ppsp_polling_station',
-    'label' => 'Polling Station',
+    'label' => 'Valgsted',
     'required' => 1,
     'settings' => array(
       'user_register_form' => FALSE,
@@ -1085,13 +1085,13 @@ function valghalla_election_field_default_field_instances() {
   t('Logo');
   t('Modtag PDF rapport');
   t('Notification config export (system field)');
+  t('Parti');
   t('Partisekretær');
-  t('Party');
-  t('Polling Station');
   t('Subscription comment');
   t('Sæt igang');
   t('Type');
   t('Udsend PDF rapport til partier');
+  t('Valgsted');
   t('Valgsteder');
   t('Valider alder');
   t('Valider bopæl i kommunen');

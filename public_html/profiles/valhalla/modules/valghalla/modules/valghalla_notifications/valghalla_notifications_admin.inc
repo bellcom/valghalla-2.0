@@ -15,7 +15,7 @@ function valghalla_notifications_settings($form, &$form_state, $election_nid = F
 
   $form['header'] = array(
     '#type' => 'item',
-    '#markup' => '<h2>Redigerer notifications skabeloner for:<em> ' . $election->title . '</em></h2>',
+    '#markup' => '<h2>Redigerer skabeloner for:<em> ' . $election->title . '</em></h2>',
   );
 
   $types = valghalla_notifications_get_types();
@@ -25,7 +25,7 @@ function valghalla_notifications_settings($form, &$form_state, $election_nid = F
 
   $form['valghalla_volunteers_notifications']['notifications'] = array(
     '#type' => 'fieldset',
-    '#title' => t('Standard notifications skabeloner'),
+    '#title' => t('Standardskabeloner'),
     '#description' => '<a href="/valghalla/administration/notifications/add?destination=' . current_path() . '"><span class="glyphicon glyphicon-plus"></span> ' . t('Tilføj ny') . '</a>',
   );
   $gateways_list = valghalla_notifications_gateways();
@@ -80,11 +80,9 @@ function valghalla_notifications_settings($form, &$form_state, $election_nid = F
   // Role specific notifications.
   // Generate fieldset for each role.
   $form['valghalla_role_notifications'] = array(
-    '#title' => t('Rollespecifikke @gateway_name skabeloner', array('@gateway_name' => $gateway['name'])),
+    '#title' => t('Rollespecifikke skabeloner'),
     '#type' => 'fieldset',
-    '#description' => t('Herunder kan du vælge rollespecifikke @gateway_name skabeloner. Disse indstillinger overskriver "Standard @gateway_name skabeloner" for den valgte rolle.',
-      array('@gateway_name' => $gateway['name'])
-    ),
+    '#description' => t('Herunder kan du vælge rollespecifikke skabeloner. Disse indstillinger overskriver "Standardskabeloner" for den valgte rolle.'),
   );
 
   // Override 'none' for role specific notifications.

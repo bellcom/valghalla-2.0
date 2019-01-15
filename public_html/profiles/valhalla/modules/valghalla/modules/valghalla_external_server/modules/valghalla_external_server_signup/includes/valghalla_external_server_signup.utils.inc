@@ -41,40 +41,40 @@ function _valghalla_external_server_signup_text_get_replacement_tokens($mode) {
   switch ($mode) {
     case 'party':
       return array(
-        '@municipality' => 'name of the municipality',
-        '@election_name' => 'name of the election',
-        '@election_time' => 'time of the election',
-        '@party_name' => 'name of the party',
+        '!municipality' => 'name of the municipality',
+        '!election_name' => 'name of the election',
+        '!election_time' => 'time of the election',
+        '!party_name' => 'name of the party',
       );
 
     case 'party_role':
       return array(
-        '@municipality' => 'name of the municipality',
-        '@election_name' => 'name of the election',
-        '@election_time' => 'time of the election',
-        '@party_name' => 'name of the party',
-        '@role_name' => 'chosen role',
-        '@role_meeting_date' => 'time when the person must come',
+        '!municipality' => 'name of the municipality',
+        '!election_name' => 'name of the election',
+        '!election_time' => 'time of the election',
+        '!party_name' => 'name of the party',
+        '!role_name' => 'chosen role',
+        '!role_meeting_time' => 'time when the person must come',
       );
 
     case 'party_polling_station':
       return array(
-        '@municipality' => 'name of the municipality',
-        '@election_name' => 'name of the election',
-        '@election_time' => 'time of the election',
-        '@party_name' => 'name of the party',
-        '@polling_station_name' => 'name of the polling station',
+        '!municipality' => 'name of the municipality',
+        '!election_name' => 'name of the election',
+        '!election_time' => 'time of the election',
+        '!party_name' => 'name of the party',
+        '!polling_station_name' => 'name of the polling station',
       );
 
     case 'party_role_polling_station':
       return array(
-        '@municipality' => 'name of the municipality',
-        '@election_name' => 'name of the election',
-        '@election_time' => 'time of the election',
-        '@party_name' => 'name of the party',
-        '@role_name' => 'chosen role',
-        '@role_meeting_date' => 'time when the person must come',
-        '@polling_station_name' => 'name of the polling station',
+        '!municipality' => 'name of the municipality',
+        '!election_name' => 'name of the election',
+        '!election_time' => 'time of the election',
+        '!party_name' => 'name of the party',
+        '!role_name' => 'chosen role',
+        '!role_meeting_time' => 'time when the person must come',
+        '!polling_station_name' => 'name of the polling station',
       );
   }
 }
