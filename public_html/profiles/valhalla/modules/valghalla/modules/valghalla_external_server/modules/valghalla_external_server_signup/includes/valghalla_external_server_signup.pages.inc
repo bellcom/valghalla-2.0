@@ -124,7 +124,7 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
       odin_get_municipality(variable_get('valhalla_settings_municipality')),
       $election->title,
       $election_date_str,
-      $party->name,
+      $party->field_partinavn['und'][0]['value'],
     );
   }
   elseif (isset($form_state['role_in_url']) && !isset($form_state['polling_station_in_url'])) {
@@ -133,8 +133,8 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
       odin_get_municipality(variable_get('valhalla_settings_municipality')),
       $election->title,
       $election_date_str,
-      $party->name,
-      $role->title,
+      $party->field_partinavn['und'][0]['value'],
+      $role->field_description['und'][0]['value'],
       $election_date_str . ' kl. ' . $role->field_meetingtime['und'][0]['value'],
     );
   }
@@ -144,7 +144,7 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
       odin_get_municipality(variable_get('valhalla_settings_municipality')),
       $election->title,
       $election_date_str,
-      $party->name,
+      $party->field_partinavn['und'][0]['value'],
       $polling_station->title,
     );
   }
@@ -154,8 +154,8 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
       odin_get_municipality(variable_get('valhalla_settings_municipality')),
       $election->title,
       $election_date_str,
-      $party->name,
-      $role->title,
+      $party->field_partinavn['und'][0]['value'],
+      $role->field_description['und'][0]['value'],
       $election_date_str . ' kl. ' . $role->field_meetingtime['und'][0]['value'],
       $polling_station->title,
     );
@@ -514,12 +514,14 @@ function valghalla_external_server_signup_settings_form($form, $form_state) {
   $form['valghalla_external_server_signup_text_party_fs']['valghalla_external_server_signup_text_party_upper'] = array(
     '#title' => t('Party only upper text'),
     '#type' => 'textarea',
-    '#default_value' => variable_get('valghalla_external_server_signup_text_party_upper'),
+    '#default_value' => variable_get('valghalla_external_server_signup_text_party_upper', '<p>Du kan her tilmelde dig til @election_name den @election_time for @party_name.</p>
+<p>Log ind med NemID i nedenstående formular for at forstætte.</p>'),
   );
   $form['valghalla_external_server_signup_text_party_fs']['valghalla_external_server_signup_text_party_bottom'] = array(
     '#title' => t('Party only bottom text'),
     '#type' => 'textarea',
-    '#default_value' => variable_get('valghalla_external_server_signup_text_party_bottom'),
+    '#default_value' => variable_get('valghalla_external_server_signup_text_party_bottom', '<p>Ved at aktivere tilmeld-knappen herunder, accepterer du samtidigt at @municipality Kommune registrerer CPR nummer som tilmeldt på ovenstående afstemningssted. Du skal møde på ovenstående adresse d. @election_time.</p>
+<p>Du vil herefter modtage en bekræftelse, her står der mere om dine opgaver på valgdagen, hvornår du skal møde samt ovenstående navn på valgsted og adresse.</p>'),
   );
   $token_str = array();
   foreach (_valghalla_external_server_signup_text_get_replacement_tokens('party') as $token => $text) {
@@ -546,12 +548,15 @@ function valghalla_external_server_signup_settings_form($form, $form_state) {
   $form['valghalla_external_server_signup_text_party_role_fs']['valghalla_external_server_signup_text_party_role_upper'] = array(
     '#title' => t('Party and role upper text'),
     '#type' => 'textarea',
-    '#default_value' => variable_get('valghalla_external_server_signup_text_party_role_upper'),
+    '#default_value' => variable_get('valghalla_external_server_signup_text_party_role_upper', '<p>Du kan her tilmelde dig til @election_name den @election_time for @party_name.</p>
+<p>Du kan vælge mellem de valgsteder der har en ledig plads.</p>
+<p>Log ind med NemID i nedenstående formular for at forstætte.</p>'),
   );
   $form['valghalla_external_server_signup_text_party_role_fs']['valghalla_external_server_signup_text_party_role_bottom'] = array(
     '#title' => t('Party and role bottom text'),
     '#type' => 'textarea',
-    '#default_value' => variable_get('valghalla_external_server_signup_text_party_role_bottom'),
+    '#default_value' => variable_get('valghalla_external_server_signup_text_party_role_bottom', '<p>Ved at aktivere tilmeld-knappen herunder, accepterer du samtidigt at @municipality Kommune registrerer CPR nummer som tilmeldt på ovenstående afstemningssted. Du skal møde på ovenstående adresse d. @election_time.</p>
+<p>Du vil herefter modtage en bekræftelse, her står der mere om dine opgaver på valgdagen, hvornår du skal møde samt ovenstående navn på valgsted og adresse.</p>'),
   );
   $token_str = array();
   foreach (_valghalla_external_server_signup_text_get_replacement_tokens('party_role') as $token => $text) {
@@ -578,12 +583,15 @@ function valghalla_external_server_signup_settings_form($form, $form_state) {
   $form['valghalla_external_server_signup_text_party_polling_station_fs']['valghalla_external_server_signup_text_party_polling_station_upper'] = array(
     '#title' => t('Party and polling station upper text'),
     '#type' => 'textarea',
-    '#default_value' => variable_get('valghalla_external_server_signup_text_party_polling_station_upper'),
+    '#default_value' => variable_get('valghalla_external_server_signup_text_party_polling_station_upper', '<p>Du kan her tilmelde dig til @election_name den @election_time for @party_name.</p>
+<p>Du kan vælge en rolle blandt de ledige pladser @party_name er tildelt på @polling_station_name.</p>
+<p>Log ind med NemID i nedenstående formular for at forstætte.</p>'),
   );
   $form['valghalla_external_server_signup_text_party_polling_station_fs']['valghalla_external_server_signup_text_party_polling_station_bottom'] = array(
     '#title' => t('Party and polling station bottom text'),
     '#type' => 'textarea',
-    '#default_value' => variable_get('valghalla_external_server_signup_text_party_polling_station_bottom'),
+    '#default_value' => variable_get('valghalla_external_server_signup_text_party_polling_station_bottom', '<p>Ved at aktivere tilmeld-knappen herunder, accepterer du samtidigt at @municipality Kommune registrerer CPR nummer som tilmeldt som @role_name på afstemningsstedet @polling_station_name. Du skal møde på ovenstående adresse d. @election_time @role_meeting_date.</p>
+<p>Du vil herefter modtage en bekræftelse, her står der mere om dine opgaver på valgdagen, hvornår du skal møde samt ovenstående navn på valgsted og adresse.</p>'),
   );
   $token_str = array();
   foreach (_valghalla_external_server_signup_text_get_replacement_tokens('party_polling_station') as $token => $text) {
@@ -610,12 +618,14 @@ function valghalla_external_server_signup_settings_form($form, $form_state) {
   $form['valghalla_external_server_signup_text_party_role_polling_station_fs']['valghalla_external_server_signup_text_party_role_polling_station_upper'] = array(
     '#title' => t('Party, role and polling station upper text'),
     '#type' => 'textarea',
-    '#default_value' => variable_get('valghalla_external_server_signup_text_party_role_polling_station_upper'),
+    '#default_value' => variable_get('valghalla_external_server_signup_text_party_role_polling_station_upper', '<p>Du kan her tilmelde dig som @role_name på @polling_station_name ved @election_name den @election_time for @party_name.</p>
+<p>Log ind med NemID i nedenstående formular for at forstætte.</p>'),
   );
   $form['valghalla_external_server_signup_text_party_role_polling_station_fs']['valghalla_external_server_signup_text_party_role_polling_station_bottom'] = array(
     '#title' => t('Party, role and polling station bottom text'),
     '#type' => 'textarea',
-    '#default_value' => variable_get('valghalla_external_server_signup_text_party_role_polling_station_bottom'),
+    '#default_value' => variable_get('valghalla_external_server_signup_text_party_role_polling_station_bottom', '<p>Ved at aktivere tilmeld-knappen herunder, accepterer du samtidigt at @municipality Kommune registrerer CPR nummer som tilmeldt som @role_name på afstemningsstedet @polling_station_name. Du skal møde på ovenstående adresse d. @election_time @role_meeting_date.</p>
+<p>Du vil herefter modtage en bekræftelse, her står der mere om dine opgaver på valgdagen, hvornår du skal møde samt ovenstående navn på valgsted og adresse.</p>'),
   );
   $token_str = array();
   foreach (_valghalla_external_server_signup_text_get_replacement_tokens('party_role_polling_station') as $token => $text) {
