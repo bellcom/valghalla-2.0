@@ -80,3 +80,14 @@ function valghalla_update_7105() {
   module_enable(array('uuid'));
   uuid_install();
 }
+
+/**
+ * Implements hook_update_N().
+ *
+ * Update admin content view. Remove URL from title node.
+ */
+function valghalla_update_7106() {
+  $view = views_get_view('admin_views_node', TRUE);
+  $view->display['default']->display_options['fields']['title']['link_to_node'] = 0;
+  views_save_view($view);
+}
