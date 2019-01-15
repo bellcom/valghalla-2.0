@@ -191,3 +191,11 @@ function valghalla_election_update_7103() {
   // Reverting feature.
   features_revert_module('valghalla_election');
 }
+
+/**
+ * Remove field field_logo from partier taxonomy_term.
+ */
+function valghalla_election_update_7104() {
+  field_delete_field('field_logo');
+  field_purge_batch(1);
+}

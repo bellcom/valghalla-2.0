@@ -773,50 +773,6 @@ function valghalla_election_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'taxonomy_term-partier-field_logo'.
-  $field_instances['taxonomy_term-partier-field_logo'] = array(
-    'bundle' => 'partier',
-    'deleted' => 0,
-    'description' => '',
-    'display' => array(
-      'default' => array(
-        'label' => 'hidden',
-        'module' => 'image',
-        'settings' => array(
-          'image_link' => '',
-          'image_style' => 'medium',
-        ),
-        'type' => 'image',
-        'weight' => 2,
-      ),
-    ),
-    'entity_type' => 'taxonomy_term',
-    'field_name' => 'field_logo',
-    'label' => 'Logo',
-    'required' => 0,
-    'settings' => array(
-      'alt_field' => 0,
-      'default_image' => 0,
-      'file_directory' => '',
-      'file_extensions' => 'png gif jpg jpeg',
-      'max_filesize' => '',
-      'max_resolution' => '',
-      'min_resolution' => '',
-      'title_field' => 0,
-      'user_register_form' => FALSE,
-    ),
-    'widget' => array(
-      'active' => 1,
-      'module' => 'image',
-      'settings' => array(
-        'preview_image_style' => 'thumbnail',
-        'progress_indicator' => 'throbber',
-      ),
-      'type' => 'image_image',
-      'weight' => 3,
-    ),
-  );
-
   // Exported field_instance: 'taxonomy_term-partier-field_partinavn'.
   $field_instances['taxonomy_term-partier-field_partinavn'] = array(
     'bundle' => 'partier',
@@ -1082,7 +1038,6 @@ function valghalla_election_field_default_field_instances() {
   t('E-mail adresse');
   t('Emails sendt');
   t('Fuldt partinavn');
-  t('Logo');
   t('Modtag PDF rapport');
   t('Notification config export (system field)');
   t('Parti');
