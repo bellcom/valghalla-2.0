@@ -515,12 +515,12 @@ function valghalla_external_server_signup_settings_form($form, $form_state) {
     '#title' => t('Party only upper text'),
     '#type' => 'textarea',
     '#default_value' => variable_get('valghalla_external_server_signup_text_party_upper', '<p>Du kan her tilmelde dig til !election_name den !election_time for !party_name.</p>
-<p>Log ind med NemID i nedenstående formular for at forstætte.</p>'),
+<p>Log ind med NemID i nedenstående formular for at fortsætte.</p>'),
   );
   $form['valghalla_external_server_signup_text_party_fs']['valghalla_external_server_signup_text_party_bottom'] = array(
     '#title' => t('Party only bottom text'),
     '#type' => 'textarea',
-    '#default_value' => variable_get('valghalla_external_server_signup_text_party_bottom', '<p>Ved at aktivere tilmeld-knappen herunder, accepterer du samtidigt at !municipality Kommune registrerer CPR nummer som tilmeldt på ovenstående afstemningssted. Du skal møde på ovenstående adresse d. !election_time.</p>
+    '#default_value' => variable_get('valghalla_external_server_signup_text_party_bottom', '<p>Ved at aktivere tilmeld-knappen herunder, accepterer du samtidigt at !municipality registrerer CPR nummer som tilmeldt på ovenstående afstemningssted. Du skal møde på ovenstående adresse d. !election_time.</p>
 <p>Du vil herefter modtage en bekræftelse, her står der mere om dine opgaver på valgdagen, hvornår du skal møde samt ovenstående navn på valgsted og adresse.</p>'),
   );
   $token_str = array();
@@ -550,12 +550,12 @@ function valghalla_external_server_signup_settings_form($form, $form_state) {
     '#type' => 'textarea',
     '#default_value' => variable_get('valghalla_external_server_signup_text_party_role_upper', '<p>Du kan her tilmelde dig til !election_name den !election_time for !party_name.</p>
 <p>Du kan vælge mellem de valgsteder der har en ledig plads.</p>
-<p>Log ind med NemID i nedenstående formular for at forstætte.</p>'),
+<p>Log ind med NemID i nedenstående formular for at fortsætte.</p>'),
   );
   $form['valghalla_external_server_signup_text_party_role_fs']['valghalla_external_server_signup_text_party_role_bottom'] = array(
     '#title' => t('Party and role bottom text'),
     '#type' => 'textarea',
-    '#default_value' => variable_get('valghalla_external_server_signup_text_party_role_bottom', '<p>Ved at aktivere tilmeld-knappen herunder, accepterer du samtidigt at !municipality Kommune registrerer CPR nummer som tilmeldt på ovenstående afstemningssted. Du skal møde på ovenstående adresse d. !election_time.</p>
+    '#default_value' => variable_get('valghalla_external_server_signup_text_party_role_bottom', '<p>Ved at aktivere tilmeld-knappen herunder, accepterer du samtidigt at !municipality registrerer CPR nummer som tilmeldt på ovenstående afstemningssted. Du skal møde på ovenstående adresse d. !election_time.</p>
 <p>Du vil herefter modtage en bekræftelse, her står der mere om dine opgaver på valgdagen, hvornår du skal møde samt ovenstående navn på valgsted og adresse.</p>'),
   );
   $token_str = array();
@@ -585,12 +585,12 @@ function valghalla_external_server_signup_settings_form($form, $form_state) {
     '#type' => 'textarea',
     '#default_value' => variable_get('valghalla_external_server_signup_text_party_polling_station_upper', '<p>Du kan her tilmelde dig til !election_name den !election_time for !party_name.</p>
 <p>Du kan vælge en rolle blandt de ledige pladser !party_name er tildelt på !polling_station_name.</p>
-<p>Log ind med NemID i nedenstående formular for at forstætte.</p>'),
+<p>Log ind med NemID i nedenstående formular for at fortsætte.</p>'),
   );
   $form['valghalla_external_server_signup_text_party_polling_station_fs']['valghalla_external_server_signup_text_party_polling_station_bottom'] = array(
     '#title' => t('Party and polling station bottom text'),
     '#type' => 'textarea',
-    '#default_value' => variable_get('valghalla_external_server_signup_text_party_polling_station_bottom', '<p>Ved at aktivere tilmeld-knappen herunder, accepterer du samtidigt at !municipality Kommune registrerer CPR nummer som tilmeldt som !role_name på afstemningsstedet !polling_station_name. Du skal møde på ovenstående adresse d. !election_time !role_meeting_date.</p>
+    '#default_value' => variable_get('valghalla_external_server_signup_text_party_polling_station_bottom', '<p>Ved at aktivere tilmeld-knappen herunder, accepterer du samtidigt at !municipality registrerer CPR nummer som tilmeldt som !role_name på afstemningsstedet !polling_station_name. Du skal møde på ovenstående adresse d. !election_time !role_meeting_time.</p>
 <p>Du vil herefter modtage en bekræftelse, her står der mere om dine opgaver på valgdagen, hvornår du skal møde samt ovenstående navn på valgsted og adresse.</p>'),
   );
   $token_str = array();
@@ -619,12 +619,12 @@ function valghalla_external_server_signup_settings_form($form, $form_state) {
     '#title' => t('Party, role and polling station upper text'),
     '#type' => 'textarea',
     '#default_value' => variable_get('valghalla_external_server_signup_text_party_role_polling_station_upper', '<p>Du kan her tilmelde dig som !role_name på !polling_station_name ved !election_name den !election_time for !party_name.</p>
-<p>Log ind med NemID i nedenstående formular for at forstætte.</p>'),
+<p>Log ind med NemID i nedenstående formular for at fortsætte.</p>'),
   );
   $form['valghalla_external_server_signup_text_party_role_polling_station_fs']['valghalla_external_server_signup_text_party_role_polling_station_bottom'] = array(
     '#title' => t('Party, role and polling station bottom text'),
     '#type' => 'textarea',
-    '#default_value' => variable_get('valghalla_external_server_signup_text_party_role_polling_station_bottom', '<p>Ved at aktivere tilmeld-knappen herunder, accepterer du samtidigt at !municipality Kommune registrerer CPR nummer som tilmeldt som !role_name på afstemningsstedet !polling_station_name. Du skal møde på ovenstående adresse d. !election_time !role_meeting_date.</p>
+    '#default_value' => variable_get('valghalla_external_server_signup_text_party_role_polling_station_bottom', '<p>Ved at aktivere tilmeld-knappen herunder, accepterer du samtidigt at !municipality registrerer CPR nummer som tilmeldt som !role_name på afstemningsstedet !polling_station_name. Du skal møde på ovenstående adresse d. !election_time !role_meeting_time.</p>
 <p>Du vil herefter modtage en bekræftelse, her står der mere om dine opgaver på valgdagen, hvornår du skal møde samt ovenstående navn på valgsted og adresse.</p>'),
   );
   $token_str = array();
