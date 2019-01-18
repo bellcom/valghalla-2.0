@@ -103,6 +103,15 @@ function valghalla_election_form_alter(&$form, &$form_state, $form_id) {
 }
 
 /**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * Disable taxonomy description.
+ */
+function valghalla_election_form_taxonomy_form_term_alter(&$form, &$form_state) {
+  $form['description']['#access'] = FALSE;
+}
+
+/**
  * Submit handler for extra fields for diet.
  */
 function valghalla_election_form_submit($form, &$form_state) {

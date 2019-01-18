@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Valghalla module.
@@ -20,7 +21,7 @@ function valghalla_menu() {
   );
 
   $items['valghalla/administration'] = array(
-    'title' => t('Administration'),
+    'title' => 'Administration',
     'page callback' => 'system_admin_menu_block_page',
     'file path' => drupal_get_path('module', 'system'),
     'file' => 'system.admin.inc',
@@ -29,6 +30,20 @@ function valghalla_menu() {
   );
   return $items;
 }
+
+/**
+ * Implements hook_menu_local_tasks_alter().
+ */
+function valghalla_menu_local_tasks_alter(&$data, $router_item, $root_path) {
+  if (!empty($data['tabs'][0]['output']) && is_array($data['tabs'][0]['output'])) {
+    foreach ($data['tabs'][0]['output'] as $key => $item) {
+      if (!empty($item['#link']['path']) && $item['#link']['path'] == 'node/%/view') {
+        unset($data['tabs'][0]['output'][$key]);
+      }
+    }
+  }
+}
+
 
 /**
  * Implements hook_theme().
@@ -44,7 +59,7 @@ function valghalla_custom_theme() {
  * Implements hook_init().
  */
 function valghalla_init() {
-  // Redirect user to login, if not already logged in;
+  // Redirect user to login, if not already logged in.
   global $user;
   $allowed_uris = array(
     '/cron.php*',
@@ -108,7 +123,7 @@ function valghalla_block_view($delta = '') {
 
     case 'valghalla_version_tag':
       if (user_is_logged_in()) {
-        $version = file_get_contents($_SERVER['DOCUMENT_ROOT'] . '/valghalla.version' );
+        $version = file_get_contents($_SERVER['DOCUMENT_ROOT'] . '/valghalla.version');
         return array("content" => '<small><a href="https://github.com/OS2Valghalla/valghalla/tags">v.' . $version . '</a></small>');
       }
   }
