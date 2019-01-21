@@ -192,13 +192,13 @@ function valghalla_notifications_entity_info() {
 /**
  * Implements hook_permission().
  */
-function valghalla_notification_permission() {
+function valghalla_notifications_permission() {
   $permissions = array(
     'administer valghalla notification entities' => array(
-      'title' => t('Administer entity_valghalla_notification entities'),
+      'title' => t('Administer notification entities'),
     ),
     'view any valghalla notification entity' => array(
-      'title' => t('View any Valghalla Notification entity'),
+      'title' => t('View any notification entity'),
     ),
   );
   return $permissions;
