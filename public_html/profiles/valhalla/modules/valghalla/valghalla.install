@@ -91,3 +91,17 @@ function valghalla_update_7106() {
   $view->display['default']->display_options['fields']['title']['link_to_node'] = 0;
   views_save_view($view);
 }
+
+/**
+ * Implements hook_update_N().
+ *
+ * Adding 'view polling station' permission to roles:
+ * 'administrator', 'Partisekretær', 'Valgsekretær'.
+ */
+function valghalla_update_7107() {
+  $permissions = array('view polling station');
+  foreach (array('administrator', 'Partisekretær', 'Valgsekretær') as $role_name) {
+    $role = user_role_load_by_name($role_name);
+    user_role_grant_permissions($role->rid, $permissions);
+  }
+}
