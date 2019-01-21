@@ -50,13 +50,12 @@ function valghalla_election_schema() {
 
 /**
  * Migrate binding on the seats from polling_station to the election.
- *
  */
 function valghalla_election_update_7101() {
   // Reverting feature.
   features_revert_module('valghalla_election');
 
-  // Field creation and field instance creation
+  // Field creation and field instance creation.
   $roles = valghalla_election_get_roles();
 
   foreach ($roles as $role) {
@@ -88,9 +87,9 @@ function valghalla_election_update_7101() {
     }
   }
 
-  // Field content creation
+  // Field content creation.
 
-  // 1. Load all elections
+  // 1. Load all elections.
   $query = new EntityFieldQuery();
   $result = $query->entityCondition('entity_type', 'node')
     ->entityCondition('bundle', 'election')
@@ -98,12 +97,12 @@ function valghalla_election_update_7101() {
 
   $elections = node_load_multiple(array_keys($result['node']));
 
-  // 2. Load all polling station used in election
+  // 2. Load all polling station used in election.
   foreach ($elections as $election) {
     $pollingStations = field_get_items('node', $election, 'field_polling_stations');
 
     if (is_array($pollingStations)) {
-      // 3. Load polling station field_volunteers_pr_party_1 field collections
+      // 3. Load polling station field_volunteers_pr_party_1 field collections.
       foreach ($pollingStations as $pollingStation) {
         $pollingStation = node_load($pollingStation['target_id']);
         if (empty($pollingStation)) {
@@ -115,14 +114,14 @@ function valghalla_election_update_7101() {
           foreach ($fieldVolunteerPrParty as $volPrParty) {
             $volPrPartyLoaded = entity_load_single('field_collection_item', $volPrParty['value']);
 
-            // 4. Create the new field collection and add it to election
+            // 4. Create the new field collection and add it to election.
             $fc = entity_create('field_collection_item', array('field_name' => 'field_volunteers_pr_pol_st_party'));
 
             $fc->setHostEntity('node', $election);
             $fc->field_ppsp_polling_station[LANGUAGE_NONE][0]['nid'] = $pollingStation->nid;
             $fc->field_ppsp_party[LANGUAGE_NONE][0]['tid'] = $volPrPartyLoaded->field_party_list['und'][0]['party_list'];
 
-            // 4.1 Find and fill all role fields
+            // 4.1 Find and fill all role fields.
             $allFields = field_info_instances('field_collection_item', 'field_volunteers_pr_party_1');
             foreach ($allFields as $field) {
               if (substr($field['field_name'], 0, 12) === 'field_role_n') {
@@ -132,7 +131,7 @@ function valghalla_election_update_7101() {
               }
             }
 
-            // 5. Saving the new field collection
+            // 5. Saving the new field collection.
             $fc->save();
           }
         }
@@ -140,7 +139,7 @@ function valghalla_election_update_7101() {
     }
   }
 
-  // Remove old field and field instances of field_volunteers_pr_party_1
+  // Remove old field and field instances of field_volunteers_pr_party_1.
   $query = new EntityFieldQuery();
   $query->entityCondition('entity_type', 'field_collection_item')
     ->entityCondition('bundle', 'field_volunteers_pr_party_1');
@@ -198,4 +197,55 @@ function valghalla_election_update_7103() {
 function valghalla_election_update_7104() {
   field_delete_field('field_logo');
   field_purge_batch(1);
+}
+
+/**
+ * Creates missing polling station to party fieldset combinations.
+ */
+function valghalla_election_update_7105() {
+  // 1. Load all elections.
+  $query = new EntityFieldQuery();
+  $result = $query->entityCondition('entity_type', 'node')
+    ->entityCondition('bundle', 'election')
+    ->execute();
+
+  $elections = node_load_multiple(array_keys($result['node']));
+
+  // 2. Load all polling station used in election.
+  foreach ($elections as $election) {
+    $pollingStations = field_get_items('node', $election, 'field_polling_stations');
+
+    // 3. Filling polling station party combination list, that election must have.
+    $pollingStationPartyMappings = array();
+    if (is_array($pollingStations)) {
+      foreach ($pollingStations as $pollingStation) {
+        $pollingStationPartyMappings[$pollingStation['target_id']] = odin_get_parties();
+      }
+    }
+
+    // 4. Removing the polling station party combination, which election has already.
+    foreach ($election->field_volunteers_pr_pol_st_party['und'] as $key => $value) {
+      if (isset($value['entity'])) {
+        $vppsp = $value['entity'];
+      }
+      else {
+        $vppsp = entity_load_single('field_collection_item', $value['value']);
+      }
+
+      $vppspPollingStationId = $vppsp->field_ppsp_polling_station['und'][0]['nid'];
+      $vppspPartyId = $vppsp->field_ppsp_party['und'][0]['tid'];
+      unset($pollingStationPartyMappings[$vppspPollingStationId][$vppspPartyId]);
+    }
+
+    // 5. Creating the field set for missing combination.
+    foreach ($pollingStationPartyMappings as $pollingStationId => $pollingStationParties) {
+      foreach ($pollingStationParties as $partyId => $partyName) {
+        $fc = entity_create('field_collection_item', array('field_name' => 'field_volunteers_pr_pol_st_party'));
+        $fc->setHostEntity('node', $election);
+        $fc->field_ppsp_polling_station[LANGUAGE_NONE][0]['nid'] = $pollingStationId;
+        $fc->field_ppsp_party[LANGUAGE_NONE][0]['tid'] = $partyId;
+        $fc->save();
+      }
+    }
+  }
 }
