@@ -322,6 +322,17 @@ function valghalla_volunteers_rsvp_form($form, &$form_state) {
     $rsvp = 1;
   }
 
+  if (variable_get('valghalla_volunteers_check_cpr_match', TRUE)) {
+    $form['cpr'] = array(
+      '#type' => 'textfield',
+      '#title' => 'CPR',
+      '#description' => 'Temporary field, until NemID login is added',
+      '#attributes' => array(
+        'placeholder' => 'Temporary field, until NemID login is added',
+      ),
+    );
+  }
+
   $form['rsvp'] = array(
       '#type' => 'select',
       '#title' => t('Vælg'),
@@ -350,6 +361,46 @@ function valghalla_volunteers_rsvp_form($form, &$form_state) {
 
   return $form;
 }
+
+/**
+ * Validates the rsvp form.
+ */
+function valghalla_volunteers_rsvp_form_validate($form, &$form_state) {
+  $rsvp = $form_state['values']['rsvp'];
+  if ($rsvp < 0 || $rsvp > 3) {
+    form_set_error('rsvp', t('Ugyldig værdig for svar'));
+  }
+
+  if (variable_get('valghalla_volunteers_check_cpr_match', TRUE)) {
+    $cpr = $form_state['values']['cpr'];
+
+    // Adding dash, if missing. E.g. 123456-7890.
+    if (preg_match('/[0-9]{10}/', $cpr)) {
+      $cpr = substr($cpr, 0, 6) . '-' . substr($cpr, 6, 4);
+      $form_state['values']['cpr'] = $cpr;
+    }
+
+    if (!preg_match('/[0-9]{6}-[0-9]{4}/', $cpr)) {
+      form_set_error('cpr', t('Wrong CPR format, correct format is 123456-7890'));
+    }
+
+    if (module_exists('valghalla_synch_node_export') && module_exists('valghalla_external_server')) {
+      $cpr = valghalla_synch_node_export_get_encrypt($cpr);
+    }
+
+    // Getting CPR from volunteer node, which is attached to the field collection.
+    $fc = _valghalla_volunteers_validate_key(arg(2));
+    $volunteer = $fc->hostEntity();
+    if ($field_cpr_number = field_get_items('node', $volunteer, 'field_cpr_number')) {
+      $expected_cpr = $field_cpr_number[0]['value'];
+    }
+
+    if (strcmp($cpr, $expected_cpr) !== 0) {
+      form_set_error('cpr', t('This token is not valid for the provided CPR'));
+    }
+  }
+}
+
 
 /**
  * Handle rsvp form submits
@@ -451,23 +502,6 @@ function valghalla_volunteers_add_email_to_list() {
     }
   }
   return $to;
-}
-
-/**
- * Validates the rsvp form.
- *
- * @param array $form
- *   The submitted form.
- * @param array $form_state
- *   The submitted form_state.
- *
- * @author Henrik Farre <hf@bellcom.dk>
- */
-function valghalla_volunteers_rsvp_form_validate($form, &$form_state) {
-  $rsvp = $form_state['values']['rsvp'];
-  if ($rsvp < 0 || $rsvp > 3) {
-    form_set_error('rsvp', t('Ugyldig værdig for svar'));
-  }
 }
 
 /**
@@ -1610,6 +1644,12 @@ function valghalla_volunteers_form_valhalla_admin_settings_form_alter(&$form, &$
     '#type' => 'checkbox',
     '#title' => t('Vis altid svar link ud for deltager på valgoversigt (blå talebobbel).'),
     '#default_value' => variable_get('valghalla_volunteers_always_show_rsvp_link', FALSE),
+  );
+
+  $form['valghalla_volunteers_check_cpr_match'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Yderligere check om CPR-nummer matcher mellem RSVP-formularen og deltageren.'),
+    '#default_value' => variable_get('valghalla_volunteers_check_cpr_match', TRUE),
   );
 }
 

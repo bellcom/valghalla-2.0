@@ -81,6 +81,7 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
     '#attributes' => array(
       'placeholder' => 'Temporary field, until NemID login is added',
     ),
+    '#required' => TRUE,
   );
 
   $form['email-container'] = array(
@@ -93,6 +94,7 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
     '#attributes' => array(
       'placeholder' => t('Email'),
     ),
+    '#required' => TRUE,
     '#access' => valghalla_external_server_signup_field_visibility($form_state, 'mail', ($role) ? $role->uuid : NULL),
   );
   $form['phone-container'] = array(
@@ -105,6 +107,7 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
     '#attributes' => array(
       'placeholder' => t('Telefon nr.'),
     ),
+    '#required' => TRUE,
     '#access' => valghalla_external_server_signup_field_visibility($form_state, 'sms', ($role) ? $role->uuid : NULL),
   );
 
@@ -442,6 +445,14 @@ function valghalla_external_server_signup_signup_form_validate($form, &$form_sta
     elseif (strlen($phone) > 12) {
       form_set_error('phone', t('Phone number is too long'));
     }
+  }
+
+  if (isset($form_state['values']['polling_station_select']) && $form_state['values']['polling_station_select'] === 0) {
+    form_set_error('polling_station_select', t('The field %field is required.', array('%field' => 'Valgsted')));
+  }
+
+  if (isset($form_state['values']['role_select']) && $form_state['values']['role_select'] === 0) {
+    form_set_error('role_select', t('The field %field is required.', array('%field' => 'Role')));
   }
 }
 
