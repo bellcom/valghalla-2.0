@@ -148,16 +148,5 @@ function valhalla_install() {
     taxonomy_term_save($edit);
   };
 
-  // Create meeting time.
-  $terms = array('8:00');
-
-  $taxonomy = taxonomy_vocabulary_machine_name_load('volonteers_meeting_time');
-  $vid = $taxonomy->vid;
-  foreach ($terms as $term) {
-    $edit = new stdClass();
-    $edit->name = $term;
-    $edit->vid = $vid;
-    taxonomy_term_save($edit);
-  };
   features_revert_module('valghalla_mail');
 }

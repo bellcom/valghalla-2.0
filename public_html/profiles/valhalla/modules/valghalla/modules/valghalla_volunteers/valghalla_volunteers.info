@@ -105,7 +105,6 @@ features[field_instance][] = node-volunteers-field_valid_state
 features[field_instance][] = node-volunteers-field_volunteer_valid_date
 features[node][] = roles
 features[node][] = volunteers
-features[taxonomy][] = volonteers_meeting_time
 features[variable][] = comment_anonymous_volunteers
 features[variable][] = comment_default_mode_volunteers
 features[variable][] = comment_default_per_page_volunteers
