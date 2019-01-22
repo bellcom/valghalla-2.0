@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * This file install the Valhalla profile.
@@ -75,12 +76,22 @@ function valhalla_install() {
   user_role_grant_permissions(DRUPAL_ANONYMOUS_RID, array('access content'));
   user_role_grant_permissions(DRUPAL_AUTHENTICATED_RID, array('access content'));
 
-  // Create a default role for site administrators, with all available permissions assigned.
-  $admin_role = new stdClass();
-  $admin_role->name = 'administrator';
-  $admin_role->weight = 2;
-  user_role_save($admin_role);
-  user_role_grant_permissions($admin_role->rid, array_keys(module_invoke_all('permission')));
+  // Create a default roles for site, with all available permissions assigned.
+  $roles = array(
+    'administrator',
+    'Partisekretær',
+    'Valgsekretær',
+  );
+  foreach ($roles as $role) {
+    $admin_role = new stdClass();
+    $admin_role->name = $role;
+    $admin_role->weight = 2;
+    user_role_save($admin_role);
+    if ($role == 'administrator') {
+      user_role_grant_permissions($admin_role->rid, array_keys(module_invoke_all('permission')));
+    }
+  }
+
   // Set this as the administrator role.
   variable_set('user_admin_role', $admin_role->rid);
 
@@ -94,7 +105,8 @@ function valhalla_install() {
 
   // Set admin theme to Rubik.
   variable_set('admin_theme', 'seven');
-  // Set admin theme on node/edit and node/add
+
+  // Set admin theme on node/edit and node/add.
   module_disable(array('update'));
   // Set default TZ.
   variable_set('date_default_timezone', "Europe/Berlin");
