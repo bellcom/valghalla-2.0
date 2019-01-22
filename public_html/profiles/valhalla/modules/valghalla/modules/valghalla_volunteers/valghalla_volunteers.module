@@ -1288,25 +1288,6 @@ function valghalla_volunteers_add_sub_secretary_form_submit($form, array &$form_
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function valghalla_volunteers_form_roles_node_form_alter(&$form, &$form_state, $form_id) {
-  // Hiding deprecated fields. @TODO cleanup codebase.
-  $fields_to_hide = array(
-    'field_invitation',
-    'field_reminder',
-    'field_rsvp_yes',
-    'field_rsvp_no',
-    'field_rsvp_never',
-    'field_meeting_time',
-  );
-  foreach ($fields_to_hide as $field) {
-    $form[$field]['#access'] = FALSE;
-  }
-}
-
-
-/**
- * Implements hook_form_FORM_ID_alter().
- */
 function valghalla_volunteers_form_volunteers_node_form_alter(&$form, &$form_state, $form_id) {
   global $user;
   $form['buttons']['#weight'] = 100;
@@ -1332,7 +1313,6 @@ function valghalla_volunteers_form_volunteers_node_form_alter(&$form, &$form_sta
       'additional_settings',
       'field_address_bnummer',
       'field_rolle_id',
-      'field_meeting_time',
       'field_electioninfo',
       'field_volunteer_valid_date',
       'field_cpr_valid_date',
@@ -1393,7 +1373,6 @@ function valghalla_volunteers_form_volunteers_node_form_alter(&$form, &$form_sta
 
     $field_ids = array(
       'field_diaet',
-      'field_meeting_time',
       'field_address_bnummer',
       'field_external_signup',
       'field_rolle_id',
