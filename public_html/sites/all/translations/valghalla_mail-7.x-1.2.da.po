@@ -10195,12 +10195,6 @@ msgstr ""
 msgid "assign afbud role"
 msgstr ""
 
-#: /admin/structure/features/valhalla_views/status
-msgid ""
-"Handler i stykker "
-"field_data_field_volunteers_pr_party.field_volunteers_pr_party"
-msgstr ""
-
 #: /add-sub-secretary
 msgid "Tilføj underbruger"
 msgstr ""
