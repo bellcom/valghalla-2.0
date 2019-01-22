@@ -328,6 +328,11 @@ function _valhalla_blocks_generate_polling_station_markup($polling_station_nids,
   $markup = '';
 
   foreach ($polling_station_nids as $polling_station_nid => $polling_station_title) {
+    // If polling station is not set, person has no permissions to see it.
+    if (!isset($polling_station_count[$polling_station_nid])) {
+      continue;
+    }
+
     $markup .= '<tr><td class="column-first"><a href="/volunteers/station/' . $polling_station_nid . '">';
     $markup .= $polling_station_title . '</a></td>';
 
