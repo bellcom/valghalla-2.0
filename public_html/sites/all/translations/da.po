@@ -5812,10 +5812,6 @@ msgid "Antal elementer"
 msgstr ""
 
 #: /admin/appearance/default?token=QetAKYKhI6s0Kt6M8p6AV4Fw90n4PLkleukJk3a0Zz0&theme=valhalla_bs
-msgid "Handler i stykker field_data_field_chairman.field_chairman"
-msgstr ""
-
-#: /admin/appearance/default?token=QetAKYKhI6s0Kt6M8p6AV4Fw90n4PLkleukJk3a0Zz0&theme=valhalla_bs
 msgid ""
 "Handler i stykker "
 "field_data_field_volunteers_pr_party.field_volunteers_pr_party"
@@ -5823,10 +5819,6 @@ msgstr ""
 
 #: /admin/appearance/default?token=QetAKYKhI6s0Kt6M8p6AV4Fw90n4PLkleukJk3a0Zz0&theme=valhalla_bs
 msgid "Handler i stykker field_data_field_dig_election.field_dig_election"
-msgstr ""
-
-#: /admin/appearance/default?token=QetAKYKhI6s0Kt6M8p6AV4Fw90n4PLkleukJk3a0Zz0&theme=valhalla_bs
-msgid "field_chairman"
 msgstr ""
 
 #: /admin/appearance/default?token=QetAKYKhI6s0Kt6M8p6AV4Fw90n4PLkleukJk3a0Zz0&theme=valhalla_bs

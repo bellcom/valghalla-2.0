@@ -3442,10 +3442,6 @@ msgid "indhold"
 msgstr ""
 
 #: /admin/modules/list/confirm
-msgid "field_chairman"
-msgstr ""
-
-#: /admin/modules/list/confirm
 msgid "volunteers/station/[nid]"
 msgstr ""
 
@@ -17834,10 +17830,6 @@ msgid "Ressourcer"
 msgstr ""
 
 #: /admin/structure/features/valghalla_user_tools/status
-msgid "Broken handler field_data_field_chairman.field_chairman"
-msgstr ""
-
-#: /admin/structure/features/valghalla_user_tools/status
 msgid ""
 "Broken handler field_data_field_volunteers_pr_party.field_volunteers_pr_party"
 msgstr ""
@@ -18753,10 +18745,6 @@ msgstr ""
 
 #: /admin/structure/features
 msgid "Postnr."
-msgstr ""
-
-#: /admin/structure/features/valghalla_user_tools/status
-msgid "Handler i stykker field_data_field_chairman.field_chairman"
 msgstr ""
 
 #: /admin/structure/features/valghalla_user_tools/status
