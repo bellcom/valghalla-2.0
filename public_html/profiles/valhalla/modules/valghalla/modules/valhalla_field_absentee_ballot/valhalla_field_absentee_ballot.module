@@ -130,12 +130,6 @@ function valhalla_field_absentee_ballot_field_formatter_view($entity_type, $enti
         if (empty($item['volunteer'])) {
            $element[$delta]['#markup'] .= t('Mangler tildeling af deltager.') . '';
         }
-        else {
-          $node = node_load($item['volunteer']);
-          // hack into the users rsvp field - only used to please the helper function
-          $node->field_rsvp[$language->language][0]['value'] = $item['rsvp'];
-          $element[$delta]['#markup'] .= _valhalla_helper_wrap_name($node, 'span');
-        }
       }
       break;
   }
