@@ -54,6 +54,7 @@ function valghalla_election_field_group_info() {
       1 => 'group_diaet',
       2 => 'group_general',
       3 => 'group_validate',
+      4 => 'group_external_signup',
     ),
     'format_type' => 'htabs',
     'format_settings' => array(
@@ -65,6 +66,35 @@ function valghalla_election_field_group_info() {
     ),
   );
   $field_groups['group_election_tabs|node|election|form'] = $field_group;
+
+  $field_group = new stdClass();
+  $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
+  $field_group->api_version = 1;
+  $field_group->identifier = 'group_external_signup|node|election|form';
+  $field_group->group_name = 'group_external_signup';
+  $field_group->entity_type = 'node';
+  $field_group->bundle = 'election';
+  $field_group->mode = 'form';
+  $field_group->parent_name = 'group_election_tabs';
+  $field_group->data = array(
+    'label' => 'Ekstern tilmelding',
+    'weight' => '9',
+    'children' => array(
+      0 => 'field_election_notif_conf_export',
+      1 => 'field_election_disable_consent',
+    ),
+    'format_type' => 'htab',
+    'format_settings' => array(
+      'label' => 'Ekstern tilmelding',
+      'instance_settings' => array(
+        'required_fields' => 1,
+        'classes' => '',
+        'description' => '',
+      ),
+      'formatter' => 'open',
+    ),
+  );
+  $field_groups['group_external_signup|node|election|form'] = $field_group;
 
   $field_group = new stdClass();
   $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
@@ -162,6 +192,7 @@ function valghalla_election_field_group_info() {
   // Translatables
   // Included for use with string extractors like potx.
   t('Diæt');
+  t('Ekstern tilmelding');
   t('Generelt');
   t('Indstillinger');
   t('Valg');
