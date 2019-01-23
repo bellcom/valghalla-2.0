@@ -686,6 +686,23 @@ function valghalla_external_server_signup_settings_form($form, $form_state) {
  *   TRUE or FALSE.
  */
 function valghalla_external_server_signup_field_visibility($form_state, $propery_name, $role_uuid = NULL) {
+  // Checking election overwrites first.
+  $election = $form_state['election'];
+
+  if ($propery_name == 'mail') {
+    $field_election_ext_require_email = field_get_items('node', $election, 'field_election_ext_require_email');
+    if (!empty($field_election_ext_require_email) && $field_election_ext_require_email[0]['value'] == 1) {
+      return TRUE;
+    }
+  }
+  elseif ($propery_name == 'sms') {
+    $field_election_ext_require_phone = field_get_items('node', $election, 'field_election_ext_require_phone');
+    if (!empty($field_election_ext_require_phone) && $field_election_ext_require_phone[0]['value'] == 1) {
+      return TRUE;
+    }
+  }
+
+  // Checking notification export config.
   $conf_export = $form_state['election_notif_conf_export'];
 
   if ($role_uuid && array_key_exists($role_uuid, $conf_export) && isset($conf_export[$role_uuid][$propery_name])) {
