@@ -142,7 +142,7 @@ function valghalla_update_7109() {
 /**
  * Implements hook_update_N().
  *
- * Cleanup deprecated fields.
+ * Cleanup deprecated fields, taxonomy vocabulary.
  */
 function valghalla_update_7110() {
   features_revert_module('valghalla_volunteers');
@@ -152,5 +152,15 @@ function valghalla_update_7110() {
   field_delete_field('field_rsvp_yes');
   field_delete_field('field_rsvp_no');
   field_delete_field('field_rsvp_never');
+  field_delete_field('field_meeting_time');
   field_purge_batch(1);
+
+  // Remove deprecated vocabulary.
+  foreach (array(
+    'volonteers_meeting_time',
+    'tags',
+  ) as $voc_name) {
+    $vocabulary = taxonomy_vocabulary_machine_name_load($voc_name);
+    taxonomy_vocabulary_delete($vocabulary->vid);
+  }
 }
