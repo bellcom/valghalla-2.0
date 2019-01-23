@@ -757,12 +757,6 @@ function valghalla_volunteers_polling_station_posts_to_fill($polling_station, $p
     }
   }
 
-  // Party subscribe URL.
-  if (module_exists('valghalla_internal_server')) {
-    $party_loaded = taxonomy_term_load($party_tid);
-    $party_posts_to_fill[$party_tid]['party_subscribe_url'] = valghalla_internal_server_generate_external_subscribe_url($election, $party_loaded, NULL, $polling_station);
-  }
-
   // Traversing assigned posts.
   $assigned_posts = _valghalla_helper_get_posts_to_fill($polling_station, $party_tid);
   foreach ($assigned_posts as $assigned_post) {
@@ -827,6 +821,14 @@ function valghalla_volunteers_polling_station_posts_to_fill($polling_station, $p
 
         $party_posts_to_fill[$party_tid]['posts'][$id]['post_subscribe_url'] = valghalla_internal_server_generate_external_subscribe_url($election, $party, $role_loaded, $polling_station);
       }
+    }
+  }
+
+  // Party subscribe URL.
+  if (module_exists('valghalla_internal_server')) {
+    if (!empty($party_posts_to_fill[$party_tid]['posts'])) {
+      $party_loaded = taxonomy_term_load($party_tid);
+      $party_posts_to_fill[$party_tid]['party_subscribe_url'] = valghalla_internal_server_generate_external_subscribe_url($election, $party_loaded, NULL, $polling_station);
     }
   }
 
