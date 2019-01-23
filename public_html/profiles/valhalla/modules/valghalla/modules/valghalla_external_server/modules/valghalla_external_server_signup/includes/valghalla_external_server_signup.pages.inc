@@ -483,6 +483,7 @@ function valghalla_external_server_signup_signup_form_submit($form, &$form_state
       $volunteer_node->status = 1;
       $volunteer_node->field_cpr_number[LANGUAGE_NONE][]['value'] = $cpr;
       $volunteer_node->field_external_signup[LANGUAGE_NONE][]['value'] = 1;
+      $volunteer_node->field_party[LANGUAGE_NONE][0]['tid'] = $party_tid;
 
       if (isset($form_state['values']['email'])) {
         $email_encrypted = valghalla_synch_node_export_get_encrypt($form_state['values']['email']);
