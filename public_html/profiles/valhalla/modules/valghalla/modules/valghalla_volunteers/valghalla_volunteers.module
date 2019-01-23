@@ -739,26 +739,22 @@ function valghalla_volunteers_polling_station_posts_to_fill($polling_station, $p
     'posts' => array(),
   );
 
-  // Party edit URL.
-  $volunteer_pr_pol_st_pr_party_query = new EntityFieldQuery();
-  $volunteer_pr_pol_st_pr_party_query->entityCondition('entity_type', 'field_collection_item')
-    ->entityCondition('bundle', 'field_volunteers_pr_pol_st_party')
-    ->propertyCondition('archived', 0)
-    ->propertyCondition('item_id', $electionAttachedVPSP)
-    ->fieldCondition('field_ppsp_polling_station', 'nid', $station_id)
-    ->fieldCondition('field_ppsp_party', 'tid', $party_tid);
-  $query_result = $volunteer_pr_pol_st_pr_party_query->execute();
-  $result = array_shift($query_result);
-  if ($result) {
-    $fc_id = reset($result);
-    $params = array('query' => array('destination' => current_path()));
-    $party_posts_to_fill[$party_tid]['edit_url'] = url('field-collection/field-volunteers-pr-pol-st-party/' . $fc_id->item_id . '/edit', $params);
-  }
-
-  // Party subscribe URL.
-  if (module_exists('valghalla_internal_server')) {
-    $party_loaded = taxonomy_term_load($party_tid);
-    $party_posts_to_fill[$party_tid]['party_subscribe_url'] = valghalla_internal_server_generate_external_subscribe_url($election, $party_loaded, NULL, $polling_station);
+  if (node_access('update', $election) === TRUE) {
+    // Party edit URL.
+    $volunteer_pr_pol_st_pr_party_query = new EntityFieldQuery();
+    $volunteer_pr_pol_st_pr_party_query->entityCondition('entity_type', 'field_collection_item')
+      ->entityCondition('bundle', 'field_volunteers_pr_pol_st_party')
+      ->propertyCondition('archived', 0)
+      ->propertyCondition('item_id', $electionAttachedVPSP)
+      ->fieldCondition('field_ppsp_polling_station', 'nid', $station_id)
+      ->fieldCondition('field_ppsp_party', 'tid', $party_tid);
+    $query_result = $volunteer_pr_pol_st_pr_party_query->execute();
+    $result = array_shift($query_result);
+    if ($result) {
+      $fc_id = reset($result);
+      $params = array('query' => array('destination' => current_path()));
+      $party_posts_to_fill[$party_tid]['edit_url'] = url('field-collection/field-volunteers-pr-pol-st-party/' . $fc_id->item_id . '/edit', $params);
+    }
   }
 
   // Traversing assigned posts.
@@ -825,6 +821,14 @@ function valghalla_volunteers_polling_station_posts_to_fill($polling_station, $p
 
         $party_posts_to_fill[$party_tid]['posts'][$id]['post_subscribe_url'] = valghalla_internal_server_generate_external_subscribe_url($election, $party, $role_loaded, $polling_station);
       }
+    }
+  }
+
+  // Party subscribe URL.
+  if (module_exists('valghalla_internal_server')) {
+    if (!empty($party_posts_to_fill[$party_tid]['posts'])) {
+      $party_loaded = taxonomy_term_load($party_tid);
+      $party_posts_to_fill[$party_tid]['party_subscribe_url'] = valghalla_internal_server_generate_external_subscribe_url($election, $party_loaded, NULL, $polling_station);
     }
   }
 
