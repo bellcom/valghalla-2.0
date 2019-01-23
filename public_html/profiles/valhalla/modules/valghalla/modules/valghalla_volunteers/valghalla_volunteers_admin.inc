@@ -68,11 +68,6 @@ function valghalla_volunteers_reset_batch($op, $nids, &$context){
       case 'pos':
           $node->field_polling_station_post = array();
         break;
-
-      case 'rsvp':
-          $node->field_rsvp = array();
-          $node->field_rsvp_comment = array();
-        break;
     }
 
     node_save($node);

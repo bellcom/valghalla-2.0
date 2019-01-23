@@ -392,7 +392,7 @@ function _valghalla_signup_birthdate_pre_render($element) {
 /**
  * Validation for signup form.
  */
-function valghalla_signup_signup_form_validate($form, &$form_state) {  
+function valghalla_signup_signup_form_validate($form, &$form_state) {
   if (isset($form_state['values']['volunteers'])) {
     if ($form_state['values']['pollingstation_nid'] <= 0) {
       form_set_error('pollingstation_nid', 'Du skal vælge et valgsted.');
@@ -489,7 +489,6 @@ function valghalla_signup_add_volunteer($volunteer, $polling_station_nid) {
   $volunteer_node->field_email[LANGUAGE_NONE][]['email'] = $volunteer['email'];
   $volunteer_node->field_phone[LANGUAGE_NONE][]['value'] = $volunteer['phone'];
   $volunteer_node->field_party[LANGUAGE_NONE][]['tid'] = $volunteer_party_tid;
-  $volunteer_node->field_rsvp_comment[LANGUAGE_NONE][]['value'] = $volunteer['comment'];
 
   $volunteer_node->field_external_signup[LANGUAGE_NONE][]['value'] = 1;
 

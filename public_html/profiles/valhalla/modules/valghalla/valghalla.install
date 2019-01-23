@@ -138,3 +138,19 @@ function valghalla_update_7109() {
     user_role_grant_permissions($role->rid, $permissions);
   }
 }
+
+/**
+ * Implements hook_update_N().
+ *
+ * Cleanup deprecated fields.
+ */
+function valghalla_update_7110() {
+  features_revert_module('valghalla_volunteers');
+  // Remove bunch of fields for Role content type.
+  field_delete_field('field_invitation');
+  field_delete_field('field_reminder');
+  field_delete_field('field_rsvp_yes');
+  field_delete_field('field_rsvp_no');
+  field_delete_field('field_rsvp_never');
+  field_purge_batch(1);
+}

@@ -21,7 +21,6 @@ function valhalla_add_volunteer_to_polling_station_form($form, &$form_state) {
   $select->condition('cn.bundle', 'volunteers');
   $select->fields('cn', array('entity_id'));
 
-  $party_id = FALSE;
   $postfix_party = FALSE;
   if (isset($roles['Partisekretær'])) {
     $user = user_load($user->uid);
@@ -85,39 +84,6 @@ function valhalla_add_volunteer_to_polling_station_form($form, &$form_state) {
         '#collapsible' => FALSE,
         '#title' => $polling_station->title,
       );
-
-      $polling_station_volunteers = empty($in_use[$polling_station->nid]) ? array() : $in_use[$polling_station->nid];
-      foreach ($polling_station->field_volunteers_pr_party[$language->language] as $k => $v) {
-
-        if ($party_id && ($party_id != $v['party'])) {
-          continue;
-        }
-
-        $selected = '';
-        if (isset($in_use[$polling_station->nid])) {
-          foreach ($in_use[$polling_station->nid] as $id => $junk) {
-            if (isset($volunteer_options[$id])) {
-              $selected = $id;
-            }
-          }
-        }
-
-        $form['constituency_' . $constituency->nid]['polling_station_' . $polling_station->nid][$k] = array( // number
-          '#type' => 'select',
-          '#tree' => TRUE,
-          '#title' => '',
-          '#options' => $volunteer_options,
-          '#default_value' => $selected
-        );
-
-        if ($selected) {
-          unset($in_use[$polling_station->nid][$id], $volunteer_options[$id]);
-        }
-        $form['constituency_' . $constituency->nid]['polling_station_volunteers_' . $polling_station->nid] = array(
-          '#type' => 'hidden',
-          '#value' => implode(',', array_keys($polling_station_volunteers))
-        );
-      }
     }
   }
 

@@ -334,83 +334,6 @@ function valghalla_volunteers_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-roles-field_invitation'.
-  $field_instances['node-roles-field_invitation'] = array(
-    'bundle' => 'roles',
-    'default_value' => NULL,
-    'deleted' => 0,
-    'description' => '',
-    'display' => array(
-      'default' => array(
-        'label' => 'above',
-        'module' => 'entityreference',
-        'settings' => array(
-          'bypass_access' => FALSE,
-          'link' => FALSE,
-        ),
-        'type' => 'entityreference_label',
-        'weight' => 1,
-      ),
-      'teaser' => array(
-        'label' => 'above',
-        'settings' => array(),
-        'type' => 'hidden',
-        'weight' => 0,
-      ),
-    ),
-    'entity_type' => 'node',
-    'field_name' => 'field_invitation',
-    'label' => 'Invitation',
-    'required' => 0,
-    'settings' => array(
-      'user_register_form' => FALSE,
-    ),
-    'widget' => array(
-      'active' => 1,
-      'module' => 'options',
-      'settings' => array(),
-      'type' => 'options_select',
-      'weight' => 4,
-    ),
-  );
-
-  // Exported field_instance: 'node-roles-field_meeting_time'.
-  $field_instances['node-roles-field_meeting_time'] = array(
-    'bundle' => 'roles',
-    'default_value' => NULL,
-    'deleted' => 0,
-    'description' => '',
-    'display' => array(
-      'default' => array(
-        'label' => 'above',
-        'module' => 'taxonomy',
-        'settings' => array(),
-        'type' => 'taxonomy_term_reference_link',
-        'weight' => 5,
-      ),
-      'teaser' => array(
-        'label' => 'above',
-        'settings' => array(),
-        'type' => 'hidden',
-        'weight' => 0,
-      ),
-    ),
-    'entity_type' => 'node',
-    'field_name' => 'field_meeting_time',
-    'label' => 'Mødetid',
-    'required' => 0,
-    'settings' => array(
-      'user_register_form' => FALSE,
-    ),
-    'widget' => array(
-      'active' => 1,
-      'module' => 'options',
-      'settings' => array(),
-      'type' => 'options_select',
-      'weight' => 4,
-    ),
-  );
-
   // Exported field_instance: 'node-roles-field_meetingtime'.
   $field_instances['node-roles-field_meetingtime'] = array(
     'bundle' => 'roles',
@@ -448,46 +371,6 @@ function valghalla_volunteers_field_default_field_instances() {
       ),
       'type' => 'text_textfield',
       'weight' => 2,
-    ),
-  );
-
-  // Exported field_instance: 'node-roles-field_reminder'.
-  $field_instances['node-roles-field_reminder'] = array(
-    'bundle' => 'roles',
-    'default_value' => NULL,
-    'deleted' => 0,
-    'description' => '',
-    'display' => array(
-      'default' => array(
-        'label' => 'above',
-        'module' => 'entityreference',
-        'settings' => array(
-          'bypass_access' => FALSE,
-          'link' => FALSE,
-        ),
-        'type' => 'entityreference_label',
-        'weight' => 2,
-      ),
-      'teaser' => array(
-        'label' => 'above',
-        'settings' => array(),
-        'type' => 'hidden',
-        'weight' => 0,
-      ),
-    ),
-    'entity_type' => 'node',
-    'field_name' => 'field_reminder',
-    'label' => 'Påmindelse',
-    'required' => 0,
-    'settings' => array(
-      'user_register_form' => FALSE,
-    ),
-    'widget' => array(
-      'active' => 1,
-      'module' => 'options',
-      'settings' => array(),
-      'type' => 'options_select',
-      'weight' => 5,
     ),
   );
 
@@ -568,126 +451,6 @@ function valghalla_volunteers_field_default_field_instances() {
       'settings' => array(),
       'type' => 'number',
       'weight' => -3,
-    ),
-  );
-
-  // Exported field_instance: 'node-roles-field_rsvp_never'.
-  $field_instances['node-roles-field_rsvp_never'] = array(
-    'bundle' => 'roles',
-    'default_value' => NULL,
-    'deleted' => 0,
-    'description' => '',
-    'display' => array(
-      'default' => array(
-        'label' => 'above',
-        'module' => 'entityreference',
-        'settings' => array(
-          'bypass_access' => FALSE,
-          'link' => FALSE,
-        ),
-        'type' => 'entityreference_label',
-        'weight' => 5,
-      ),
-      'teaser' => array(
-        'label' => 'above',
-        'settings' => array(),
-        'type' => 'hidden',
-        'weight' => 0,
-      ),
-    ),
-    'entity_type' => 'node',
-    'field_name' => 'field_rsvp_never',
-    'label' => 'RSVP - Aldrig',
-    'required' => 0,
-    'settings' => array(
-      'user_register_form' => FALSE,
-    ),
-    'widget' => array(
-      'active' => 1,
-      'module' => 'options',
-      'settings' => array(),
-      'type' => 'options_select',
-      'weight' => 8,
-    ),
-  );
-
-  // Exported field_instance: 'node-roles-field_rsvp_no'.
-  $field_instances['node-roles-field_rsvp_no'] = array(
-    'bundle' => 'roles',
-    'default_value' => NULL,
-    'deleted' => 0,
-    'description' => '',
-    'display' => array(
-      'default' => array(
-        'label' => 'above',
-        'module' => 'entityreference',
-        'settings' => array(
-          'bypass_access' => FALSE,
-          'link' => FALSE,
-        ),
-        'type' => 'entityreference_label',
-        'weight' => 4,
-      ),
-      'teaser' => array(
-        'label' => 'above',
-        'settings' => array(),
-        'type' => 'hidden',
-        'weight' => 0,
-      ),
-    ),
-    'entity_type' => 'node',
-    'field_name' => 'field_rsvp_no',
-    'label' => 'RSVP - Nej',
-    'required' => 0,
-    'settings' => array(
-      'user_register_form' => FALSE,
-    ),
-    'widget' => array(
-      'active' => 1,
-      'module' => 'options',
-      'settings' => array(),
-      'type' => 'options_select',
-      'weight' => 7,
-    ),
-  );
-
-  // Exported field_instance: 'node-roles-field_rsvp_yes'.
-  $field_instances['node-roles-field_rsvp_yes'] = array(
-    'bundle' => 'roles',
-    'default_value' => NULL,
-    'deleted' => 0,
-    'description' => '',
-    'display' => array(
-      'default' => array(
-        'label' => 'above',
-        'module' => 'entityreference',
-        'settings' => array(
-          'bypass_access' => FALSE,
-          'link' => FALSE,
-        ),
-        'type' => 'entityreference_label',
-        'weight' => 3,
-      ),
-      'teaser' => array(
-        'label' => 'above',
-        'settings' => array(),
-        'type' => 'hidden',
-        'weight' => 0,
-      ),
-    ),
-    'entity_type' => 'node',
-    'field_name' => 'field_rsvp_yes',
-    'label' => 'RSVP - Ja',
-    'required' => 0,
-    'settings' => array(
-      'user_register_form' => FALSE,
-    ),
-    'widget' => array(
-      'active' => 1,
-      'module' => 'options',
-      'settings' => array(),
-      'type' => 'options_select',
-      'weight' => 6,
     ),
   );
 
@@ -1403,42 +1166,6 @@ function valghalla_volunteers_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-volunteers-field_meeting_time'.
-  $field_instances['node-volunteers-field_meeting_time'] = array(
-    'bundle' => 'volunteers',
-    'default_value' => NULL,
-    'deleted' => 0,
-    'description' => '',
-    'display' => array(
-      'default' => array(
-        'label' => 'above',
-        'settings' => array(),
-        'type' => 'hidden',
-        'weight' => 28,
-      ),
-      'teaser' => array(
-        'label' => 'above',
-        'settings' => array(),
-        'type' => 'hidden',
-        'weight' => 0,
-      ),
-    ),
-    'entity_type' => 'node',
-    'field_name' => 'field_meeting_time',
-    'label' => 'Mødetid',
-    'required' => 0,
-    'settings' => array(
-      'user_register_form' => FALSE,
-    ),
-    'widget' => array(
-      'active' => 1,
-      'module' => 'options',
-      'settings' => array(),
-      'type' => 'options_select',
-      'weight' => 23,
-    ),
-  );
-
   // Exported field_instance: 'node-volunteers-field_municipality'.
   $field_instances['node-volunteers-field_municipality'] = array(
     'bundle' => 'volunteers',
@@ -1949,18 +1676,12 @@ function valghalla_volunteers_field_default_field_instances() {
   t('Fritagelse for Digital Post');
   t('Fritagelse for NemSMS');
   t('Hus nr.');
-  t('Invitation');
   t('Label');
   t('Municipality');
-  t('Mødetid');
   t('Mødetidspunkt');
   t('Parti');
   t('Parti plads');
   t('Postnr.');
-  t('Påmindelse');
-  t('RSVP - Aldrig');
-  t('RSVP - Ja');
-  t('RSVP - Nej');
   t('Role Rækkefølge');
   t('Rolle');
   t('Sal');
