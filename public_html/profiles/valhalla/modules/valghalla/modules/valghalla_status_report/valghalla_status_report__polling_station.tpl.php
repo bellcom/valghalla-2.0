@@ -1,21 +1,21 @@
 <?php if ($party_posts_to_fill): ?>
   <?php foreach ($party_posts_to_fill as $party_tid => $party_posts): ?>
+    <?php if (count($party_posts['posts']) > 0): ?>
 
-    <!-- Begin - heading -->
-    <h3><?php print t('Parti') . ' ' . $party_posts['party_name']; ?>:</h3>
-    <!-- End - heading -->
+      <!-- Begin - heading -->
+      <h3><?php print t('Parti') . ' ' . $party_posts['party_name']; ?>:</h3>
+      <!-- End - heading -->
 
-    <!-- Begin - body -->
-    <table>
-      <thead>
-      <tr>
-        <th><?=t('Status'); ?></th>
-        <th><?=t('Rolle'); ?></th>
-        <th><?=t('Navn'); ?></th>
-      </tr>
-      </thead>
+      <!-- Begin - body -->
+      <table>
+        <thead>
+        <tr>
+          <th><?=t('Status'); ?></th>
+          <th><?=t('Rolle'); ?></th>
+          <th><?=t('Navn'); ?></th>
+        </tr>
+        </thead>
 
-      <?php if (count($party_posts['posts']) > 0): ?>
         <tbody>
           <?php foreach ($party_posts['posts'] as $i => $post): ?>
             <tr>
@@ -63,18 +63,9 @@
             </tr>
           <?php endforeach; ?>
         </tbody>
-      <?php else: ?>
-        <tbody>
-        <tr>
-          <td colspan="3">
-            <?=t('Dette parti har ingen tildelte pladser.'); ?>
-          </td>
-        </tr>
-        </tbody>
-      <?php endif; ?>
+      </table>
+      <!-- End - body -->
 
-    </table>
-    <!-- End - body -->
-
+    <?php endif; ?>
   <?php endforeach; ?>
 <?php endif; ?>
