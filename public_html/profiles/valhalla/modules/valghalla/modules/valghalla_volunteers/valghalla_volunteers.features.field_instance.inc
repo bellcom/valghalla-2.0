@@ -1126,46 +1126,6 @@ function valghalla_volunteers_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-volunteers-field_label'.
-  $field_instances['node-volunteers-field_label'] = array(
-    'bundle' => 'volunteers',
-    'default_value' => NULL,
-    'deleted' => 0,
-    'description' => '',
-    'display' => array(
-      'default' => array(
-        'label' => 'inline',
-        'module' => 'text',
-        'settings' => array(),
-        'type' => 'text_default',
-        'weight' => 6,
-      ),
-      'teaser' => array(
-        'label' => 'above',
-        'settings' => array(),
-        'type' => 'hidden',
-        'weight' => 0,
-      ),
-    ),
-    'entity_type' => 'node',
-    'field_name' => 'field_label',
-    'label' => 'Label',
-    'required' => 0,
-    'settings' => array(
-      'text_processing' => 0,
-      'user_register_form' => FALSE,
-    ),
-    'widget' => array(
-      'active' => 1,
-      'module' => 'text',
-      'settings' => array(
-        'size' => 5,
-      ),
-      'type' => 'text_textfield',
-      'weight' => 8,
-    ),
-  );
-
   // Exported field_instance: 'node-volunteers-field_municipality'.
   $field_instances['node-volunteers-field_municipality'] = array(
     'bundle' => 'volunteers',
@@ -1443,82 +1403,6 @@ function valghalla_volunteers_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-volunteers-field_polling_station_post'.
-  $field_instances['node-volunteers-field_polling_station_post'] = array(
-    'bundle' => 'volunteers',
-    'default_value' => NULL,
-    'deleted' => 0,
-    'description' => 'kun til internt brug',
-    'display' => array(
-      'default' => array(
-        'label' => 'inline',
-        'settings' => array(),
-        'type' => 'hidden',
-        'weight' => 26,
-      ),
-      'teaser' => array(
-        'label' => 'above',
-        'settings' => array(),
-        'type' => 'hidden',
-        'weight' => 0,
-      ),
-    ),
-    'entity_type' => 'node',
-    'field_name' => 'field_polling_station_post',
-    'label' => 'Valgsted placering',
-    'required' => 0,
-    'settings' => array(
-      'max' => '',
-      'min' => '',
-      'prefix' => '',
-      'suffix' => '',
-      'user_register_form' => FALSE,
-    ),
-    'widget' => array(
-      'active' => 0,
-      'module' => 'number',
-      'settings' => array(),
-      'type' => 'number',
-      'weight' => 11,
-    ),
-  );
-
-  // Exported field_instance: 'node-volunteers-field_rolle_id'.
-  $field_instances['node-volunteers-field_rolle_id'] = array(
-    'bundle' => 'volunteers',
-    'default_value' => NULL,
-    'deleted' => 0,
-    'description' => '',
-    'display' => array(
-      'default' => array(
-        'label' => 'inline',
-        'settings' => array(),
-        'type' => 'hidden',
-        'weight' => 27,
-      ),
-      'teaser' => array(
-        'label' => 'above',
-        'settings' => array(),
-        'type' => 'hidden',
-        'weight' => 0,
-      ),
-    ),
-    'entity_type' => 'node',
-    'field_name' => 'field_rolle_id',
-    'label' => 'Rolle',
-    'required' => 0,
-    'settings' => array(
-      'user_register_form' => FALSE,
-    ),
-    'widget' => array(
-      'active' => 1,
-      'module' => 'options',
-      'settings' => array(),
-      'type' => 'options_select',
-      'weight' => 9,
-    ),
-  );
-
   // Exported field_instance: 'node-volunteers-field_second_name'.
   $field_instances['node-volunteers-field_second_name'] = array(
     'bundle' => 'volunteers',
@@ -1676,7 +1560,6 @@ function valghalla_volunteers_field_default_field_instances() {
   t('Fritagelse for Digital Post');
   t('Fritagelse for NemSMS');
   t('Hus nr.');
-  t('Label');
   t('Municipality');
   t('Mødetidspunkt');
   t('Parti');
@@ -1695,10 +1578,8 @@ function valghalla_volunteers_field_default_field_instances() {
   t('Valg');
   t('Valginfo');
   t('Valgsted');
-  t('Valgsted placering');
   t('Valideret dato');
   t('Validering status');
-  t('kun til internt brug');
 
   return $field_instances;
 }

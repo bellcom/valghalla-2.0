@@ -466,16 +466,13 @@ function liste_deltager_get_volunteers($values) {
       if (isset($values[$node->nid])) {
         continue;
       }
-      if ($role_field = field_get_items('node', $node, 'field_rolle_id')) {
-        $role_field_value = node_load($role_field[0]['nid'])->title;
-      }
       $values[$node->nid] = array(
         'name' => $node->title,
-        'role' => $role_field_value,
+        'role' => '',
         'mail' => ($email_field = field_get_items('node', $node, 'field_email')) ? $email_field[0]['email'] : '',
         'phone' => ($telf_field = field_get_items('node', $node, 'field_phone')) ? $telf_field[0]['value'] : '',
         'rsvp' => '',
-        'cpr' =>  $cpr_none,
+        'cpr' => $cpr_none,
         'age' => $age_none,
         'party' => $par_field,
         'party_post' => '',
@@ -528,14 +525,7 @@ function liste_deltager_none_polling_station($election_id, $roles, $party) {
     }
     // Does not contain fc.
     else {
-      $node_role = field_get_items('node', $node, 'field_rolle_id');
       $node_party = field_get_items('node', $node, 'field_party');
-
-      if ($node_role && array_key_exists($node_role[0]['nid'], $roles )
-          && !$roles[$node_role[0]['nid']]){
-        $role_selected = FALSE;
-      }
-
       if ($node_party && array_key_exists($node_party[0]['tid'], $party)
           && !$party[$node_party[0]['tid']]) {
         $party_selected = FALSE;

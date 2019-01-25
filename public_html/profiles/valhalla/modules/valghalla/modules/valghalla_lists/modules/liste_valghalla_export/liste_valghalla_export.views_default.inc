@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * liste_valghalla_export.views_default.inc
@@ -76,21 +77,11 @@ function liste_valghalla_export_views_default_views() {
   $handler->display->display_options['fields']['entity_id_2']['table'] = 'field_data_field_phone';
   $handler->display->display_options['fields']['entity_id_2']['field'] = 'field_phone';
   $handler->display->display_options['fields']['entity_id_2']['exclude'] = TRUE;
-  /* Felt: Felt: Begræns adgang til følgende valgsteder */
+  /* Felt: Felt: Valgsted */
   $handler->display->display_options['fields']['entity_id_3']['id'] = 'entity_id_3';
   $handler->display->display_options['fields']['entity_id_3']['table'] = 'field_data_field_polling_station';
   $handler->display->display_options['fields']['entity_id_3']['field'] = 'field_polling_station';
   $handler->display->display_options['fields']['entity_id_3']['label'] = 'valgsted';
-  /* Felt: Indhold: Valgsted placering */
-  $handler->display->display_options['fields']['entity_id_4']['id'] = 'entity_id_4';
-  $handler->display->display_options['fields']['entity_id_4']['table'] = 'field_data_field_polling_station_post';
-  $handler->display->display_options['fields']['entity_id_4']['field'] = 'field_polling_station_post';
-  $handler->display->display_options['fields']['entity_id_4']['label'] = 'Placering';
-  $handler->display->display_options['fields']['entity_id_4']['type'] = 'number_unformatted';
-  $handler->display->display_options['fields']['entity_id_4']['settings'] = array(
-    'thousand_separator' => '',
-    'prefix_suffix' => 0,
-  );
   /* Felt: Field collection item: Status */
   $handler->display->display_options['fields']['entity_id_5']['id'] = 'entity_id_5';
   $handler->display->display_options['fields']['entity_id_5']['table'] = 'field_data_field_rsvp';
@@ -110,7 +101,7 @@ function liste_valghalla_export_views_default_views() {
   $handler->display->display_options['sorts']['title']['id'] = 'title';
   $handler->display->display_options['sorts']['title']['table'] = 'node';
   $handler->display->display_options['sorts']['title']['field'] = 'title';
-  /* Sorteringskriterie: Felt: Begræns adgang til følgende valgsteder (field_polling_station) */
+  /* Sorteringskriterie: Felt: Valgsted (field_polling_station) */
   $handler->display->display_options['sorts']['field_polling_station_nid']['id'] = 'field_polling_station_nid';
   $handler->display->display_options['sorts']['field_polling_station_nid']['table'] = 'field_data_field_polling_station';
   $handler->display->display_options['sorts']['field_polling_station_nid']['field'] = 'field_polling_station_nid';
@@ -320,7 +311,6 @@ function liste_valghalla_export_views_default_views() {
     t('E-mail'),
     t('Telefon'),
     t('valgsted'),
-    t('Placering'),
     t('RSVP'),
     t('Symbol'),
     t('Nid'),
