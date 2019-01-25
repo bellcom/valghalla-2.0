@@ -164,3 +164,12 @@ function valghalla_update_7110() {
     taxonomy_vocabulary_delete($vocabulary->vid);
   }
 }
+
+/**
+ * Implements hook_update_N().
+ *
+ * Revert eboks feature.
+ */
+function valghalla_update_7111() {
+  features_revert_module('valghalla_eboks');
+}

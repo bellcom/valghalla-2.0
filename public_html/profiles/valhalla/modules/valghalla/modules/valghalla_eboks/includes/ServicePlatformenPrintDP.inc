@@ -47,14 +47,21 @@ class ServicePlatformenPrintDP extends ServicePlatformenPrint {
    *
    * @param array $params
    *   Request array.
+   *
+   * @throws Exception
    */
   public function prepareRequest(array &$params) {
     $params['rendered_message'] = $this->renderMessage($params);
     $pdf = new Pdf();
     $pdf->WriteHTML($params['rendered_message']);
     $pdf_output = $pdf->Output(FALSE, Destination::STRING_RETURN);
-    $params['title_text'] = format_string($params['subject'], $params['tokens']);
+    $title_text = format_string($params['subject'], $params['tokens']);
 
+    // TitelTekst xml field has max length 50 ch.
+    if (drupal_strlen($title_text) > 50) {
+      $title_text = substr($title_text, 0, 47) . '...';
+    }
+    $params['title_text'] = $title_text;
     $this->request['BrevSPBody'] = array(
       'Kanalvalg' => 'D',
       'Prioritet' => 'D',
