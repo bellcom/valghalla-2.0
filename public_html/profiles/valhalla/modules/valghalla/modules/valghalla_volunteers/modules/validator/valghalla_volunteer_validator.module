@@ -205,8 +205,8 @@ function valghalla_volunteer_validator_form_volunteers_node_form_alter(&$form, &
   }
 
   if (variable_get('valghalla_volunteer_validator_get_subscription_status')) {
-    $form['field_no_mail']['#disabled'] = TRUE;
-    $form['field_no_sms']['#disabled'] = TRUE;
+    $form['field_no_mail']['#access'] = FALSE;
+    $form['field_no_sms']['#access'] = FALSE;
   }
 
 }
