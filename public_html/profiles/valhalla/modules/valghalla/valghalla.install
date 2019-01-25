@@ -172,4 +172,26 @@ function valghalla_update_7110() {
  */
 function valghalla_update_7111() {
   features_revert_module('valghalla_eboks');
+  features_revert_module('valghalla_volunteers');
+  features_revert_module('liste_m_cpr_nummer');
+  features_revert_module('liste_parti_oversigt');
+  features_revert_module('liste_valghalla_export');
+}
+
+/**
+ * Implements hook_update_N().
+ *
+ * Revert features and remove deprecated fields.
+ */
+function valghalla_update_7112() {
+  features_revert_module('valghalla_volunteers');
+  features_revert_module('liste_m_cpr_nummer');
+  features_revert_module('liste_parti_oversigt');
+  features_revert_module('liste_valghalla_export');
+
+  // Remove field from db.
+  field_delete_field('field_label');
+  field_delete_field('field_rolle_id');
+  field_delete_field('field_polling_station_post');
+  field_purge_batch(1);
 }

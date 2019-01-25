@@ -362,7 +362,6 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
           ),
         ),
       ),
-      'field_label' => array(),
       'field_party' => array(
         'da' => array(
           array(
@@ -381,8 +380,6 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
       ),
       'field_phone2' => array(),
       'field_polling_station' => array(),
-      'field_polling_station_post' => array(),
-      'field_rolle_id' => array(),
       'field_ending_time' => array(),
       'field_cpr_status' => array(),
       'field_external_signup' => array(
