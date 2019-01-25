@@ -806,10 +806,18 @@ function valghalla_volunteers_polling_station_posts_to_fill($polling_station, $p
     }
 
     // Adding filled post information to party_posts_to_fill.
+    $role = node_load($assigned_post['role_nid']);
+    $role_description = '';
+
+    if ($field = field_get_items('node', $role, 'field_description')) {
+      $role_description .= $field[0]['value'];
+    }
+
     $party_posts_to_fill[$party_tid]['posts'][$id] = array(
       'id' => $id,
       'role_nid' => $assigned_post['role_nid'],
       'role_title' => $assigned_post['role_title'],
+      'role_description' => $role_description,
       'party_tid' => $party_tid,
       'existing_post' => $existing_post,
     );

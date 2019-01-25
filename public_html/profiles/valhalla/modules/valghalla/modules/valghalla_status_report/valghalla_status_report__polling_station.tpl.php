@@ -45,7 +45,7 @@
               <!-- Begin - role -->
               <td>
                 &nbsp;
-                <strong><?php print $post['role_title'] ?></strong>
+                <?php print $post['role_description'] ?>
               </td>
               <!-- End - role -->
 
