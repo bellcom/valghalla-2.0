@@ -3,7 +3,7 @@
     <?php if (count($party_posts['posts']) > 0): ?>
 
       <!-- Begin - heading -->
-      <h3><?php print t('Parti') . ' ' . $party_posts['party_name']; ?>:</h3>
+      <h3><?php print t('Parti') . ' ' . $party_posts['party_name']; ?> (<a href="<?php print $party_posts['party_subscribe_url']; ?>">link</a>)</h3>
       <!-- End - heading -->
 
       <!-- Begin - body -->
@@ -35,6 +35,8 @@
                 <td class="danger"> </td>
               <?php elseif ($post['existing_post']['rsvp'] == '3'): ?>
                 <td class="danger"> </td>
+              <?php elseif (! isset($post['existing_post'])): ?>
+                <td><a href="<?php print $post['post_subscribe_url']; ?>">Link</a></td>
               <?php else: ?>
                 <td> </td>
               <?php endif; ?>
@@ -43,7 +45,6 @@
               <!-- Begin - role -->
               <td>
                 &nbsp;
-
                 <strong><?php print $post['role_title'] ?></strong>
               </td>
               <!-- End - role -->
@@ -51,7 +52,6 @@
               <!-- Begin - name -->
               <td>
                 &nbsp;&nbsp;
-
                 <?php if (! isset($post['existing_post'])): ?>
                   <i><span class="text-muted"><?php print t('Denne plads er tom.'); ?></span></i>
                 <?php else: ?>
