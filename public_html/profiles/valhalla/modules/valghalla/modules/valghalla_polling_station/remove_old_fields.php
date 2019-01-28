@@ -1,10 +1,5 @@
 <?php
-if ($instance = field_info_instance('node', 'field_party', 'polling_station')) {
-  field_delete_instance($instance);
-}
-if ($instance = field_info_instance('node', 'field_chairman', 'polling_station')) {
-  field_delete_instance($instance);
-}
+
 if ($instance = field_info_instance('node', 'field_volunteers_pr_party', 'polling_station')) {
   field_delete_instance($instance);
 }

@@ -242,3 +242,14 @@ function valghalla_permission() {
     ),
   );
 }
+
+/**
+ * Implements hook_update_dependencies().
+ */
+function valghalla_update_dependencies() {
+  // Update field_cpr_number max length to 255 before revert features.
+  $dependencies['valghalla'][7105] = array(
+    'valghalla_volunteers' => 7101,
+  );
+  return $dependencies;
+}

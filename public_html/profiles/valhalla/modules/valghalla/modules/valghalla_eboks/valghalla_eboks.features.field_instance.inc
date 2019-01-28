@@ -104,7 +104,8 @@ function valghalla_eboks_field_default_field_instances() {
     'bundle' => 'eboks',
     'default_value' => NULL,
     'deleted' => 0,
-    'description' => '',
+    'description' => 'Titel på dokumentet. Ved forsendelser til eBoks, må der <b>maksimalt angives 50 tegn efter at udskiftningstoken er blevet ændret</b>.
+Teksten forkortes automatisk hvis den er for lang. Der vil vises 47 karakterer med 3 punktummer til sidst.',
     'display' => array(
       'default' => array(
         'label' => 'above',
@@ -132,7 +133,7 @@ function valghalla_eboks_field_default_field_instances() {
       'active' => 1,
       'module' => 'text',
       'settings' => array(
-        'size' => 60,
+        'size' => 50,
       ),
       'type' => 'text_textfield',
       'weight' => 1,
@@ -143,6 +144,8 @@ function valghalla_eboks_field_default_field_instances() {
   // Included for use with string extractors like potx.
   t('Emne');
   t('Indhold');
+  t('Titel på dokumentet. Ved forsendelser til eBoks, må der <b>maksimalt angives 50 tegn efter at udskiftningstoken er blevet ændret</b>.
+Teksten forkortes automatisk hvis den er for lang. Der vil vises 47 karakterer med 3 punktummer til sidst.');
   t('Vedhæftede filer');
 
   return $field_instances;

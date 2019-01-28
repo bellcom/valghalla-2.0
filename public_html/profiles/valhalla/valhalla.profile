@@ -35,6 +35,11 @@ function valhalla_install_tasks(&$install_state) {
       'display' => FALSE,
       'type' => 'normal',
     ),
+    'valhalla_apply_updates' => array(
+      'display_name' => st('Apply updates'),
+      'display' => FALSE,
+      'type' => 'normal',
+    ),
   );
 
   return $tasks;
@@ -172,4 +177,15 @@ function valhalla_theme_settings() {
 
   // Set default home page.
   variable_set('site_frontpage', 'status');
+}
+
+/**
+ * Apply valghalla update during installtion.
+ */
+function valhalla_apply_updates() {
+  module_load_include('install', 'valghalla', 'valghalla');
+  valghalla_update_7106();
+  valghalla_update_7107();
+  valghalla_update_7108();
+  valghalla_update_7109();
 }

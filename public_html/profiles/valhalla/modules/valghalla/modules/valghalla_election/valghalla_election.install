@@ -249,3 +249,14 @@ function valghalla_election_update_7105() {
     }
   }
 }
+
+/**
+ * Adding new fields fields.
+ *
+ * New fields: field_election_disable_consent, field_election_ext_require_email,
+ * field_election_ext_require_phone.
+ */
+function valghalla_election_update_7106() {
+  // Reverting feature.
+  features_revert_module('valghalla_election');
+}

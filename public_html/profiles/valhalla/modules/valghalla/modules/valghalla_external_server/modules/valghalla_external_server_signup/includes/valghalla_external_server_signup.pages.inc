@@ -268,22 +268,35 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
     $form['#party_message'] = $party->field_party_subsc_message['und'][0]['value'];
   }
 
-  $terms_agreement_default = t('Accepter at vi gemmer dine oplysninger.');
-  $form['terms_agreement'] = array(
-    '#type' => 'checkbox',
-    '#title' => !empty($party->field_party_subsc_terms_text) ? $party->field_party_subsc_terms_text['und'][0]['value'] : $terms_agreement_default,
-    '#required' => TRUE,
-  );
-
   $form['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Tilmeld'),
-    '#states' => array(
+  );
+
+  // Determining if we need to show consent checkbox.
+  $terms_agreement_text = '';
+  $field_election_disable_consent = field_get_items('node', $election, 'field_election_disable_consent');
+  if (!empty($field_election_disable_consent) && $field_election_disable_consent[0]['value'] != 1) {
+    $terms_agreement_text = t('Accepter at vi gemmer dine oplysninger.');
+  }
+  if (!empty($party->field_party_subsc_terms_text)) {
+    $terms_agreement_text = $party->field_party_subsc_terms_text['und'][0]['value'];
+  }
+
+  // We have some text, so consent checkbox needs to be displayed.
+  if (!empty($terms_agreement_text)) {
+    $form['terms_agreement'] = array(
+      '#type' => 'checkbox',
+      '#title' => $terms_agreement_text ,
+      '#required' => TRUE,
+    );
+
+    $form['submit']['#states'] = array(
       'enabled' => array(
         ':input[name="terms_agreement"]' => array('checked' => TRUE),
       ),
-    ),
-  );
+    );
+  }
 
   $form['#theme'] = array('valghalla_external_server_signup_form');
 
@@ -483,6 +496,7 @@ function valghalla_external_server_signup_signup_form_submit($form, &$form_state
       $volunteer_node->status = 1;
       $volunteer_node->field_cpr_number[LANGUAGE_NONE][]['value'] = $cpr;
       $volunteer_node->field_external_signup[LANGUAGE_NONE][]['value'] = 1;
+      $volunteer_node->field_party[LANGUAGE_NONE][0]['tid'] = $party_tid;
 
       if (isset($form_state['values']['email'])) {
         $email_encrypted = valghalla_synch_node_export_get_encrypt($form_state['values']['email']);
@@ -672,6 +686,23 @@ function valghalla_external_server_signup_settings_form($form, $form_state) {
  *   TRUE or FALSE.
  */
 function valghalla_external_server_signup_field_visibility($form_state, $propery_name, $role_uuid = NULL) {
+  // Checking election overwrites first.
+  $election = $form_state['election'];
+
+  if ($propery_name == 'mail') {
+    $field_election_ext_require_email = field_get_items('node', $election, 'field_election_ext_require_email');
+    if (!empty($field_election_ext_require_email) && $field_election_ext_require_email[0]['value'] == 1) {
+      return TRUE;
+    }
+  }
+  elseif ($propery_name == 'sms') {
+    $field_election_ext_require_phone = field_get_items('node', $election, 'field_election_ext_require_phone');
+    if (!empty($field_election_ext_require_phone) && $field_election_ext_require_phone[0]['value'] == 1) {
+      return TRUE;
+    }
+  }
+
+  // Checking notification export config.
   $conf_export = $form_state['election_notif_conf_export'];
 
   if ($role_uuid && array_key_exists($role_uuid, $conf_export) && isset($conf_export[$role_uuid][$propery_name])) {

@@ -156,10 +156,17 @@ function _valghalla_status_report_generate_overview_markup($count) {
       continue;
     }
 
+    $role = node_load($role_nid);
+    $role_description = '';
+
+    if ($field = field_get_items('node', $role, 'field_description')) {
+      $role_description .= $field[0]['value'];
+    }
+
     $label = _valghalla_status_report_get_label($role_count);
     $markup .= '
         <tr>
-          <td class="column-first">' . $roles[$role_nid] . '</td>
+          <td class="column-first">' . $role_description . '</td>
           <td class="column-count ' . $label . '">' . $role_count['total']
           . '/' . $role_count['assigned'] . '</td>
           <td class="column-count">' .
@@ -353,11 +360,23 @@ function _generate_pdf_content($election_nid = NULL, $party_tid = NULL) {
 
   $markup .= '<h1>' . t('Status rapport') . '</h1>';
 
+  if ($party_tid) {
+    $party = taxonomy_term_load($party_tid);
+
+    $markup .= '<h2>' . t('Parti') . ' ' . $party->name . '</h2>';
+  }
+
   // Party status.
   $markup .= _generate_pdf_content__party_status($party_tid, $polling_station_nids);
 
   // Constituency status.
   $markup .= _generate_pdf_content__party_constituency_status($party_tid, $polling_station_nids);
+
+  // Volunteer list.
+  $markup .= '<pagebreak>';
+  $markup .= '<h1>' . t('Deltagerliste') . '</h1>';
+
+  $markup .= _generate_pdf_content__volunteer_list_from_polling_station($party_tid, $polling_station_nids);
 
   // We are requiring a specific party.
   if ($party_tid) {
@@ -368,12 +387,6 @@ function _generate_pdf_content($election_nid = NULL, $party_tid = NULL) {
     $markup .= '<h1>' . t('Eksterne links') . '</h1>';
     $markup .= _generate_pdf_content__party_external_links($election_node->nid, $party_tid);
   }
-
-  // Volunteer list.
-  $markup .= '<pagebreak>';
-  $markup .= '<h1>' . t('Deltagerliste') . '</h1>';
-
-  $markup .= _generate_pdf_content__volunteer_list_from_polling_station($party_tid, $polling_station_nids);
 
   return $markup;
 }
@@ -390,7 +403,7 @@ function _generate_pdf_content__party_external_links($election_nid = NULL, $part
   $party = taxonomy_term_load($party_tid);
   $party_url = valghalla_internal_server_generate_external_subscribe_url($election, $party, $role = NULL, $polling_station = NULL);
 
-  $markup = '<h2 style="margin-bottom: 0;">' . t('Parti') . ' ' . $party->name . ': <a href="' . $party_url . '">' . t('Link til tilmelding') . '</a></h2>';
+  $markup = '<h2 style="margin-bottom: 0;">' . t('Parti') . ' ' . $party->name . ': <a href="' . $party_url . '">' . t('Link') . '</a></h2>';
 
   // Roles.
   if ($roles) {
@@ -400,16 +413,22 @@ function _generate_pdf_content__party_external_links($election_nid = NULL, $part
     $markup .= '<table>';
     $markup .= '<tr>';
     $markup .= '  <th>' . t('Rolle') . '</th>';
-    $markup .= '  <th>' . t('Eksternt link') . '</th>';
+    $markup .= '  <th>' . t('Ekstern tilmelding') . '</th>';
     $markup .= '</tr>';
 
     foreach ($roles as $role_nid => $role_title) {
       $role = node_load($role_nid);
+      $role_description = '';
+
+      if ($field = field_get_items('node', $role, 'field_description')) {
+        $role_description .= $field[0]['value'];
+      }
+
       $role_url = valghalla_internal_server_generate_external_subscribe_url($election, $party, $role, $polling_station = NULL);
 
       $markup .= '<tr>';
-      $markup .= '  <td>' . $role_title . ':</td>';
-      $markup .= '  <td><a href="' . $role_url . '">' . t('Link til tilmelding') . '</a></td>';
+      $markup .= '  <td>' . $role_description . '</td>';
+      $markup .= '  <td><a href="' . $role_url . '">' . t('Link') . '</a></td>';
       $markup .= '</tr>';
     }
 
@@ -417,35 +436,53 @@ function _generate_pdf_content__party_external_links($election_nid = NULL, $part
   }
 
   // Polling station.
-  if ($polling_station_nids) {
-    $markup .= '<h2>' . t('Afstemningssteder:') . '</h2>';
-
-    // Run through all polling stations.
-    foreach ($polling_station_nids as $polling_station_nid => $polling_station_title) {
-      $polling_station = node_load($polling_station_nid);
-      $polling_station_url = valghalla_internal_server_generate_external_subscribe_url($election, $party, $role = NULL, $polling_station);
-
-      $markup .= '<h3>' . $polling_station_title . ' (<a href="' . $polling_station_url . '">' . t('Link til tilmelding') . '</a>)</h3>';
-
-      $markup .= '<table>';
-      $markup .= '<tr>';
-      $markup .= '  <th>' . t('Rolle') . '</th>';
-      $markup .= '  <th>' . t('Eksternt link') . '</th>';
-      $markup .= '</tr>';
-
-      foreach ($roles as $role_nid => $role_title) {
-        $role = node_load($role_nid);
-        $polling_station_role_url = valghalla_internal_server_generate_external_subscribe_url($election, $party, $role, $polling_station);
-
-        $markup .= '<tr>';
-        $markup .= '  <td>' . $role_title . ':</td>';
-        $markup .= '  <td><a href="' . $polling_station_role_url . '">' . t('Link til tilmelding') . '</a></td>';
-        $markup .= '</tr>';
-      }
-
-      $markup .= '</table>';
-    }
-  }
+//  if ($polling_station_nids) {
+//    $markup .= '<h2>' . t('Afstemningssteder:') . '</h2>';
+//
+//    // Run through all polling stations.
+//    foreach ($polling_station_nids as $polling_station_nid => $polling_station_title) {
+//      $polling_station = node_load($polling_station_nid);
+//      $polling_station_url = valghalla_internal_server_generate_external_subscribe_url($election, $party, $role = NULL, $polling_station);
+//
+//      $available_seats = odin_get_volunteers_count($election_nid, array($polling_station_nid), $roles, $party_tid);
+//
+//      // Don't show polling station of no seats are available.
+//      if ($available_seats['total_count']['assigned'] === 0) {
+//        continue;
+//      }
+//
+//      $markup .= '<h3>' . $polling_station_title . ' (<a href="' . $polling_station_url . '">' . t('Link') . '</a>)</h3>';
+//
+//      $markup .= '<table>';
+//      $markup .= '<tr>';
+//      $markup .= '  <th>' . t('Rolle') . '</th>';
+//      $markup .= '  <th>' . t('Eksternt link') . '</th>';
+//      $markup .= '</tr>';
+//
+//      foreach ($roles as $role_nid => $role_title) {
+//        $role = node_load($role_nid);
+//        $polling_station_role_url = valghalla_internal_server_generate_external_subscribe_url($election, $party, $role, $polling_station);
+//        $role_available_seats = $available_seats['role_count'][$role_nid]['assigned'];
+//
+//        // If no seats are available, don't proceed as we don't want to display an
+//        // external link.
+//        if ($role_available_seats == 0) {
+////          $markup .= '<tr>';
+////          $markup .= '  <td colspan="2">' . t('Der er ingen tilgængelige pladser.') . '</td>';
+////          $markup .= '</tr>';
+//
+//          continue;
+//        }
+//
+//        $markup .= '<tr>';
+//        $markup .= '  <td>' . $role_title . ':</td>';
+//        $markup .= '  <td><a href="' . $polling_station_role_url . '">' . t('Link') . '</a></td>';
+//        $markup .= '</tr>';
+//      }
+//
+//      $markup .= '</table>';
+//    }
+//  }
 
   return $markup;
 }
@@ -533,11 +570,14 @@ function _generate_pdf_content__volunteer_list_from_polling_station($party_tid =
   $restrict_polling_stations = FALSE;
   $user = user_load($user->uid);
   $selected_party_tid = $party_tid;
+  $election = node_load($_SESSION['election_nid']);
 
   // Try to load a selected party tid from the user.
   if (!$party_tid) {
     $selected_party_tid = $user_party_id = empty($user->field_party[LANGUAGE_NONE][0]['tid']) ? FALSE : $user->field_party[LANGUAGE_NONE][0]['tid'];
   }
+
+  $party = taxonomy_term_load($selected_party_tid);
 
   if (!empty($user->field_polling_station[LANGUAGE_NONE])) {
     $restrict_polling_stations = array();
@@ -553,7 +593,7 @@ function _generate_pdf_content__volunteer_list_from_polling_station($party_tid =
   foreach ($polling_station_nids as $polling_station_nid => $name) {
     $polling_station = node_load($polling_station_nid);
 
-    $markup = '<h2>' . $polling_station->title . '</h2>';
+    $markup = '<h3>' . $polling_station->title . '</h3>';
 
     if (user_access('valghalla see all parties') && !$selected_party_tid) {
       // If the user is administrator and theres no party chosen,

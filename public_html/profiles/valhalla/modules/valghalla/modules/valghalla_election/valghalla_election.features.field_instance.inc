@@ -175,6 +175,135 @@ function valghalla_election_field_default_field_instances() {
     ),
   );
 
+  // Exported field_instance: 'node-election-field_election_disable_consent'.
+  $field_instances['node-election-field_election_disable_consent'] = array(
+    'bundle' => 'election',
+    'default_value' => array(
+      0 => array(
+        'value' => 0,
+      ),
+    ),
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'list',
+        'settings' => array(),
+        'type' => 'list_default',
+        'weight' => 15,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_election_disable_consent',
+    'label' => 'Deaktiver samtykke',
+    'required' => 0,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'options',
+      'settings' => array(
+        'display_label' => 1,
+      ),
+      'type' => 'options_onoff',
+      'weight' => 15,
+    ),
+  );
+
+  // Exported field_instance: 'node-election-field_election_ext_require_email'.
+  $field_instances['node-election-field_election_ext_require_email'] = array(
+    'bundle' => 'election',
+    'default_value' => array(
+      0 => array(
+        'value' => 0,
+      ),
+    ),
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'list',
+        'settings' => array(),
+        'type' => 'list_default',
+        'weight' => 16,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_election_ext_require_email',
+    'label' => 'Kræv email',
+    'required' => 0,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'options',
+      'settings' => array(
+        'display_label' => 1,
+      ),
+      'type' => 'options_onoff',
+      'weight' => 16,
+    ),
+  );
+
+  // Exported field_instance: 'node-election-field_election_ext_require_phone'.
+  $field_instances['node-election-field_election_ext_require_phone'] = array(
+    'bundle' => 'election',
+    'default_value' => array(
+      0 => array(
+        'value' => 0,
+      ),
+    ),
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'list',
+        'settings' => array(),
+        'type' => 'list_default',
+        'weight' => 18,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_election_ext_require_phone',
+    'label' => 'Kræv telefon',
+    'required' => 0,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'options',
+      'settings' => array(
+        'display_label' => 1,
+      ),
+      'type' => 'options_onoff',
+      'weight' => 17,
+    ),
+  );
+
   // Exported field_instance: 'node-election-field_election_mails_send'.
   $field_instances['node-election-field_election_mails_send'] = array(
     'bundle' => 'election',
@@ -253,7 +382,7 @@ function valghalla_election_field_default_field_instances() {
         'rows' => 1,
       ),
       'type' => 'text_textarea',
-      'weight' => 10,
+      'weight' => 18,
     ),
   );
 
@@ -668,7 +797,7 @@ function valghalla_election_field_default_field_instances() {
       'module' => 'field_collection',
       'settings' => array(),
       'type' => 'field_collection_hidden',
-      'weight' => 9,
+      'weight' => 10,
     ),
   );
 
@@ -1034,10 +1163,13 @@ function valghalla_election_field_default_field_instances() {
   t('CVR nummer');
   t('Commenting enabled');
   t('Dato');
+  t('Deaktiver samtykke');
   t('Deltagere pr. parti');
   t('E-mail adresse');
   t('Emails sendt');
   t('Fuldt partinavn');
+  t('Kræv email');
+  t('Kræv telefon');
   t('Modtag PDF rapport');
   t('Notification config export (system field)');
   t('Parti');
