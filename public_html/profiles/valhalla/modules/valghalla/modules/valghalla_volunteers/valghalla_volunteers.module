@@ -322,7 +322,7 @@ function valghalla_volunteers_rsvp_form($form, &$form_state) {
     $rsvp = 1;
   }
 
-  if (variable_get('valghalla_volunteers_check_cpr_match', TRUE)) {
+  if (variable_get('valghalla_volunteers_check_cpr_match', TRUE) && !$GLOBALS['user']) {
     $form['cpr'] = array(
       '#type' => 'textfield',
       '#title' => 'CPR',
@@ -371,7 +371,7 @@ function valghalla_volunteers_rsvp_form_validate($form, &$form_state) {
     form_set_error('rsvp', t('Ugyldig værdig for svar'));
   }
 
-  if (variable_get('valghalla_volunteers_check_cpr_match', TRUE)) {
+  if (variable_get('valghalla_volunteers_check_cpr_match', TRUE) && !$GLOBALS['user']) {
     $cpr = $form_state['values']['cpr'];
 
     // Adding dash, if missing. E.g. 123456-7890.
