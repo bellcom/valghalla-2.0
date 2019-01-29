@@ -214,6 +214,7 @@ function valghalla_update_7113() {
   // Alter old theme settings before applied to new theme.
   $mutated_settings = $current_settings;
   $mutated_settings['bootstrap_tooltip_descriptions'] = 0;
+  $mutated_settings['bootstrap_cdn'] = '';
 
   // Transfer settings.
   variable_set('theme_' . $current_theme . '_settings', $mutated_settings);
