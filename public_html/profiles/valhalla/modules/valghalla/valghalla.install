@@ -195,3 +195,26 @@ function valghalla_update_7112() {
   field_delete_field('field_polling_station_post');
   field_purge_batch(1);
 }
+
+/**
+ * Update version of jQuery used and set default theme to "site".
+ */
+function valghalla_update_7113() {
+  $current_theme = variable_get('theme_default', 'none');
+  $current_settings = variable_get('theme_' . $current_theme . '_settings', array());
+
+  $new_theme = 'site';
+
+  // Enable site theme.
+  theme_enable(array(
+    $new_theme,
+  ));
+  variable_set('theme_default', $new_theme);
+
+  // Alter old theme settings before applied to new theme.
+  $mutated_settings = $current_settings;
+  $mutated_settings['bootstrap_tooltip_descriptions'] = 0;
+
+  // Transfer settings.
+  variable_set('theme_' . $current_theme . '_settings', $mutated_settings);
+}
