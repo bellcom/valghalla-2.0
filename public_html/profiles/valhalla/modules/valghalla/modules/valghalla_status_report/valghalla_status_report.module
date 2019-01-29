@@ -157,10 +157,10 @@ function _valghalla_status_report_generate_overview_markup($count) {
     }
 
     $role = node_load($role_nid);
-    $role_description = '';
+    $role_description = $role->title;
 
     if ($field = field_get_items('node', $role, 'field_description')) {
-      $role_description .= $field[0]['value'];
+      $role_description = $field[0]['value'];
     }
 
     $label = _valghalla_status_report_get_label($role_count);
@@ -418,10 +418,10 @@ function _generate_pdf_content__party_external_links($election_nid = NULL, $part
 
     foreach ($roles as $role_nid => $role_title) {
       $role = node_load($role_nid);
-      $role_description = '';
+      $role_description = $role->title;
 
       if ($field = field_get_items('node', $role, 'field_description')) {
-        $role_description .= $field[0]['value'];
+        $role_description = $field[0]['value'];
       }
 
       $role_url = valghalla_internal_server_generate_external_subscribe_url($election, $party, $role, $polling_station = NULL);
