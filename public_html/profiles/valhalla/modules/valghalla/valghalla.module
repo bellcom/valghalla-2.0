@@ -253,3 +253,13 @@ function valghalla_update_dependencies() {
   );
   return $dependencies;
 }
+
+/**
+ * Implements hook_form_BASE_FORM_ID_alter().
+ */
+function valghalla_form_node_form_alter(&$form, &$form_state, $form_id) {
+  // Do not validate form on deleting action.
+  if (isset($form['actions']['delete'])) {
+    $form['actions']['delete']['#limit_validation_errors'] = array();
+  }
+}

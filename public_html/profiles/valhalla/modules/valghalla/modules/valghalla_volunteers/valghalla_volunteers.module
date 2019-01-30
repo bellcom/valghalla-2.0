@@ -1311,10 +1311,6 @@ function valghalla_volunteers_form_volunteers_node_form_alter(&$form, &$form_sta
     $form['actions']['preview']['#access'] = FALSE;
   }
 
-  if (isset($form['actions']['delete'])) {
-    $form['actions']['delete']['#limit_validation_errors'] = array();
-  }
-
   // Only alter the form on edit and if the user is not an administrator.
   if (isset($form['#entity']->nid)
      && !user_access('administer valghalla')) {
