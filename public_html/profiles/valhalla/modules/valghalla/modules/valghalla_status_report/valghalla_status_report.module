@@ -228,15 +228,25 @@ function _valghalla_status_report_generate_constituency_markup($constituency_nid
     $header_markup = '';
     $bottom_markup = '';
 
+    // Finding roles with no assigned places.
+    $empty_roles = array();
+    foreach ($constituency_total['role_count'] as $role_nid => $role_count) {
+      if ($role_count['assigned'] == 0) {
+        $empty_roles[$role_nid] = $role_nid;
+      }
+    }
+
     // Generate header and bottom rows, for each constituency.
     foreach ($roles as $role_nid => $role_title) {
-      $header_markup .= '<th class="column-label">' . $role_title . '</th>';
+      if (!in_array($role_nid, $empty_roles)) {
+        $header_markup .= '<th class="column-label">' . $role_title . '</th>';
 
-      // Generate bottom totals row.
-      $label = _valghalla_status_report_get_label($constituency_total['role_count'][$role_nid]);
+        // Generate bottom totals row.
+        $label = _valghalla_status_report_get_label($constituency_total['role_count'][$role_nid]);
 
-      $bottom_markup .= '<td class="total column-count ' . $label . ' ">' . $constituency_total['role_count'][$role_nid]['total'];
-      $bottom_markup .= '/' . $constituency_total['role_count'][$role_nid]['assigned'] . '</td>';
+        $bottom_markup .= '<td class="total column-count ' . $label . ' ">' . $constituency_total['role_count'][$role_nid]['total'];
+        $bottom_markup .= '/' . $constituency_total['role_count'][$role_nid]['assigned'] . '</td>';
+      }
     }
 
     // Generate constituency status block.
@@ -245,7 +255,7 @@ function _valghalla_status_report_generate_constituency_markup($constituency_nid
     $markup .= '<th class="column-label">I alt</th>';
     $markup .= '</tr></thead>';
     $markup .= _valghalla_status_report_generate_polling_station_markup($polling_station_nids,
-                                                                $polling_station_count);
+                                                                $polling_station_count, $empty_roles);
 
     $markup .= '<tr><td class="total">I alt</td>';
     $markup .= $bottom_markup;
@@ -270,7 +280,7 @@ function _valghalla_status_report_generate_constituency_markup($constituency_nid
 /**
  * Generates row markup for overview page.
  */
-function _valghalla_status_report_generate_polling_station_markup($polling_station_nids, $polling_station_count) {
+function _valghalla_status_report_generate_polling_station_markup($polling_station_nids, $polling_station_count, $empty_roles) {
   $markup = '';
 
   foreach ($polling_station_nids as $polling_station_nid => $polling_station_title) {
@@ -285,9 +295,11 @@ function _valghalla_status_report_generate_polling_station_markup($polling_stati
     $markup .= '<tr><td class="column-first">' . $polling_station_title . '</td>';
 
     foreach ($polling_station_count[$polling_station_nid]['role_count'] as $role_nid => $role_count) {
-      $label = _valghalla_status_report_get_label($role_count);
+      if (!in_array($role_nid, $empty_roles)) {
+        $label = _valghalla_status_report_get_label($role_count);
 
-      $markup .= '<td class="column-count ' . $label . '">' . $role_count['total'] . '/' . $role_count['assigned'] . '</td>';
+        $markup .= '<td class="column-count ' . $label . '">' . $role_count['total'] . '/' . $role_count['assigned'] . '</td>';
+      }
     }
 
     $label = _valghalla_status_report_get_label($polling_station_count[$polling_station_nid]['total_count']);
