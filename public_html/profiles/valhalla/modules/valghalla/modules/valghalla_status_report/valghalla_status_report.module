@@ -419,6 +419,12 @@ function _generate_pdf_content__party_external_links($election_nid = NULL, $part
     foreach ($roles as $role_nid => $role_title) {
       $role = node_load($role_nid);
       $role_description = $role->title;
+      $available_seats = odin_get_volunteers_count($election_nid, array_keys($polling_station_nids), array($role_nid => $role_title), $party_tid);
+
+      // Abort if this role has no seats available.
+      if ($available_seats['total_count']['assigned'] === 0) {
+        continue;
+      }
 
       if ($field = field_get_items('node', $role, 'field_description')) {
         $role_description = $field[0]['value'];
