@@ -8,7 +8,7 @@
  * Implements hook_field_group_info().
  */
 function valghalla_polling_station_field_group_info() {
-  $export = array();
+  $field_groups = array();
 
   $field_group = new stdClass();
   $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
@@ -33,16 +33,16 @@ function valghalla_polling_station_field_group_info() {
     ),
     'format_type' => 'htab',
     'format_settings' => array(
-      'formatter' => 'closed',
+      'label' => 'Adresse',
       'instance_settings' => array(
-        'description' => '',
-        'classes' => 'group-adresse field-group-htab',
         'required_fields' => 1,
-        'id' => '',
+        'classes' => 'group-adresse field-group-htab',
+        'description' => '',
       ),
+      'formatter' => 'open',
     ),
   );
-  $export['group_adresse|node|polling_station|form'] = $field_group;
+  $field_groups['group_adresse|node|polling_station|form'] = $field_group;
 
   $field_group = new stdClass();
   $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
@@ -57,21 +57,21 @@ function valghalla_polling_station_field_group_info() {
     'label' => 'Andet',
     'weight' => '25',
     'children' => array(
-      0 => 'field_venue_skolekode',
-      1 => 'field_digital_election_list',
+      0 => 'field_digital_election_list',
+      1 => 'field_venue_skolekode',
     ),
     'format_type' => 'htab',
     'format_settings' => array(
-      'formatter' => 'closed',
+      'label' => 'Andet',
       'instance_settings' => array(
-        'description' => '',
-        'classes' => 'group-andet field-group-htab',
         'required_fields' => 1,
-        'id' => '',
+        'classes' => 'group-andet field-group-htab',
+        'description' => '',
       ),
+      'formatter' => 'open',
     ),
   );
-  $export['group_andet|node|polling_station|form'] = $field_group;
+  $field_groups['group_andet|node|polling_station|form'] = $field_group;
 
   $field_group = new stdClass();
   $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
@@ -90,16 +90,16 @@ function valghalla_polling_station_field_group_info() {
     ),
     'format_type' => 'htab',
     'format_settings' => array(
-      'formatter' => 'closed',
+      'label' => 'Deltagere',
       'instance_settings' => array(
-        'description' => '',
-        'classes' => 'group-deltagere field-group-htab',
         'required_fields' => 1,
-        'id' => '',
+        'classes' => 'group-deltagere field-group-htab',
+        'description' => '',
       ),
+      'formatter' => 'open',
     ),
   );
-  $export['group_deltagere|node|polling_station|form'] = $field_group;
+  $field_groups['group_deltagere|node|polling_station|form'] = $field_group;
 
   $field_group = new stdClass();
   $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
@@ -120,16 +120,16 @@ function valghalla_polling_station_field_group_info() {
     ),
     'format_type' => 'htab',
     'format_settings' => array(
-      'formatter' => 'closed',
+      'label' => 'Kontaktpersoner',
       'instance_settings' => array(
-        'description' => '',
-        'classes' => 'group-kontakter field-group-htab',
         'required_fields' => 1,
-        'id' => '',
+        'classes' => 'group-kontakter field-group-htab',
+        'description' => '',
       ),
+      'formatter' => 'open',
     ),
   );
-  $export['group_kontakter|node|polling_station|form'] = $field_group;
+  $field_groups['group_kontakter|node|polling_station|form'] = $field_group;
 
   $field_group = new stdClass();
   $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
@@ -153,16 +153,16 @@ function valghalla_polling_station_field_group_info() {
     ),
     'format_type' => 'htab',
     'format_settings' => array(
-      'formatter' => 'closed',
+      'label' => 'Ressourcer',
       'instance_settings' => array(
-        'description' => '',
-        'classes' => 'group-ressourcer field-group-htab',
         'required_fields' => 1,
-        'id' => '',
+        'classes' => 'group-ressourcer field-group-htab',
+        'description' => '',
       ),
+      'formatter' => 'open',
     ),
   );
-  $export['group_ressourcer|node|polling_station|form'] = $field_group;
+  $field_groups['group_ressourcer|node|polling_station|form'] = $field_group;
 
   $field_group = new stdClass();
   $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
@@ -181,16 +181,16 @@ function valghalla_polling_station_field_group_info() {
     ),
     'format_type' => 'htab',
     'format_settings' => array(
-      'formatter' => 'closed',
+      'label' => 'Valgsted',
       'instance_settings' => array(
-        'description' => '',
-        'classes' => ' group-valgsteder field-group-htab',
         'required_fields' => 1,
-        'id' => '',
+        'classes' => '',
+        'description' => '',
       ),
+      'formatter' => 'open',
     ),
   );
-  $export['group_valgsteder|node|polling_station|form'] = $field_group;
+  $field_groups['group_valgsteder|node|polling_station|form'] = $field_group;
 
   $field_group = new stdClass();
   $field_group->disabled = FALSE; /* Edit this to true to make a default field_group disabled initially */
@@ -216,11 +216,21 @@ function valghalla_polling_station_field_group_info() {
     'format_settings' => array(
       'formatter' => '',
       'instance_settings' => array(
-        'classes' => ' group-valgsted field-group-htabs',
+        'classes' => '',
+        'id' => '',
       ),
     ),
   );
-  $export['group_valgsted|node|polling_station|form'] = $field_group;
+  $field_groups['group_valgsted|node|polling_station|form'] = $field_group;
 
-  return $export;
+  // Translatables
+  // Included for use with string extractors like potx.
+  t('Adresse');
+  t('Andet');
+  t('Deltagere');
+  t('Kontaktpersoner');
+  t('Ressourcer');
+  t('Valgsted');
+
+  return $field_groups;
 }

@@ -78,12 +78,12 @@ function valghalla_pages_admin_valghalla() {
   }
 
   $header = array(
-    'Titel',
-    'Dato',
-    'Status',
-    'Invitationer sendt',
-    'Type',
-    'Valgmuligheder',
+    t('Titel'),
+    t('Dato'),
+    t('Status'),
+    t('Invitationer sendt'),
+    t('Type'),
+    t('Valgmuligheder'),
   );
 
   $elections_table_settings = array(
@@ -118,7 +118,7 @@ function valghalla_pages_admin_valghalla() {
 
   $header = array('Titel', 'Valgmuligheder');
 
-  $old_elections_table = '<h3>Arkiverede valg</h3>';
+  $old_elections_table = '<h3>' . t('Arkiverede valg') . '</h3>';
 
   $old_elections_table_settings = array(
     'header' => $header,

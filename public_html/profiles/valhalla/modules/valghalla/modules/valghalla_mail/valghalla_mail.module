@@ -41,8 +41,8 @@ function valghalla_mail_cron(){
  */
 function valghalla_mail_menu() {
   $items['valghalla/administration/notifications'] = array(
-      'title' => 'E-mail notifikationer',
-      'description' => 'Tilretning af mail notifikationer.',
+      'title' => t('E-mail notifikationer'),
+      'description' => t('Tilretning af mail notifikationer.'),
       'page callback' => 'drupal_get_form',
       'page arguments' => array('valghalla_mail_admin_notifications'),
       'access arguments' => array('administer valghalla'),
@@ -51,8 +51,8 @@ function valghalla_mail_menu() {
       'weight' => -4,
   );
   $items['valghalla/administration/valg/mails'] = array(
-      'title' => 'E-mail indstillinger',
-      'description' => 'Tilretning af standard mails.',
+      'title' => t('E-mail indstillinger'),
+      'description' => t('Tilretning af standard mails.'),
       'page callback' => 'drupal_get_form',
       'page arguments' => array('valghalla_mail_admin_valghalla_mails'),
       'access arguments' => array('administer valghalla'),
@@ -62,8 +62,8 @@ function valghalla_mail_menu() {
   );
 
   $items['valghalla/administration/sendmail'] = array(
-      'title' => 'Send mails til deltagere',
-      'description' => 'Her kan der udsendes mails til alle, eller udvalgte segmenter, af deltagere.',
+      'title' => t('Send mails til deltagere'),
+      'description' => t('Her kan der udsendes mails til alle, eller udvalgte segmenter, af deltagere.'),
       'page callback' => 'valghalla_mail_sendmail_create_email_node', // Step 1 create an email node
       'access arguments' => array('administer valghalla'),
       'file' =>'includes/valghalla_mail_form.inc',
@@ -71,7 +71,7 @@ function valghalla_mail_menu() {
       'weight' => -5,
   );
   $items['valghalla/administration/sendinvitation'] = array(
-      'title' => 'Send invitationer',
+      'title' => t('Send invitationer'),
       'page callback' => 'drupal_get_form',
       'page arguments' => array('valghalla_mail_sendinvitation_form', 3), // Step 2 get mail addresses.
       'access arguments' => array('administer valghalla'),
@@ -109,7 +109,7 @@ function valghalla_mail_mail($key, &$message, $params) {
   switch ($key) {
     // "default" case for sending mail.
     case 'mail':
-            $params += array('tokens' => '');
+            $params += array('tokens' => array());
 
       // Html mail
       if(strstr($params['format'], 'html')){
@@ -152,6 +152,10 @@ function valghalla_mail_get_mail($election_nid, $role_nid, $mail_type, $mail_nid
     $mail_nid = variable_get($variable_name, 0);
   }
 
+  // If 'None'(id==1), do not proceed.
+  if($mail_nid == 1){
+    return FALSE;
+  }
   // If it doesn't exist, get the standard.
   if(!$mail_nid){
     $mail_nid = variable_get('valghalla_mail_' . $election_nid . '_' . $mail_type, FALSE);
@@ -209,7 +213,7 @@ function valghalla_mail_ajax_view($mail_nid, $fc_id, $election_nid = FALSE) {
   }
 
   $subject = t($params['subject'], $tokens, $options);
-  print "<div class = 'valghalla_mail_subject'> Emne : " . $subject . "</div>";
+  print "<div class = 'valghalla_mail_subject'> " . t(' Emne : ') . $subject . "</div>";
   print "<div class= 'valghalla_mail_body'>" . $body . "</div>";
 }
 
@@ -234,7 +238,8 @@ function valghalla_mail_get_mail_types(){
 function valghalla_mail_get_mails(){
   $mail_nodes = node_load_multiple(array(), array('type' => 'email'));
   // Populate array with mail options for general mails.
-  $mail_options[0] = t('None');
+  $mail_options[0] = t('Nedarves fra "Standard E-Mail skabeloner"');
+  $mail_options[1] = t('None');
   foreach($mail_nodes as $mail_node){
     $mail_options[$mail_node->nid] = $mail_node->title;
   }

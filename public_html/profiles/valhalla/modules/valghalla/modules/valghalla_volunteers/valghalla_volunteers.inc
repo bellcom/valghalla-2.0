@@ -17,10 +17,10 @@ function _valghalla_helper_wrap_name($node, $container = 'p', $fcid = null) {
     3 => t('Ønsker at blive slettet'),
   );
   $rsvp_class_map = array(
-    0 => 'unknown',
-    1 => 'yes',
-    2 => 'no',
-    3 => 'never',
+    0 => t('unknown'),
+    1 => t('yes'),
+    2 => t('no'),
+    3 => t('never'),
   );
 
   $party = '';
@@ -46,7 +46,7 @@ function _valghalla_helper_wrap_name($node, $container = 'p', $fcid = null) {
 
   $reply_link = '';
 
-  if ($rsvp == 0 || variable_get('valghalla_volunteers_always_show_rsvp_link', FALSE)) {
+  if (user_access('add volunteer to station') && ($rsvp == 0 || variable_get('valghalla_volunteers_always_show_rsvp_link', FALSE))) {
     $field_token = field_get_items('field_collection_item', $fc, 'field_token');
     $reply_link = '<a title="Svar for denne tilforordnede" class="reply edit" href="/volunteers/rsvp/'  . $field_token[0]['value'] . '"><span class="glyphicon glyphicon-comment"></span></a>';
   }
@@ -430,23 +430,23 @@ function _valghalla_helper_get_token_values($entity) {
 function _valghalla_helper_get_volunteer_info_params($node) {
   return "<p><b>Erstatningstokens til brug i emne- og indholdsfeltet:</b></p>
           <ul>
-          <li><em>!name</em> vil blive erstattet af modtagerens navn</li>
-          <li><em>!email</em> vil blive erstattet af modtagerens email adresse</li>
-          <li><em>!phone</em> vil blive erstattet af modtagerens telefonnr</li>
-          <li><em>!date_now</em> vil blive erstattet af tidspunktet for mailens udsendelse</li>
-          <li><em>!days</em> vil blive erstattet af antallet af dage der er til valget (f.eks. 3)</li>
-          <li><em>!election</em> vil blive erstattet af valgets titel</li>
-          <li><em>!election_date</em> vil blive erstattet af valgets dato</li>
-          <li><em>!polling_station</em> vil blive erstattet af valgstedets navn</li>
-          <li><em>!polling_station_address</em> vil blive erstattet af valgstedets adresse</li>
-          <li><em>!position</em> vil blive erstattet af rollens titel</li>
-          <li><em>!position_description</em> vil blive erstattet af rollens beskrivelse</li>
-          <li><em>!time</em> vil blive erstattet af rollens mødetidspunkt</li>
-          <li><em>!link</em> vil blive erstattet med link til RSVP side (brug denne hvis der sendes HTML mails.)</li>
-          <li><em>!url</em> vil blive erstattet med url'en til RSVP side (brug denne hvis der sendes plain text mails.)</li>
-          <li><em>!polling_station_contact</em> vil blive erstattet med kontaktpersonen på valgstedet</li>
+          <li><em>!name</em>" . t(' vil blive erstattet af modtagerens navn') . "</li>
+          <li><em>!email</em>" . t(' vil blive erstattet af modtagerens email adresse') . "</li>
+          <li><em>!phone</em>" . t(' vil blive erstattet af modtagerens telefonnr') . "</li>
+          <li><em>!date_now</em>" . t(' vil blive erstattet af tidspunktet for mailens udsendelse') . "</li>
+          <li><em>!days</em>" . t(' vil blive erstattet af antallet af dage der er til valget (f.eks. 3)') . "</li>
+          <li><em>!election</em>" . t(' vil blive erstattet af valgets titel') . "</li>
+          <li><em>!election_date</em>" . t(' vil blive erstattet af valgets dato') . "</li>
+          <li><em>!polling_station</em>" . t(' vil blive erstattet af valgstedets navn') . "</li>
+          <li><em>!polling_station_address</em>" . t(' vil blive erstattet af valgstedets adresse') . "</li>
+          <li><em>!position</em>" . t(' vil blive erstattet af rollens titel') . "</li>
+          <li><em>!position_description</em>" . t(' vil blive erstattet af rollens beskrivelse') . "</li>
+          <li><em>!time</em>" . t(' vil blive erstattet af rollens mødetidspunkt') . "</li>
+          <li><em>!link</em>" . t(' vil blive erstattet med link til RSVP side (brug denne hvis der sendes HTML mails.') . "</li>
+          <li><em>!url</em>" . t(" vil blive erstattet med url'en til RSVP side (brug denne hvis der sendes plain text mails.") . "</li>
+          <li><em>!polling_station_contact</em>" . t(' vil blive erstattet med kontaktpersonen på valgstedet') . "</li>
           </ul>
-          <p><em>Bemærk!</em> i nogle tilfælde vil nogle tokens ikke være tilgængelige.</p>";
+          <p><em>Bemærk!</em>" . t(' i nogle tilfælde vil nogle tokens ikke være tilgængelige.') . "</p>";
 }
 
 /**

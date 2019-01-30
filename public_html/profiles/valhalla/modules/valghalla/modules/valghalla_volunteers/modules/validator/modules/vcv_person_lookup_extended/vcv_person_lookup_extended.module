@@ -1,0 +1,338 @@
+<?php
+
+/**
+ * @file
+ * Implements valghalla person lookup extended with serviceplatformen.dk
+ *
+ */
+
+/**
+ * Implements hook_menu()
+ */
+function vcv_person_lookup_extended_menu(){
+  $items['admin/valghalla/validator/vcv_person_lookup_extended'] = array(
+    'title' => t('Indstillinger for Person stamdata udvidet service'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('vcv_person_lookup_extended_settings'),
+    'access arguments' => array('administer valghalla'),
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_MODULE_PLUGIN()
+ *     -      hook_valghalla_cpr_validator_cpr_service()
+ *
+ * Tells the valghalla_cpr_validator module which services are implementet
+ * as well as where the plugin can be configured.
+ */
+function vcv_person_lookup_extended_valghalla_volunteer_validator_cpr_service(){
+  return array(
+    'vcv_person_lookup_extended' => array(
+      // Label for the plugin, shown in CPR validator settings.
+      'label' => 'serviceplatformen.dk: Om Person stamdata, udvidet',
+      // Short description for the plugin, shown in CPR validator settings.
+      'description' => t('Fetching person living status and citizenship'),
+      // If the plugin implements CPR validation, the callback must be
+      // specified here.
+      'validate_cpr' => 'vcv_person_lookup_extended_validate_cpr',
+      // Same as above, but just for fetching the address for the
+      // volunteer.
+      'get_status' => 'vcv_person_lookup_extended_get_status',
+      // Url for plugin configuration.
+      'config' => 'admin/valghalla/validator/vcv_person_lookup_extended',
+    )
+  );
+}
+
+/**
+ * Page callback for settings
+ */
+function vcv_person_lookup_extended_settings() {
+  $cpr = variable_get('test_cpr');
+  $output = '';
+  if ($cpr != '') {
+    $message = vcv_person_lookup_extended_get_status($cpr);
+
+    if ($message['status']) {
+      $output = '<div style="font-size: 15px; color : green"><b>' .t('Succeed') . '</b></div>';
+      $output .= '<div> Test CPR nr. ' . $cpr . '<br />';
+      foreach ($message as $key => $item) {
+        if ($key != 'status') {
+          if($key == 'civil_status'){
+            $output .= $key . ': ' . _vcv_person_lookup_extended_civil_status_2text($item) . '<br />';
+          }elseif($key == 'citizenship'){
+            $output .= $key . ': ' . _vcv_person_lookup_extended_citizenship_2text($item) . '<br />';
+          }else{
+            $output .= $key . ': ' . $item . '<br />';
+          }
+        }
+      }
+      $output .= '</div>';
+    }
+    else {
+      $output = '<b style = "color : red">Error: ' . $message['text'] . '</b>';
+    }
+    variable_set('test_cpr', '');
+  }
+
+  $form['test_cpr_fieldset'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Test CPR'),
+  );
+  $form['test_cpr_fieldset']['test_cpr'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Test cpr nr.'),
+  );
+
+  $form['test_cpr_fieldset']['test_serviceplatformen_function'] = array(
+    '#type' => 'item',
+    '#markup' => $output,
+  );
+
+  //Start PersonBaseDataExtended
+  $form['stamudv'] = array(
+    '#title' => 'Person stamdata udvidet',
+    '#type' => 'fieldset',
+  );
+
+  $form['stamudv']['vcv_person_lookup_extended_serviceagreementuuid'] = array(
+    '#type' => 'textfield',
+    '#title' => 'Serviceaftale UUID',
+    '#default_value' => variable_get('vcv_person_lookup_extended_serviceagreementuuid', ''),
+  );
+
+  $form['stamudv']['vcv_person_lookup_extended_serviceuuid'] = array(
+    '#type' => 'textfield',
+    '#title' => 'Service UUID',
+    '#default_value' => variable_get('vcv_person_lookup_extended_serviceuuid', ''),
+  );
+
+  $form['stamudv']['vcv_person_lookup_extended_wsdl'] = array(
+    '#type' => 'textfield',
+    '#title' => 'Service WSDL location',
+    '#default_value' => variable_get('vcv_person_lookup_extended_wsdl', ''),
+    '#maxlength' => 256,
+    '#description' => t('not available as a URL, must be stored locally
+    ex. file://exttestwww.serviceplatformen.dk/administration/wsdl/CPRBasicInformationService.wsdl'),
+  );
+
+  $form['stamudv']['vcv_person_lookup_extended_location'] = array(
+    '#type' => 'textfield',
+    '#title' => 'Service location',
+    '#default_value' => variable_get('vcv_person_lookup_extended_location', ''),
+    '#description' => t('ex. https://exttest.serviceplatformen.dk/service/CPR/PersonBaseDataExtended/4'),
+  );
+  //Stop PersonBaseDataExtended
+
+  $form['vcv_person_lookup_extended_usersystemuuid'] = array(
+    '#type' => 'textfield',
+    '#title' => 'System UUID',
+    '#default_value' => variable_get('vcv_person_lookup_extended_usersystemuuid', ''),
+  );
+
+  $form['vcv_person_lookup_extended_useruuid'] = array(
+    '#type' => 'textfield',
+    '#title' => 'Kommune UUID',
+    '#default_value' => variable_get('vcv_person_lookup_extended_useruuid', ''),
+  );
+
+  $form['vcv_person_lookup_extended_accountinginfo'] = array(
+    '#type' => 'textfield',
+    '#title' => 'AccountingInfo',
+    '#default_value' => variable_get('vcv_person_lookup_extended_accountinginfo', ''),
+  );
+
+  $form['vcv_person_lookup_extended_certfile_passphrase'] = array(
+    '#type' => 'password',
+    '#title' => 'Certfile passphrase',
+    '#default_value' => variable_get('vcv_person_lookup_extended_certfile_passphrase', ''),
+  );
+
+  $form['vcv_person_lookup_extended_certfile'] = array(
+    '#type' => 'textfield',
+    '#title' => 'Certfile',
+    '#default_value' => variable_get('vcv_person_lookup_extended_certfile', ''),
+  );
+
+  $form = system_settings_form($form);
+  array_unshift($form['#submit'], 'vcv_person_lookup_extended_settings_submit');
+
+  return $form;
+}
+
+/**
+ * Extra submit handler for serviceplatformen settings.
+ */
+function vcv_person_lookup_extended_settings_submit(&$form, &$form_state) {
+  if ($form_state['values']['vcv_person_lookup_extended_certfile_passphrase'] == '') {
+    unset($form_state['values']['vcv_person_lookup_extended_certfile_passphrase']);
+  }
+}
+
+/**
+ * Validate cpr callback
+ *
+ * @param
+ *  String - PSN (cpr) ([0-9]{6}\-[0-9]{4})
+ *
+ * @return
+ *  Array
+ *  (
+ *    [status] => TRUE/FALSE
+ *    [text] => Descriptive text shown when CPR doesn't validate
+ *  )
+ */
+function vcv_person_lookup_extended_validate_cpr($cpr, $process){
+  
+  $status = vcv_person_lookup_extended_get_status($cpr);
+
+  if ( ($process == 'single' AND variable_get('validate_single_civil_status', FALSE)) 
+          OR ( $process == 'batch' AND variable_get('validate_batch_civil_status', FALSE) )) {
+  //checking status
+    if (intval($status['civil_status']) == 90) {
+      return array(
+        'status' => FALSE,
+        'text' => t('Personen med angivne CPR-nummer er død'),
+      );
+    }
+  }else{
+// we do not validate if disable
+  }
+  if ( ($process == 'single' AND variable_get('validate_single_sitizenship', FALSE)) 
+          OR ( $process == 'batch' AND variable_get('validate_batch_sitizenship', FALSE) )) {
+    //checking citizenship
+    if (strcmp($status['citizenship'], '5100') != 0) {
+      return array(
+        'status' => FALSE,
+        'text' => t('Den angivne CPR-nummer er ikke Dansk borger'),
+      );
+    }
+  }else{
+// we do not validate if disable
+  }
+}
+
+/**
+ * Query the webservice.
+ */
+function vcv_person_lookup_extended_query($cpr) {
+  ini_set('soap.wsdl_cache_enabled', 0);
+  ini_set('soap.wsdl_cache_ttl', 0);
+
+  try {
+    $wsdl_address = variable_get('vcv_person_lookup_extended_wsdl');
+    $service_location = variable_get('vcv_person_lookup_extended_location');
+    $certfile_passphrase = variable_get('vcv_person_lookup_extended_certfile_passphrase');
+    $certfile = variable_get('vcv_person_lookup_extended_certfile');
+
+    $client = new SoapClient($wsdl_address, array(
+      'location' => $service_location,
+      'local_cert' => $certfile,
+      'passphrase' => $certfile_passphrase,
+      'trace' => TRUE,
+    ));
+
+    $serviceagreementuuid = variable_get('vcv_person_lookup_extended_serviceagreementuuid');
+    $usersystemuuid = variable_get('vcv_person_lookup_extended_usersystemuuid');
+    $useruuid = variable_get('vcv_person_lookup_extended_useruuid');
+    $serviceuuid = variable_get('vcv_person_lookup_extended_serviceuuid');
+    $accountinginfo = variable_get('vcv_person_lookup_extended_accountinginfo');
+
+    global $user;
+    $onbehalfofuser = $user->name;
+
+    $pnr = str_replace('-', '', $cpr);
+
+    $request = array(
+      'InvocationContext' => array(
+        'ServiceAgreementUUID' => $serviceagreementuuid,
+        'UserSystemUUID' => $usersystemuuid,
+        'UserUUID' => $useruuid,
+        'ServiceUUID' => $serviceuuid,
+        'AccountingInfo' => $accountinginfo,
+        'OnBehalfOfUser' => $onbehalfofuser,
+      ),
+      'PNR' => $pnr,
+    );
+
+    $response = (array) $client->PersonLookup($request);
+
+    $response['status'] = TRUE;
+    return $response;
+
+  }
+  catch (Exception $e) {
+    list($fault, $message) = explode(':', $e->faultstring);
+
+    if (!$message) {
+      $message = $e->faultstring;
+    }
+
+    return array(
+      'status' => FALSE,
+      'text' => $message,
+    );
+  }
+}
+
+/**
+ * Fetch address for the specified CPR
+ *
+ * @param
+ *  String - PSN (cpr) ([0-9]{6}\-[0-9]{4})
+ *
+ * @return
+ *  Array
+ *  (
+ *    [status] => TRUE/FALSE
+ *    [citizenship] => 5100
+ *    [civil_status] => number
+ *  )
+ */
+function vcv_person_lookup_extended_get_status($cpr){
+  $message = vcv_person_lookup_extended_query($cpr);
+
+  // If all goes well we return de address as valghalla wants it.
+  if ($message['status']) {
+    return array(
+      'status' => TRUE,
+      'citizenship' => $message['persondata']->statsborgerskab->landekode,
+      'civil_status' => $message['persondata']->status->status
+    );
+  }
+  else {
+    return $message;
+  }
+}
+
+ function _vcv_person_lookup_extended_civil_status_2text($civil_status) {
+   $status_array = array('1' => t('Aktiv, bopæl i dansk folkeregister'),
+           '3' => t('Aktiv, speciel vejkode (9900-9999) i dansk folkeregister'),
+           '5' => t('Aktiv, bopæli grønlandsk folkeregister'),
+           '7' => t('Aktiv, speciel vejkode (9900-9999) i grønlandsk folkeregister'),
+           '20' => t('Inaktiv, uden bopæl i dansk/grønlandsk folkeregister men tildelt personnummer af skattehensyn'),
+           '30' => t('Inaktiv, annulleret personummer'),
+           '50' => t('Inaktive, slettet personnummer ved dobbeltnummer'),
+           '60' => t('Inaktiv, ændret personnummer ved ændring af fødselsdato og køn'),
+           '70' => t('Inaktiv, forsundet'),
+           '80' => t('Inaktiv, udrejst'),
+           '90' => t('Inaktiv, død'),
+           );
+   if(isset($status_array[$civil_status])){
+     $output = $status_array[$civil_status];
+   }else{
+     $output = $civil_status;
+   }
+   return $output;
+}
+
+function _vcv_person_lookup_extended_citizenship_2text($citizenship) {
+   if($citizenship == '5100'){
+     $output =  t('Dansk statsborger');
+   }else{
+     $output = 'Ikke Dansk statsborger';
+   }
+   return $output;
+}

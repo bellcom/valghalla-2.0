@@ -99,6 +99,9 @@ function valghalla_mail_rsvp_reminder_send($election, $volunteer_fc) {
   if($mail = valghalla_mail_get_mail($election->nid, $tokens['!position_nid'], 'reminder')){
     $params = array_merge(array('tokens' => $tokens), $mail);
   }
+  else {
+    return;
+  }
 
   $send = TRUE;
   $result = drupal_mail('valghalla_mail', 'mail', $to, $language, $params, $from, $send);

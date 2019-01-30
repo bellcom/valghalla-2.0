@@ -10,7 +10,8 @@
 function valghalla_volunteers_field_default_field_instances() {
   $field_instances = array();
 
-  // Exported field_instance: 'field_collection_item-field_electioninfo-field_diaet'
+  // Exported field_instance:
+  // 'field_collection_item-field_electioninfo-field_diaet'.
   $field_instances['field_collection_item-field_electioninfo-field_diaet'] = array(
     'bundle' => 'field_electioninfo',
     'default_value' => NULL,
@@ -50,7 +51,8 @@ function valghalla_volunteers_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'field_collection_item-field_electioninfo-field_election'
+  // Exported field_instance:
+  // 'field_collection_item-field_electioninfo-field_election'.
   $field_instances['field_collection_item-field_electioninfo-field_election'] = array(
     'bundle' => 'field_electioninfo',
     'default_value' => NULL,
@@ -61,6 +63,7 @@ function valghalla_volunteers_field_default_field_instances() {
         'label' => 'above',
         'module' => 'entityreference',
         'settings' => array(
+          'bypass_access' => FALSE,
           'link' => FALSE,
         ),
         'type' => 'entityreference_label',
@@ -83,7 +86,8 @@ function valghalla_volunteers_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'field_collection_item-field_electioninfo-field_post_party'
+  // Exported field_instance:
+  // 'field_collection_item-field_electioninfo-field_post_party'.
   $field_instances['field_collection_item-field_electioninfo-field_post_party'] = array(
     'bundle' => 'field_electioninfo',
     'default_value' => NULL,
@@ -94,6 +98,7 @@ function valghalla_volunteers_field_default_field_instances() {
         'label' => 'above',
         'module' => 'entityreference',
         'settings' => array(
+          'bypass_access' => FALSE,
           'link' => FALSE,
         ),
         'type' => 'entityreference_label',
@@ -116,7 +121,8 @@ function valghalla_volunteers_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'field_collection_item-field_electioninfo-field_post_role'
+  // Exported field_instance:
+  // 'field_collection_item-field_electioninfo-field_post_role'.
   $field_instances['field_collection_item-field_electioninfo-field_post_role'] = array(
     'bundle' => 'field_electioninfo',
     'default_value' => NULL,
@@ -127,6 +133,7 @@ function valghalla_volunteers_field_default_field_instances() {
         'label' => 'above',
         'module' => 'entityreference',
         'settings' => array(
+          'bypass_access' => FALSE,
           'link' => FALSE,
         ),
         'type' => 'entityreference_label',
@@ -149,7 +156,8 @@ function valghalla_volunteers_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'field_collection_item-field_electioninfo-field_rsvp'
+  // Exported field_instance:
+  // 'field_collection_item-field_electioninfo-field_rsvp'.
   $field_instances['field_collection_item-field_electioninfo-field_rsvp'] = array(
     'bundle' => 'field_electioninfo',
     'default_value' => NULL,
@@ -180,7 +188,8 @@ function valghalla_volunteers_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'field_collection_item-field_electioninfo-field_rsvp_comment'
+  // Exported field_instance:
+  // 'field_collection_item-field_electioninfo-field_rsvp_comment'.
   $field_instances['field_collection_item-field_electioninfo-field_rsvp_comment'] = array(
     'bundle' => 'field_electioninfo',
     'default_value' => NULL,
@@ -214,7 +223,8 @@ function valghalla_volunteers_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'field_collection_item-field_electioninfo-field_token'
+  // Exported field_instance:
+  // 'field_collection_item-field_electioninfo-field_token'.
   $field_instances['field_collection_item-field_electioninfo-field_token'] = array(
     'bundle' => 'field_electioninfo',
     'default_value' => NULL,
@@ -248,7 +258,8 @@ function valghalla_volunteers_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'field_collection_item-field_electioninfo-field_vlnt_station'
+  // Exported field_instance:
+  // 'field_collection_item-field_electioninfo-field_vlnt_station'.
   $field_instances['field_collection_item-field_electioninfo-field_vlnt_station'] = array(
     'bundle' => 'field_electioninfo',
     'default_value' => NULL,
@@ -259,6 +270,7 @@ function valghalla_volunteers_field_default_field_instances() {
         'label' => 'above',
         'module' => 'entityreference',
         'settings' => array(
+          'bypass_access' => FALSE,
           'link' => FALSE,
         ),
         'type' => 'entityreference_label',
@@ -281,7 +293,7 @@ function valghalla_volunteers_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-roles-field_description'
+  // Exported field_instance: 'node-roles-field_description'.
   $field_instances['node-roles-field_description'] = array(
     'bundle' => 'roles',
     'default_value' => NULL,
@@ -321,7 +333,7 @@ function valghalla_volunteers_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-roles-field_invitation'
+  // Exported field_instance: 'node-roles-field_invitation'.
   $field_instances['node-roles-field_invitation'] = array(
     'bundle' => 'roles',
     'default_value' => NULL,
@@ -332,6 +344,7 @@ function valghalla_volunteers_field_default_field_instances() {
         'label' => 'above',
         'module' => 'entityreference',
         'settings' => array(
+          'bypass_access' => FALSE,
           'link' => FALSE,
         ),
         'type' => 'entityreference_label',
@@ -360,7 +373,7 @@ function valghalla_volunteers_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-roles-field_meeting_time'
+  // Exported field_instance: 'node-roles-field_meeting_time'.
   $field_instances['node-roles-field_meeting_time'] = array(
     'bundle' => 'roles',
     'default_value' => NULL,
@@ -397,7 +410,7 @@ function valghalla_volunteers_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-roles-field_meetingtime'
+  // Exported field_instance: 'node-roles-field_meetingtime'.
   $field_instances['node-roles-field_meetingtime'] = array(
     'bundle' => 'roles',
     'default_value' => NULL,
@@ -437,7 +450,7 @@ function valghalla_volunteers_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-roles-field_reminder'
+  // Exported field_instance: 'node-roles-field_reminder'.
   $field_instances['node-roles-field_reminder'] = array(
     'bundle' => 'roles',
     'default_value' => NULL,
@@ -448,6 +461,7 @@ function valghalla_volunteers_field_default_field_instances() {
         'label' => 'above',
         'module' => 'entityreference',
         'settings' => array(
+          'bypass_access' => FALSE,
           'link' => FALSE,
         ),
         'type' => 'entityreference_label',
@@ -476,7 +490,7 @@ function valghalla_volunteers_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-roles-field_role_hours'
+  // Exported field_instance: 'node-roles-field_role_hours'.
   $field_instances['node-roles-field_role_hours'] = array(
     'bundle' => 'roles',
     'default_value' => NULL,
@@ -516,7 +530,7 @@ function valghalla_volunteers_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-roles-field_role_weight'
+  // Exported field_instance: 'node-roles-field_role_weight'.
   $field_instances['node-roles-field_role_weight'] = array(
     'bundle' => 'roles',
     'default_value' => NULL,
@@ -556,7 +570,7 @@ function valghalla_volunteers_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-roles-field_rsvp_never'
+  // Exported field_instance: 'node-roles-field_rsvp_never'.
   $field_instances['node-roles-field_rsvp_never'] = array(
     'bundle' => 'roles',
     'default_value' => NULL,
@@ -567,6 +581,7 @@ function valghalla_volunteers_field_default_field_instances() {
         'label' => 'above',
         'module' => 'entityreference',
         'settings' => array(
+          'bypass_access' => FALSE,
           'link' => FALSE,
         ),
         'type' => 'entityreference_label',
@@ -595,7 +610,7 @@ function valghalla_volunteers_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-roles-field_rsvp_no'
+  // Exported field_instance: 'node-roles-field_rsvp_no'.
   $field_instances['node-roles-field_rsvp_no'] = array(
     'bundle' => 'roles',
     'default_value' => NULL,
@@ -606,6 +621,7 @@ function valghalla_volunteers_field_default_field_instances() {
         'label' => 'above',
         'module' => 'entityreference',
         'settings' => array(
+          'bypass_access' => FALSE,
           'link' => FALSE,
         ),
         'type' => 'entityreference_label',
@@ -634,7 +650,7 @@ function valghalla_volunteers_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-roles-field_rsvp_yes'
+  // Exported field_instance: 'node-roles-field_rsvp_yes'.
   $field_instances['node-roles-field_rsvp_yes'] = array(
     'bundle' => 'roles',
     'default_value' => NULL,
@@ -645,6 +661,7 @@ function valghalla_volunteers_field_default_field_instances() {
         'label' => 'above',
         'module' => 'entityreference',
         'settings' => array(
+          'bypass_access' => FALSE,
           'link' => FALSE,
         ),
         'type' => 'entityreference_label',
@@ -673,7 +690,7 @@ function valghalla_volunteers_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-volunteers-field_address_bnummer'
+  // Exported field_instance: 'node-volunteers-field_address_bnummer'.
   $field_instances['node-volunteers-field_address_bnummer'] = array(
     'bundle' => 'volunteers',
     'default_value' => NULL,
@@ -709,11 +726,11 @@ function valghalla_volunteers_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 17,
+      'weight' => 18,
     ),
   );
 
-  // Exported field_instance: 'node-volunteers-field_address_city'
+  // Exported field_instance: 'node-volunteers-field_address_city'.
   $field_instances['node-volunteers-field_address_city'] = array(
     'bundle' => 'volunteers',
     'default_value' => NULL,
@@ -753,7 +770,7 @@ function valghalla_volunteers_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-volunteers-field_address_coname'
+  // Exported field_instance: 'node-volunteers-field_address_coname'.
   $field_instances['node-volunteers-field_address_coname'] = array(
     'bundle' => 'volunteers',
     'default_value' => NULL,
@@ -793,7 +810,7 @@ function valghalla_volunteers_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-volunteers-field_address_door'
+  // Exported field_instance: 'node-volunteers-field_address_door'.
   $field_instances['node-volunteers-field_address_door'] = array(
     'bundle' => 'volunteers',
     'default_value' => NULL,
@@ -833,7 +850,7 @@ function valghalla_volunteers_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-volunteers-field_address_floor'
+  // Exported field_instance: 'node-volunteers-field_address_floor'.
   $field_instances['node-volunteers-field_address_floor'] = array(
     'bundle' => 'volunteers',
     'default_value' => NULL,
@@ -873,7 +890,7 @@ function valghalla_volunteers_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-volunteers-field_address_road'
+  // Exported field_instance: 'node-volunteers-field_address_road'.
   $field_instances['node-volunteers-field_address_road'] = array(
     'bundle' => 'volunteers',
     'default_value' => NULL,
@@ -913,7 +930,7 @@ function valghalla_volunteers_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-volunteers-field_address_road_no'
+  // Exported field_instance: 'node-volunteers-field_address_road_no'.
   $field_instances['node-volunteers-field_address_road_no'] = array(
     'bundle' => 'volunteers',
     'default_value' => NULL,
@@ -953,7 +970,7 @@ function valghalla_volunteers_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-volunteers-field_address_zipcode'
+  // Exported field_instance: 'node-volunteers-field_address_zipcode'.
   $field_instances['node-volunteers-field_address_zipcode'] = array(
     'bundle' => 'volunteers',
     'default_value' => NULL,
@@ -999,7 +1016,7 @@ function valghalla_volunteers_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-volunteers-field_cpr_number'
+  // Exported field_instance: 'node-volunteers-field_cpr_number'.
   $field_instances['node-volunteers-field_cpr_number'] = array(
     'bundle' => 'volunteers',
     'default_value' => NULL,
@@ -1039,7 +1056,7 @@ function valghalla_volunteers_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-volunteers-field_cpr_status'
+  // Exported field_instance: 'node-volunteers-field_cpr_status'.
   $field_instances['node-volunteers-field_cpr_status'] = array(
     'bundle' => 'volunteers',
     'default_value' => NULL,
@@ -1072,11 +1089,11 @@ function valghalla_volunteers_field_default_field_instances() {
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_select',
-      'weight' => 25,
+      'weight' => 26,
     ),
   );
 
-  // Exported field_instance: 'node-volunteers-field_cpr_valid_date'
+  // Exported field_instance: 'node-volunteers-field_cpr_valid_date'.
   $field_instances['node-volunteers-field_cpr_valid_date'] = array(
     'bundle' => 'volunteers',
     'deleted' => 0,
@@ -1091,6 +1108,7 @@ function valghalla_volunteers_field_default_field_instances() {
           'multiple_from' => '',
           'multiple_number' => '',
           'multiple_to' => '',
+          'show_remaining_days' => FALSE,
           'show_repeat_rule' => 'show',
         ),
         'type' => 'date_default',
@@ -1127,11 +1145,11 @@ function valghalla_volunteers_field_default_field_instances() {
         'year_range' => '-3:+3',
       ),
       'type' => 'date_select',
-      'weight' => 24,
+      'weight' => 25,
     ),
   );
 
-  // Exported field_instance: 'node-volunteers-field_diaet'
+  // Exported field_instance: 'node-volunteers-field_diaet'.
   $field_instances['node-volunteers-field_diaet'] = array(
     'bundle' => 'volunteers',
     'default_value' => array(
@@ -1177,11 +1195,11 @@ function valghalla_volunteers_field_default_field_instances() {
       'module' => 'number',
       'settings' => array(),
       'type' => 'number',
-      'weight' => 18,
+      'weight' => 19,
     ),
   );
 
-  // Exported field_instance: 'node-volunteers-field_electioninfo'
+  // Exported field_instance: 'node-volunteers-field_electioninfo'.
   $field_instances['node-volunteers-field_electioninfo'] = array(
     'bundle' => 'volunteers',
     'default_value' => NULL,
@@ -1220,11 +1238,11 @@ function valghalla_volunteers_field_default_field_instances() {
       'module' => 'field_collection',
       'settings' => array(),
       'type' => 'field_collection_embed',
-      'weight' => 19,
+      'weight' => 20,
     ),
   );
 
-  // Exported field_instance: 'node-volunteers-field_email'
+  // Exported field_instance: 'node-volunteers-field_email'.
   $field_instances['node-volunteers-field_email'] = array(
     'bundle' => 'volunteers',
     'default_value' => NULL,
@@ -1263,7 +1281,7 @@ function valghalla_volunteers_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-volunteers-field_external_signup'
+  // Exported field_instance: 'node-volunteers-field_external_signup'.
   $field_instances['node-volunteers-field_external_signup'] = array(
     'bundle' => 'volunteers',
     'default_value' => array(
@@ -1302,11 +1320,11 @@ function valghalla_volunteers_field_default_field_instances() {
         'display_label' => 1,
       ),
       'type' => 'options_onoff',
-      'weight' => 21,
+      'weight' => 22,
     ),
   );
 
-  // Exported field_instance: 'node-volunteers-field_label'
+  // Exported field_instance: 'node-volunteers-field_label'.
   $field_instances['node-volunteers-field_label'] = array(
     'bundle' => 'volunteers',
     'default_value' => NULL,
@@ -1346,7 +1364,7 @@ function valghalla_volunteers_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-volunteers-field_meeting_time'
+  // Exported field_instance: 'node-volunteers-field_meeting_time'.
   $field_instances['node-volunteers-field_meeting_time'] = array(
     'bundle' => 'volunteers',
     'default_value' => NULL,
@@ -1378,11 +1396,48 @@ function valghalla_volunteers_field_default_field_instances() {
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_select',
-      'weight' => 20,
+      'weight' => 21,
     ),
   );
 
-  // Exported field_instance: 'node-volunteers-field_no_mail'
+  // Exported field_instance: 'node-volunteers-field_municipality'.
+  $field_instances['node-volunteers-field_municipality'] = array(
+    'bundle' => 'volunteers',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'list',
+        'settings' => array(),
+        'type' => 'list_default',
+        'weight' => 36,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_municipality',
+    'label' => 'Municipality',
+    'required' => 0,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'options',
+      'settings' => array(),
+      'type' => 'options_select',
+      'weight' => 17,
+    ),
+  );
+
+  // Exported field_instance: 'node-volunteers-field_no_mail'.
   $field_instances['node-volunteers-field_no_mail'] = array(
     'bundle' => 'volunteers',
     'default_value' => array(
@@ -1421,11 +1476,11 @@ function valghalla_volunteers_field_default_field_instances() {
         'display_label' => 1,
       ),
       'type' => 'options_onoff',
-      'weight' => 26,
+      'weight' => 27,
     ),
   );
 
-  // Exported field_instance: 'node-volunteers-field_party'
+  // Exported field_instance: 'node-volunteers-field_party'.
   $field_instances['node-volunteers-field_party'] = array(
     'bundle' => 'volunteers',
     'default_value' => NULL,
@@ -1462,7 +1517,7 @@ function valghalla_volunteers_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-volunteers-field_phone'
+  // Exported field_instance: 'node-volunteers-field_phone'.
   $field_instances['node-volunteers-field_phone'] = array(
     'bundle' => 'volunteers',
     'default_value' => NULL,
@@ -1502,7 +1557,7 @@ function valghalla_volunteers_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-volunteers-field_phone2'
+  // Exported field_instance: 'node-volunteers-field_phone2'.
   $field_instances['node-volunteers-field_phone2'] = array(
     'bundle' => 'volunteers',
     'default_value' => NULL,
@@ -1542,7 +1597,7 @@ function valghalla_volunteers_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-volunteers-field_polling_station'
+  // Exported field_instance: 'node-volunteers-field_polling_station'.
   $field_instances['node-volunteers-field_polling_station'] = array(
     'bundle' => 'volunteers',
     'default_value' => NULL,
@@ -1579,7 +1634,7 @@ function valghalla_volunteers_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-volunteers-field_polling_station_post'
+  // Exported field_instance: 'node-volunteers-field_polling_station_post'.
   $field_instances['node-volunteers-field_polling_station_post'] = array(
     'bundle' => 'volunteers',
     'default_value' => NULL,
@@ -1619,7 +1674,7 @@ function valghalla_volunteers_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-volunteers-field_rolle_id'
+  // Exported field_instance: 'node-volunteers-field_rolle_id'.
   $field_instances['node-volunteers-field_rolle_id'] = array(
     'bundle' => 'volunteers',
     'default_value' => NULL,
@@ -1655,7 +1710,7 @@ function valghalla_volunteers_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-volunteers-field_valid_state'
+  // Exported field_instance: 'node-volunteers-field_valid_state'.
   $field_instances['node-volunteers-field_valid_state'] = array(
     'bundle' => 'volunteers',
     'default_value' => array(
@@ -1692,11 +1747,11 @@ function valghalla_volunteers_field_default_field_instances() {
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_select',
-      'weight' => 23,
+      'weight' => 24,
     ),
   );
 
-  // Exported field_instance: 'node-volunteers-field_volunteer_valid_date'
+  // Exported field_instance: 'node-volunteers-field_volunteer_valid_date'.
   $field_instances['node-volunteers-field_volunteer_valid_date'] = array(
     'bundle' => 'volunteers',
     'deleted' => 0,
@@ -1711,6 +1766,7 @@ function valghalla_volunteers_field_default_field_instances() {
           'multiple_from' => '',
           'multiple_number' => '',
           'multiple_to' => '',
+          'show_remaining_days' => FALSE,
         ),
         'type' => 'date_default',
         'weight' => 32,
@@ -1746,7 +1802,7 @@ function valghalla_volunteers_field_default_field_instances() {
         'year_range' => '-3:+3',
       ),
       'type' => 'date_select',
-      'weight' => 22,
+      'weight' => 23,
     ),
   );
 
@@ -1769,6 +1825,7 @@ function valghalla_volunteers_field_default_field_instances() {
   t('Hus nr.');
   t('Invitation');
   t('Label');
+  t('Municipality');
   t('Mødetid');
   t('Mødetidspunkt');
   t('Parti');

@@ -1,0 +1,122 @@
+<?php
+/**
+ * @file
+ * Code for the Valghalla TFA Extension module feature.
+ */
+
+include_once 'valghalla_tfa.features.inc';
+
+/**
+ * Implements hook_tfa_api().
+ */
+function valghalla_tfa_tfa_api() {
+  return array(
+    'valghalla_tfa_trusted_ip' => array(
+      'class' => 'TfaTrustedIp',
+      'name' => 'Trusted IPs',
+    ),
+  );
+}
+
+/**
+ * Create TfaTrustedBrowser plugin.
+ *
+ * @param array $context
+ * @return TfaTrustedBrowser
+ */
+function valghalla_tfa_trusted_ip_create($context) {
+  return new TfaTrustedIp($context);
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function valghalla_tfa_form_tfa_admin_settings_alter(&$form, &$form_state, $form_id) {
+// Add cookie domain field to TFA admin settings.
+  $form['valghalla_tfa_trusted_ip'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Trusted IP list (bypassed TFA check)'),
+    '#default_value' => variable_get('valghalla_tfa_trusted_ip'),
+    '#description' => t('Comma separated. Ex. 192.168.1.1,192.168.2.1'),
+    '#states' => array(
+      'visible' => array(
+        ':input[name="tfa_login[valghalla_tfa_trusted_ip]"]' => array('checked' => TRUE)
+      )
+    ),
+  );
+
+  $form['valghalla_tfa_setup_mandatory'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Mandatory setup'),
+    '#default_value' => variable_get('valghalla_tfa_setup_mandatory'),
+    '#description' => t('If the setup is mandatory user MUST setup the TFA before proceeding any further'),
+    '#states' => array(
+      'visible' => array(
+        ':input[name="tfa_login[valghalla_tfa_trusted_ip]"]' => array('checked' => TRUE)
+      )
+    ),
+  );
+
+  $form['#validate'][] = 'valghalla_tfa_admin_form_validate';
+  $form['#submit'][] = 'valghalla_tfa_admin_form_submit';
+}
+
+/**
+ * Validation for TFA admin settings alter.
+ */
+function valghalla_tfa_admin_form_validate($form, &$form_state) {
+  if (preg_match("/[^0-9.,]/", $form_state['values']['valghalla_tfa_trusted_ip'])) {
+    form_set_error('valghalla_tfa_trusted_ip', 'Invalid format');
+  }
+}
+
+/**
+ * Submit for TFA admin settings alter.
+ */
+function valghalla_tfa_admin_form_submit($form, &$form_state) {
+  variable_set('valghalla_tfa_trusted_ip', $form_state['values']['valghalla_tfa_trusted_ip']);
+  variable_set('valghalla_tfa_setup_mandatory', $form_state['values']['valghalla_tfa_setup_mandatory']);
+}
+
+function valghalla_tfa_user_login(&$edit, $account) {
+  $account_data = tfa_basic_get_tfa_data($account);
+  if ((empty($account_data) || !$account_data['status']) && user_access('setup own tfa')) {
+    drupal_set_message(t('Opret venligst to faktor autentificering indstillinger'));
+    unset($_GET['destination']);
+    drupal_goto('user/' . $account->uid . '/security/tfa');
+  } else {
+    $_SESSION['tfa_is_setup'] = TRUE;
+  }
+}
+
+/**
+ * Implement hook_boot
+ * 
+ * Intended to forbid access to any of the pages, unless TFA is set up (unless TFA setup is not mandatory).
+ */
+function valghalla_tfa_boot() {
+  //proceeding only for non-anonymous user, which does NOT have flag in the session
+  if (php_sapi_name() != 'cli' && $GLOBALS['user']->uid != 0 && !$_SESSION['tfa_is_setup']) {
+    require_once(DRUPAL_ROOT . '/includes/common.inc');
+    require_once(DRUPAL_ROOT . '/includes/path.inc');
+
+    //is the TFA mandatory?
+    if (variable_get('valghalla_tfa_setup_mandatory', FALSE)) {
+      //loading required modules
+      drupal_load('module', 'user');
+      drupal_load('module', 'tfa_basic');
+
+      //does use have tfa set up?
+      $account_data = tfa_basic_get_tfa_data($GLOBALS['user']);
+
+      if ((empty($account_data) || !$account_data['status']) && user_access('setup own tfa')) {
+        //checking that URL is not already tfa setup or logout
+        if (strpos($_GET['q'], 'user/' . $GLOBALS['user']->uid . '/security/tfa') !== 0 && strpos($_GET['q'], 'user/logout') !== 0) {
+          drupal_set_message(t('Opret venligst to faktor autentificering indstillinger'));
+          unset($_GET['destination']);
+          drupal_goto('user/' . $GLOBALS['user']->uid . '/security/tfa');
+        }
+      }
+    }
+  }
+}

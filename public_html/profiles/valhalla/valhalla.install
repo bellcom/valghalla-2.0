@@ -133,4 +133,5 @@ function valhalla_install() {
     $edit->vid = $vid;
     taxonomy_term_save($edit);
   };
+  features_revert_module('valghalla_mail');
 }

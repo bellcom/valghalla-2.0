@@ -71,6 +71,7 @@ features[field_instance][] = field_collection_item-field_volunteers_pr_party_1-f
 features[field_instance][] = field_collection_item-field_volunteers_pr_party_1-field_role_n2528
 features[field_instance][] = field_collection_item-field_volunteers_pr_party_1-field_role_n2529
 features[field_instance][] = field_collection_item-field_volunteers_pr_party_1-field_role_n2530
+features[field_instance][] = node-polling_station-body
 features[field_instance][] = node-polling_station-field_address_city
 features[field_instance][] = node-polling_station-field_address_door
 features[field_instance][] = node-polling_station-field_address_floor

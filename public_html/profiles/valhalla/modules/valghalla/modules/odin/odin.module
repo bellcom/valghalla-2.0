@@ -11,7 +11,7 @@
  */
 function odin_menu() {
   $items['reset-alphabetical/%'] = array(
-    'title' => 'Nulstil til alfabetisk rækkefølge',
+    'title' => t('Nulstil til alfabetisk rækkefølge'),
     'page callback' => 'drupal_get_form',
     'page arguments' => array('odin_reset_alphabetical_form', 1),
     'access arguments' => array('administer valghalla'),

@@ -10,7 +10,7 @@
 function valghalla_election_field_default_field_instances() {
   $field_instances = array();
 
-  // Exported field_instance: 'node-constituency-body'
+  // Exported field_instance: 'node-constituency-body'.
   $field_instances['node-constituency-body'] = array(
     'bundle' => 'constituency',
     'default_value' => NULL,
@@ -55,7 +55,7 @@ function valghalla_election_field_default_field_instances() {
     'widget_type' => 'text_textarea_with_summary',
   );
 
-  // Exported field_instance: 'node-election-field_date'
+  // Exported field_instance: 'node-election-field_date'.
   $field_instances['node-election-field_date'] = array(
     'bundle' => 'election',
     'deleted' => 0,
@@ -70,6 +70,7 @@ function valghalla_election_field_default_field_instances() {
           'multiple_from' => '',
           'multiple_number' => '',
           'multiple_to' => '',
+          'show_remaining_days' => FALSE,
           'show_repeat_rule' => 'show',
         ),
         'type' => 'date_default',
@@ -110,7 +111,7 @@ function valghalla_election_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-election-field_election_mails_send'
+  // Exported field_instance: 'node-election-field_election_mails_send'.
   $field_instances['node-election-field_election_mails_send'] = array(
     'bundle' => 'election',
     'default_value' => array(
@@ -153,7 +154,7 @@ function valghalla_election_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-election-field_election_status'
+  // Exported field_instance: 'node-election-field_election_status'.
   $field_instances['node-election-field_election_status'] = array(
     'bundle' => 'election',
     'default_value' => array(
@@ -196,7 +197,7 @@ function valghalla_election_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-election-field_election_type'
+  // Exported field_instance: 'node-election-field_election_type'.
   $field_instances['node-election-field_election_type'] = array(
     'bundle' => 'election',
     'default_value' => NULL,
@@ -233,7 +234,7 @@ function valghalla_election_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-election-field_polling_stations'
+  // Exported field_instance: 'node-election-field_polling_stations'.
   $field_instances['node-election-field_polling_stations'] = array(
     'bundle' => 'election',
     'default_value' => NULL,
@@ -244,6 +245,7 @@ function valghalla_election_field_default_field_instances() {
         'label' => 'above',
         'module' => 'entityreference',
         'settings' => array(
+          'bypass_access' => FALSE,
           'link' => FALSE,
         ),
         'type' => 'entityreference_label',
@@ -272,7 +274,7 @@ function valghalla_election_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'taxonomy_term-partier-field_bogstav'
+  // Exported field_instance: 'taxonomy_term-partier-field_bogstav'.
   $field_instances['taxonomy_term-partier-field_bogstav'] = array(
     'bundle' => 'partier',
     'default_value' => NULL,
@@ -306,7 +308,7 @@ function valghalla_election_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'taxonomy_term-partier-field_logo'
+  // Exported field_instance: 'taxonomy_term-partier-field_logo'.
   $field_instances['taxonomy_term-partier-field_logo'] = array(
     'bundle' => 'partier',
     'deleted' => 0,
@@ -350,7 +352,7 @@ function valghalla_election_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'taxonomy_term-partier-field_partinavn'
+  // Exported field_instance: 'taxonomy_term-partier-field_partinavn'.
   $field_instances['taxonomy_term-partier-field_partinavn'] = array(
     'bundle' => 'partier',
     'default_value' => NULL,
@@ -384,7 +386,7 @@ function valghalla_election_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'taxonomy_term-partier-field_partisek'
+  // Exported field_instance: 'taxonomy_term-partier-field_partisek'.
   $field_instances['taxonomy_term-partier-field_partisek'] = array(
     'bundle' => 'partier',
     'default_value' => NULL,
@@ -418,7 +420,7 @@ function valghalla_election_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'taxonomy_term-partier-field_secretary'
+  // Exported field_instance: 'taxonomy_term-partier-field_secretary'.
   $field_instances['taxonomy_term-partier-field_secretary'] = array(
     'bundle' => 'partier',
     'default_value' => NULL,

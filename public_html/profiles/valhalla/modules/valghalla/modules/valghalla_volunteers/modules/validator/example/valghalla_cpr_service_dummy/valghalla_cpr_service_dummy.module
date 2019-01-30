@@ -53,7 +53,7 @@ function valghalla_cpr_service_dummy_valghalla_volunteer_validator_cpr_service()
 function valghalla_cpr_service_dummy_settings(){
   $form['dummy_settings'] = array(
     '#type' => 'item',
-    '#title' => 'Put some settings here',
+    '#title' => t('Put some settings here'),
   );
 
   return system_settings_form($form);

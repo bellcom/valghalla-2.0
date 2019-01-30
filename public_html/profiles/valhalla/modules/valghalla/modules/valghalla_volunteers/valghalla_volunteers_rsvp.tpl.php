@@ -16,13 +16,13 @@
   <p><?php print t('Her kan du tilkendegive om du ønsker at udfylde den post vi har tiltænkt dig i det kommende valg.') ?></p>
 </div>
 <?php if($rsvp): ?>
-<p> Vi har registreret følgende svar: <strong> <?php print $rsvp_status; ?></strong>.</p>
+<p> <?php print t('Vi har registreret følgende svar: '); ?> <strong> <?php print $rsvp_status; ?></strong>.</p>
 <?php endif; ?>
 <br />
 <table>
   <tr>
     <td class="col-sm-3 col-md-3">
-      <b>Funktion:</b><br />
+      <b><?php print t('Funktion:'); ?></b><br />
     </td>
     <td class="col-sm-9 col-md-9">
       <?php if (!empty($params['!position_description'])) : ?>
@@ -43,7 +43,7 @@
 
   <tr>
     <td class="col-sm-3 col-md-3">
-      <b>Tidspunkter:</b><br />
+      <b><?php print t('Tidspunkter:'); ?></b><br />
     </td>
     <td class="col-sm-9 col-md-9">
       <?php print $params['!time']; ?><br />
@@ -54,7 +54,7 @@
   </tr>
   <tr>
     <td class="col-sm-3 col-md-3">
-      <b>Valgsted:</b>
+      <b><?php print t('Valgsted:'); ?></b>
     </td>
     <td class="col-sm-9 col-md-9">
       <?php print $params['!polling_station']; ?><br />

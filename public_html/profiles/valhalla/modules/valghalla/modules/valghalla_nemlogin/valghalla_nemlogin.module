@@ -6,15 +6,15 @@
 function valghalla_nemlogin_menu() {
   $items = array();
   $items['nemlogin/handlepost'] = array(
-    'title' => 'Nemlogin handlepost',
+    'title' => t('Nemlogin handlepost'),
     'page callback' => 'valghalla_nemlogin_handlepost',
     'access callback' => TRUE,
     'type' => MENU_CALLBACK,
   );
 
   $items['admin/config/nemlogin'] = array(
-    'title' => 'Valghalla Nemlogin',
-    'description' => 'Valghalla Nemlogin configuration',
+    'title' => t('Valghalla Nemlogin'),
+    'description' => t('Valghalla Nemlogin configuration'),
     'access arguments' => array('administer valghalla'),
     'page callback' => 'system_admin_menu_block_page',
     'file' => 'system.admin.inc',
@@ -23,8 +23,8 @@ function valghalla_nemlogin_menu() {
   );
 
   $items['admin/config/nemlogin/config'] = array(
-    'title' => 'Valghalla Nemlogin configuration',
-    'description' => 'Configure Nemlogin',
+    'title' => t('Valghalla Nemlogin configuration'),
+    'description' => t('Configure Nemlogin'),
     'page callback' => 'drupal_get_form',
     'page arguments' => array('valghalla_nemlogin_settings_form'),
     'access arguments' => array('administer valghalla'),

@@ -9,7 +9,7 @@
  */
 function liste_deltager_menu() {
   $items['valghalla_lists/deltagere'] = array(
-    'title' => 'Deltagerlister',
+    'title' => t('Deltagerlister'),
     'page callback' => 'drupal_get_form',
     'page arguments' => array('liste_deltager_form'),
     'access arguments' => array('liste deltager see list'),
@@ -19,7 +19,7 @@ function liste_deltager_menu() {
 
   foreach ($saved_filters as $id => $filter) {
     $items['valghalla_lists/gemt_liste-' . $id] = array(
-      'title' => 'Gemt liste: ' . $filter['name'],
+      'title' => t('Gemt liste: ') . $filter['name'],
       'page callback' => 'drupal_goto',
       'page arguments' => array('valghalla_lists/deltagere/' . $id),
       'access arguments' => array('liste deltager see list'),
@@ -37,16 +37,16 @@ function liste_deltager_menu() {
 function liste_deltager_permission() {
   return array(
     'liste deltager see list' => array(
-      'title' => 'Se "Deltagerlister"',
-      'description' => 'Dette tillader kun brugeren at se gemte lister',
+      'title' => t('Se "Deltagerlister"'),
+      'description' => t('Dette tillader kun brugeren at se gemte lister'),
     ),
     'liste deltager change filters' => array(
-      'title' => 'Ændre filtre på "Deltagerlister"',
-      'description' => 'Dette tillader brugeren at se gemte liste og skifte deres filtre',
+      'title' => t('Ændre filtre på "Deltagerlister"'),
+      'description' => t('Dette tillader brugeren at se gemte liste og skifte deres filtre'),
     ),
     'liste deltager administer saved filters' => array(
-      'title' => 'Gemme filtre på "Deltagerlister"',
-      'description' => 'Dette tillader brugeren at se gemme filtre',
+      'title' => t('Gemme filtre på "Deltagerlister"'),
+      'description' => t('Dette tillader brugeren at se gemme filtre'),
     ),
   );
 }
@@ -111,13 +111,13 @@ function liste_deltager_form($form, &$form_state) {
     '#type' => 'checkboxes',
     '#title' => t('Status'),
     '#options' => array(
-      0 => 'Ikke besvaret',
-      1 => 'Ja',
-      2 => 'Nej',
-      3 => 'Aldrig',
+      0 => t('Ikke besvaret'),
+      1 => t('Ja'),
+      2 => t('Nej'),
+      3 => t('Aldrig'),
     ),
     '#prefix' => '<div class="col-sm-6 col-md-3">',
-    '#suffix' => '<a class="js-select-all" href="#">Vælg alle</a></div></div>',
+    '#suffix' => '<a class="js-select-all" href="#">' . t('Vælg alle') . '</a></div></div>',
   );
 
   $saved_filters = variable_get('liste_deltager_saved_filters', array());
@@ -129,14 +129,14 @@ function liste_deltager_form($form, &$form_state) {
   $saved_filters_list .= '</ul>';
 
   $form['save_filters']['filters'] = array(
-    '#title' => 'Filtre',
+    '#title' => t('Filtre'),
     '#type' => 'item',
     '#markup' => $saved_filters_list,
   );
 
   $form['save_filters']['name'] = array(
     '#type' => 'textfield',
-    '#title' => 'Navn på filter',
+    '#title' => t('Navn på filter'),
     '#suffix' => '<p><small>Opdateres navnet gemmes nyt filter med dette.</small></p>',
   );
 
@@ -331,10 +331,10 @@ function liste_deltager_get_volunteers($values) {
   $polling_station = count($values['polling_station']) > 0 ? $values['polling_station'] : FALSE;
 
   $rsvp_map = array(
-    0 => '-',
-    1 => 'Ja',
-    2 => 'Nej',
-    3 => 'Aldrig',
+    0 => t('-'),
+    1 => t('Ja'),
+    2 => t('Nej'),
+    3 => t('Aldrig'),
   );
 
   if ($_SESSION['election_nid']) {
@@ -385,6 +385,7 @@ function liste_deltager_get_volunteers($values) {
     }
 
     $volunteer = $volunteer_fc->hostEntity();
+    if (!isset($volunteer)) continue;
 
     $party_post_field = field_get_items('field_collection_item', $volunteer_fc, 'field_post_party');
     $party_post = $parties[$party_post_field[0]['target_id']];
@@ -562,17 +563,17 @@ function liste_deltager_theme() {
  */
 function _liste_deltager_columns() {
   return array(
-    'name' => 'Navn',
-    'cpr' => 'Cpr-nr.',
-    'age' => 'Alder',
-    'role' => 'Rolle',
-    'rsvp' => 'RSVP',
-    'phone' => 'Telefon',
-    'mail' => 'Mail',
-    'party' => 'Parti (deltager)',
-    'party_post' => 'Parti (plads)',
-    'diet' => 'Diæt',
-    'sign' => 'Kvittering',
+    'name' => t('Navn'),
+    'cpr' => t('Cpr-nr.'),
+    'age' => t('Alder'),
+    'role' => t('Rolle'),
+    'rsvp' => t('RSVP'),
+    'phone' => t('Telefon'),
+    'mail' => t('Mail'),
+    'party' => t('Parti (deltager)'),
+    'party_post' => t('Parti (plads)'),
+    'diet' => t('Diæt'),
+    'sign' => t('Kvittering'),
   );
 }
 
@@ -582,7 +583,7 @@ function _liste_deltager_columns() {
 function liste_deltager_polling_station_options() {
 
   if (!$election_node = node_load($_SESSION['election_nid'])) {
-    return array('Du skal vælge et valg i dropdown menuen øverst.');
+    return array(t('Du skal vælge et valg i dropdown menuen øverst.'));
   }
 
   // Use odin_get_polling_stations(), it will return a correctly sorted array

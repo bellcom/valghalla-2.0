@@ -121,15 +121,15 @@ function valghalla_mail_sendmail_get_recipients_form($form, &$form_state, $nid) 
       $description = ' <a class="form-submit" href="/node/' . $nid . '/edit?destination=valghalla/administration/sendto/' . $nid . '">' . t('edit') . '</a>';
     }
     else {
-      $description = ' <a class="form-submit" href="/valghalla/administration/sendmail">Add</a>';
+      $description = ' <a class="form-submit" href="/valghalla/administration/sendmail">' . t('Add') . '</a>';
     }
   }
   else {
-    $description = ' <a class="form-submit" href="/valghalla/administration/sendmail">Add</a>';
+    $description = ' <a class="form-submit" href="/valghalla/administration/sendmail">' . t('Add') . '</a>';
   }
 
   $form['mail_content']['valghalla_mail_email_node_ID'] = array(
-    '#title' => "Mail indhold",
+    '#title' => t('Mail indhold'),
     '#type' => 'select',
     '#options' => array($nid => isset($node->title) ? $node->title : ''),
     '#default_value' => $nid,
@@ -138,13 +138,13 @@ function valghalla_mail_sendmail_get_recipients_form($form, &$form_state, $nid) 
 
   $form['recipents'] = array(
     '#type' => 'fieldset',
-    '#title' => 'Modtagere',
-    '#description' => "Hold CTRL nede for at vælge flere. Ingen valgte vil sende til alle.",
+    '#title' => t('Modtagere'),
+    '#description' => t('Hold CTRL nede for at vælge flere. Ingen valgte vil sende til alle.'),
   );
 
   $form['recipents']['election'] = array(
     '#type' => 'select',
-    '#title' => 'Valg',
+    '#title' => t('Valg'),
     '#multiple' => TRUE,
     '#options' => $elections,
     '#size' => 5,
@@ -155,7 +155,7 @@ function valghalla_mail_sendmail_get_recipients_form($form, &$form_state, $nid) 
 
   $form['recipents']['rsvp_status'] = array(
     '#type' => 'select',
-    '#title' => 'RSVP Status',
+    '#title' => t('RSVP Status'),
     '#options' => array(
       '1' => t('Ja'),
       '2' => t('Nej'),
@@ -170,7 +170,7 @@ function valghalla_mail_sendmail_get_recipients_form($form, &$form_state, $nid) 
 
   $form['recipents']['roles'] = array(
     '#type' => 'select',
-    '#title' => 'Deltager type',
+    '#title' => t('Deltager type'),
     '#multiple' => TRUE,
     '#options' => $roles,
     '#size' => 5,
@@ -181,7 +181,7 @@ function valghalla_mail_sendmail_get_recipients_form($form, &$form_state, $nid) 
 
   $form['recipents']['party'] = array(
     '#type' => 'select',
-    '#title' => 'Parti',
+    '#title' => t('Parti'),
     '#multiple' => TRUE,
     '#options' => $parties,
     '#size' => 5,
@@ -192,7 +192,7 @@ function valghalla_mail_sendmail_get_recipients_form($form, &$form_state, $nid) 
 
   $form['recipents']['polling_station'] = array(
     '#type' => 'select',
-    '#title' => 'Valgsted',
+    '#title' => t('Valgsted'),
     '#multiple' => TRUE,
     '#options' => $ps,
     '#size' => 5,
@@ -203,13 +203,13 @@ function valghalla_mail_sendmail_get_recipients_form($form, &$form_state, $nid) 
 
   $form['sender'] = array(
     '#type' => 'fieldset',
-    '#title' => 'Afsender',
+    '#title' => t('Afsender'),
   );
 
   $form['sender']['email_sender'] = array(
     '#type' => 'checkbox',
-    '#title' => "brug min egen mail",
-    '#description' => "Denne vil også bruges som svar-til email, så svar fra modtageren sendes til den pågældende e-mailadresse. ",
+    '#title' => t('brug min egen mail'),
+    '#description' => t('Denne vil også bruges som svar-til email, så svar fra modtageren sendes til den pågældende e-mailadresse. '),
     '#default_value' => isset($values['email_sender']) ? $values['email_sender'] : 0,
   );
 
@@ -373,7 +373,7 @@ function valghalla_mail_sendmail_get_recipients($values) {
 
   foreach (entity_load('field_collection_item', $result) as $volunteer_item) {
     $volunteer_node = $volunteer_item->hostEntity();
-
+    if (!isset($volunteer_node)) continue;
     if (!valghalla_mail_volunteer_no_mail($volunteer_node)) {
       $volunteer_fcids[] = $volunteer_item->item_id;
     }
@@ -412,7 +412,7 @@ function valghalla_mail_form_email_node_form_alter(&$form, &$form_state, $form_i
       '#type' => 'select',
       '#weight' => -100,
       '#options' => $emails,
-      '#title' => 'Vælg en mailskabelon her:',
+      '#title' => t('Vælg en mailskabelon her:'),
       '#suffix' => '<p><b>Eller opret en ny herunder:</b></p>',
       '#empty_option' => t('- None -'),
       '#ajax' => array(

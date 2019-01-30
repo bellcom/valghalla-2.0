@@ -139,7 +139,7 @@ function valghalla_mail_send_batch($mail_nid, $recipients, $form_state, &$contex
     }
   }
 
-  $context['message'] = "Det er vigtigt at du ikke forlader denne side!";
+  $context['message'] = t('Det er vigtigt at du ikke forlader denne side!');
 }
 
 function valghalla_mails_send_batch_finished($success, $results, $operations){

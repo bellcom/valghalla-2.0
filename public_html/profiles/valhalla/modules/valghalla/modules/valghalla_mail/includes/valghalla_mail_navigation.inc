@@ -24,9 +24,9 @@ function valghalla_mail_sendmail_get_header($form, &$form_state) {
   }
 
   $stages = array(
-    1 => array('data' => '1. Opret en mail'),
-    2 => array('data' => '2. Modtagere'),
-    3 => array('data' => '3. Send mail'),
+    1 => array('data' => t('1. Opret en mail')),
+    2 => array('data' => t('2. Modtagere')),
+    3 => array('data' => t('3. Send mail')),
   );
 
   $stages[$current_step]['data'] = '<b>' . $stages[$current_step]['data'] . '</b>';
@@ -35,7 +35,7 @@ function valghalla_mail_sendmail_get_header($form, &$form_state) {
 
   $form['header'] = array(
     '#type' => 'fieldset',
-    '#title' => 'Send mail til deltagere.',
+    '#title' => t('Send mail til deltagere.'),
   );
   $form['header']['steps'] = array(
     '#markup' => $stages_list,

@@ -13,7 +13,7 @@
  */
 function vvv_validate_age_menu() {
   $items['admin/valghalla/validator/validate_age'] = array(
-    'title' => 'Indstillinger for "Valider Alder"',
+    'title' => t('Indstillinger for "Valider Alder"'),
     'page callback' => 'drupal_get_form',
     'page arguments' => array('vvv_validate_age_settings'),
     'access arguments' => array('administer valghalla'),
@@ -29,7 +29,7 @@ function vvv_validate_age_menu() {
 function vvv_validate_age_valghalla_volunteer_validator_validate() {
   return array(
     'age' => array(
-      'label' => 'Valider alder',
+      'label' => t('Valider alder'),
       'description' => t('Valider deltagerens alder'),
       'validate' => 'vvv_validate_age_validate',
       'config' => 'admin/valghalla/validator/validate_age',
@@ -43,16 +43,16 @@ function vvv_validate_age_valghalla_volunteer_validator_validate() {
 function vvv_validate_age_settings() {
   $form['vvv_validate_age_on_election'] = array(
     '#type' => 'checkbox',
-    '#title' => 'Brug valgdato, for validering',
-    '#description' => 'Valider alderen mod valgets dato. Hvis dette ikke vælges, bruges dags dato.',
+    '#title' => t('Brug valgdato, for validering'),
+    '#description' => t('Valider alderen mod valgets dato. Hvis dette ikke vælges, bruges dags dato.'),
     '#default_value' => variable_get('vvv_validate_age_on_election', TRUE),
   );
 
   $form['vvv_validate_age_age'] = array(
     '#type' => 'textfield',
-    '#title' => 'Alder',
+    '#title' => t('Alder'),
     '#default_value' => variable_get('vvv_validate_age_age', 18),
-    '#description' => 'Hvilken alder skal deltageren min. have',
+    '#description' => t('Hvilken alder skal deltageren min. have'),
   );
 
   return system_settings_form($form);
@@ -61,7 +61,17 @@ function vvv_validate_age_settings() {
 /**
  * Validation on age.
  */
-function vvv_validate_age_validate($volunteer, $message) {
+function vvv_validate_age_validate($volunteer, $process) {
+  
+  // Do not validate, if disable
+  if ( ($process == 'single' AND !variable_get('validate_single_age', FALSE)) 
+          OR ( $process == 'batch' AND !variable_get('validate_batch_age', FALSE) )) {
+// we do not validate if disable
+    return array(
+      'valid' => TRUE,
+    );
+  }
+
   $date = &drupal_static(__FUNCTION__);
   if (!isset($date)) {
     // Get date to validate volunteer against.
@@ -98,7 +108,7 @@ function vvv_validate_age_validate($volunteer, $message) {
   catch (Exception $e) {
     return array(
       'valid' => FALSE,
-      'text' => 'Deltageren har ikke en gyldig fødselsdato',
+      'text' => t('Deltageren har ikke en gyldig fødselsdato'),
     );
   }
 
@@ -107,7 +117,7 @@ function vvv_validate_age_validate($volunteer, $message) {
   if ($years < $min_age) {
     return array(
       'valid' => FALSE,
-      'text' => 'Deltagerens alder er under: ' . $min_age,
+      'text' => t('Deltagerens alder er under: ') . $min_age,
     );
   }
   return array(

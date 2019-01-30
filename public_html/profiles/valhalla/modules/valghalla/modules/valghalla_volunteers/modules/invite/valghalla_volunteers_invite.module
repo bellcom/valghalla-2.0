@@ -8,7 +8,7 @@ function valghalla_volunteers_invite_menu() {
   $items = array();
 
   $items['valghalla/deltagere/invite'] = array(
-      'title' => 'Inviter tidligere deltagere',
+      'title' => t('Inviter tidligere deltagere'),
       'page callback' => 'drupal_get_form',
       'page arguments' => array('valghalla_volunteers_invite_select'),
       'access arguments' => array('administer valghalla'),
@@ -22,7 +22,7 @@ function valghalla_volunteers_invite_menu() {
 function valghalla_volunteers_invite_select($form, &$form_state) {
   $form['header'] = array(
     '#type' => 'fieldset',
-    '#title' => 'Vælg deltagere',
+    '#title' => t('Vælg deltagere'),
   );
 
   $form['header']['description'] = array(
@@ -30,14 +30,14 @@ function valghalla_volunteers_invite_select($form, &$form_state) {
   );
 
   $form['role'] = array(
-    '#title' => 'Rolle',
+    '#title' => t('Rolle'),
     '#type' => 'select',
     '#options' => odin_get_roles(),
     '#required' => TRUE,
   );
 
   $form['parties'] = array(
-    '#title' => 'Partier',
+    '#title' => t('Partier'),
     '#type' => 'select',
     '#options' => odin_get_parties(),
     '#multiple' => TRUE,
@@ -45,7 +45,7 @@ function valghalla_volunteers_invite_select($form, &$form_state) {
   );
 
   $form['election'] = array(
-    '#title' => 'Valg',
+    '#title' => t('Valg'),
     '#type' => 'select',
     '#options' => odin_get_elections(),
   );

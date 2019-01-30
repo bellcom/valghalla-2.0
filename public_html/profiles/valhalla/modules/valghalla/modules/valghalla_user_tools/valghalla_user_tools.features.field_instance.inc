@@ -10,7 +10,7 @@
 function valghalla_user_tools_field_default_field_instances() {
   $field_instances = array();
 
-  // Exported field_instance: 'user-user-field_full_name'
+  // Exported field_instance: 'user-user-field_full_name'.
   $field_instances['user-user-field_full_name'] = array(
     'bundle' => 'user',
     'default_value' => NULL,
@@ -22,12 +22,46 @@ function valghalla_user_tools_field_default_field_instances() {
         'module' => 'text',
         'settings' => array(),
         'type' => 'text_default',
-        'weight' => 3,
+        'weight' => 1,
       ),
     ),
     'entity_type' => 'user',
     'field_name' => 'field_full_name',
-    'label' => 'Fulde name',
+    'label' => 'Fulde navn',
+    'required' => 0,
+    'settings' => array(
+      'text_processing' => 0,
+      'user_register_form' => 1,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'text',
+      'settings' => array(
+        'size' => 60,
+      ),
+      'type' => 'text_textfield',
+      'weight' => 0,
+    ),
+  );
+
+  // Exported field_instance: 'user-user-field_mobile_phone'.
+  $field_instances['user-user-field_mobile_phone'] = array(
+    'bundle' => 'user',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => 'eks. +4512345678',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 2,
+      ),
+    ),
+    'entity_type' => 'user',
+    'field_name' => 'field_mobile_phone',
+    'label' => 'Mobiltelefon',
     'required' => 0,
     'settings' => array(
       'text_processing' => 0,
@@ -40,11 +74,11 @@ function valghalla_user_tools_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 1,
+      'weight' => 2,
     ),
   );
 
-  // Exported field_instance: 'user-user-field_party'
+  // Exported field_instance: 'user-user-field_party'.
   $field_instances['user-user-field_party'] = array(
     'bundle' => 'user',
     'default_value' => NULL,
@@ -55,7 +89,7 @@ function valghalla_user_tools_field_default_field_instances() {
         'label' => 'above',
         'settings' => array(),
         'type' => 'hidden',
-        'weight' => 2,
+        'weight' => 5,
       ),
       'full' => array(
         'label' => 'hidden',
@@ -76,11 +110,11 @@ function valghalla_user_tools_field_default_field_instances() {
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_buttons',
-      'weight' => 6,
+      'weight' => 7,
     ),
   );
 
-  // Exported field_instance: 'user-user-field_polling_station'
+  // Exported field_instance: 'user-user-field_polling_station'.
   $field_instances['user-user-field_polling_station'] = array(
     'bundle' => 'user',
     'default_value' => NULL,
@@ -92,7 +126,7 @@ function valghalla_user_tools_field_default_field_instances() {
         'module' => 'node_reference',
         'settings' => array(),
         'type' => 'node_reference_default',
-        'weight' => 0,
+        'weight' => 3,
       ),
       'full' => array(
         'label' => 'above',
@@ -114,15 +148,17 @@ function valghalla_user_tools_field_default_field_instances() {
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_buttons',
-      'weight' => 7,
+      'weight' => 8,
     ),
   );
 
   // Translatables
   // Included for use with string extractors like potx.
   t('Begræns adgang til følgende valgsteder');
-  t('Fulde name');
+  t('Fulde navn');
+  t('Mobiltelefon');
   t('Parti');
+  t('eks. +4512345678');
 
   return $field_instances;
 }

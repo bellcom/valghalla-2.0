@@ -6,7 +6,7 @@ function valghalla_lists_menu(){
   $items = array();
 
   $items['valghalla_lists'] = array(
-    'title' => 'Lister',
+    'title' => t('Lister'),
     'file path' => drupal_get_path('module', 'system'),
     'file' => 'system.admin.inc',
     'page callback' => 'system_admin_menu_block_page',
@@ -17,7 +17,7 @@ function valghalla_lists_menu(){
   // so we make a couple here, that just redirects the user
   // to the export paths
   $items['valghalla_lists/exportxls'] = array(
-    'title' => 'Eksporter valgdeltagere som XLS',
+    'title' => t('Eksporter valgdeltagere som XLS'),
     'type' => MENU_NORMAL_ITEM,
     'page callback' => 'valghalla_lists_redirect',
     'page arguments' => array('valghalla_lists/export_xls'),
@@ -25,7 +25,7 @@ function valghalla_lists_menu(){
   );
 
   $items['valghalla_lists/exportcsv'] = array(
-    'title' => 'Eksporter valgdeltagere som CSV',
+    'title' => t('Eksporter valgdeltagere som CSV'),
     'type' => MENU_NORMAL_ITEM,
     'page callback' => 'valghalla_lists_redirect',
     'page arguments' => array('valghalla_lists/export_csv'),
