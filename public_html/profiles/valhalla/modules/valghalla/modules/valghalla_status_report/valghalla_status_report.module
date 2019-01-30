@@ -598,6 +598,12 @@ function _generate_pdf_content__volunteer_list_from_polling_station($party_tid =
   // Run through all polling stations.
   foreach ($polling_station_nids as $polling_station_nid => $name) {
     $polling_station = node_load($polling_station_nid);
+    $available_seats = odin_get_volunteers_count($election->nid, array($polling_station_nid), odin_get_roles(), $selected_party_tid);
+
+    // Abort if this role has no seats available.
+    if ($available_seats['total_count']['assigned'] === 0) {
+      continue;
+    }
 
     $markup = '<h3>' . $polling_station->title . '</h3>';
 
