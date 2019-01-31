@@ -8,15 +8,25 @@ include_once('valghalla_election.features.inc');
  *  valghalla_election.module
  */
 
+module_load_include('inc', 'valghalla_election', 'includes/valghalla_election.pages');
+
 /**
- * implements hook_menu()
+ * Implements hook_menu().
  */
 function valghalla_election_menu(){
   $items = array();
 
   $items['valghalla/election'] = array(
     'page callback' => 'valghalla_election_set_election',
-    'access callback' => true,
+    'access callback' => TRUE,
+  );
+
+  $items['station/%/seats'] = array(
+    'title' => 'Handle election seats',
+    'access arguments' => array('administer valghalla'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('valghalla_election_handle_seats_form', 1),
+    'type' => MENU_CALLBACK,
   );
 
   return $items;
@@ -256,6 +266,7 @@ function valghalla_election_field_volunteers_pr_pol_st_party_form_validate($form
 
   // Loop through all combinations and find out if any of the input values
   // are lower than the already allocated count.
+
   foreach($map as $polling_station_nid => $parties_map) {
     foreach ($parties_map as $party_tid => $roles_map) {
       foreach ($roles_map as $role_nid => $count) {

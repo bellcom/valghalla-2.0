@@ -641,7 +641,14 @@ function valghalla_volunteers_to_polling_station($station_nid = NULL) {
     $node_edit = '<div><a class="btn btn-secondary edit-polling-station hidden" href="' . $node_edit_url . '">' . t('Rediger valgsted') . '</a></div>';
   }
 
-  return $node_edit . $markup . $modal;
+  // Let the used edit seats, if he/she has sufficient permissions.
+  $edit_seats = '';
+  if (user_access('administer valghalla')) {
+    $edit_seats_url = '/station/' . arg(2) . '/seats?destination=' . current_path();
+    $edit_seats = '<div><a class="btn btn-secondary edit-polling-station hidden" href="' . $edit_seats_url . '">' . t('Rediger steder') . '</a></div>';
+  }
+
+  return $node_edit . $edit_seats . $markup . $modal;
 }
 
 /**
