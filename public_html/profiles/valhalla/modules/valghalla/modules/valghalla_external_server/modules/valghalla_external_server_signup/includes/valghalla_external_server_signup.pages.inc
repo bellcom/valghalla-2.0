@@ -278,7 +278,7 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
   $field_election_disable_consent = field_get_items('node', $election, 'field_election_disable_consent');
   if (!empty($field_election_disable_consent) && $field_election_disable_consent[0]['value'] != 1) {
     $field_election_consent_text = field_get_items('node', $election, 'field_election_consent_text');
-    if (!empty($field_election_consent_text)) {
+    if (!empty($field_election_consent_text) && !empty($field_election_consent_text[0]['value'])) {
       $terms_agreement_text = $field_election_consent_text[0]['value'];
     }
     else {
