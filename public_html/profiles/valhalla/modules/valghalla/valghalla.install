@@ -219,3 +219,14 @@ function valghalla_update_7113() {
   // Transfer settings.
   variable_set('theme_' . $current_theme . '_settings', $mutated_settings);
 }
+
+/**
+ * Enabling node clone modules.
+ */
+function valghalla_update_7114() {
+  module_enable(array(
+    'clone',
+    'node_clone_tab',
+    'field_collection_node_clone',
+  ));
+}
