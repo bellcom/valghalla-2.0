@@ -57,7 +57,7 @@ function valghalla_election_handle_seats_form($form, &$form_state, $polling_stat
 
 /**
  * Form valghalla_election_handle_seats_form validate.
- * 
+ *
  * Uses valghalla_election_field_volunteers_pr_pol_st_party_form_validate for
  * actual validation, but gracefully handles the reassignment of the errors to
  * correct fields.
@@ -78,12 +78,14 @@ function valghalla_election_handle_seats_form_validate($form, &$form_state) {
       // Clear form errors.
       form_clear_error();
 
-      foreach ($entity_form_values as $entity_field_key => $entity_field) {
-        // If this is a field, check if we need to put some errors.
-        if (strpos($entity_field_key, 'field_') === 0) {
-          if (array_key_exists($entity_field_key, $errors)) {
-            $all_form_errors["$entity_id][$entity_field_key"] = $errors[$entity_field_key];
-            unset($errors[$entity_field_key]);
+      if (!empty($errors)) {
+        foreach ($entity_form_values as $entity_field_key => $entity_field) {
+          // If this is a field, check if we need to put some errors.
+          if (strpos($entity_field_key, 'field_') === 0) {
+            if (array_key_exists($entity_field_key, $errors)) {
+              $all_form_errors["$entity_id][$entity_field_key"] = $errors[$entity_field_key];
+              unset($errors[$entity_field_key]);
+            }
           }
         }
       }

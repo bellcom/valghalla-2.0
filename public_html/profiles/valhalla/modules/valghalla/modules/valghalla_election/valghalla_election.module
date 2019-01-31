@@ -254,7 +254,7 @@ function valghalla_election_field_volunteers_pr_pol_st_party_form_validate($form
       $count = $field_value[LANGUAGE_NONE][0]['number_vo'];
 
     }
-    if ($polling_station_nid && $party_tid && $role_nid) {
+    if (isset($polling_station_nid) && isset($party_tid) && isset($role_nid)) {
       $map[$polling_station_nid][$party_tid][$role_nid] = $count;
     }
   }
@@ -280,13 +280,15 @@ function valghalla_election_field_volunteers_pr_pol_st_party_form_validate($form
           ->fieldCondition('field_vlnt_station', 'target_id', $polling_station_nid);
 
         $query_result = $volunteer_query->execute();
-        $result       = array_keys(array_shift($query_result));
+        if (!empty($query_result)) {
+          $result = array_keys(array_shift($query_result));
 
-        if ($result) {
-          $allocated = count($result);
+          if ($result) {
+            $allocated = count($result);
 
-          if ($allocated > $count) {
-            form_set_error('field_role_n' . $role_nid, 'Deltagere - Det indtastede antal er mindre end antallet af tilføjede deltagere. Valgsted: ' . $polling_stations[$polling_station_nid] . ', Parti: ' . $parties[$party_tid] . ', Rolle: ' . $roles[$role_nid] . ', antal: ' . $allocated . ', indtastet: ' . $count);
+            if ($allocated > $count) {
+              form_set_error('field_role_n' . $role_nid, 'Deltagere - Det indtastede antal er mindre end antallet af tilføjede deltagere. Valgsted: ' . $polling_stations[$polling_station_nid] . ', Parti: ' . $parties[$party_tid] . ', Rolle: ' . $roles[$role_nid] . ', antal: ' . $allocated . ', indtastet: ' . $count);
+            }
           }
         }
       }
