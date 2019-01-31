@@ -175,6 +175,46 @@ function valghalla_election_field_default_field_instances() {
     ),
   );
 
+  // Exported field_instance: 'node-election-field_election_consent_text'.
+  $field_instances['node-election-field_election_consent_text'] = array(
+    'bundle' => 'election',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 20,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_election_consent_text',
+    'label' => 'Samtykke tekst',
+    'required' => 0,
+    'settings' => array(
+      'text_processing' => 0,
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'text',
+      'settings' => array(
+        'size' => 60,
+      ),
+      'type' => 'text_textfield',
+      'weight' => 16,
+    ),
+  );
+
   // Exported field_instance: 'node-election-field_election_disable_consent'.
   $field_instances['node-election-field_election_disable_consent'] = array(
     'bundle' => 'election',
@@ -1098,7 +1138,7 @@ function valghalla_election_field_default_field_instances() {
     ),
     'entity_type' => 'taxonomy_term',
     'field_name' => 'field_party_subsc_terms_text',
-    'label' => ' Terms and conditions text',
+    'label' => 'Vilkår og betingelser tekst',
     'required' => 0,
     'settings' => array(
       'text_processing' => 0,
@@ -1155,7 +1195,6 @@ function valghalla_election_field_default_field_instances() {
 
   // Translatables
   // Included for use with string extractors like potx.
-  t(' Terms and conditions text');
   t('Angiv om dette parti skal modtage PDF rapporter.');
   t('Benyttes til videresendelse af tilmeldinger, hvor der er udfyldt kommentarer');
   t('Body');
@@ -1174,6 +1213,7 @@ function valghalla_election_field_default_field_instances() {
   t('Notification config export (system field)');
   t('Parti');
   t('Partisekretær');
+  t('Samtykke tekst');
   t('Subscription comment');
   t('Sæt igang');
   t('Type');
@@ -1185,6 +1225,7 @@ function valghalla_election_field_default_field_instances() {
   t('Valider dansk statsborger');
   t('Valider ikke bopæl i kommunen');
   t('Valider om person med personnummerer er levende');
+  t('Vilkår og betingelser tekst');
 
   return $field_instances;
 }

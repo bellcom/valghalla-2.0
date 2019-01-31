@@ -277,7 +277,13 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
   $terms_agreement_text = '';
   $field_election_disable_consent = field_get_items('node', $election, 'field_election_disable_consent');
   if (!empty($field_election_disable_consent) && $field_election_disable_consent[0]['value'] != 1) {
-    $terms_agreement_text = t('Accepter at vi gemmer dine oplysninger.');
+    $field_election_consent_text = field_get_items('node', $election, 'field_election_consent_text');
+    if (!empty($field_election_consent_text)) {
+      $terms_agreement_text = $field_election_consent_text[0]['value'];
+    }
+    else {
+      $terms_agreement_text = t('Accepter at vi gemmer dine oplysninger.');
+    }
   }
   if (!empty($party->field_party_subsc_terms_text)) {
     $terms_agreement_text = $party->field_party_subsc_terms_text['und'][0]['value'];

@@ -84,6 +84,7 @@ function valghalla_election_field_group_info() {
       1 => 'field_election_disable_consent',
       2 => 'field_election_ext_require_email',
       3 => 'field_election_ext_require_phone',
+      4 => 'field_election_consent_text',
     ),
     'format_type' => 'htab',
     'format_settings' => array(
