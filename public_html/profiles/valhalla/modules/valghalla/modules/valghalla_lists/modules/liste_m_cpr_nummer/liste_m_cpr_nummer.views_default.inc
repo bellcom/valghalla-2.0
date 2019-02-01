@@ -176,7 +176,7 @@ function liste_m_cpr_nummer_views_default_views() {
   $handler->display->display_options['fields']['entity_id']['label'] = 'field_address_door';
   $handler->display->display_options['fields']['entity_id']['exclude'] = TRUE;
   $handler->display->display_options['fields']['entity_id']['hide_empty'] = TRUE;
-  /* Felt: Indhold: Dør / Side */
+  /* Felt: Indhold: Dør / side */
   $handler->display->display_options['fields']['entity_id_1']['id'] = 'entity_id_1';
   $handler->display->display_options['fields']['entity_id_1']['table'] = 'field_data_field_address_door';
   $handler->display->display_options['fields']['entity_id_1']['field'] = 'field_address_door';
@@ -190,21 +190,21 @@ function liste_m_cpr_nummer_views_default_views() {
   $handler->display->display_options['fields']['entity_id_2']['label'] = 'field_address_floor';
   $handler->display->display_options['fields']['entity_id_2']['exclude'] = TRUE;
   $handler->display->display_options['fields']['entity_id_2']['hide_empty'] = TRUE;
-  /* Felt: Indhold: Vej */
+  /* Felt: Indhold: Adresse */
   $handler->display->display_options['fields']['entity_id_3']['id'] = 'entity_id_3';
   $handler->display->display_options['fields']['entity_id_3']['table'] = 'field_data_field_address_road';
   $handler->display->display_options['fields']['entity_id_3']['field'] = 'field_address_road';
   $handler->display->display_options['fields']['entity_id_3']['label'] = 'field_address_road';
   $handler->display->display_options['fields']['entity_id_3']['exclude'] = TRUE;
   $handler->display->display_options['fields']['entity_id_3']['hide_empty'] = TRUE;
-  /* Felt: Indhold: Nummer */
+  /* Felt: Indhold: Hus nr. */
   $handler->display->display_options['fields']['entity_id_4']['id'] = 'entity_id_4';
   $handler->display->display_options['fields']['entity_id_4']['table'] = 'field_data_field_address_road_no';
   $handler->display->display_options['fields']['entity_id_4']['field'] = 'field_address_road_no';
   $handler->display->display_options['fields']['entity_id_4']['label'] = 'field_address_road_no';
   $handler->display->display_options['fields']['entity_id_4']['exclude'] = TRUE;
   $handler->display->display_options['fields']['entity_id_4']['hide_empty'] = TRUE;
-  /* Felt: Indhold: Postnummer */
+  /* Felt: Indhold: Postnr. */
   $handler->display->display_options['fields']['entity_id_5']['id'] = 'entity_id_5';
   $handler->display->display_options['fields']['entity_id_5']['table'] = 'field_data_field_address_zipcode';
   $handler->display->display_options['fields']['entity_id_5']['field'] = 'field_address_zipcode';
@@ -337,7 +337,7 @@ function liste_m_cpr_nummer_views_default_views() {
   $handler->display->display_options['fields']['entity_id']['label'] = 'field_address_door';
   $handler->display->display_options['fields']['entity_id']['exclude'] = TRUE;
   $handler->display->display_options['fields']['entity_id']['hide_empty'] = TRUE;
-  /* Felt: Indhold: Dør / Side */
+  /* Felt: Indhold: Dør / side */
   $handler->display->display_options['fields']['entity_id_1']['id'] = 'entity_id_1';
   $handler->display->display_options['fields']['entity_id_1']['table'] = 'field_data_field_address_door';
   $handler->display->display_options['fields']['entity_id_1']['field'] = 'field_address_door';
@@ -351,21 +351,21 @@ function liste_m_cpr_nummer_views_default_views() {
   $handler->display->display_options['fields']['entity_id_2']['label'] = 'field_address_floor';
   $handler->display->display_options['fields']['entity_id_2']['exclude'] = TRUE;
   $handler->display->display_options['fields']['entity_id_2']['hide_empty'] = TRUE;
-  /* Felt: Indhold: Vej */
+  /* Felt: Indhold: Adresse */
   $handler->display->display_options['fields']['entity_id_3']['id'] = 'entity_id_3';
   $handler->display->display_options['fields']['entity_id_3']['table'] = 'field_data_field_address_road';
   $handler->display->display_options['fields']['entity_id_3']['field'] = 'field_address_road';
   $handler->display->display_options['fields']['entity_id_3']['label'] = 'field_address_road';
   $handler->display->display_options['fields']['entity_id_3']['exclude'] = TRUE;
   $handler->display->display_options['fields']['entity_id_3']['hide_empty'] = TRUE;
-  /* Felt: Indhold: Nummer */
+  /* Felt: Indhold: Hus nr. */
   $handler->display->display_options['fields']['entity_id_4']['id'] = 'entity_id_4';
   $handler->display->display_options['fields']['entity_id_4']['table'] = 'field_data_field_address_road_no';
   $handler->display->display_options['fields']['entity_id_4']['field'] = 'field_address_road_no';
   $handler->display->display_options['fields']['entity_id_4']['label'] = 'field_address_road_no';
   $handler->display->display_options['fields']['entity_id_4']['exclude'] = TRUE;
   $handler->display->display_options['fields']['entity_id_4']['hide_empty'] = TRUE;
-  /* Felt: Indhold: Postnummer */
+  /* Felt: Indhold: Postnr. */
   $handler->display->display_options['fields']['entity_id_5']['id'] = 'entity_id_5';
   $handler->display->display_options['fields']['entity_id_5']['table'] = 'field_data_field_address_zipcode';
   $handler->display->display_options['fields']['entity_id_5']['field'] = 'field_address_zipcode';
@@ -411,17 +411,6 @@ function liste_m_cpr_nummer_views_default_views() {
   $handler->display->display_options['fields']['field_cpr_number']['id'] = 'field_cpr_number';
   $handler->display->display_options['fields']['field_cpr_number']['table'] = 'field_data_field_cpr_number';
   $handler->display->display_options['fields']['field_cpr_number']['field'] = 'field_cpr_number';
-  /* Felt: Felt: Diæt */
-  $handler->display->display_options['fields']['field_diaet']['id'] = 'field_diaet';
-  $handler->display->display_options['fields']['field_diaet']['table'] = 'field_data_field_diaet';
-  $handler->display->display_options['fields']['field_diaet']['field'] = 'field_diaet';
-  $handler->display->display_options['fields']['field_diaet']['alter']['alter_text'] = TRUE;
-  $handler->display->display_options['fields']['field_diaet']['alter']['text'] = '790';
-  $handler->display->display_options['fields']['field_diaet']['empty'] = '790';
-  $handler->display->display_options['fields']['field_diaet']['settings'] = array(
-    'thousand_separator' => ' ',
-    'prefix_suffix' => 1,
-  );
   /* Felt: Global: Tilpasset tekst */
   $handler->display->display_options['fields']['nothing_1']['id'] = 'nothing_1';
   $handler->display->display_options['fields']['nothing_1']['table'] = 'views';
@@ -497,7 +486,7 @@ function liste_m_cpr_nummer_views_default_views() {
   $handler->display->display_options['fields']['entity_id']['label'] = 'field_address_door';
   $handler->display->display_options['fields']['entity_id']['exclude'] = TRUE;
   $handler->display->display_options['fields']['entity_id']['hide_empty'] = TRUE;
-  /* Felt: Indhold: Dør / Side */
+  /* Felt: Indhold: Dør / side */
   $handler->display->display_options['fields']['entity_id_1']['id'] = 'entity_id_1';
   $handler->display->display_options['fields']['entity_id_1']['table'] = 'field_data_field_address_door';
   $handler->display->display_options['fields']['entity_id_1']['field'] = 'field_address_door';
@@ -511,21 +500,21 @@ function liste_m_cpr_nummer_views_default_views() {
   $handler->display->display_options['fields']['entity_id_2']['label'] = 'field_address_floor';
   $handler->display->display_options['fields']['entity_id_2']['exclude'] = TRUE;
   $handler->display->display_options['fields']['entity_id_2']['hide_empty'] = TRUE;
-  /* Felt: Indhold: Vej */
+  /* Felt: Indhold: Adresse */
   $handler->display->display_options['fields']['entity_id_3']['id'] = 'entity_id_3';
   $handler->display->display_options['fields']['entity_id_3']['table'] = 'field_data_field_address_road';
   $handler->display->display_options['fields']['entity_id_3']['field'] = 'field_address_road';
   $handler->display->display_options['fields']['entity_id_3']['label'] = 'field_address_road';
   $handler->display->display_options['fields']['entity_id_3']['exclude'] = TRUE;
   $handler->display->display_options['fields']['entity_id_3']['hide_empty'] = TRUE;
-  /* Felt: Indhold: Nummer */
+  /* Felt: Indhold: Hus nr. */
   $handler->display->display_options['fields']['entity_id_4']['id'] = 'entity_id_4';
   $handler->display->display_options['fields']['entity_id_4']['table'] = 'field_data_field_address_road_no';
   $handler->display->display_options['fields']['entity_id_4']['field'] = 'field_address_road_no';
   $handler->display->display_options['fields']['entity_id_4']['label'] = 'field_address_road_no';
   $handler->display->display_options['fields']['entity_id_4']['exclude'] = TRUE;
   $handler->display->display_options['fields']['entity_id_4']['hide_empty'] = TRUE;
-  /* Felt: Indhold: Postnummer */
+  /* Felt: Indhold: Postnr. */
   $handler->display->display_options['fields']['entity_id_5']['id'] = 'entity_id_5';
   $handler->display->display_options['fields']['entity_id_5']['table'] = 'field_data_field_address_zipcode';
   $handler->display->display_options['fields']['entity_id_5']['field'] = 'field_address_zipcode';
@@ -640,8 +629,6 @@ function liste_m_cpr_nummer_views_default_views() {
     t('Kvitteringsliste'),
     t('Adresse'),
     t('[entity_id_3] [entity_id_4]  [entity_id_2] [entity_id_1], [entity_id_5] [entity_id]'),
-    t('Diæt'),
-    t('790'),
     t('Valgstyrere og tilforordnede'),
   );
   $export['liste_valgsted_m_cpr'] = $view;

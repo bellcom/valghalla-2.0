@@ -82,7 +82,6 @@ features[field_instance][] = node-volunteers-field_address_zipcode
 features[field_instance][] = node-volunteers-field_cpr_number
 features[field_instance][] = node-volunteers-field_cpr_status
 features[field_instance][] = node-volunteers-field_cpr_valid_date
-features[field_instance][] = node-volunteers-field_diaet
 features[field_instance][] = node-volunteers-field_electioninfo
 features[field_instance][] = node-volunteers-field_email
 features[field_instance][] = node-volunteers-field_external_signup
