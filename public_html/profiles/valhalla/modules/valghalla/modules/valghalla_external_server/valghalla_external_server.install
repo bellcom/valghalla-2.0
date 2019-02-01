@@ -58,3 +58,63 @@ function valghalla_external_server_enable() {
   variable_set('validate_create_citizenship', 0);
   variable_set('validate_create_civil_status', 0);
 }
+
+/**
+ * Implements hook_requirements().
+ */
+function valghalla_external_server_requirements($phase) {
+  $requirements = array();
+  switch ($phase) {
+    case 'runtime':
+
+      $not_allowed_modules = array(
+        // Contrib modules.
+        'ckeditor',
+        'contact',
+        'field_ui',
+        'imce',
+        'locationmap',
+        'mailsystem',
+        'mimemail',
+        'panels_ipe',
+        'panels_mini',
+        'search',
+        'views_ui',
+        // Valghalla modules.
+        'valghalla_lists',
+        'liste_beskeder',
+        'liste_frivillige_uden_email',
+        'liste_m_cpr_nummer',
+        'liste_parti_oversigt',
+        'liste_valghalla_export',
+        'liste_valghalla_kvittering',
+        'valghalla_notifications',
+        'valghalla_signup',
+        'valghalla_signup_list',
+        'valghalla_volunteer_validator',
+        'valghalla_volunteers_import',
+        'valghalla_volunteers_invite',
+        'vcv_serviceplatformen',
+        'vcv_person_lookup_extended',
+        'vvv_validate_age',
+      );
+
+      $exists_modules = array();
+      foreach ($not_allowed_modules as $module) {
+        if (module_exists($module)) {
+          $exists_modules[] = $module;
+        }
+      }
+
+      if (!empty($exists_modules)) {
+        $requirements['valghalla_external_server'] = array(
+          'title' => t('Modules that should be disabled'),
+          'severity' => REQUIREMENT_ERROR,
+          'value' => t('Enabled: !list', array('!list' => theme('item_list', array('items' => $exists_modules)))),
+        );
+      }
+      break;
+  }
+
+  return $requirements;
+}
