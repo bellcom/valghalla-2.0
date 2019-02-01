@@ -12,7 +12,13 @@
       <!-- Begin - heading -->
       <div class="boxy__heading">
         <div class="boxy__heading__data">
-          <h2 class="boxy__heading__title"><?php print $party_posts['party_name']; ?></h2>
+          <h2 class="boxy__heading__title">
+            <?php if ($party_posts['party_letter'] !== ''): ?>
+              <?php print $party_posts['party_letter']; ?>
+            <?php else: ?>
+              <?php print $party_posts['party_name']; ?>
+            <?php endif; ?>
+          </h2>
 
           <div class="boxy__heading__meta">
             <?php foreach($parties_status[$party_tid]['status']['role_count'] as $role_count): ?>

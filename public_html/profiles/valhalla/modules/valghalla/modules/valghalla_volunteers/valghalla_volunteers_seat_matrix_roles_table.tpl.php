@@ -20,7 +20,13 @@
           <tr class="<?php print $party_status['party_status_label']; ?>">
             <td>
               <a href="#" data-scroll-to="#party_<?=strtolower($party_status['party_name']); ?>">
-                <strong><?php print $party_status['party_name']; ?></strong>
+                <strong>
+                  <?php if ($party_status['party_letter'] !== ''): ?>
+                    <?php print $party_status['party_letter']; ?>
+                  <?php else: ?>
+                    <?php print $party_status['party_name']; ?>
+                  <?php endif; ?>
+                </strong>
               </a>
             </td>
 
