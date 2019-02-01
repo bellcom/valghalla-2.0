@@ -21,7 +21,6 @@ dependencies[] = strongarm
 dependencies[] = taxonomy
 dependencies[] = text
 dependencies[] = valghalla_election
-dependencies[] = valghalla_notifications
 dependencies[] = valghalla_polling_station
 dependencies[] = valhalla_settings
 stylesheets[all][] = valhalla_volunteers.css
