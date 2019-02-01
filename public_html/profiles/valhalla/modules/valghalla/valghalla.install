@@ -230,3 +230,13 @@ function valghalla_update_7114() {
     'field_collection_node_clone',
   ));
 }
+
+/**
+ * Implements hook_update_N().
+ *
+ * Remove deprecated field_diaet from volunteer node.
+ */
+function valghalla_update_7115() {
+  features_revert_module('valghalla_volunteers');
+  features_revert_module('liste_m_cpr_nummer');
+}

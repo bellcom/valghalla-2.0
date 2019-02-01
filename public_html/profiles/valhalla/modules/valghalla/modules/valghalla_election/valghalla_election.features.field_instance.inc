@@ -285,7 +285,7 @@ function valghalla_election_field_default_field_instances() {
     ),
     'entity_type' => 'node',
     'field_name' => 'field_election_ext_require_email',
-    'label' => 'Kræv email',
+    'label' => 'E-mail obligatorisk for alle ',
     'required' => 0,
     'settings' => array(
       'user_register_form' => FALSE,
@@ -328,7 +328,7 @@ function valghalla_election_field_default_field_instances() {
     ),
     'entity_type' => 'node',
     'field_name' => 'field_election_ext_require_phone',
-    'label' => 'Kræv telefon',
+    'label' => 'Telefon obligatorisk for alle ',
     'required' => 0,
     'settings' => array(
       'user_register_form' => FALSE,
@@ -1020,7 +1020,7 @@ function valghalla_election_field_default_field_instances() {
       ),
     ),
     'deleted' => 0,
-    'description' => '',
+    'description' => 'Bruges typisk for administrativt personale.',
     'display' => array(
       'default' => array(
         'label' => 'above',
@@ -1032,7 +1032,7 @@ function valghalla_election_field_default_field_instances() {
     ),
     'entity_type' => 'taxonomy_term',
     'field_name' => 'field_party_skip_valid_municipal',
-    'label' => 'Valider ikke bopæl i kommunen',
+    'label' => 'Valider ikke bopæl i kommunen for deltagere tilknyttet pladser for dette parti',
     'required' => 0,
     'settings' => array(
       'user_register_form' => FALSE,
@@ -1070,7 +1070,7 @@ function valghalla_election_field_default_field_instances() {
     ),
     'entity_type' => 'taxonomy_term',
     'field_name' => 'field_party_subsc_accept_comment',
-    'label' => 'Commenting enabled',
+    'label' => 'Aktiver deltagerkommentar på tilmeldingsbekræftelse',
     'required' => 0,
     'settings' => array(
       'user_register_form' => FALSE,
@@ -1103,7 +1103,7 @@ function valghalla_election_field_default_field_instances() {
     ),
     'entity_type' => 'taxonomy_term',
     'field_name' => 'field_party_subsc_message',
-    'label' => 'Subscription comment',
+    'label' => 'Tekst på ekstern tilmelding før samtykkeerklæring',
     'required' => 0,
     'settings' => array(
       'text_processing' => 0,
@@ -1138,7 +1138,7 @@ function valghalla_election_field_default_field_instances() {
     ),
     'entity_type' => 'taxonomy_term',
     'field_name' => 'field_party_subsc_terms_text',
-    'label' => 'Vilkår og betingelser tekst',
+    'label' => 'Overskriv samtykkeerklæring på ekstern tilmelding',
     'required' => 0,
     'settings' => array(
       'text_processing' => 0,
@@ -1195,27 +1195,30 @@ function valghalla_election_field_default_field_instances() {
 
   // Translatables
   // Included for use with string extractors like potx.
+  t('Aktiver deltagerkommentar på tilmeldingsbekræftelse');
   t('Angiv om dette parti skal modtage PDF rapporter.');
   t('Benyttes til videresendelse af tilmeldinger, hvor der er udfyldt kommentarer');
   t('Body');
   t('Bogstav');
+  t('Bruges typisk for administrativt personale.');
   t('CVR nummer');
-  t('Commenting enabled');
   t('Dato');
   t('Deaktiver samtykke');
   t('Deltagere pr. parti');
   t('E-mail adresse');
+  t('E-mail obligatorisk for alle');
   t('Emails sendt');
   t('Fuldt partinavn');
-  t('Kræv email');
-  t('Kræv telefon');
   t('Modtag PDF rapport');
   t('Notification config export (system field)');
+  t('Overskriv samtykkeerklæring på ekstern tilmelding');
   t('Parti');
   t('Partisekretær');
+  t('Rolle');
   t('Samtykke tekst');
-  t('Subscription comment');
   t('Sæt igang');
+  t('Tekst på ekstern tilmelding før samtykkeerklæring');
+  t('Telefon obligatorisk for alle');
   t('Type');
   t('Udsend PDF rapport til partier');
   t('Valgsted');
@@ -1223,9 +1226,8 @@ function valghalla_election_field_default_field_instances() {
   t('Valider alder');
   t('Valider bopæl i kommunen');
   t('Valider dansk statsborger');
-  t('Valider ikke bopæl i kommunen');
+  t('Valider ikke bopæl i kommunen for deltagere tilknyttet pladser for dette parti');
   t('Valider om person med personnummerer er levende');
-  t('Vilkår og betingelser tekst');
 
   return $field_instances;
 }
