@@ -7,23 +7,25 @@
 
 <?php if ($party_posts_to_fill): ?>
   <?php foreach ($party_posts_to_fill as $party_tid => $party_posts): ?>
-    <div class="boxy boxy--<?=$parties_status[$party_tid]['party_status_label']; ?>" id="party_<?=strtolower($party_posts['party_name']); ?>">
+    <div class="boxy boxy--party boxy--<?=$parties_status[$party_tid]['party_status_label']; ?>" id="party_<?=strtolower($party_posts['party_name']); ?>">
 
       <!-- Begin - heading -->
       <div class="boxy__heading">
-        <div class="flexy-row">
+        <div class="boxy__heading__data">
           <h2 class="boxy__heading__title"><?php print $party_posts['party_name']; ?></h2>
 
-          <?php foreach($parties_status[$party_tid]['status']['role_count'] as $role_count): ?>
-            <?php if ($role_count['assigned'] !== 0) : ?>
-              <div class="boxy__heading__meta-data">
-                <?php print $role_count['role_name'] . ': ' . $role_count['total'] . '/' . $role_count['assigned']?>
-              </div>
-            <?php endif; ?>
-          <?php endforeach; ?>
+          <div class="boxy__heading__meta">
+            <?php foreach($parties_status[$party_tid]['status']['role_count'] as $role_count): ?>
+              <?php if ($role_count['assigned'] !== 0) : ?>
+                <div class="boxy__heading__meta-data">
+                  <?php print $role_count['role_name'] . ': ' . $role_count['total'] . '/' . $role_count['assigned']?>
+                </div>
+              <?php endif; ?>
+            <?php endforeach; ?>
+          </div>
+        </div>
 
-          <div class="flexy-spacer"></div>
-
+        <div class="boxy__heading__controls">
           <?php if (isset($party_posts['party_subscribe_url'])): ?>
             <button type="button"
                     class="btn btn-default btn-xs"
@@ -41,7 +43,6 @@
               <span class="glyphicon glyphicon-edit"></span>
             </a>
           <?php endif; ?>
-
         </div>
       </div>
       <!-- End - heading -->

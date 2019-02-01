@@ -1,0 +1,109 @@
+// |--------------------------------------------------------------------------
+// | Boxy
+// |--------------------------------------------------------------------------
+// |
+// | This file contains styles for the following:
+// | - .boxy
+// |
+
+// --------------------------------------------------
+// Variables
+// --------------------------------------------------
+
+// Responsive
+$xs-boxy-spacing-left-right: 10px;
+$sm-boxy-spacing-left-right: 20px;
+$md-boxy-spacing-left-right: $boxy-spacing-left-right;
+$lg-boxy-spacing-left-right: $boxy-spacing-left-right;
+
+// --------------------------------------------------
+// Mixins
+// --------------------------------------------------
+
+@mixin boxy-mixin() {}
+
+// --------------------------------------------------
+// Styling
+// --------------------------------------------------
+
+.boxy--party {
+
+  .boxy__heading {
+    display: flex;
+
+    flex-direction: column;
+  }
+  .boxy__heading__data {
+    display: flex;
+
+    flex-direction: column;
+  }
+  .boxy__heading__controls {}
+}
+
+// --------------------------------------------------
+// Variants
+// --------------------------------------------------
+
+// --------------------------------------------------
+// Responsive
+// --------------------------------------------------
+
+// Mobile - and up
+@media #{$breakpoint-mobile-and-up} {}
+
+// Mobile - only
+@media #{$breakpoint-mobile-only} {}
+
+// Tablet - and up
+@media #{$breakpoint-tablet-and-up} {}
+
+// Tablet - only
+@media #{$breakpoint-tablet-only} {}
+
+// Desktop - and up
+@media #{$breakpoint-desktop-and-up} {
+
+  .boxy--party {
+
+    .boxy__heading {
+      flex-direction: row;
+      flex-wrap: nowrap;
+      justify-content: space-between;
+      align-items: center;
+
+      + .boxy__heading__controls {
+        margin-left: 15px;
+      }
+    }
+    .boxy__heading__title {
+      margin-right: 15px;
+    }
+    .boxy__heading__data {
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .boxy__heading__controls {
+      white-space: nowrap;
+      //display: flex;
+
+      //flex-wrap: nowrap;
+    }
+  }
+}
+
+// Desktop - only
+@media #{$breakpoint-desktop-only} {}
+
+// Large desktop - and up
+@media #{$breakpoint-large-desktop-and-up} {}
+
+// Print
+@media print {}
+
+// Touch
+.touchevents {}
+
+// No touch
+.no-touchevents {}
