@@ -143,7 +143,9 @@ function entity_valghalla_notification_list_entities($vol_nid = FALSE) {
   $content = array();
   // Load all of our entities.
   $query = new EntityFieldQuery();
-  $query->entityCondition('entity_type', 'entity_valghalla_notification')->propertyOrderBy('created', 'DESC');
+  $query->entityCondition('entity_type', 'entity_valghalla_notification')
+    ->propertyOrderBy('created', 'DESC')
+    ->pager(20);
   $headers[] = t('ID');
   $headers[] = t('Gateway');
   $headers[] = t('Type');
@@ -203,6 +205,7 @@ function entity_valghalla_notification_list_entities($vol_nid = FALSE) {
       '#markup' => t('No entity_valghalla_notification entities currently exist.'),
     );
   }
+  $content['pager'] = array('#theme' => 'pager');
   return $content;
 }
 

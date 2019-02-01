@@ -541,3 +541,17 @@ function valghalla_notifications_direct_send($gateway_id, $to, $params, $context
     ), WATCHDOG_ERROR);
   }
 }
+
+/**
+ * Implements hook_node_delete().
+ */
+function valghalla_notifications_node_delete($node) {
+  if ($node->type != 'volunteers') {
+    return;
+  }
+  // Delete all notifications for deleting volunteer.
+  $entities = entity_valghalla_notification_load_multiple(FALSE, array('vol_id' => $node->nid));
+  foreach ($entities as $entity) {
+    $entity->delete();
+  }
+}
