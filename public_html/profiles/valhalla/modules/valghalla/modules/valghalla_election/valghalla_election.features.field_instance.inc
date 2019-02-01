@@ -1206,7 +1206,7 @@ function valghalla_election_field_default_field_instances() {
   t('Deaktiver samtykke');
   t('Deltagere pr. parti');
   t('E-mail adresse');
-  t('E-mail obligatorisk for alle ');
+  t('E-mail obligatorisk for alle');
   t('Emails sendt');
   t('Fuldt partinavn');
   t('Modtag PDF rapport');
@@ -1218,7 +1218,7 @@ function valghalla_election_field_default_field_instances() {
   t('Samtykke tekst');
   t('Sæt igang');
   t('Tekst på ekstern tilmelding før samtykkeerklæring');
-  t('Telefon obligatorisk for alle ');
+  t('Telefon obligatorisk for alle');
   t('Type');
   t('Udsend PDF rapport til partier');
   t('Valgsted');
