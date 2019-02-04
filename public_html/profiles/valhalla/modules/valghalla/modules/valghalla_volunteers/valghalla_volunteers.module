@@ -456,7 +456,7 @@ function valghalla_volunteers_rsvp_form_submit($form, &$form_state) {
       valghalla_notifications_direct_send('mail', $recipient, $params);
     }
     else {
-      drupal_set_message('Notifikation blev ikke afsend. Modul er ikke aktiveret.', 'warning');
+      watchdog('valghalla_volunteers','Notifikation blev ikke afsend. Modul valghalla_notifications er ikke aktiveret.', array(), WATCHDOG_WARNING);
     }
   }
 }
@@ -1656,6 +1656,6 @@ function valghalla_volunteers_notify($election_nid, $role_nid, $fc, $type) {
     valghalla_notifications_notify_volunteer($election_nid, $role_nid, $fc, $type);
   }
   else {
-    drupal_set_message('Notifikation blev ikke afsend. Modul er ikke aktiveret.', 'warning');
+    watchdog('valghalla_volunteers','Notifikation blev ikke afsend. Modul valghalla_notifications er ikke aktiveret.', array(), WATCHDOG_WARNING);
   }
 }
