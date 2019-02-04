@@ -14,7 +14,7 @@ function valghalla_internal_server_form_alter(&$form, &$form_state, $form_id) {
   if ($form_id === 'valhalla_admin_settings_form') {
     // Do synch, if asked.
     if (isset($form_state['triggering_element']) && $form_state['triggering_element']['#id'] == 'edit-synch-now') {
-      valghalla_internal_server_cron();
+      valghalla_internal_server_perform_synch(TRUE);
     }
 
     $form['valghalla_internal_server_enable'] = array(
@@ -69,7 +69,7 @@ function valghalla_internal_server_form_alter(&$form, &$form_state, $form_id) {
 
     $form['valghalla_internal_server_fs']['valghalla_external_server_synch_frequency'] = array(
       '#type' => 'select',
-      '#title' => t('Synch frequency'),
+      '#title' => t('Synch frequency (via cron)'),
       '#options' => array(
         '0' => 'As often as cron',
         '1' => '1 minute',
@@ -81,7 +81,7 @@ function valghalla_internal_server_form_alter(&$form, &$form_state, $form_id) {
         '30' => '30 minutes',
       ),
       '#default_value' => variable_get('valghalla_external_server_synch_frequency', 0),
-      '#description' => t('Run synch every N minutes.'),
+      '#description' => t('Attempt running synch every cron, but keep delays between synchs at least N minutes.'),
       '#required' => TRUE,
     );
 

@@ -1646,6 +1646,12 @@ function valghalla_volunteers_preprocess_views_view_table(&$variables) {
  * Wrapper with module existing check.
  */
 function valghalla_volunteers_notify($election_nid, $role_nid, $fc, $type) {
+  if ($type == 'invitation' && module_exists('valghalla_internal_server')) {
+    // Forcing synch before sending the invitation message, so that sent is
+    // valid at all times.
+    valghalla_internal_server_perform_synch(TRUE);
+  }
+
   if (module_exists('valghalla_notifications')) {
     valghalla_notifications_notify_volunteer($election_nid, $role_nid, $fc, $type);
   }
