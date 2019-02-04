@@ -118,7 +118,8 @@ function valghalla_internal_server_cron() {
  * if synch has not been run in more than 15 minutes.
  */
 function valghalla_internal_server_init() {
-  $minsSinceLastSynch = (time() - intval(variable_get('valghalla_external_server_synch_frequency', 0))) / 60;
+  $synchTs = min(variable_get('valgalla_internal_server_last_clone_timestamp', 0), variable_get('valgalla_internal_server_last_push_timestamp', 0));
+  $minsSinceLastSynch = (time() - $synchTs) / 60;
 
   if (!variable_get('valgalla_internal_server_heartbeat') || $minsSinceLastSynch > 15) {
     drupal_set_message(variable_get('valghalla_external_server_synch_error_message', 'Cannot connect to Valghalla external server'), 'warning', FALSE);
