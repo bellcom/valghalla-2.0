@@ -22,7 +22,7 @@ function valghalla_internal_server_default_monolog_profiles() {
         'label' => 'Rotating File Handler',
         'level' => '200',
         'bubble' => 1,
-        'filepath' => 'private://log/valghalla_intenal_server.log',
+        'filepath' => 'private://log/valghalla_internal_server.log',
         'max_files' => '30',
         'handler' => 'rotating_file',
       ),
