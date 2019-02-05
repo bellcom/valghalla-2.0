@@ -260,3 +260,13 @@ function valghalla_election_update_7106() {
   // Reverting feature.
   features_revert_module('valghalla_election');
 }
+
+/**
+ * Adding new fields fields.
+ *
+ * New fields: field_election_consent_text.
+ */
+function valghalla_election_update_7107() {
+  // Reverting feature.
+  features_revert_module('valghalla_election');
+}

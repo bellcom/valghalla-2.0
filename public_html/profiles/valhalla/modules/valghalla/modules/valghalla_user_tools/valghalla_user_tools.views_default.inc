@@ -297,7 +297,7 @@ function valghalla_user_tools_views_default_views() {
 
   /* Display: Master */
   $handler = $view->new_display('default', 'Master', 'default');
-  $handler->display->display_options['title'] = 'Notifikations skabeloner';
+  $handler->display->display_options['title'] = 'Skabelonoversigt';
   $handler->display->display_options['use_more_always'] = FALSE;
   $handler->display->display_options['use_more_text'] = 'mere';
   $handler->display->display_options['access']['type'] = 'perm';
@@ -413,12 +413,13 @@ function valghalla_user_tools_views_default_views() {
   $handler = $view->new_display('page', 'Page', 'page');
   $handler->display->display_options['path'] = 'valghalla/administration/mail-skabeloner';
   $handler->display->display_options['menu']['type'] = 'normal';
-  $handler->display->display_options['menu']['title'] = 'Mail skabeloner';
+  $handler->display->display_options['menu']['title'] = 'Skabelonoversigt';
   $handler->display->display_options['menu']['weight'] = '0';
   $handler->display->display_options['menu']['context'] = 0;
+  $handler->display->display_options['menu']['context_only_inline'] = 0;
   $translatables['mail_templates'] = array(
     t('Master'),
-    t('Notifikations skabeloner'),
+    t('Skabelonoversigt'),
     t('mere'),
     t('Udfør'),
     t('Gendan'),

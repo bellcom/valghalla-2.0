@@ -8,15 +8,25 @@ include_once('valghalla_election.features.inc');
  *  valghalla_election.module
  */
 
+module_load_include('inc', 'valghalla_election', 'includes/valghalla_election.pages');
+
 /**
- * implements hook_menu()
+ * Implements hook_menu().
  */
 function valghalla_election_menu(){
   $items = array();
 
   $items['valghalla/election'] = array(
     'page callback' => 'valghalla_election_set_election',
-    'access callback' => true,
+    'access callback' => TRUE,
+  );
+
+  $items['station/%/seats'] = array(
+    'title' => 'Handle election seats',
+    'access arguments' => array('administer valghalla'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('valghalla_election_handle_seats_form', 1),
+    'type' => MENU_CALLBACK,
   );
 
   return $items;
@@ -244,7 +254,7 @@ function valghalla_election_field_volunteers_pr_pol_st_party_form_validate($form
       $count = $field_value[LANGUAGE_NONE][0]['number_vo'];
 
     }
-    if ($polling_station_nid && $party_tid && $role_nid) {
+    if (isset($polling_station_nid) && isset($party_tid) && isset($role_nid)) {
       $map[$polling_station_nid][$party_tid][$role_nid] = $count;
     }
   }
@@ -256,6 +266,7 @@ function valghalla_election_field_volunteers_pr_pol_st_party_form_validate($form
 
   // Loop through all combinations and find out if any of the input values
   // are lower than the already allocated count.
+
   foreach($map as $polling_station_nid => $parties_map) {
     foreach ($parties_map as $party_tid => $roles_map) {
       foreach ($roles_map as $role_nid => $count) {
@@ -269,13 +280,15 @@ function valghalla_election_field_volunteers_pr_pol_st_party_form_validate($form
           ->fieldCondition('field_vlnt_station', 'target_id', $polling_station_nid);
 
         $query_result = $volunteer_query->execute();
-        $result       = array_keys(array_shift($query_result));
+        if (!empty($query_result)) {
+          $result = array_keys(array_shift($query_result));
 
-        if ($result) {
-          $allocated = count($result);
+          if ($result) {
+            $allocated = count($result);
 
-          if ($allocated > $count) {
-            form_set_error('field_role_n' . $role_nid, 'Deltagere - Det indtastede antal er mindre end antallet af tilføjede deltagere. Valgsted: ' . $polling_stations[$polling_station_nid] . ', Parti: ' . $parties[$party_tid] . ', Rolle: ' . $roles[$role_nid] . ', antal: ' . $allocated . ', indtastet: ' . $count);
+            if ($allocated > $count) {
+              form_set_error('field_role_n' . $role_nid, 'Deltagere - Det indtastede antal er mindre end antallet af tilføjede deltagere. Valgsted: ' . $polling_stations[$polling_station_nid] . ', Parti: ' . $parties[$party_tid] . ', Rolle: ' . $roles[$role_nid] . ', antal: ' . $allocated . ', indtastet: ' . $count);
+            }
           }
         }
       }

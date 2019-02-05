@@ -73,3 +73,14 @@ function valghalla_internal_server_update_7101() {
   );
   db_add_field('valghalla_internal_server_logs', 'cpr', $field);
 }
+
+/**
+ * Implements hook_update_N().
+ *
+ * Enabling background_batch module.
+ */
+function valghalla_internal_server_update_7102() {
+  module_enable(array(
+    'background_batch',
+  ));
+}

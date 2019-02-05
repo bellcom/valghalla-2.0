@@ -912,56 +912,6 @@ function valghalla_volunteers_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'node-volunteers-field_diaet'.
-  $field_instances['node-volunteers-field_diaet'] = array(
-    'bundle' => 'volunteers',
-    'default_value' => array(
-      0 => array(
-        'value' => 750,
-      ),
-    ),
-    'deleted' => 0,
-    'description' => '',
-    'display' => array(
-      'default' => array(
-        'label' => 'inline',
-        'module' => 'number',
-        'settings' => array(
-          'decimal_separator' => '.',
-          'prefix_suffix' => TRUE,
-          'scale' => 0,
-          'thousand_separator' => ' ',
-        ),
-        'type' => 'number_integer',
-        'weight' => 16,
-      ),
-      'teaser' => array(
-        'label' => 'above',
-        'settings' => array(),
-        'type' => 'hidden',
-        'weight' => 0,
-      ),
-    ),
-    'entity_type' => 'node',
-    'field_name' => 'field_diaet',
-    'label' => 'Diæt',
-    'required' => 0,
-    'settings' => array(
-      'max' => '',
-      'min' => '',
-      'prefix' => '',
-      'suffix' => '',
-      'user_register_form' => FALSE,
-    ),
-    'widget' => array(
-      'active' => 0,
-      'module' => 'number',
-      'settings' => array(),
-      'type' => 'number',
-      'weight' => 21,
-    ),
-  );
-
   // Exported field_instance: 'node-volunteers-field_electioninfo'.
   $field_instances['node-volunteers-field_electioninfo'] = array(
     'bundle' => 'volunteers',

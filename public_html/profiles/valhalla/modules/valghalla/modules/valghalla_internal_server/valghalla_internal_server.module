@@ -108,6 +108,31 @@ function valghalla_internal_server_taxonomy_term_delete($term) {
  * Implements hook_cron().
  */
 function valghalla_internal_server_cron() {
+  valghalla_internal_server_perform_synch(FALSE);
+}
+
+/**
+ * Implements hook_init().
+ *
+ * Presents the error message if can't connect to external server or
+ * if synch has not been run in more than 15 minutes.
+ */
+function valghalla_internal_server_init() {
+  $synchTs = min(variable_get('valgalla_internal_server_last_clone_timestamp', 0), variable_get('valgalla_internal_server_last_push_timestamp', 0));
+  $minsSinceLastSynch = (time() - $synchTs) / 60;
+
+  if (!variable_get('valgalla_internal_server_heartbeat') || $minsSinceLastSynch > 15) {
+    drupal_set_message(variable_get('valghalla_external_server_synch_error_message', 'Cannot connect to Valghalla external server'), 'warning', FALSE);
+  }
+}
+
+/**
+ * Sync jobs execute wrapper.
+ *
+ * @param bool $force
+ *   Make a force synch rather than depend on the schedule frequency.
+ */
+function valghalla_internal_server_perform_synch($force = TRUE) {
   // Update heartbeat.
   $ws = new ExternalWebservice();
   variable_set('valgalla_internal_server_heartbeat', $ws->heartbeat());
@@ -116,11 +141,11 @@ function valghalla_internal_server_cron() {
   $nowTs = time();
 
   $batchExists = FALSE;
-  if ((($nowTs - variable_get('valgalla_internal_server_last_clone_timestamp')) / 60) > $synchFrequency) {
+  if ($force || (($nowTs - variable_get('valgalla_internal_server_last_clone_timestamp')) / 60) > $synchFrequency) {
     valghalla_internal_server_clone_updated_content();
     $batchExists = TRUE;
   }
-  if ((($nowTs - variable_get('valgalla_internal_server_last_push_timestamp')) / 60) > $synchFrequency) {
+  if ($force || (($nowTs - variable_get('valgalla_internal_server_last_push_timestamp')) / 60) > $synchFrequency) {
     valghalla_internal_server_push_updated_content();
     $batchExists = TRUE;
   }
@@ -130,21 +155,8 @@ function valghalla_internal_server_cron() {
       drush_backend_batch_process();
     }
     else {
-      batch_process(current_path());
+      background_batch_process_batch(current_path());
     }
-  }
-}
-
-/**
- * Implements hook_init().
- *
- * Presents the error message if can't connect to external server or
- * if cron has not been run in more than 15 minutes.
- */
-function valghalla_internal_server_init() {
-  $minsSinceLastCron = (time() - variable_get('cron_last')) / 60;
-  if (!variable_get('valgalla_internal_server_heartbeat') || $minsSinceLastCron > 15) {
-    drupal_set_message(variable_get('valghalla_external_server_synch_error_message', 'Cannot connect to Valghalla external server'), 'warning', FALSE);
   }
 }
 
@@ -191,7 +203,7 @@ function valghalla_internal_server_clone_updated_content($forceStart = FALSE) {
       drush_backend_batch_process();
     }
     else {
-      batch_process(current_path());
+      background_batch_process_batch(current_path());
     }
   }
 }
@@ -216,7 +228,7 @@ function valghalla_internal_server_push_updated_content($forceStart = FALSE) {
       drush_backend_batch_process();
     }
     else {
-      batch_process(current_path());
+      background_batch_process_batch(current_path());
     }
   }
 }

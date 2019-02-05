@@ -1,6 +1,7 @@
 name = Valghalla Internal server
 description = Provides funtionality Valghalla internal server
 package = Valghalla - Synch
+dependencies[] = background_batch
 dependencies[] = ctools
 dependencies[] = uuid
 dependencies[] = node_export

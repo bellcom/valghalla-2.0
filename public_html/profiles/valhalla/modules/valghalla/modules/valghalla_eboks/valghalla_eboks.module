@@ -204,12 +204,14 @@ function valghalla_eboks_form_valghalla_notifications_admin_settings_alter(&$for
     '#type' => 'textfield',
     '#title' => t('Certfile'),
     '#default_value' => variable_get('valghalla_eboks_certfile', ''),
+    '#description' => t('Absolute path to SSL certificate file for service soap request'),
   );
 
   $form['print_service']['valghalla_eboks_debug'] = array(
     '#type' => 'checkbox',
     '#title' => t('Debug'),
     '#default_value' => variable_get('valghalla_eboks_debug', FALSE),
+    '#description' => t('Request files will be stored for debug in !location', array('!location' => file_directory_temp() . '/service-print-soap')),
   );
 }
 
@@ -236,6 +238,45 @@ function valghalla_eboks_wsdl_submit(&$form, &$form_state) {
       if (is_file($file)) {
         unlink($file);
       }
+    }
+  }
+}
+
+/**
+ * Initiate function to get default settings for eboks.
+ */
+function valghalla_eboks_default_settings() {
+  global $base_url, $base_path;
+  $variables_default = array(
+    'valghalla_eboks_serviceuuid' => 'fd885b8b-4a3f-46cb-b367-6c9dda1c78f6',
+    'valghalla_eboks_wsdl' => $base_url . $base_path . drupal_get_path('module', 'valghalla_eboks') . '/PriveService/wsdl/token/PrintService.wsdl',
+    'valghalla_eboks_location' => 'https://prod.serviceplatformen.dk/service/Print/Print/2',
+  );
+
+  // Fetch variables from similar module.
+  if (module_exists('vcv_serviceplatformen')) {
+    $vcv_to_eboks_variables = array(
+      'vcv_serviceplatformen_usersystemuuid' => 'valghalla_eboks_usersystemuuid',
+      'vcv_serviceplatformen_useruuid' => 'valghalla_eboks_useruuid',
+      'vcv_serviceplatformen_accountinginfo' => 'valghalla_eboks_accountinginfo',
+      'vcv_serviceplatformen_certfile_passphrase' => 'valghalla_eboks_certfile_passphrase',
+      'vcv_serviceplatformen_certfile' => 'valghalla_eboks_certfile',
+    );
+    foreach ($vcv_to_eboks_variables as $vcv_variable => $eboks_variable) {
+      $vcv_value = variable_get($vcv_variable);
+      if (empty($value)) {
+        $variables_default[$eboks_variable] = $vcv_value;
+      }
+    }
+  }
+  foreach ($variables_default as $variable => $default_value) {
+    $value = variable_get($variable);
+    if (empty($value)) {
+      variable_set($variable, $default_value);
+      drupal_set_message(t('Default value for !variable has been set to "!value"', array(
+        '!variable' => $variable,
+        '!value' => $default_value,
+      )));
     }
   }
 }
