@@ -630,6 +630,7 @@ function valghalla_volunteers_to_polling_station_markup($polling_station, $user_
       'parties_status' => $parties_status,
       'pollingstation_nid' => $posts_array['station_nid'],
       'party_posts_to_fill' => $posts_array['party_posts_to_fill'],
+      'election_nid' => $_SESSION['election_nid'],
     ));
   }
 }
