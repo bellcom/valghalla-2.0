@@ -236,7 +236,10 @@ function valghalla_update_7114() {
  *
  * Remove deprecated field_diaet from volunteer node.
  */
-function valghalla_update_7115() {
+function valghalla_update_7116() {
   features_revert_module('valghalla_volunteers');
   features_revert_module('liste_m_cpr_nummer');
+
+  field_delete_field('field_diaet');
+  field_purge_batch(1);
 }
