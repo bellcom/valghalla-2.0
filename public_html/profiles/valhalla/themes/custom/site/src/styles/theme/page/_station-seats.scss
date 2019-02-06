@@ -1,0 +1,80 @@
+// |--------------------------------------------------------------------------
+// | Station seats
+// |--------------------------------------------------------------------------
+// |
+// | This file contains styles for the following:
+// | - .page-station-seats
+// |
+
+// --------------------------------------------------
+// Variables
+// --------------------------------------------------
+
+// --------------------------------------------------
+// Mixins
+// --------------------------------------------------
+
+@mixin page-station-seats-mixin() {}
+
+// --------------------------------------------------
+// Styling
+// --------------------------------------------------
+
+.page-station-seats {
+
+  .container-inline {
+    margin-bottom: floor( ($form-group-margin-bottom / 2) );
+
+    label {
+      font-weight: $font-weight;
+    }
+
+    .form-type-textfield {
+
+      .form-control {
+        height: $input-height-small;
+        padding: $padding-small-vertical $padding-small-horizontal;
+        font-size: $font-size-small;
+        line-height: $line-height-small;
+      }
+    }
+  }
+}
+
+// --------------------------------------------------
+// Variants
+// --------------------------------------------------
+
+// --------------------------------------------------
+// Responsive
+// --------------------------------------------------
+
+// Mobile - and up
+@media #{$breakpoint-mobile-and-up} {}
+
+// Mobile - only
+@media #{$breakpoint-mobile-only} {}
+
+// Tablet - and up
+@media #{$breakpoint-tablet-and-up} {}
+
+// Tablet - only
+@media #{$breakpoint-tablet-only} {}
+
+// Desktop - and up
+@media #{$breakpoint-desktop-and-up} {}
+
+// Desktop - only
+@media #{$breakpoint-desktop-only} {}
+
+// Large desktop - and up
+@media #{$breakpoint-large-desktop-and-up} {}
+
+// Print
+@media print {}
+
+// Touch
+.touchevents {}
+
+// No touch
+.no-touchevents {}
