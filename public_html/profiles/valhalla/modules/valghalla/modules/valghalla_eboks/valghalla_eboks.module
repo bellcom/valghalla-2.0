@@ -69,7 +69,7 @@ function valghalla_eboks_get_message($template_node) {
 /**
  * Send message callback.
  */
-function valghalla_eboks_send_message($to, $params, $context) {
+function valghalla_eboks_send_message($to, $params, $context = array()) {
   module_load_include('inc', 'valghalla_eboks', 'includes/ServicePlatformenPrintDP');
 
   /** @var EntityInterface $notification */
