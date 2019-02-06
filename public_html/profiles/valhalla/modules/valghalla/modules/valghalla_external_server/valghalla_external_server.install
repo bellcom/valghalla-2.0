@@ -80,6 +80,11 @@ function valghalla_external_server_requirements($phase) {
         'panels_mini',
         'search',
         'views_ui',
+        'contextual',
+        'dashboard',
+        'shortcut',
+        'color',
+
         // Valghalla modules.
         'valghalla_lists',
         'liste_beskeder',
