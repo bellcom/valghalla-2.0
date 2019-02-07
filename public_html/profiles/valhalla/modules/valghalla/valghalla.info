@@ -8,7 +8,6 @@ dependencies[] = adminimal_admin_menu
 dependencies[] = addressfield
 dependencies[] = block
 dependencies[] = bulk_export
-dependencies[] = color
 dependencies[] = composer_manager
 dependencies[] = ctools
 dependencies[] = ctools_access_ruleset

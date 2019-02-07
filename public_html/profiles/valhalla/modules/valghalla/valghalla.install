@@ -240,6 +240,6 @@ function valghalla_update_7116() {
   features_revert_module('valghalla_volunteers');
   features_revert_module('liste_m_cpr_nummer');
 
-  field_delete_field('field_diaet');
-  field_purge_batch(1);
+  $instance = field_info_instance('node', 'field_diaet', 'volunteers');
+  field_delete_instance($instance);
 }

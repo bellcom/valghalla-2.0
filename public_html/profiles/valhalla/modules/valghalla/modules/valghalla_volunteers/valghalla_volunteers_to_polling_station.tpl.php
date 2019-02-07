@@ -193,6 +193,7 @@
                         'role_nid'           => $post['role_nid'],
                         'party_tid'          => $post['party_tid'],
                         'pollingstation_nid' => $pollingstation_nid,
+                        'election_nid' => $election_nid,
                         'destination'        => current_path(),
                       ],
                     ]);

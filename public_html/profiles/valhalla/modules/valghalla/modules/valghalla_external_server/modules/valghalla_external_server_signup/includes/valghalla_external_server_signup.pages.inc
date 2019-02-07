@@ -77,9 +77,9 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
 
   $form['cpr'] = array(
     '#type' => 'textfield',
-    '#description' => 'Temporary field, until NemID login is added',
+    '#description' => t('CPR nummer'),
     '#attributes' => array(
-      'placeholder' => 'Temporary field, until NemID login is added',
+      'placeholder' => t('CPR nummer'),
     ),
     '#required' => TRUE,
   );

@@ -630,6 +630,7 @@ function valghalla_volunteers_to_polling_station_markup($polling_station, $user_
       'parties_status' => $parties_status,
       'pollingstation_nid' => $posts_array['station_nid'],
       'party_posts_to_fill' => $posts_array['party_posts_to_fill'],
+      'election_nid' => $_SESSION['election_nid'],
     ));
   }
 }
@@ -1646,16 +1647,16 @@ function valghalla_volunteers_preprocess_views_view_table(&$variables) {
  * Wrapper with module existing check.
  */
 function valghalla_volunteers_notify($election_nid, $role_nid, $fc, $type) {
-  if ($type == 'invitation' && module_exists('valghalla_internal_server')) {
-    // Forcing synch before sending the invitation message, so that sent is
-    // valid at all times.
-    valghalla_internal_server_perform_synch(TRUE);
-  }
-
   if (module_exists('valghalla_notifications')) {
     valghalla_notifications_notify_volunteer($election_nid, $role_nid, $fc, $type);
   }
   else {
     watchdog('valghalla_volunteers','Notifikation blev ikke afsend. Modul valghalla_notifications er ikke aktiveret.', array(), WATCHDOG_WARNING);
+  }
+
+  if ($type == 'invitation' && module_exists('valghalla_internal_server')) {
+    // Forcing synch before sending the invitation message, so that sent is
+    // valid at all times.
+    valghalla_internal_server_perform_synch(TRUE);
   }
 }
