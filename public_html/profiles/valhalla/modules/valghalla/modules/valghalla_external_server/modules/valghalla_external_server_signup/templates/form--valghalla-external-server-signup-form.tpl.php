@@ -32,12 +32,6 @@ unset($form['terms_agreement']);
   </div>
   <!-- End - upper text -->
 
-  <!-- Begin - nemid login -->
-  <div>
-    <p>NemID block</p>
-  </div>
-  <!-- End - nemid login -->
-
   <!-- Begin - form -->
   <div class="partial">
     <div class="partial__body">
