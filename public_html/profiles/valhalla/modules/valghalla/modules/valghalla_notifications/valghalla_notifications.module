@@ -532,14 +532,16 @@ function valghalla_notifications_direct_send($gateway_id, $to, $params, $context
   $gateway = valghalla_notifications_gateway($gateway_id);
   if (empty($gateway)) {
     watchdog('valghalla_notifications', 'Gateway %gateway not found', array('%gateway' => $gateway_id), WATCHDOG_ERROR);
-    return;
+    return FALSE;
   }
   if (!empty($to) && !call_user_func($gateway['send_message_callback'], $to, $params, $context)) {
     watchdog('valghalla_notifications', 'Failed sending direct notification to %to via %gateway gateway', array(
       '%gateway' => $gateway_id,
       '%to' => str_repeat("*", strlen($to) - 4) . substr($to, -4),
     ), WATCHDOG_ERROR);
+    return FALSE;
   }
+  return TRUE;
 }
 
 /**
