@@ -32,7 +32,6 @@ function valghalla_election_handle_seats_form($form, &$form_state, $polling_stat
 
           $langcode = entity_language('field_collection_item', $fc);
           field_attach_form('field_collection_item', $fc, $fc_form, $fc_form_state, $langcode);
-
           // It is very important to unset parents, otherwise the received
           // values will be collapsed.
           unset($fc_form['#parents']);
@@ -44,6 +43,27 @@ function valghalla_election_handle_seats_form($form, &$form_state, $polling_stat
       }
     }
   }
+
+  // Alter form appearance.
+  foreach($form as $form_party_tid => $form_party) {
+    $party = $form[$form_party_tid]['field_ppsp_party']['und'];
+    $party_letter_form_value = $party['#default_value'][0];
+    $party_letter = $party['#options'][$party_letter_form_value];
+
+    $form[$form_party_tid]['field_ppsp_party']['#type'] = 'hidden';
+
+    $heading = array(
+      '#type' => 'item',
+      '#markup' => '<h2>' . t('Parti') . ' ' . $party_letter . '</h2>',
+    );
+
+    // Insert heading at beginning of the render array.
+    array_unshift($form[$form_party_tid], $heading);
+
+    // Insert bottom.
+    $form[$form_party_tid]['#suffix'] = '<hr>';
+  }
+
 
   $form['#tree'] = TRUE;
 

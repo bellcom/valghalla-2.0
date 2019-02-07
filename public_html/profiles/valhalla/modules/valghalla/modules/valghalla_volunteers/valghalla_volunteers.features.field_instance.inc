@@ -12,47 +12,6 @@ function valghalla_volunteers_field_default_field_instances() {
   $field_instances = array();
 
   // Exported field_instance:
-  // 'field_collection_item-field_electioninfo-field_diaet'.
-  $field_instances['field_collection_item-field_electioninfo-field_diaet'] = array(
-    'bundle' => 'field_electioninfo',
-    'default_value' => NULL,
-    'deleted' => 0,
-    'description' => '',
-    'display' => array(
-      'default' => array(
-        'label' => 'above',
-        'module' => 'number',
-        'settings' => array(
-          'decimal_separator' => '.',
-          'prefix_suffix' => TRUE,
-          'scale' => 0,
-          'thousand_separator' => ' ',
-        ),
-        'type' => 'number_integer',
-        'weight' => 7,
-      ),
-    ),
-    'entity_type' => 'field_collection_item',
-    'field_name' => 'field_diaet',
-    'label' => 'Diæt',
-    'required' => 0,
-    'settings' => array(
-      'max' => '',
-      'min' => '',
-      'prefix' => '',
-      'suffix' => '',
-      'user_register_form' => FALSE,
-    ),
-    'widget' => array(
-      'active' => 0,
-      'module' => 'number',
-      'settings' => array(),
-      'type' => 'number',
-      'weight' => 12,
-    ),
-  );
-
-  // Exported field_instance:
   // 'field_collection_item-field_electioninfo-field_election'.
   $field_instances['field_collection_item-field_electioninfo-field_election'] = array(
     'bundle' => 'field_electioninfo',
@@ -1501,7 +1460,6 @@ function valghalla_volunteers_field_default_field_instances() {
   t('CPR status');
   t('Deltageren er fritaget for Digital Post. Afkrydses dette felt, vil deltageren ikke modtage mails fra Valghalla.');
   t('Deltageren er fritaget for NemSMS. Afkrydses dette felt, vil deltageren ikke modtage SMS fra Valghalla.');
-  t('Diæt');
   t('Dør / side');
   t('Efternavn');
   t('Ekstern tilmelding');
