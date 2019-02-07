@@ -30,14 +30,14 @@ function valghalla_volunteers_update_7000() {
 }
 
 /**
- * Implements hook_update_N().
+ * Helper function to change field max length.
  *
- * Update field_cpr_number max length to 255.
+ * @param string $field_name
+ *   Name of the field.
+ * @param int $maxlength
+ *   New length of the field.
  */
-function valghalla_volunteers_update_7101() {
-  $field_name = 'field_cpr_number';
-  $maxlength = 255;
-
+function _valghalla_volunteer_change_field_maxlength($field_name, $maxlength = 255) {
   db_query("ALTER TABLE field_data_" . $field_name . " CHANGE " . $field_name . "_value " . $field_name . "_value VARCHAR( " . $maxlength . " ) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL");
   db_query("ALTER TABLE field_revision_" . $field_name . " CHANGE " . $field_name . "_value " . $field_name . "_value VARCHAR( " . $maxlength . " ) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL");
 
@@ -50,4 +50,22 @@ function valghalla_volunteers_update_7101() {
 
   $qry = "UPDATE field_config SET data = :data WHERE field_name = :field_name";
   db_query($qry, array(':data' => $data, ':field_name' => $field_name));
+}
+
+/**
+ * Implements hook_update_N().
+ *
+ * Update field_cpr_number max length to 255.
+ */
+function valghalla_volunteers_update_7101() {
+  _valghalla_volunteer_change_field_maxlength('field_cpr_number');
+}
+
+/**
+ * Implements hook_update_N().
+ *
+ * Update field_phone max length to 255.
+ */
+function valghalla_volunteers_update_7102() {
+  _valghalla_volunteer_change_field_maxlength('field_phone');
 }
