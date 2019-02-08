@@ -112,6 +112,7 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
     '#attributes' => array(
       'placeholder' => t('Email'),
     ),
+    '#required' => TRUE,
     '#access' => valghalla_external_server_signup_field_visibility($form_state, 'mail', ($role) ? $role->uuid : NULL),
   );
   $form['phone-container'] = array(
@@ -124,6 +125,7 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
     '#attributes' => array(
       'placeholder' => t('Telefon nr.'),
     ),
+    '#required' => TRUE,
     '#access' => valghalla_external_server_signup_field_visibility($form_state, 'sms', ($role) ? $role->uuid : NULL),
   );
 
@@ -140,38 +142,42 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
   if (!isset($form_state['role_in_url']) && !isset($form_state['polling_station_in_url'])) {
     $form_mode = 'party';
     $replacements = array(
+      odin_get_municipality(variable_get('valhalla_settings_municipality')),
       $election->title,
       $election_date_str,
-      $party->name,
+      $party->field_partinavn['und'][0]['value'],
     );
   }
   elseif (isset($form_state['role_in_url']) && !isset($form_state['polling_station_in_url'])) {
     $form_mode = 'party_role';
     $replacements = array(
+      odin_get_municipality(variable_get('valhalla_settings_municipality')),
       $election->title,
       $election_date_str,
-      $party->name,
-      $role->title,
-      $election_date_str . ' kl. ' . $role->field_meetingtime['und'][0]['value'],
+      $party->field_partinavn['und'][0]['value'],
+      $role->field_description['und'][0]['value'],
+      $role->field_meetingtime['und'][0]['value'],
     );
   }
   elseif (!isset($form_state['role_in_url']) && isset($form_state['polling_station_in_url'])) {
     $form_mode = 'party_polling_station';
     $replacements = array(
+      odin_get_municipality(variable_get('valhalla_settings_municipality')),
       $election->title,
       $election_date_str,
-      $party->name,
+      $party->field_partinavn['und'][0]['value'],
       $polling_station->title,
     );
   }
   elseif (isset($form_state['role_in_url']) && isset($form_state['polling_station_in_url'])) {
     $form_mode = 'party_role_polling_station';
     $replacements = array(
+      odin_get_municipality(variable_get('valhalla_settings_municipality')),
       $election->title,
       $election_date_str,
-      $party->name,
-      $role->title,
-      $election_date_str . ' kl. ' . $role->field_meetingtime['und'][0]['value'],
+      $party->field_partinavn['und'][0]['value'],
+      $role->field_description['und'][0]['value'],
+      $role->field_meetingtime['und'][0]['value'],
       $polling_station->title,
     );
   }
@@ -205,10 +211,17 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
       ),
     );
 
+    $form['role_details'] = array(
+      '#prefix' => '<div id="js-role-details">',
+      '#suffix' => '</div>',
+    );
+
     if (isset($form_state['values']) && isset($form_state['values']['role_select'])) {
       $role_selected = $form_state['values']['role_select'];
       $role = node_load($role_selected);
       $form_state['role'] = $role;
+
+      $form['role_details']['#markup'] = _valghalla_external_server_signup_get_role_detail_html($role);
     }
   }
 
@@ -273,22 +286,43 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
     $form['#party_message'] = $party->field_party_subsc_message['und'][0]['value'];
   }
 
-  $terms_agreement_default = t('Accepter at vi gemmer dine oplysninger.');
-  $form['terms_agreement'] = array(
-    '#type' => 'checkbox',
-    '#title' => !empty($party->field_party_subsc_terms_text) ? $party->field_party_subsc_terms_text['und'][0]['value'] : $terms_agreement_default,
-    '#required' => TRUE,
-  );
-
   $form['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Tilmeld'),
-    '#states' => array(
+  );
+
+  // Determining if we need to show consent checkbox.
+  $terms_agreement_text = '';
+  $field_election_disable_consent = field_get_items('node', $election, 'field_election_disable_consent');
+
+  // If field is empty, or the value is 0.
+  if (empty($field_election_disable_consent) || $field_election_disable_consent[0]['value'] == 0) {
+    $field_election_consent_text = field_get_items('node', $election, 'field_election_consent_text');
+    if (!empty($field_election_consent_text) && !empty($field_election_consent_text[0]['value'])) {
+      $terms_agreement_text = $field_election_consent_text[0]['value'];
+    }
+    else {
+      $terms_agreement_text = t('Accepter at vi gemmer dine oplysninger.');
+    }
+  }
+  if (!empty($party->field_party_subsc_terms_text)) {
+    $terms_agreement_text = $party->field_party_subsc_terms_text['und'][0]['value'];
+  }
+
+  // We have some text, so consent checkbox needs to be displayed.
+  if (!empty($terms_agreement_text)) {
+    $form['terms_agreement'] = array(
+      '#type' => 'checkbox',
+      '#title' => $terms_agreement_text ,
+      '#required' => TRUE,
+    );
+
+    $form['submit']['#states'] = array(
       'enabled' => array(
         ':input[name="terms_agreement"]' => array('checked' => TRUE),
       ),
-    ),
-  );
+    );
+  }
 
   $form['#theme'] = array('valghalla_external_server_signup_form');
 
@@ -307,17 +341,18 @@ function valghalla_external_server_signup_role_select_callback($form, &$form_sta
   $commands = array();
 
   $role_selected = $form_state['values']['role_select'];
-  $uuids = entity_get_uuid_by_id('node', array($role_selected));
-  if (!empty($uuids) && is_array($uuids)) {
-    $role_uuid = reset($uuids);
-  }
+  $role = node_load($role_selected);
 
   // Updating the email and phone fields visibility.
-  $form['email-container']['email']['#access'] = valghalla_external_server_signup_field_visibility($form_state, 'mail', $role_uuid);
+  $form['email-container']['email']['#access'] = valghalla_external_server_signup_field_visibility($form_state, 'mail', $role->uuid);
   $commands[] = ajax_command_replace('#js-email-container', drupal_render($form['email-container']));
 
-  $form['phone-container']['phone']['#access'] = valghalla_external_server_signup_field_visibility($form_state, 'sms', $role_uuid);
+  $form['phone-container']['phone']['#access'] = valghalla_external_server_signup_field_visibility($form_state, 'sms', $role->uuid);
   $commands[] = ajax_command_replace('#js-phone-container', drupal_render($form['phone-container']));
+
+  // Updating role details.
+  $form['role_details']['#markup'] = ($role) ? _valghalla_external_server_signup_get_role_detail_html($role) : '';
+  $commands[] = ajax_command_replace('#js-role-details', drupal_render($form['role_details']));
 
   if (!isset($form_state['polling_station_in_url'])) {
     $polling_station_selected = $form_state['values']['polling_station_select'];
@@ -394,6 +429,11 @@ function valghalla_external_server_signup_polling_station_select_callback($form,
 
     // Updating value in the form state.
     $form_state['values']['role_select'] = $role_selected;
+
+    // Updating role details.
+    $role = ($role_selected) ? node_load($role_selected) : NULL;
+    $form['role_details']['#markup'] = ($role) ? _valghalla_external_server_signup_get_role_detail_html($role) : '';
+    $commands[] = ajax_command_replace('#js-role-details', drupal_render($form['role_details']));
   }
 
   return array('#type' => 'ajax', '#commands' => $commands);
@@ -433,6 +473,14 @@ function valghalla_external_server_signup_signup_form_validate($form, &$form_sta
       form_set_error('phone', t('Phone number is too long'));
     }
   }
+
+  if (isset($form_state['values']['polling_station_select']) && $form_state['values']['polling_station_select'] === 0) {
+    form_set_error('polling_station_select', t('The field %field is required.', array('%field' => 'Valgsted')));
+  }
+
+  if (isset($form_state['values']['role_select']) && $form_state['values']['role_select'] === 0) {
+    form_set_error('role_select', t('The field %field is required.', array('%field' => 'Role')));
+  }
 }
 
 /**
@@ -462,6 +510,7 @@ function valghalla_external_server_signup_signup_form_submit($form, &$form_state
       $volunteer_node->status = 1;
       $volunteer_node->field_cpr_number[LANGUAGE_NONE][]['value'] = $cpr;
       $volunteer_node->field_external_signup[LANGUAGE_NONE][]['value'] = 1;
+      $volunteer_node->field_party[LANGUAGE_NONE][0]['tid'] = $party_tid;
 
       if (isset($form_state['values']['email'])) {
         $email_encrypted = valghalla_synch_node_export_get_encrypt($form_state['values']['email']);
@@ -504,12 +553,14 @@ function valghalla_external_server_signup_settings_form($form, $form_state) {
   $form['valghalla_external_server_signup_text_party_fs']['valghalla_external_server_signup_text_party_upper'] = array(
     '#title' => t('Party only upper text'),
     '#type' => 'textarea',
-    '#default_value' => variable_get('valghalla_external_server_signup_text_party_upper'),
+    '#default_value' => variable_get('valghalla_external_server_signup_text_party_upper', '<p>Du kan her tilmelde dig til !election_name den !election_time for !party_name.</p>
+<p>Log ind med NemID i nedenstående formular for at fortsætte.</p>'),
   );
   $form['valghalla_external_server_signup_text_party_fs']['valghalla_external_server_signup_text_party_bottom'] = array(
     '#title' => t('Party only bottom text'),
     '#type' => 'textarea',
-    '#default_value' => variable_get('valghalla_external_server_signup_text_party_bottom'),
+    '#default_value' => variable_get('valghalla_external_server_signup_text_party_bottom', '<p>Ved at aktivere tilmeld-knappen herunder, accepterer du samtidigt at !municipality registrerer CPR nummer som tilmeldt på ovenstående afstemningssted. Du skal møde på ovenstående adresse d. !election_time.</p>
+<p>Du vil herefter modtage en bekræftelse, her står der mere om dine opgaver på valgdagen, hvornår du skal møde samt ovenstående navn på valgsted og adresse.</p>'),
   );
   $token_str = array();
   foreach (_valghalla_external_server_signup_text_get_replacement_tokens('party') as $token => $text) {
@@ -536,12 +587,15 @@ function valghalla_external_server_signup_settings_form($form, $form_state) {
   $form['valghalla_external_server_signup_text_party_role_fs']['valghalla_external_server_signup_text_party_role_upper'] = array(
     '#title' => t('Party and role upper text'),
     '#type' => 'textarea',
-    '#default_value' => variable_get('valghalla_external_server_signup_text_party_role_upper'),
+    '#default_value' => variable_get('valghalla_external_server_signup_text_party_role_upper', '<p>Du kan her tilmelde dig til !election_name den !election_time for !party_name.</p>
+<p>Du kan vælge mellem de valgsteder der har en ledig plads.</p>
+<p>Log ind med NemID i nedenstående formular for at fortsætte.</p>'),
   );
   $form['valghalla_external_server_signup_text_party_role_fs']['valghalla_external_server_signup_text_party_role_bottom'] = array(
     '#title' => t('Party and role bottom text'),
     '#type' => 'textarea',
-    '#default_value' => variable_get('valghalla_external_server_signup_text_party_role_bottom'),
+    '#default_value' => variable_get('valghalla_external_server_signup_text_party_role_bottom', '<p>Ved at aktivere tilmeld-knappen herunder, accepterer du samtidigt at !municipality registrerer CPR nummer som tilmeldt på ovenstående afstemningssted. Du skal møde på ovenstående adresse d. !election_time.</p>
+<p>Du vil herefter modtage en bekræftelse, her står der mere om dine opgaver på valgdagen, hvornår du skal møde samt ovenstående navn på valgsted og adresse.</p>'),
   );
   $token_str = array();
   foreach (_valghalla_external_server_signup_text_get_replacement_tokens('party_role') as $token => $text) {
@@ -568,12 +622,15 @@ function valghalla_external_server_signup_settings_form($form, $form_state) {
   $form['valghalla_external_server_signup_text_party_polling_station_fs']['valghalla_external_server_signup_text_party_polling_station_upper'] = array(
     '#title' => t('Party and polling station upper text'),
     '#type' => 'textarea',
-    '#default_value' => variable_get('valghalla_external_server_signup_text_party_polling_station_upper'),
+    '#default_value' => variable_get('valghalla_external_server_signup_text_party_polling_station_upper', '<p>Du kan her tilmelde dig til !election_name den !election_time for !party_name.</p>
+<p>Du kan vælge en rolle blandt de ledige pladser !party_name er tildelt på !polling_station_name.</p>
+<p>Log ind med NemID i nedenstående formular for at fortsætte.</p>'),
   );
   $form['valghalla_external_server_signup_text_party_polling_station_fs']['valghalla_external_server_signup_text_party_polling_station_bottom'] = array(
     '#title' => t('Party and polling station bottom text'),
     '#type' => 'textarea',
-    '#default_value' => variable_get('valghalla_external_server_signup_text_party_polling_station_bottom'),
+    '#default_value' => variable_get('valghalla_external_server_signup_text_party_polling_station_bottom', '<p>Ved at aktivere tilmeld-knappen herunder, accepterer du samtidigt at !municipality registrerer CPR nummer som tilmeldt som !role_name på afstemningsstedet !polling_station_name. Du skal møde på ovenstående adresse d. !election_time !role_meeting_time.</p>
+<p>Du vil herefter modtage en bekræftelse, her står der mere om dine opgaver på valgdagen, hvornår du skal møde samt ovenstående navn på valgsted og adresse.</p>'),
   );
   $token_str = array();
   foreach (_valghalla_external_server_signup_text_get_replacement_tokens('party_polling_station') as $token => $text) {
@@ -600,12 +657,14 @@ function valghalla_external_server_signup_settings_form($form, $form_state) {
   $form['valghalla_external_server_signup_text_party_role_polling_station_fs']['valghalla_external_server_signup_text_party_role_polling_station_upper'] = array(
     '#title' => t('Party, role and polling station upper text'),
     '#type' => 'textarea',
-    '#default_value' => variable_get('valghalla_external_server_signup_text_party_role_polling_station_upper'),
+    '#default_value' => variable_get('valghalla_external_server_signup_text_party_role_polling_station_upper', '<p>Du kan her tilmelde dig som !role_name på !polling_station_name ved !election_name den !election_time for !party_name.</p>
+<p>Log ind med NemID i nedenstående formular for at fortsætte.</p>'),
   );
   $form['valghalla_external_server_signup_text_party_role_polling_station_fs']['valghalla_external_server_signup_text_party_role_polling_station_bottom'] = array(
     '#title' => t('Party, role and polling station bottom text'),
     '#type' => 'textarea',
-    '#default_value' => variable_get('valghalla_external_server_signup_text_party_role_polling_station_bottom'),
+    '#default_value' => variable_get('valghalla_external_server_signup_text_party_role_polling_station_bottom', '<p>Ved at aktivere tilmeld-knappen herunder, accepterer du samtidigt at !municipality registrerer CPR nummer som tilmeldt som !role_name på afstemningsstedet !polling_station_name. Du skal møde på ovenstående adresse d. !election_time !role_meeting_time.</p>
+<p>Du vil herefter modtage en bekræftelse, her står der mere om dine opgaver på valgdagen, hvornår du skal møde samt ovenstående navn på valgsted og adresse.</p>'),
   );
   $token_str = array();
   foreach (_valghalla_external_server_signup_text_get_replacement_tokens('party_role_polling_station') as $token => $text) {
@@ -641,6 +700,23 @@ function valghalla_external_server_signup_settings_form($form, $form_state) {
  *   TRUE or FALSE.
  */
 function valghalla_external_server_signup_field_visibility($form_state, $propery_name, $role_uuid = NULL) {
+  // Checking election overwrites first.
+  $election = $form_state['election'];
+
+  if ($propery_name == 'mail') {
+    $field_election_ext_require_email = field_get_items('node', $election, 'field_election_ext_require_email');
+    if (!empty($field_election_ext_require_email) && $field_election_ext_require_email[0]['value'] == 1) {
+      return TRUE;
+    }
+  }
+  elseif ($propery_name == 'sms') {
+    $field_election_ext_require_phone = field_get_items('node', $election, 'field_election_ext_require_phone');
+    if (!empty($field_election_ext_require_phone) && $field_election_ext_require_phone[0]['value'] == 1) {
+      return TRUE;
+    }
+  }
+
+  // Checking notification export config.
   $conf_export = $form_state['election_notif_conf_export'];
 
   if ($role_uuid && array_key_exists($role_uuid, $conf_export) && isset($conf_export[$role_uuid][$propery_name])) {

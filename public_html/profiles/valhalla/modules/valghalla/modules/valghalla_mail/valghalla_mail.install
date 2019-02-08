@@ -90,6 +90,8 @@ function valghalla_mail_install() {
   variable_del('valhalla_rsvp_status_body_no');
   variable_del('valhalla_rsvp_status_subject_never');
   variable_del('valhalla_rsvp_status_body_never');
+
+  valghalla_mail_update_7102();
 }
 
 /**

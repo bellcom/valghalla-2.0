@@ -26,7 +26,7 @@ function valghalla_notifications_menu() {
   );
 
   $items['valghalla/administration/valg/notifications/%'] = array(
-    'title' => 'Notifikationer indstillinger',
+    'title' => 'Skabeloner',
     'description' => 'Tilretning af standard notifikationer.',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('valghalla_notifications_settings', 4),
@@ -192,13 +192,13 @@ function valghalla_notifications_entity_info() {
 /**
  * Implements hook_permission().
  */
-function valghalla_notification_permission() {
+function valghalla_notifications_permission() {
   $permissions = array(
     'administer valghalla notification entities' => array(
-      'title' => t('Administer entity_valghalla_notification entities'),
+      'title' => t('Administer notification entities'),
     ),
     'view any valghalla notification entity' => array(
-      'title' => t('View any Valghalla Notification entity'),
+      'title' => t('View any notification entity'),
     ),
   );
   return $permissions;
@@ -240,8 +240,8 @@ function valghalla_notifications_get_types() {
   return array(
     'invitation' => t('Invitation'),
     'confirmed' => t('Bekræftet (tak for din tilmeldelse)'),
-    'reminder' => t('Påmindelse'),
-    'reminder_togo' => t('Påmindelse toGo'),
+    'reminder' => t('Påmindelse for svar på invitation'),
+    'reminder_togo' => t('Påmindelse før valg'),
     'rsvp_no' => t('RSVP Nej'),
     'rsvp_never' => t('RSVP Aldrig'),
     'remove' => t('Slet fra pladsen'),
@@ -487,7 +487,7 @@ function valghalla_notifications_notify_volunteer($election_nid, $role_nid, $fc,
 
   // Send email to roles or other email address, if user cancelled to attend.
   if ($type == 'rsvp_no' || $type == 'rsvp_never') {
-    $to_admin = valghalla_volunteers_add_email_to_list();
+    $to_admin = valghalla_notifications_add_email_to_list();
     $copy_params = $params;
     $copy_params['volunteer_nid'] = -1;
     valghalla_notifications_direct_send('mail', $to_admin, $copy_params);
@@ -532,12 +532,69 @@ function valghalla_notifications_direct_send($gateway_id, $to, $params, $context
   $gateway = valghalla_notifications_gateway($gateway_id);
   if (empty($gateway)) {
     watchdog('valghalla_notifications', 'Gateway %gateway not found', array('%gateway' => $gateway_id), WATCHDOG_ERROR);
-    return;
+    return FALSE;
   }
   if (!empty($to) && !call_user_func($gateway['send_message_callback'], $to, $params, $context)) {
     watchdog('valghalla_notifications', 'Failed sending direct notification to %to via %gateway gateway', array(
       '%gateway' => $gateway_id,
       '%to' => str_repeat("*", strlen($to) - 4) . substr($to, -4),
     ), WATCHDOG_ERROR);
+    return FALSE;
   }
+  return TRUE;
+}
+
+/**
+ * Implements hook_node_delete().
+ */
+function valghalla_notifications_node_delete($node) {
+  if ($node->type != 'volunteers') {
+    return;
+  }
+  // Delete all notifications for deleting volunteer.
+  $entities = entity_valghalla_notification_load_multiple(FALSE, array('vol_id' => $node->nid));
+  foreach ($entities as $entity) {
+    $entity->delete();
+  }
+}
+
+/**
+ * Get a list of email addresses.
+ *
+ * According to role which are selected in config file.
+ */
+function valghalla_notifications_add_email_to_list() {
+  module_load_include('inc', 'valghalla_notifications', 'valghalla_notifications_admin');
+  $roles = db_query("SELECT name, rid FROM {role} WHERE rid > 2");
+  $to = "";
+  foreach ($roles as $role) {
+    $role_id_send_to = variable_get("valghalla_notifications_cancellation_from_participants_" . $role->rid);
+    if ($role_id_send_to) {
+      // Get all the email addresses according to role id and add to "to list".
+      $results = db_query("SELECT u.mail as mail FROM {users_roles} r, {users} u where r.uid=u.uid and r.rid = " . $role->rid);
+      foreach ($results as $result) {
+        if ($to == "") {
+          $to = $result->mail;
+        }
+        else {
+          $pattern = "/^" . $result->mail . "/";
+          $multi_roles = preg_match($pattern, $to, $matches);
+          if ($multi_roles == 0) {
+            $to .= ",";
+            $to .= $result->mail;
+          }
+        }
+      }
+    }
+  }
+  // Get the extra email addresses.
+  $mails = variable_get("valghalla_notifications_cancellation_from_participants_to_mails");
+  $other_check = variable_get("valghalla_notifications_cancellation_from_participants_others");
+  if ($other_check) {
+    $mails = explode(",", $mails);
+    foreach ($mails as $key => $value) {
+      $to .= "," . $value;
+    }
+  }
+  return $to;
 }

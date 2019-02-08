@@ -322,6 +322,17 @@ function valghalla_volunteers_rsvp_form($form, &$form_state) {
     $rsvp = 1;
   }
 
+  if (variable_get('valghalla_volunteers_check_cpr_match', TRUE) && $GLOBALS['user']->uid == 0) {
+    $form['cpr'] = array(
+      '#type' => 'textfield',
+      '#title' => 'CPR',
+      '#description' => 'Temporary field, until NemID login is added',
+      '#attributes' => array(
+        'placeholder' => 'Temporary field, until NemID login is added',
+      ),
+    );
+  }
+
   $form['rsvp'] = array(
       '#type' => 'select',
       '#title' => t('Vælg'),
@@ -350,6 +361,46 @@ function valghalla_volunteers_rsvp_form($form, &$form_state) {
 
   return $form;
 }
+
+/**
+ * Validates the rsvp form.
+ */
+function valghalla_volunteers_rsvp_form_validate($form, &$form_state) {
+  $rsvp = $form_state['values']['rsvp'];
+  if ($rsvp < 0 || $rsvp > 3) {
+    form_set_error('rsvp', t('Ugyldig værdig for svar'));
+  }
+
+  if (variable_get('valghalla_volunteers_check_cpr_match', TRUE) && $GLOBALS['user']->uid == 0) {
+    $cpr = $form_state['values']['cpr'];
+
+    // Adding dash, if missing. E.g. 123456-7890.
+    if (preg_match('/[0-9]{10}/', $cpr)) {
+      $cpr = substr($cpr, 0, 6) . '-' . substr($cpr, 6, 4);
+      $form_state['values']['cpr'] = $cpr;
+    }
+
+    if (!preg_match('/[0-9]{6}-[0-9]{4}/', $cpr)) {
+      form_set_error('cpr', t('Wrong CPR format, correct format is 123456-7890'));
+    }
+
+    if (module_exists('valghalla_synch_node_export') && module_exists('valghalla_external_server')) {
+      $cpr = valghalla_synch_node_export_get_encrypt($cpr);
+    }
+
+    // Getting CPR from volunteer node, which is attached to the field collection.
+    $fc = _valghalla_volunteers_validate_key(arg(2));
+    $volunteer = $fc->hostEntity();
+    if ($field_cpr_number = field_get_items('node', $volunteer, 'field_cpr_number')) {
+      $expected_cpr = $field_cpr_number[0]['value'];
+    }
+
+    if (strcmp($cpr, $expected_cpr) !== 0) {
+      form_set_error('cpr', t('This token is not valid for the provided CPR'));
+    }
+  }
+}
+
 
 /**
  * Handle rsvp form submits
@@ -391,7 +442,7 @@ function valghalla_volunteers_rsvp_form_submit($form, &$form_state) {
     }
 
     // Send email via notification system.
-    if (module_exists('valghalla_mail')) {
+    if (module_exists('valghalla_notifications')) {
       $params = array(
         'subject' => t('Ny tilmelding til !valgtitle', array('!valgtitle' => $election_node->title)),
         'body' => t('Der er oprettet en ny tilmelding til !valgtitle med kommentaren: ' . $comment, array('!valgtitle' => $election_node->title)),
@@ -404,69 +455,9 @@ function valghalla_volunteers_rsvp_form_submit($form, &$form_state) {
 
       valghalla_notifications_direct_send('mail', $recipient, $params);
     }
-  }
-}
-
-/**
- * Get a list of email addresses according to role which are selected in config file
- * see also valghalla_notification_admin
- *
- * @author Yani Xu <yani@bellcom.dk>
- */
-function valghalla_volunteers_add_email_to_list() {
-  module_load_include('inc', 'valghalla_notifications', 'valghalla_notifications_admin');
-  $roles = db_query("SELECT name, rid FROM {role} WHERE rid > 2");
-  $to = "";
-  foreach ($roles as $role) {
-    $role_id_sendTo = variable_get("valghalla_notifications_cancellation_from_participants_".$role->rid);
-    // When the role is selected in valghalla_notifications_admin.inc
-    if ($role_id_sendTo) {
-      // Get all the email addresses according to role id and add to "to list".
-      $results = db_query("SELECT u.mail as mail FROM {users_roles} r, {users} u where r.uid=u.uid and r.rid = ".$role->rid);
-      foreach ($results as $result) {
-
-        if ($to == "") {
-          $to = $result->mail;
-        }
-        else {
-          // Add "," to mail list to seperate
-          // yani: check duplicate email addresses, because a user can have multi roles.
-          $pattern = "/^" .$result->mail . "/";
-          $multi_roles = preg_match($pattern, $to, $matches);
-          if ($multi_roles == 0) {
-            $to .= ",";
-            $to .= $result->mail;
-          }
-        }
-      }
+    else {
+      watchdog('valghalla_volunteers','Notifikation blev ikke afsend. Modul valghalla_notifications er ikke aktiveret.', array(), WATCHDOG_WARNING);
     }
-  }
-  // Get the extra email addresses.
-  $mails = variable_get("valghalla_notifications_cancellation_from_participants_to_mails");
-  $other_check = variable_get("valghalla_notifications_cancellation_from_participants_others");
-  if ($other_check) {
-    $mails = explode(",", $mails);
-    foreach ($mails as $key => $value) {
-      $to .= ",".$value;
-    }
-  }
-  return $to;
-}
-
-/**
- * Validates the rsvp form.
- *
- * @param array $form
- *   The submitted form.
- * @param array $form_state
- *   The submitted form_state.
- *
- * @author Henrik Farre <hf@bellcom.dk>
- */
-function valghalla_volunteers_rsvp_form_validate($form, &$form_state) {
-  $rsvp = $form_state['values']['rsvp'];
-  if ($rsvp < 0 || $rsvp > 3) {
-    form_set_error('rsvp', t('Ugyldig værdig for svar'));
   }
 }
 
@@ -607,7 +598,14 @@ function valghalla_volunteers_to_polling_station($station_nid = NULL) {
     $node_edit = '<div><a class="btn btn-secondary edit-polling-station hidden" href="' . $node_edit_url . '">' . t('Rediger valgsted') . '</a></div>';
   }
 
-  return $node_edit . $markup . $modal;
+  // Let the used edit seats, if he/she has sufficient permissions.
+  $edit_seats = '';
+  if (user_access('administer valghalla')) {
+    $edit_seats_url = '/station/' . arg(2) . '/seats?destination=' . current_path();
+    $edit_seats = '<div><a class="btn btn-secondary edit-polling-station hidden" href="' . $edit_seats_url . '">' . t('Rediger placeringer') . '</a></div>';
+  }
+
+  return $node_edit . $edit_seats . $markup . $modal;
 }
 
 /**
@@ -632,6 +630,7 @@ function valghalla_volunteers_to_polling_station_markup($polling_station, $user_
       'parties_status' => $parties_status,
       'pollingstation_nid' => $posts_array['station_nid'],
       'party_posts_to_fill' => $posts_array['party_posts_to_fill'],
+      'election_nid' => $_SESSION['election_nid'],
     ));
   }
 }
@@ -700,31 +699,32 @@ function valghalla_volunteers_polling_station_posts_to_fill($polling_station, $p
   // Populate filled_post with volunteer data.
 
   // Filling party information.
+  $party_letter = '';
+  if ($field_letter = field_get_items('taxonomy_term', $party, 'field_bogstav')) {
+    $party_letter = $field_letter[0]['value'];
+  }
   $party_posts_to_fill[$party_tid] = array(
     'party_name' => $party->name,
+    'party_letter' => $party_letter,
     'posts' => array(),
   );
 
-  // Party edit URL.
-  $volunteer_pr_pol_st_pr_party_query = new EntityFieldQuery();
-  $volunteer_pr_pol_st_pr_party_query->entityCondition('entity_type', 'field_collection_item')
-    ->entityCondition('bundle', 'field_volunteers_pr_pol_st_party')
-    ->propertyCondition('archived', 0)
-    ->propertyCondition('item_id', $electionAttachedVPSP)
-    ->fieldCondition('field_ppsp_polling_station', 'nid', $station_id)
-    ->fieldCondition('field_ppsp_party', 'tid', $party_tid);
-  $query_result = $volunteer_pr_pol_st_pr_party_query->execute();
-  $result = array_shift($query_result);
-  if ($result) {
-    $fc_id = reset($result);
-    $params = array('query' => array('destination' => current_path()));
-    $party_posts_to_fill[$party_tid]['edit_url'] = url('field-collection/field-volunteers-pr-pol-st-party/' . $fc_id->item_id . '/edit', $params);
-  }
-
-  // Party subscribe URL.
-  if (module_exists('valghalla_internal_server')) {
-    $party_loaded = taxonomy_term_load($party_tid);
-    $party_posts_to_fill[$party_tid]['party_subscribe_url'] = valghalla_internal_server_generate_external_subscribe_url($election, $party_loaded, NULL, $polling_station);
+  if (node_access('update', $election) === TRUE) {
+    // Party edit URL.
+    $volunteer_pr_pol_st_pr_party_query = new EntityFieldQuery();
+    $volunteer_pr_pol_st_pr_party_query->entityCondition('entity_type', 'field_collection_item')
+      ->entityCondition('bundle', 'field_volunteers_pr_pol_st_party')
+      ->propertyCondition('archived', 0)
+      ->propertyCondition('item_id', $electionAttachedVPSP)
+      ->fieldCondition('field_ppsp_polling_station', 'nid', $station_id)
+      ->fieldCondition('field_ppsp_party', 'tid', $party_tid);
+    $query_result = $volunteer_pr_pol_st_pr_party_query->execute();
+    $result = array_shift($query_result);
+    if ($result) {
+      $fc_id = reset($result);
+      $params = array('query' => array('destination' => current_path()));
+      $party_posts_to_fill[$party_tid]['edit_url'] = url('field-collection/field-volunteers-pr-pol-st-party/' . $fc_id->item_id . '/edit', $params);
+    }
   }
 
   // Traversing assigned posts.
@@ -776,10 +776,18 @@ function valghalla_volunteers_polling_station_posts_to_fill($polling_station, $p
     }
 
     // Adding filled post information to party_posts_to_fill.
+    $role = node_load($assigned_post['role_nid']);
+    $role_description = '';
+
+    if ($field = field_get_items('node', $role, 'field_description')) {
+      $role_description .= $field[0]['value'];
+    }
+
     $party_posts_to_fill[$party_tid]['posts'][$id] = array(
       'id' => $id,
       'role_nid' => $assigned_post['role_nid'],
       'role_title' => $assigned_post['role_title'],
+      'role_description' => $role_description,
       'party_tid' => $party_tid,
       'existing_post' => $existing_post,
     );
@@ -791,6 +799,14 @@ function valghalla_volunteers_polling_station_posts_to_fill($polling_station, $p
 
         $party_posts_to_fill[$party_tid]['posts'][$id]['post_subscribe_url'] = valghalla_internal_server_generate_external_subscribe_url($election, $party, $role_loaded, $polling_station);
       }
+    }
+  }
+
+  // Party subscribe URL.
+  if (module_exists('valghalla_internal_server')) {
+    if (!empty($party_posts_to_fill[$party_tid]['posts'])) {
+      $party_loaded = taxonomy_term_load($party_tid);
+      $party_posts_to_fill[$party_tid]['party_subscribe_url'] = valghalla_internal_server_generate_external_subscribe_url($election, $party_loaded, NULL, $polling_station);
     }
   }
 
@@ -816,9 +832,18 @@ function valghalla_volunteers_polling_station_posts_to_fill($polling_station, $p
 function valghalla_volunteers_seat_matrix_roles_table_markup($polling_station, $parties) {
   // Filling party status information.
   foreach ($parties as $party_tid => $party) {
+    $party = taxonomy_term_load($party_tid);
     $status = odin_get_volunteers_count($_SESSION['election_nid'], array($polling_station->nid), odin_get_roles(), $party_tid);
+
+    // Load party letter
+    $party_letter = '';
+    if ($field_letter = field_get_items('taxonomy_term', $party, 'field_bogstav')) {
+      $party_letter = $field_letter[0]['value'];
+    }
+
     $parties_status[$party_tid] = array(
-      'party_name' => $party,
+      'party_name' => $party->name,
+      'party_letter' => $party_letter,
       'party_status_label' => _valhalla_blocks_get_label($status['total_count']),
       'status' => $status
     );
@@ -1039,10 +1064,10 @@ function valghalla_volunteers_add_volunteer_to_post($volunteer_nid, $pollingstat
   $fc->save();
 
   if (variable_get('valghalla_notifications_send_invitation_on_add', TRUE) && !$confirmed) {
-    valghalla_notifications_notify_volunteer($election_nid, $role_nid, $fc, 'invitation');
+    valghalla_volunteers_notify($election_nid, $role_nid, $fc, 'invitation');
   }
   else if ($confirmed) {
-    valghalla_notifications_notify_volunteer($election_nid, $role_nid, $fc, 'confirmed');
+    valghalla_volunteers_notify($election_nid, $role_nid, $fc, 'confirmed');
   }
 
   return array('fcid' => $fc->item_id, 'html' => _valghalla_helper_wrap_name($volunteer_node, "p", $fc->item_id));
@@ -1062,7 +1087,7 @@ function valghalla_volunteers_remove_volunteer_from_post($fcid){
 
     // We send the notification. Only if a template is specified, will the
     // volunteer recieve a mail.
-    valghalla_notifications_notify_volunteer($election_nid, $role_nid, $fc, 'remove');
+    valghalla_volunteers_notify($election_nid, $role_nid, $fc, 'remove');
 
     $fc->delete();
 
@@ -1118,7 +1143,7 @@ function valghalla_volunteers_notify_volunteer($electionInfo, $forceType = NULL)
       }
     }
 
-    valghalla_notifications_notify_volunteer($election_nid, $role_nid, $electionInfo, $type);
+    valghalla_volunteers_notify($election_nid, $role_nid, $electionInfo, $type);
   }
 }
 
@@ -1274,12 +1299,8 @@ function valghalla_volunteers_form_volunteers_node_form_alter(&$form, &$form_sta
       'field_external_signup',
       'field_token',
       'field_polling_station',
-      'field_polling_station_post',
-      'field_label',
       'additional_settings',
       'field_address_bnummer',
-      'field_rolle_id',
-      'field_meeting_time',
       'field_electioninfo',
       'field_volunteer_valid_date',
       'field_cpr_valid_date',
@@ -1340,12 +1361,8 @@ function valghalla_volunteers_form_volunteers_node_form_alter(&$form, &$form_sta
 
     $field_ids = array(
       'field_diaet',
-      'field_meeting_time',
       'field_address_bnummer',
       'field_external_signup',
-      'field_rolle_id',
-      'field_label',
-      'field_polling_station_post',
       'field_electioninfo',
       'field_electioninfo',
       'field_volunteer_valid_date',
@@ -1364,14 +1381,6 @@ function valghalla_volunteers_form_volunteers_node_form_alter(&$form, &$form_sta
 
     $form['additional_settings']['#prefix'] = '<div style="display:none;">';
     $form['additional_settings']['#suffix'] = '</div>';
-
-    $form['roles_id'] = array(
-      '#type' => 'select',
-      '#title' => t('Rolle'),
-      '#options' => odin_get_roles(),
-      '#empty_option' => 'Select',
-      '#weight' => 10,
-    );
 
     $form_state['volunteer_add'] = TRUE;
     $form['actions']['submit']['#submit'][] = 'valghalla_volunteers_node_form_submit';
@@ -1455,16 +1464,6 @@ function valghalla_volunteers_node_validate($node, $form, &$form_state) {
     $field_language = key($form_state['values']['field_party']);
     if ($user_party_id) {
       $form_state['values']['field_party'][$field_language][0]['tid'] = $user_party_id;
-    }
-    // Convert the role chosen, to a label on the volunteer.
-    $role_id = '';
-    if (isset($form['roles_id'])) {
-      $field_language = key($form_state['values']['field_cpr_number']);
-
-      $role_id = $form_state['values']['roles_id'];
-
-      $roles_array = odin_get_roles();
-      $form_state['values']['field_label'][$field_language][0]['value'] = strtolower($roles_array[$role_id]);
     }
   }
 }
@@ -1592,6 +1591,12 @@ function valghalla_volunteers_form_valhalla_admin_settings_form_alter(&$form, &$
     '#title' => t('Vis altid svar link ud for deltager på valgoversigt (blå talebobbel).'),
     '#default_value' => variable_get('valghalla_volunteers_always_show_rsvp_link', FALSE),
   );
+
+  $form['valghalla_volunteers_check_cpr_match'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Yderligere check om CPR-nummer matcher mellem RSVP-formularen og deltageren.'),
+    '#default_value' => variable_get('valghalla_volunteers_check_cpr_match', TRUE),
+  );
 }
 
 /**
@@ -1635,5 +1640,23 @@ function valghalla_volunteers_preprocess_views_view_table(&$variables) {
     if (!empty($details)) {
       $variables['rows'][$key]['title'] .= ' (' . implode(' ', $details) . ')';
     }
+  }
+}
+
+/**
+ * Wrapper with module existing check.
+ */
+function valghalla_volunteers_notify($election_nid, $role_nid, $fc, $type) {
+  if (module_exists('valghalla_notifications')) {
+    valghalla_notifications_notify_volunteer($election_nid, $role_nid, $fc, $type);
+  }
+  else {
+    watchdog('valghalla_volunteers','Notifikation blev ikke afsend. Modul valghalla_notifications er ikke aktiveret.', array(), WATCHDOG_WARNING);
+  }
+
+  if ($type == 'invitation' && module_exists('valghalla_internal_server')) {
+    // Forcing synch before sending the invitation message, so that sent is
+    // valid at all times.
+    valghalla_internal_server_perform_synch(TRUE);
   }
 }

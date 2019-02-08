@@ -57,4 +57,5 @@ function valghalla_external_server_signup_theme($existing, $type, $theme, $path)
  */
 function valghalla_external_server_signup_valghalla_allowed_uris_alter(&$allowed_uris) {
   $allowed_uris[] = '/valghalla/external-signup*';
+  $allowed_uris[] = '/system/ajax*';
 }

@@ -3513,10 +3513,6 @@ msgid "indhold"
 msgstr ""
 
 #: /admin/modules/list/confirm
-msgid "field_chairman"
-msgstr ""
-
-#: /admin/modules/list/confirm
 msgid "Side m  CPR"
 msgstr ""
 
@@ -4535,20 +4531,6 @@ msgstr ""
 
 #: /admin/structure/taxonomy/partier/fields
 msgid "<Hidden>"
-msgstr ""
-
-#: /admin/structure/taxonomy/partier/fields/field_secretary
-msgid ""
-"The list of users that can be referenced can provided by a view (Views "
-"module) using the \"References\" display type."
-msgstr ""
-
-#: /admin/structure/taxonomy/partier/fields/field_secretary
-msgid "Views - Users that can be referenced"
-msgstr ""
-
-#: /admin/structure/taxonomy/partier/fields/field_secretary
-msgid "No eligible view was found."
 msgstr ""
 
 #: /volunteers/add
@@ -10197,16 +10179,6 @@ msgstr ""
 
 #: /admin/people
 msgid "assign afbud role"
-msgstr ""
-
-#: /admin/structure/features/valhalla_views/status
-msgid "Handler i stykker field_data_field_chairman.field_chairman"
-msgstr ""
-
-#: /admin/structure/features/valhalla_views/status
-msgid ""
-"Handler i stykker "
-"field_data_field_volunteers_pr_party.field_volunteers_pr_party"
 msgstr ""
 
 #: /add-sub-secretary

@@ -89,7 +89,7 @@ function valghalla_volunteer_validator_node_presave($node) {
   // Fetching names split.
   if (variable_get('valghalla_volunteer_validator_get_name')) {
     $field_map = array(
-      'field_first_name' => 'fornavn',
+      'field_first_name' => array('fornavn', 'mellemnavn'),
       'field_second_name' => 'efternavn',
     );
 
@@ -97,9 +97,17 @@ function valghalla_volunteer_validator_node_presave($node) {
 
     if ($data['status']) {
       $names_arr = array();
-      foreach ($field_map as $field => $index) {
-        $node_wrapper->{$field} = $data['persondata']->navn->{$index};
-        $names_arr[] = $data['persondata']->navn->{$index};
+      foreach ($field_map as $field => $index_keys) {
+        if (!is_array($index_keys)) {
+          $index_keys = array($index_keys);
+        }
+        $value_arr = [];
+        foreach ($index_keys as $index) {
+          $value_arr[] = $data['persondata']->navn->{$index};
+        }
+        $value = implode(' ', $value_arr);
+        $node_wrapper->{$field} = $value;
+        $names_arr[] = $value;
       }
 
       $node_wrapper->title = implode(' ', $names_arr);
@@ -143,19 +151,38 @@ function valghalla_volunteer_validator_node_validate($node, $form, &$form_state)
     }
   }
 
-  // Query service.
-  if (variable_get('valghalla_volunteer_validator_enable', FALSE)) {
-    // Run validator.
+  // Skip validation via services if disabled.
+  if (!variable_get('valghalla_volunteer_validator_enable', FALSE)) {
+    return;
+  }
+
+  $query = drupal_get_query_parameters();
+  if (!empty($query['election_nid'])) {
+    $election = node_load($query['election_nid']);
+  }
+
+  if (!empty($query['party_tid'])) {
+    $party_tid = $query['party_tid'];
+    $party = taxonomy_term_load($party_tid);
+  }
+
+  // Run validator.
+  if (empty($election) && empty($party)) {
     $messages = valghalla_volunteer_validator_query_service('validate_cpr', $cpr);
-
-    foreach ($messages as $message) {
-      if ($message['status'] === FALSE) {
-        form_set_error('field_cpr_number', t('Det angivne CPR-nummer kan ikke valideres: @text', array('@text' => $message['text'])));
-      }
+    $messages = array_merge($messages, valghalla_volunteer_validator_validate($node));
+  }
+  else {
+    $election_config = valghalla_volunteer_validator_get_election_config($election, $party);
+    $messages = valghalla_volunteer_validator_query_service('validate_cpr_per_election', $cpr, $election_config);
+    $field_election_date = field_get_items('node', $election, 'field_date');
+    if ($election_config['validate_age'] && !empty($field_election_date[0]['value'])) {
+      $messages = array_merge($messages, valghalla_volunteer_validator_validate_service('validate_per_election', $cpr, array('election_date' => $field_election_date[0]['value'])));
     }
+  }
 
-    if ($errors = valghalla_volunteer_validator_validate($node)) {
-      form_set_error('field_cpr_number', t('Det angivne CPR-nummer kan ikke valideres: @text', array('@text' => $errors['age']['text'])));
+  foreach ($messages as $message) {
+    if ($message['status'] === FALSE) {
+      form_set_error('field_cpr_number', t('Det angivne CPR-nummer kan ikke valideres: @text', array('@text' => $message['text'])));
     }
   }
 }
@@ -197,8 +224,8 @@ function valghalla_volunteer_validator_form_volunteers_node_form_alter(&$form, &
   }
 
   if (variable_get('valghalla_volunteer_validator_get_subscription_status')) {
-    $form['field_no_mail']['#disabled'] = TRUE;
-    $form['field_no_sms']['#disabled'] = TRUE;
+    $form['field_no_mail']['#access'] = FALSE;
+    $form['field_no_sms']['#access'] = FALSE;
   }
 
 }

@@ -11,6 +11,17 @@
  * Sets required variables.
  */
 function valghalla_external_server_install() {
+  // Disables the CPR validation.
+  variable_set('valghalla_volunteer_validator_enable', 0);
+  variable_set('valghalla_volunteer_validator_get_address', 0);
+  variable_set('valghalla_volunteer_validator_get_name', 0);
+  variable_set('valghalla_volunteer_validator_get_subscription_status', 0);
+
+  variable_set('validate_create_age', 0);
+  variable_set('validate_create_municipality', 0);
+  variable_set('validate_create_citizenship', 0);
+  variable_set('validate_create_civil_status', 0);
+
   // Module requires this variable to be FALSE.
   variable_set('node_export_dependency_attach_nodes', FALSE);
   variable_set('node_export_existing', 'revision');
@@ -57,4 +68,69 @@ function valghalla_external_server_enable() {
   variable_set('validate_create_municipality', 0);
   variable_set('validate_create_citizenship', 0);
   variable_set('validate_create_civil_status', 0);
+}
+
+/**
+ * Implements hook_requirements().
+ */
+function valghalla_external_server_requirements($phase) {
+  $requirements = array();
+  switch ($phase) {
+    case 'runtime':
+
+      $not_allowed_modules = array(
+        // Contrib modules.
+        'ckeditor',
+        'contact',
+        'field_ui',
+        'imce',
+        'locationmap',
+        'mailsystem',
+        'mimemail',
+        'panels_ipe',
+        'panels_mini',
+        'search',
+        'views_ui',
+        'contextual',
+        'dashboard',
+        'shortcut',
+        'color',
+
+        // Valghalla modules.
+        'valghalla_lists',
+        'liste_beskeder',
+        'liste_frivillige_uden_email',
+        'liste_m_cpr_nummer',
+        'liste_parti_oversigt',
+        'liste_valghalla_export',
+        'liste_valghalla_kvittering',
+        'valghalla_notifications',
+        'valghalla_signup',
+        'valghalla_signup_list',
+        'valghalla_volunteer_validator',
+        'valghalla_volunteers_import',
+        'valghalla_volunteers_invite',
+        'vcv_serviceplatformen',
+        'vcv_person_lookup_extended',
+        'vvv_validate_age',
+      );
+
+      $exists_modules = array();
+      foreach ($not_allowed_modules as $module) {
+        if (module_exists($module)) {
+          $exists_modules[] = $module;
+        }
+      }
+
+      if (!empty($exists_modules)) {
+        $requirements['valghalla_external_server'] = array(
+          'title' => t('Modules that should be disabled'),
+          'severity' => REQUIREMENT_ERROR,
+          'value' => t('Enabled: !list', array('!list' => theme('item_list', array('items' => $exists_modules)))),
+        );
+      }
+      break;
+  }
+
+  return $requirements;
 }

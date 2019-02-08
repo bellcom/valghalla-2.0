@@ -54,32 +54,6 @@ function valghalla_volunteers_reset_submit(&$form, &$form_state){
 }
 
 /**
- * Batch callback
- *
- * @author Thomas Thune Hansen <tth@bellcom.dk>
- */
-function valghalla_volunteers_reset_batch($op, $nids, &$context){
-  // Loop over nids in this batch
-  foreach($nids as $nid){
-    $node = node_load($nid);
-
-    // Reset what the user has chosen $op
-    switch($op){
-      case 'pos':
-          $node->field_polling_station_post = array();
-        break;
-
-      case 'rsvp':
-          $node->field_rsvp = array();
-          $node->field_rsvp_comment = array();
-        break;
-    }
-
-    node_save($node);
-  }
-}
-
-/**
  * Batch finished callback
  *
  * @author Thomas Thune Hansen <tth@bellcom.dk>

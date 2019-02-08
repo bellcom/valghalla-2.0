@@ -29,7 +29,7 @@ function valghalla_election_field_default_field_instances() {
     ),
     'entity_type' => 'field_collection_item',
     'field_name' => 'field_ppsp_party',
-    'label' => 'Party',
+    'label' => 'Parti',
     'required' => 1,
     'settings' => array(
       'user_register_form' => FALSE,
@@ -61,7 +61,7 @@ function valghalla_election_field_default_field_instances() {
     ),
     'entity_type' => 'field_collection_item',
     'field_name' => 'field_ppsp_polling_station',
-    'label' => 'Polling Station',
+    'label' => 'Valgsted',
     'required' => 1,
     'settings' => array(
       'user_register_form' => FALSE,
@@ -175,6 +175,175 @@ function valghalla_election_field_default_field_instances() {
     ),
   );
 
+  // Exported field_instance: 'node-election-field_election_consent_text'.
+  $field_instances['node-election-field_election_consent_text'] = array(
+    'bundle' => 'election',
+    'default_value' => NULL,
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'text',
+        'settings' => array(),
+        'type' => 'text_default',
+        'weight' => 20,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_election_consent_text',
+    'label' => 'Samtykke tekst',
+    'required' => 0,
+    'settings' => array(
+      'text_processing' => 0,
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'text',
+      'settings' => array(
+        'size' => 60,
+      ),
+      'type' => 'text_textfield',
+      'weight' => 16,
+    ),
+  );
+
+  // Exported field_instance: 'node-election-field_election_disable_consent'.
+  $field_instances['node-election-field_election_disable_consent'] = array(
+    'bundle' => 'election',
+    'default_value' => array(
+      0 => array(
+        'value' => 0,
+      ),
+    ),
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'list',
+        'settings' => array(),
+        'type' => 'list_default',
+        'weight' => 15,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_election_disable_consent',
+    'label' => 'Deaktiver samtykke',
+    'required' => 0,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'options',
+      'settings' => array(
+        'display_label' => 1,
+      ),
+      'type' => 'options_onoff',
+      'weight' => 17,
+    ),
+  );
+
+  // Exported field_instance: 'node-election-field_election_ext_require_email'.
+  $field_instances['node-election-field_election_ext_require_email'] = array(
+    'bundle' => 'election',
+    'default_value' => array(
+      0 => array(
+        'value' => 0,
+      ),
+    ),
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'list',
+        'settings' => array(),
+        'type' => 'list_default',
+        'weight' => 16,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_election_ext_require_email',
+    'label' => 'E-mail obligatorisk for alle ',
+    'required' => 0,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'options',
+      'settings' => array(
+        'display_label' => 1,
+      ),
+      'type' => 'options_onoff',
+      'weight' => 18,
+    ),
+  );
+
+  // Exported field_instance: 'node-election-field_election_ext_require_phone'.
+  $field_instances['node-election-field_election_ext_require_phone'] = array(
+    'bundle' => 'election',
+    'default_value' => array(
+      0 => array(
+        'value' => 0,
+      ),
+    ),
+    'deleted' => 0,
+    'description' => '',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'list',
+        'settings' => array(),
+        'type' => 'list_default',
+        'weight' => 18,
+      ),
+      'teaser' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
+      ),
+    ),
+    'entity_type' => 'node',
+    'field_name' => 'field_election_ext_require_phone',
+    'label' => 'Telefon obligatorisk for alle ',
+    'required' => 0,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'options',
+      'settings' => array(
+        'display_label' => 1,
+      ),
+      'type' => 'options_onoff',
+      'weight' => 19,
+    ),
+  );
+
   // Exported field_instance: 'node-election-field_election_mails_send'.
   $field_instances['node-election-field_election_mails_send'] = array(
     'bundle' => 'election',
@@ -253,7 +422,7 @@ function valghalla_election_field_default_field_instances() {
         'rows' => 1,
       ),
       'type' => 'text_textarea',
-      'weight' => 10,
+      'weight' => 20,
     ),
   );
 
@@ -668,7 +837,7 @@ function valghalla_election_field_default_field_instances() {
       'module' => 'field_collection',
       'settings' => array(),
       'type' => 'field_collection_hidden',
-      'weight' => 9,
+      'weight' => 10,
     ),
   );
 
@@ -773,50 +942,6 @@ function valghalla_election_field_default_field_instances() {
     ),
   );
 
-  // Exported field_instance: 'taxonomy_term-partier-field_logo'.
-  $field_instances['taxonomy_term-partier-field_logo'] = array(
-    'bundle' => 'partier',
-    'deleted' => 0,
-    'description' => '',
-    'display' => array(
-      'default' => array(
-        'label' => 'hidden',
-        'module' => 'image',
-        'settings' => array(
-          'image_link' => '',
-          'image_style' => 'medium',
-        ),
-        'type' => 'image',
-        'weight' => 2,
-      ),
-    ),
-    'entity_type' => 'taxonomy_term',
-    'field_name' => 'field_logo',
-    'label' => 'Logo',
-    'required' => 0,
-    'settings' => array(
-      'alt_field' => 0,
-      'default_image' => 0,
-      'file_directory' => '',
-      'file_extensions' => 'png gif jpg jpeg',
-      'max_filesize' => '',
-      'max_resolution' => '',
-      'min_resolution' => '',
-      'title_field' => 0,
-      'user_register_form' => FALSE,
-    ),
-    'widget' => array(
-      'active' => 1,
-      'module' => 'image',
-      'settings' => array(
-        'preview_image_style' => 'thumbnail',
-        'progress_indicator' => 'throbber',
-      ),
-      'type' => 'image_image',
-      'weight' => 3,
-    ),
-  );
-
   // Exported field_instance: 'taxonomy_term-partier-field_partinavn'.
   $field_instances['taxonomy_term-partier-field_partinavn'] = array(
     'bundle' => 'partier',
@@ -895,7 +1020,7 @@ function valghalla_election_field_default_field_instances() {
       ),
     ),
     'deleted' => 0,
-    'description' => '',
+    'description' => 'Bruges typisk for administrativt personale.',
     'display' => array(
       'default' => array(
         'label' => 'above',
@@ -907,7 +1032,7 @@ function valghalla_election_field_default_field_instances() {
     ),
     'entity_type' => 'taxonomy_term',
     'field_name' => 'field_party_skip_valid_municipal',
-    'label' => 'Valider ikke bopæl i kommunen',
+    'label' => 'Valider ikke bopæl i kommunen for deltagere tilknyttet pladser for dette parti',
     'required' => 0,
     'settings' => array(
       'user_register_form' => FALSE,
@@ -945,7 +1070,7 @@ function valghalla_election_field_default_field_instances() {
     ),
     'entity_type' => 'taxonomy_term',
     'field_name' => 'field_party_subsc_accept_comment',
-    'label' => 'Commenting enabled',
+    'label' => 'Aktiver deltagerkommentar på tilmeldingsbekræftelse',
     'required' => 0,
     'settings' => array(
       'user_register_form' => FALSE,
@@ -978,7 +1103,7 @@ function valghalla_election_field_default_field_instances() {
     ),
     'entity_type' => 'taxonomy_term',
     'field_name' => 'field_party_subsc_message',
-    'label' => 'Subscription comment',
+    'label' => 'Tekst på ekstern tilmelding før samtykkeerklæring',
     'required' => 0,
     'settings' => array(
       'text_processing' => 0,
@@ -1013,7 +1138,7 @@ function valghalla_election_field_default_field_instances() {
     ),
     'entity_type' => 'taxonomy_term',
     'field_name' => 'field_party_subsc_terms_text',
-    'label' => ' Terms and conditions text',
+    'label' => 'Overskriv samtykkeerklæring på ekstern tilmelding',
     'required' => 0,
     'settings' => array(
       'text_processing' => 0,
@@ -1070,33 +1195,38 @@ function valghalla_election_field_default_field_instances() {
 
   // Translatables
   // Included for use with string extractors like potx.
-  t(' Terms and conditions text');
+  t('Aktiver deltagerkommentar på tilmeldingsbekræftelse');
   t('Angiv om dette parti skal modtage PDF rapporter.');
   t('Benyttes til videresendelse af tilmeldinger, hvor der er udfyldt kommentarer');
   t('Body');
   t('Bogstav');
+  t('Bruges typisk for administrativt personale.');
   t('CVR nummer');
-  t('Commenting enabled');
   t('Dato');
+  t('Deaktiver samtykke');
   t('Deltagere pr. parti');
   t('E-mail adresse');
+  t('E-mail obligatorisk for alle');
   t('Emails sendt');
   t('Fuldt partinavn');
-  t('Logo');
   t('Modtag PDF rapport');
   t('Notification config export (system field)');
+  t('Overskriv samtykkeerklæring på ekstern tilmelding');
+  t('Parti');
   t('Partisekretær');
-  t('Party');
-  t('Polling Station');
-  t('Subscription comment');
+  t('Rolle');
+  t('Samtykke tekst');
   t('Sæt igang');
+  t('Tekst på ekstern tilmelding før samtykkeerklæring');
+  t('Telefon obligatorisk for alle');
   t('Type');
   t('Udsend PDF rapport til partier');
+  t('Valgsted');
   t('Valgsteder');
   t('Valider alder');
   t('Valider bopæl i kommunen');
   t('Valider dansk statsborger');
-  t('Valider ikke bopæl i kommunen');
+  t('Valider ikke bopæl i kommunen for deltagere tilknyttet pladser for dette parti');
   t('Valider om person med personnummerer er levende');
 
   return $field_instances;

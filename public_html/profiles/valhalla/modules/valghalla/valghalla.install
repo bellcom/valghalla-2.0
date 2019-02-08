@@ -80,3 +80,166 @@ function valghalla_update_7105() {
   module_enable(array('uuid'));
   uuid_install();
 }
+
+/**
+ * Implements hook_update_N().
+ *
+ * Update admin content view. Remove URL from title node.
+ */
+function valghalla_update_7106() {
+  $view = views_get_view('admin_views_node', TRUE);
+  $view->display['default']->display_options['fields']['title']['link_to_node'] = 0;
+  views_save_view($view);
+}
+
+/**
+ * Implements hook_update_N().
+ *
+ * Adding 'view polling station' permission to roles:
+ * 'administrator', 'Partisekretær', 'Valgsekretær'.
+ */
+function valghalla_update_7107() {
+  $permissions = array('view polling station');
+  foreach (array('administrator', 'Partisekretær', 'Valgsekretær') as $role_name) {
+    $role = user_role_load_by_name($role_name);
+    user_role_grant_permissions($role->rid, $permissions);
+  }
+}
+
+/**
+ * Implements hook_update_N().
+ *
+ * Adding notification permission to roles:
+ * 'administrator', 'Partisekretær', 'Valgsekretær'.
+ */
+function valghalla_update_7108() {
+  $permissions = array(
+    'administer valghalla notification entities',
+    'view any valghalla notification entity',
+  );
+  foreach (array('administrator', 'Partisekretær', 'Valgsekretær') as $role_name) {
+    $role = user_role_load_by_name($role_name);
+    user_role_grant_permissions($role->rid, $permissions);
+  }
+}
+
+/**
+ * Implements hook_update_N().
+ *
+ * Adding 'access administration menu' permission to roles:
+ * 'administrator'
+ */
+function valghalla_update_7109() {
+  $permissions = array('access administration menu');
+
+  foreach (array('administrator') as $role_name) {
+    $role = user_role_load_by_name($role_name);
+
+    user_role_grant_permissions($role->rid, $permissions);
+  }
+}
+
+/**
+ * Implements hook_update_N().
+ *
+ * Cleanup deprecated fields, taxonomy vocabulary.
+ */
+function valghalla_update_7110() {
+  features_revert_module('valghalla_volunteers');
+  // Remove bunch of fields for Role content type.
+  field_delete_field('field_invitation');
+  field_delete_field('field_reminder');
+  field_delete_field('field_rsvp_yes');
+  field_delete_field('field_rsvp_no');
+  field_delete_field('field_rsvp_never');
+  field_delete_field('field_meeting_time');
+  field_purge_batch(1);
+
+  // Remove deprecated vocabulary.
+  foreach (array(
+    'volonteers_meeting_time',
+    'tags',
+  ) as $voc_name) {
+    $vocabulary = taxonomy_vocabulary_machine_name_load($voc_name);
+    taxonomy_vocabulary_delete($vocabulary->vid);
+  }
+}
+
+/**
+ * Implements hook_update_N().
+ *
+ * Revert eboks feature.
+ */
+function valghalla_update_7111() {
+  features_revert_module('valghalla_eboks');
+  features_revert_module('valghalla_volunteers');
+  features_revert_module('liste_m_cpr_nummer');
+  features_revert_module('liste_parti_oversigt');
+  features_revert_module('liste_valghalla_export');
+}
+
+/**
+ * Implements hook_update_N().
+ *
+ * Revert features and remove deprecated fields.
+ */
+function valghalla_update_7112() {
+  features_revert_module('valghalla_volunteers');
+  features_revert_module('liste_m_cpr_nummer');
+  features_revert_module('liste_parti_oversigt');
+  features_revert_module('liste_valghalla_export');
+
+  // Remove field from db.
+  field_delete_field('field_label');
+  field_delete_field('field_rolle_id');
+  field_delete_field('field_polling_station_post');
+  field_purge_batch(1);
+}
+
+/**
+ * Update version of jQuery used and set default theme to "site".
+ */
+function valghalla_update_7113() {
+  $current_theme = variable_get('theme_default', 'none');
+  $current_settings = variable_get('theme_' . $current_theme . '_settings', array());
+
+  $new_theme = 'site';
+
+  // Enable site theme.
+  theme_enable(array(
+    $new_theme,
+  ));
+  variable_set('theme_default', $new_theme);
+
+  // Alter old theme settings before applied to new theme.
+  $mutated_settings = $current_settings;
+  $mutated_settings['bootstrap_tooltip_descriptions'] = 0;
+  $mutated_settings['bootstrap_cdn'] = '';
+
+  // Transfer settings.
+  variable_set('theme_' . $current_theme . '_settings', $mutated_settings);
+}
+
+/**
+ * Enabling node clone modules.
+ */
+function valghalla_update_7114() {
+  module_enable(array(
+    'clone',
+    'node_clone_tab',
+    'field_collection_node_clone',
+  ));
+}
+
+/**
+ * Implements hook_update_N().
+ *
+ * Remove deprecated field_diaet from volunteer node.
+ */
+function valghalla_update_7116() {
+  features_revert_module('valghalla_volunteers');
+  features_revert_module('liste_m_cpr_nummer');
+
+  $instance = field_info_instance('node', 'field_diaet', 'volunteers');
+  field_delete_instance($instance);
+}

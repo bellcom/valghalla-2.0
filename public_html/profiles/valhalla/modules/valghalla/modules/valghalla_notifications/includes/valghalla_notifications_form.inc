@@ -170,7 +170,7 @@ function valghalla_notifications_recipients_form($form, &$form_state, $nid) {
   }
 
   $form['message_content']['valghalla_notifications_message_node_ID'] = array(
-    '#title' => t('Message indhold'),
+    '#title' => t('Valgt skabelon'),
     '#type' => 'select',
     '#options' => array($nid => isset($node->title) ? $node->title : ''),
     '#default_value' => $nid,

@@ -72,17 +72,13 @@ function valghalla_internal_server_validate_volunteer($volunteer_node) {
     $messages = array_merge($messages, valghalla_volunteer_validator_query_service('validate_cpr_per_election', $cpr, $election_config));
   }
 
-  foreach ($messages as $message) {
-    if ($message['status'] === FALSE) {
-      $validationStatus['errors'][] = t('Det angivne CPR-nummer kan ikke valideres: @text', array('@text' => $message['text']));
-      $validationStatus['valid'] = FALSE;
-    }
+  if ($election_date) {
+    $plugin_context = array_merge(array('election_date' => $election_date), $election_config);
+    $messages = array_merge($messages, valghalla_volunteer_validator_validate_service('validate_per_election', $cpr, $plugin_context));
   }
 
-  if ($election_date) {
-    $context = array_merge(array('election_date' => $election_date), $election_config);
-
-    if ($errors = valghalla_volunteer_validator_validate_service('validate_per_election', $cpr, $context)) {
+  foreach ($messages as $message) {
+    if ($message['status'] === FALSE) {
       $validationStatus['errors'][] = t('Det angivne CPR-nummer kan ikke valideres: @text', array('@text' => $message['text']));
       $validationStatus['valid'] = FALSE;
     }

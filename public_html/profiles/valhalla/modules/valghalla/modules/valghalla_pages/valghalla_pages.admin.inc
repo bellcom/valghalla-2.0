@@ -69,8 +69,8 @@ function valghalla_pages_admin_valghalla() {
         }
       }
 
-      $actions[] = l('Notifikationer skabeloner', 'valghalla/administration/valg/notifications/' . $election->nid);
-      $actions[] = l(t('Validate'), 'admin/valghalla/validator/batch/validate/' . $election->nid);
+      $actions[] = l('Skabeloner', 'valghalla/administration/valg/notifications/' . $election->nid);
+      $actions[] = l(t('Validering'), 'admin/valghalla/validator/batch/validate/' . $election->nid);
 
       $action_links = implode(' | ', $actions);
 
