@@ -215,6 +215,14 @@ function vcv_serviceplatformen_settings_submit(&$form, &$form_state) {
 function vcv_serviceplatformen_validate_cpr($cpr) {
   $status = vcv_serviceplatformen_get_address($cpr);
 
+  // Checking if CPR is valid.
+  if (!$status['status']) {
+    return array(
+      'status' => FALSE,
+      'text' => t('Personen med det angivne CPR-nummer kan ikke findes'),
+    );
+  }
+
   // Checking for municipality.
   if (variable_get('validate_create_municipality', FALSE)) {
     if (strcmp($status['municipality'], variable_get('valhalla_settings_municipality')) != 0) {
@@ -240,6 +248,14 @@ function vcv_serviceplatformen_validate_cpr($cpr) {
  */
 function vcv_serviceplatformen_validate_cpr_per_election($cpr, $election_config) {
   $status = vcv_serviceplatformen_get_address($cpr);
+
+  // Checking if CPR is valid.
+  if (!$status['status']) {
+    return array(
+      'status' => FALSE,
+      'text' => t('Personen med det angivne CPR-nummer kan ikke findes'),
+    );
+  }
 
   // Checking for municipality.
   if ($election_config['validate_municipality']) {
