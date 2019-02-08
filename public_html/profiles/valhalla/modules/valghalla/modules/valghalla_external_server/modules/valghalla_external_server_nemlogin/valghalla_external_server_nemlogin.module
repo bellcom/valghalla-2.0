@@ -16,7 +16,7 @@ function valghalla_external_server_nemlogin_menu() {
     'description' => 'Nemlogin require authentication',
     'page callback' => 'valghalla_external_server_nemlogin_require_auth',
     'page arguments' => array(2),
-    'access arguments' => array('access content'),
+    'access callback' => TRUE,
     'type' => MENU_NORMAL_ITEM,
   );
 
@@ -30,6 +30,13 @@ function valghalla_external_server_nemlogin_menu() {
   );
 
   return $items;
+}
+
+/**
+ * Implements hook_valghalla_allowed_uris_alter().
+ */
+function valghalla_external_server_nemlogin_valghalla_allowed_uris_alter(&$allowed_uris) {
+  $allowed_uris[] = '/nemlogin/require*';
 }
 
 /**
