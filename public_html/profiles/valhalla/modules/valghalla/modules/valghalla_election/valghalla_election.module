@@ -252,7 +252,9 @@ function valghalla_election_field_volunteers_pr_pol_st_party_form_validate($form
     if (strpos($field_name, 'field_role_n') !== FALSE) {
       $role_nid = str_replace('field_role_n', '', $field_name);
       $count = $field_value[LANGUAGE_NONE][0]['number_vo'];
-
+      if (!is_numeric($count)) {
+        form_set_error('field_role_n' . $role_nid, 'Angiv en numerisk værdi');
+      }
     }
     if (isset($polling_station_nid) && isset($party_tid) && isset($role_nid)) {
       $map[$polling_station_nid][$party_tid][$role_nid] = $count;
