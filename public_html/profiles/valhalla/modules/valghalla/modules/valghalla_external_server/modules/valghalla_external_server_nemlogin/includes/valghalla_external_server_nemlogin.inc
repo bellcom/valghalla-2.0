@@ -2,63 +2,53 @@
 
 /**
  * @file
- * Include SimpleSAML_Auth_Simple help functions.
+ * Valghalla_external_server_nemlogin.inc
  */
 
 /**
- * Returns SimpleSAML_Auth_Simple object.
+ * Generates a NemID login link.
  *
- * @throws Exception
- *   Wrong directory of SimpleSaml Exception.
+ * @param string $destination
+ *   The destination callback url.
  *
- * @return object
- *   SimpleSAML_Auth_Simple object.
+ * @return string
+ *   Generated string.
  */
-function valghalla_external_server_nemlogin_get_simple_saml_auth() {
-  $simplesaml_installdir = variable_get('nemlogin_simplesaml_installdir');
+function valghalla_external_server_nemlogin_login_link($destination) {
+  $idp = variable_get('valghalla_external_server_nemlogin_idp', 'https://test-nemlogin.bellcom.dk/simplesaml');
 
-  if (!file_exists($simplesaml_installdir . '/lib/_autoload.php')) {
-    throw new Exception('Simplesaml install directory is not properly configured');
-  }
-  else {
-    require_once $simplesaml_installdir . '/lib/_autoload.php';
-
-    $as = new SimpleSAML_Auth_Simple(variable_get('nemlogin_simplesaml_default_auth', 'default-sp'));
-    return $as;
-  }
+  $url = url($idp . VALGHALLA_EXTERNAL_SERVER_NEMLOGIN_URL_LOGIN, array(
+    'query' => array(
+      'mnemo' => 'bellcom.dk',
+      'forward' => $GLOBALS['base_url'] . base_path() . 'nemlogin/login-callback?destination=' . urlencode($destination)
+    )
+  ));
+  return $url;
 }
 
 /**
- * Attempts to fetch field from the SimpleAuth attributes.
+ * Fetches the CPR from the session.
  *
- * Function that attempts to fetch field from the SimpleAuth attributes with
- * specific name, suffix with NumberIdentifier.
- * E.g. if field name is "CPR", method will attempt
- * to fetch dk:gov:saml:attribute:CprNumberIdentifier.
- *
- * If field value is fetch it is returned, otherwise NULL is returned.
- *
- * @param mixed $as
- *   SimpleAuth valid object.
- * @param string $field_name
- *   Name of the field.
+ * Is none found, null is returned.
  *
  * @return string
- *   Field value.
+ *   The CPR stored in the session.
  */
-function valghalla_external_server_nemlogin_attempt_fetch_number_identifier($as, $field_name = 'cpr') {
-  // Make first char uppercase and suffixing with NumberIdentifier.
-  $field_name = ucfirst(strtolower($field_name));
-  $field_name .= 'NumberIdentifier';
-
-  $attrs = $as->getAttributes();
-  $field_value = NULL;
-
-  if (is_array($attrs) && isset($attrs["dk:gov:saml:attribute:$field_name"])) {
-    if (is_array($attrs["dk:gov:saml:attribute:$field_name"]) && isset($attrs["dk:gov:saml:attribute:$field_name"][0])) {
-      $field_value = $attrs["dk:gov:saml:attribute:$field_name"][0];
-    }
+function valghalla_external_server_nemlogin_fetch_cpr() {
+  if (isset($_SESSION['valghalla_external_server_nemlogin_cpr'])) {
+    return $_SESSION['valghalla_external_server_nemlogin_cpr'];
   }
 
-  return $field_value;
+  return NULL;
+}
+
+/**
+ * Deletes the CPR from the session, destroys session on external IDP.
+ */
+function valghalla_external_server_nemlogin_logout() {
+  unset($_SESSION['valghalla_external_server_nemlogin_cpr']);
+
+  // TODO: make a proper logout.
+  //$idp = variable_get('valghalla_external_server_nemlogin_idp', 'https://test-nemlogin.bellcom.dk/simplesaml');
+  //drupal_http_request($idp . VALGHALLA_EXTERNAL_SERVER_NEMLOGIN_URL_LOGOUT);
 }

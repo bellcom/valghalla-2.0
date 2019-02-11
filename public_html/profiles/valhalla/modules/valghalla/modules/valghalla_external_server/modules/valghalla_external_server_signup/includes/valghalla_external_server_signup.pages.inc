@@ -88,7 +88,7 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
 
     // Logout url.
     $form['nemid_logout_link'] = array(
-      '#markup' => l(t('Logout af NemID'), 'nemlogin/logout', array('query' => array('destination' => request_uri()))),
+      '#markup' => l(t('Log ud af NemID'), 'nemlogin/logout', array('query' => array('destination' => request_uri()))),
     );
   }
 
