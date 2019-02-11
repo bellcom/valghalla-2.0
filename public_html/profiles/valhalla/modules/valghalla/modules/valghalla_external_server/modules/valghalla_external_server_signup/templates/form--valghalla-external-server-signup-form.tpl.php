@@ -43,7 +43,6 @@ unset($form['terms_agreement']);
 
   <!-- Begin - nemid login -->
   <div>
-    <p>NemID block</p>
     <?php if (isset($form['#cpr']) && !empty($form['#cpr'])) : ?>
       <?php print drupal_render($nemid_logout_link); ?>
       <p>Du er logget ind med NemID med følgende CPR nummer <?php print $form['#cpr'];?></p>

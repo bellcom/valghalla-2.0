@@ -75,31 +75,21 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
 
   drupal_set_title($election->title);
 
-  try {
-    $as = valghalla_external_server_nemlogin_get_simple_saml_auth();
+  $cpr = valghalla_external_server_nemlogin_fetch_cpr();
 
-    // Check if user is already authenticated.
-    if ($as->isAuthenticated()) {
-      $cpr = valghalla_external_server_nemlogin_attempt_fetch_number_identifier($as, 'cpr');
-      if ($cpr) {
-        $form_state['cpr'] = $cpr;
-        $form['#cpr'] = $cpr;
-      }
-
-      // Logout url.
-      $form['nemid_logout_link'] = array(
-        '#markup' => l(t('Login af NemID'), $as->getLogoutURL(request_uri())),
-      );
-    }
-    else {
-      // If modify form to include the link for authentication.
-      $form['nemid_login_link'] = array(
-        '#markup' => l(t('Login med Nemlogin'), '/nemlogin/require', array('query' => array('destination' => request_uri()))),
-      );
-    }
+  if (!$cpr) {
+    $form['nemid_login_link'] = array(
+      '#markup' => l(t('Login med Nemlogin'), valghalla_external_server_nemlogin_login_link(request_uri())),
+    );
   }
-  catch (Exception $e) {
-    watchdog("Valghalla nemlogin", 'Cannot initialize simplesaml request: @message', array('@message' => $e->getMessage()), WATCHDOG_ERROR);
+  else {
+    $form['#cpr'] = $cpr;
+    $form_state['cpr'] = $cpr;
+
+    // Logout url.
+    $form['nemid_logout_link'] = array(
+      '#markup' => l(t('Logout af NemID'), 'nemlogin/logout', array('query' => array('destination' => request_uri()))),
+    );
   }
 
   $form['email-container'] = array(
@@ -457,6 +447,17 @@ function valghalla_external_server_signup_terminate_signup() {
  * Also changes the format of CPR, if needed.
  */
 function valghalla_external_server_signup_signup_form_validate($form, &$form_state) {
+  $cpr = $form_state['cpr'];
+
+  // Adding dash, if missing. E.g. 123456-7890.
+  if (preg_match('/[0-9]{10}/', $cpr)) {
+    $cpr = substr($cpr, 0, 6) . '-' . substr($cpr, 6, 4);
+    $form_state['cpr'] = $cpr;
+  }
+  if (!preg_match('/[0-9]{6}-[0-9]{4}/', $cpr)) {
+    form_set_error('cpr', t('Wrong CPR format, correct format is 123456-7890'));
+  }
+
   if ($form['email-container']['email']['#access']) {
     $email = $form_state['values']['email'];
     if (!valid_email_address($email)) {
@@ -734,13 +735,7 @@ function _external_signup_success_page() {
   drupal_set_title(t('Tilmeldt'));
   $output = '<p>' . t('Du kan nu lukke siden.') . '</p>';
 
-  $as = valghalla_external_server_nemlogin_get_simple_saml_auth();
-  try {
-    $as->logout();
-  }
-  catch (Exception $e) {
-    watchdog("Valghalla nemlogin", 'Cannot perform logout: @message', array('@message' => $e->getMessage()), WATCHDOG_ERROR);
-  }
+  valghalla_external_server_nemlogin_logout();
 
   return $output;
 }
