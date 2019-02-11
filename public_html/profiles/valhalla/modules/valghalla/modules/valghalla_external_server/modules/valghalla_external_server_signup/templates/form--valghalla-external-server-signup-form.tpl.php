@@ -42,13 +42,13 @@ unset($form['terms_agreement']);
   <!-- End - upper text -->
 
   <!-- Begin - nemid login -->
-  <div>
+  <div class="partial">
     <?php if (isset($form['#cpr']) && !empty($form['#cpr'])) : ?>
-      <?php print drupal_render($nemid_logout_link); ?>
       <p>Du er logget ind med NemID med følgende CPR nummer <?php print $form['#cpr'];?></p>
+      <?php print drupal_render($nemid_logout_link); ?>
     <?php else: ?>
-      <?php print drupal_render($nemid_login_link); ?>
       <p>Login med NemLogin for at forsætte</p>
+      <?php print drupal_render($nemid_login_link); ?>
     <?php endif; ?>
   </div>
   <!-- End - nemid login -->
