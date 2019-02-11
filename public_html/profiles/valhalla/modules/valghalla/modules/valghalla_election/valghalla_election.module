@@ -102,6 +102,8 @@ function valghalla_election_form_alter(&$form, &$form_state, $form_id) {
 
     $form['actions']['submit']['#submit'][] = 'valghalla_election_form_submit';
 
+    // Hide system field from form.
+    $form['field_election_notif_conf_export']['#access'] = FALSE;
   } elseif ($form_id === 'field_collection_item_form' && $form['#bundle'] === 'field_volunteers_pr_pol_st_party') {
     // Disabling some of the fields.
     $form['field_ppsp_polling_station']['#disabled'] = TRUE;

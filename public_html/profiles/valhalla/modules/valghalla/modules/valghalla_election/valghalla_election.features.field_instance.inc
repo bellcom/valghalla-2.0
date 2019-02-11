@@ -164,9 +164,10 @@ function valghalla_election_field_default_field_instances() {
       'settings' => array(
         'display_all_day' => 0,
         'increment' => 1,
-        'input_format' => 'm/d/Y - H:i:s',
+        'input_format' => 'd/m/Y - H:i:s',
         'input_format_custom' => '',
         'label_position' => 'above',
+        'no_fieldset' => 0,
         'text_parts' => array(),
         'year_range' => '-3:+3',
       ),
@@ -180,7 +181,7 @@ function valghalla_election_field_default_field_instances() {
     'bundle' => 'election',
     'default_value' => NULL,
     'deleted' => 0,
-    'description' => '',
+    'description' => 'Den tekst personen læser og skal forstå hvad vedkommende accepterer ved samtykke.',
     'display' => array(
       'default' => array(
         'label' => 'above',
@@ -211,7 +212,7 @@ function valghalla_election_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'text_textfield',
-      'weight' => 16,
+      'weight' => 18,
     ),
   );
 
@@ -224,7 +225,7 @@ function valghalla_election_field_default_field_instances() {
       ),
     ),
     'deleted' => 0,
-    'description' => '',
+    'description' => 'Skjuler samtykke checkboksen helt fra formularen.',
     'display' => array(
       'default' => array(
         'label' => 'above',
@@ -267,7 +268,7 @@ function valghalla_election_field_default_field_instances() {
       ),
     ),
     'deleted' => 0,
-    'description' => '',
+    'description' => 'Indsamler e-mails fra alle der benytter den eksterne tilmelding.',
     'display' => array(
       'default' => array(
         'label' => 'above',
@@ -285,7 +286,7 @@ function valghalla_election_field_default_field_instances() {
     ),
     'entity_type' => 'node',
     'field_name' => 'field_election_ext_require_email',
-    'label' => 'E-mail obligatorisk for alle ',
+    'label' => 'E-mail obligatorisk for alle',
     'required' => 0,
     'settings' => array(
       'user_register_form' => FALSE,
@@ -297,7 +298,7 @@ function valghalla_election_field_default_field_instances() {
         'display_label' => 1,
       ),
       'type' => 'options_onoff',
-      'weight' => 18,
+      'weight' => 19,
     ),
   );
 
@@ -310,7 +311,7 @@ function valghalla_election_field_default_field_instances() {
       ),
     ),
     'deleted' => 0,
-    'description' => '',
+    'description' => 'Indsamler mobilnumre fra alle der benytter den eksterne tilmelding.',
     'display' => array(
       'default' => array(
         'label' => 'above',
@@ -328,7 +329,7 @@ function valghalla_election_field_default_field_instances() {
     ),
     'entity_type' => 'node',
     'field_name' => 'field_election_ext_require_phone',
-    'label' => 'Telefon obligatorisk for alle ',
+    'label' => 'Mobil-nummer obligatorisk for alle',
     'required' => 0,
     'settings' => array(
       'user_register_form' => FALSE,
@@ -340,7 +341,7 @@ function valghalla_election_field_default_field_instances() {
         'display_label' => 1,
       ),
       'type' => 'options_onoff',
-      'weight' => 19,
+      'weight' => 20,
     ),
   );
 
@@ -353,7 +354,7 @@ function valghalla_election_field_default_field_instances() {
       ),
     ),
     'deleted' => 0,
-    'description' => '',
+    'description' => 'Sættes automatisk når invitationer er afsendt via link på valgoversigten.',
     'display' => array(
       'default' => array(
         'label' => 'above',
@@ -383,7 +384,7 @@ function valghalla_election_field_default_field_instances() {
         'display_label' => 1,
       ),
       'type' => 'options_onoff',
-      'weight' => -1,
+      'weight' => 2,
     ),
   );
 
@@ -422,7 +423,7 @@ function valghalla_election_field_default_field_instances() {
         'rows' => 1,
       ),
       'type' => 'text_textarea',
-      'weight' => 20,
+      'weight' => 21,
     ),
   );
 
@@ -435,7 +436,7 @@ function valghalla_election_field_default_field_instances() {
       ),
     ),
     'deleted' => 0,
-    'description' => '',
+    'description' => 'Samme dokument som kan downloades fra forsiden, kan automatisk afsendes som digital post til partiernes CVR-nummer. Kræver CVR nummer er indsat på hvert parti. Gøres via Partioversigten i Administrationsmenuen.',
     'display' => array(
       'default' => array(
         'label' => 'above',
@@ -476,7 +477,7 @@ function valghalla_election_field_default_field_instances() {
       ),
     ),
     'deleted' => 0,
-    'description' => '',
+    'description' => 'Sættes automatisk når valget aktiveres via link på valgoversigten.',
     'display' => array(
       'default' => array(
         'label' => 'above',
@@ -506,7 +507,7 @@ function valghalla_election_field_default_field_instances() {
         'display_label' => 1,
       ),
       'type' => 'options_onoff',
-      'weight' => -2,
+      'weight' => 1,
     ),
   );
 
@@ -754,7 +755,7 @@ function valghalla_election_field_default_field_instances() {
         'size' => 60,
       ),
       'type' => 'email_textfield',
-      'weight' => 3,
+      'weight' => -1,
     ),
   );
 
@@ -794,7 +795,7 @@ function valghalla_election_field_default_field_instances() {
       'module' => 'options',
       'settings' => array(),
       'type' => 'options_buttons',
-      'weight' => 1,
+      'weight' => -2,
     ),
   );
 
@@ -837,7 +838,7 @@ function valghalla_election_field_default_field_instances() {
       'module' => 'field_collection',
       'settings' => array(),
       'type' => 'field_collection_hidden',
-      'weight' => 10,
+      'weight' => 11,
     ),
   );
 
@@ -1195,6 +1196,7 @@ function valghalla_election_field_default_field_instances() {
 
   // Translatables
   // Included for use with string extractors like potx.
+  t('Mobil-nummer obligatorisk for alle');
   t('Aktiver deltagerkommentar på tilmeldingsbekræftelse');
   t('Angiv om dette parti skal modtage PDF rapporter.');
   t('Benyttes til videresendelse af tilmeldinger, hvor der er udfyldt kommentarer');
@@ -1205,20 +1207,25 @@ function valghalla_election_field_default_field_instances() {
   t('Dato');
   t('Deaktiver samtykke');
   t('Deltagere pr. parti');
+  t('Den tekst personen læser og skal forstå hvad vedkommende accepterer ved samtykke.');
   t('E-mail adresse');
   t('E-mail obligatorisk for alle');
   t('Emails sendt');
   t('Fuldt partinavn');
+  t('Indsamler e-mails fra alle der benytter den eksterne tilmelding.');
+  t('Indsamler mobilnumre fra alle der benytter den eksterne tilmelding.');
   t('Modtag PDF rapport');
   t('Notification config export (system field)');
   t('Overskriv samtykkeerklæring på ekstern tilmelding');
   t('Parti');
   t('Partisekretær');
-  t('Rolle');
+  t('Samme dokument som kan downloades fra forsiden, kan automatisk afsendes som digital post til partiernes CVR-nummer. Kræver CVR nummer er indsat på hvert parti. Gøres via Partioversigten i Administrationsmenuen.');
   t('Samtykke tekst');
+  t('Skjuler samtykke checkboksen helt fra formularen.');
   t('Sæt igang');
+  t('Sættes automatisk når invitationer er afsendt via link på valgoversigten.');
+  t('Sættes automatisk når valget aktiveres via link på valgoversigten.');
   t('Tekst på ekstern tilmelding før samtykkeerklæring');
-  t('Telefon obligatorisk for alle');
   t('Type');
   t('Udsend PDF rapport til partier');
   t('Valgsted');
