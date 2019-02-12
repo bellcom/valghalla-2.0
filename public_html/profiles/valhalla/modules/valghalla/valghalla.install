@@ -109,23 +109,6 @@ function valghalla_update_7107() {
 /**
  * Implements hook_update_N().
  *
- * Adding notification permission to roles:
- * 'administrator', 'Partisekretær', 'Valgsekretær'.
- */
-function valghalla_update_7108() {
-  $permissions = array(
-    'administer valghalla notification entities',
-    'view any valghalla notification entity',
-  );
-  foreach (array('administrator', 'Partisekretær', 'Valgsekretær') as $role_name) {
-    $role = user_role_load_by_name($role_name);
-    user_role_grant_permissions($role->rid, $permissions);
-  }
-}
-
-/**
- * Implements hook_update_N().
- *
  * Adding 'access administration menu' permission to roles:
  * 'administrator'
  */

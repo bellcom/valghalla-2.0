@@ -186,6 +186,5 @@ function valhalla_apply_updates() {
   module_load_include('install', 'valghalla', 'valghalla');
   valghalla_update_7106();
   valghalla_update_7107();
-  valghalla_update_7108();
   valghalla_update_7109();
 }
