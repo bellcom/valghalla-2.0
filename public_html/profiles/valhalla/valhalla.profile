@@ -30,6 +30,11 @@ function valhalla_form_install_configure_form_alter(&$form, $form_state) {
  */
 function valhalla_install_tasks(&$install_state) {
   $tasks = array(
+    'valhalla_enable_modules' => array(
+      'display_name' => st('Enable additional modules'),
+      'display' => FALSE,
+      'type' => 'normal',
+    ),
     'valhalla_theme_settings' => array(
       'display_name' => st('Theme settings'),
       'display' => FALSE,
@@ -50,6 +55,45 @@ function valhalla_install_tasks(&$install_state) {
  */
 function valhalla_settings_extra_submit(&$form, $form_state) {
   valhalla_theme_settings();
+}
+
+/**
+ * Enable additional modules.
+ */
+function valhalla_enable_modules() {
+  $modules = array(
+    // Contrib modules.
+    'ckeditor',
+    'field_ui',
+    'mailsystem',
+    'mimemail',
+    'views_ui',
+    'contextual',
+    'shortcut',
+    'color',
+    // Valghalla modules.
+    'valghalla_lists',
+    'liste_beskeder',
+    'liste_frivillige_uden_email',
+    'liste_m_cpr_nummer',
+    'liste_parti_oversigt',
+    'liste_valghalla_export',
+    'liste_valghalla_kvittering',
+    'valghalla_notifications',
+    'valghalla_eboks',
+    'valghalla_mail',
+    'valghalla_sms',
+    'valghalla_signup',
+    'valghalla_signup_list',
+    'valghalla_volunteer_validator',
+    'valghalla_volunteers_import',
+    'valghalla_volunteers_invite',
+    'vcv_serviceplatformen',
+    'vcv_person_lookup_extended',
+    'vvv_validate_age',
+    'valghalla_status_report',
+  );
+  module_enable($modules);
 }
 
 /**

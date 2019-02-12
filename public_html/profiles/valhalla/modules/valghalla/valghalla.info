@@ -64,7 +64,6 @@ dependencies[] = valhalla_blocks
 dependencies[] = valhalla_field_absentee_ballot
 dependencies[] = valhalla_field_volunteers_roles
 dependencies[] = valhalla_settings
-dependencies[] = valghalla_status_report
 dependencies[] = valhalla_roles
 dependencies[] = views
 dependencies[] = simplify
