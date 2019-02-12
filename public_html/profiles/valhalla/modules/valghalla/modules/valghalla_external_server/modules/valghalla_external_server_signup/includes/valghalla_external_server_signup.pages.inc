@@ -88,7 +88,7 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
 
     // Logout url.
     $form['nemid_logout_link'] = array(
-      '#markup' => l(t('Log ud af NemID'), 'nemlogin/logout', array('query' => array('destination' => request_uri()))),
+      '#markup' => l(t('Log ud af NemID'), 'nemlogin/logout', array('query' => array('callback' => request_uri()))),
     );
   }
 
@@ -532,7 +532,14 @@ function valghalla_external_server_signup_signup_form_submit($form, &$form_state
         $post->save();
       }
 
-      $form_state['redirect'] = 'valghalla/external-signup-success';
+      $form_state['redirect'] = array(
+        'nemlogin/logout',
+        array(
+          'query' => array(
+            'callback' => 'valghalla/external-signup-success',
+          ),
+        )
+      );
     }
     else {
       drupal_set_message(t('This volunteer already has a seat in the selected election'), 'warning');
@@ -734,8 +741,6 @@ function valghalla_external_server_signup_field_visibility($form_state, $propery
 function _external_signup_success_page() {
   drupal_set_title(t('Tilmeldt'));
   $output = '<p>' . t('Du kan nu lukke siden.') . '</p>';
-
-  valghalla_external_server_nemlogin_logout();
 
   return $output;
 }

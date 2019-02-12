@@ -41,14 +41,3 @@ function valghalla_external_server_nemlogin_fetch_cpr() {
 
   return NULL;
 }
-
-/**
- * Deletes the CPR from the session, destroys session on external IDP.
- */
-function valghalla_external_server_nemlogin_logout() {
-  unset($_SESSION['valghalla_external_server_nemlogin_cpr']);
-
-  // TODO: make a proper logout.
-  //$idp = variable_get('valghalla_external_server_nemlogin_idp', 'https://test-nemlogin.bellcom.dk/simplesaml');
-  //drupal_http_request($idp . VALGHALLA_EXTERNAL_SERVER_NEMLOGIN_URL_LOGOUT);
-}

@@ -78,17 +78,16 @@ function valghalla_external_server_nemlogin_menu_settings_form_validate($form, $
     form_set_error('valghalla_external_server_nemlogin_idp', t('Please remove the trailing slash'));
   }
 
-  // TODO: Enable links.
   $url_to_test = array(
     $idp . VALGHALLA_EXTERNAL_SERVER_NEMLOGIN_URL_LOGINSERVICE,
-    //$idp . VALGHALLA_EXTERNAL_SERVER_NEMLOGIN_URL_LOGIN,
-    //$idp . VALGHALLA_EXTERNAL_SERVER_NEMLOGIN_URL_LOGOUT
+    $idp . VALGHALLA_EXTERNAL_SERVER_NEMLOGIN_URL_LOGIN,
+    $idp . VALGHALLA_EXTERNAL_SERVER_NEMLOGIN_URL_LOGOUT
   );
 
   // Testing if we have access to all URLs.
   foreach ($url_to_test as $url) {
     $url_request = drupal_http_request($url);
-    if ($url_request->code != 200) {
+    if ($url_request->code != 200 && $url_request->redirect_code != 302) {
       form_set_error('valghalla_external_server_nemlogin_idp', t('%url cannot be accessed. Response code: %code', array(
         '%url' => $url,
         '%code' => $url_request->code
@@ -145,14 +144,21 @@ function valghalla_external_server_nemlogin_login_callback() {
  *
  * Deletes the CPR from the session, destroys session on external IDP.
  * In the end the user is redirected to a URL specified as destination.
- *
- * @see valghalla_external_server_nemlogin_logout.
  */
 function valghalla_external_server_nemlogin_logout_callback() {
-  valghalla_external_server_nemlogin_logout();
+  unset($_SESSION['valghalla_external_server_nemlogin_cpr']);
 
-  $destination = drupal_get_destination();
-  if (isset($destination['destination'])) {
-    drupal_goto($destination);
+  $callback = '';
+  if (isset($_GET['callback'])) {
+    $callback = $_GET['callback'];
   }
+
+  $getParams = http_build_query(
+    array(
+      'RelayState' => $GLOBALS['base_url'] . base_path() . $callback,
+    )
+  );
+
+  $idp = variable_get('valghalla_external_server_nemlogin_idp', 'https://test-nemlogin.bellcom.dk/simplesaml');
+  drupal_goto($idp . VALGHALLA_EXTERNAL_SERVER_NEMLOGIN_URL_LOGOUT . '?' . $getParams);
 }
