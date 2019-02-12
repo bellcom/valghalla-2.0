@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Install/Schema, and uninstall functions for valghalla_election.module
+ * Install/Schema, and uninstall functions for valghalla_election.
  */
 
 /**
@@ -17,7 +17,6 @@ function valghalla_election_install() {
  * Implements hook_uninstall().
  */
 function valghalla_election_uninstall() {
-
   if (db_table_exists('field_election_roles_diaet')) {
     db_query('DROP TABLE {field_election_roles_diaet}');
   }
@@ -34,13 +33,13 @@ function valghalla_election_schema() {
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
-        'description' => t('Primary Key: the node identifier for an election item.'),
+        'description' => 'Primary Key: the node identifier for an election item.',
       ),
       'role_diaet_value' => array(
         'type' => 'text',
         'not null' => TRUE,
         'size' => 'medium',
-        'description' => t('Diaet value for each role'),
+        'description' => 'Diaet value for each role',
       ),
     ),
     'primary key' => array('nid'),
@@ -74,7 +73,8 @@ function valghalla_election_update_7101() {
       'entity_type' => 'field_collection_item',
       'label' => t('Role'),
       'bundle' => 'field_volunteers_pr_pol_st_party',
-      // If you don't set the "required" property then the field wont be required by default.
+      // If you don't set the "required" property then the field wont be
+      // required by default.
       'required' => TRUE,
       'widget' => array(
         'type' => 'custom_type',
@@ -88,14 +88,16 @@ function valghalla_election_update_7101() {
   }
 
   // Field content creation.
-
   // 1. Load all elections.
   $query = new EntityFieldQuery();
   $result = $query->entityCondition('entity_type', 'node')
     ->entityCondition('bundle', 'election')
     ->execute();
 
-  $elections = node_load_multiple(array_keys($result['node']));
+  $elections = array();
+  if (!empty($result['node'])) {
+    $elections = node_load_multiple(array_keys($result['node']));
+  }
 
   // 2. Load all polling station used in election.
   foreach ($elections as $election) {
@@ -167,7 +169,6 @@ function valghalla_election_update_7101() {
 
 /**
  * Remove field field_secretary from partier taxonomy_term.
- *
  */
 function valghalla_election_update_7102() {
   field_delete_field('field_secretary');
@@ -215,7 +216,8 @@ function valghalla_election_update_7105() {
   foreach ($elections as $election) {
     $pollingStations = field_get_items('node', $election, 'field_polling_stations');
 
-    // 3. Filling polling station party combination list, that election must have.
+    // 3. Filling polling station party combination list,
+    // that election must have.
     $pollingStationPartyMappings = array();
     if (is_array($pollingStations)) {
       foreach ($pollingStations as $pollingStation) {
@@ -223,7 +225,8 @@ function valghalla_election_update_7105() {
       }
     }
 
-    // 4. Removing the polling station party combination, which election has already.
+    // 4. Removing the polling station party combination,
+    // which election has already.
     foreach ($election->field_volunteers_pr_pol_st_party['und'] as $key => $value) {
       if (isset($value['entity'])) {
         $vppsp = $value['entity'];
