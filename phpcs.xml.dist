@@ -24,6 +24,9 @@
   <file>public_html/profiles/valhalla/themes/custom/bellcom</file>
   <file>public_html/profiles/valhalla/themes/custom/site</file>
 
+  <!-- Legacy code with changes -->
+  <file>public_html/profiles/valhalla/modules/valghalla/modules/valghalla_election</file>
+
   <exclude-pattern>*.features.*</exclude-pattern>
   <exclude-pattern>*.pages_default.inc</exclude-pattern>
   <exclude-pattern>*.strongarm.inc</exclude-pattern>

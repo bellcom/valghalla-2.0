@@ -22,7 +22,7 @@ function valghalla_election_field_group_info() {
   $field_group->parent_name = 'group_election_tabs';
   $field_group->data = array(
     'label' => 'Diæt',
-    'weight' => '7',
+    'weight' => '8',
     'children' => array(),
     'format_type' => 'htab',
     'format_settings' => array(
@@ -52,9 +52,9 @@ function valghalla_election_field_group_info() {
     'children' => array(
       0 => 'field_volunteers_pr_pol_st_party',
       1 => 'group_diaet',
-      2 => 'group_general',
-      3 => 'group_validate',
-      4 => 'group_external_signup',
+      2 => 'group_external_signup',
+      3 => 'group_general',
+      4 => 'group_validate',
     ),
     'format_type' => 'htabs',
     'format_settings' => array(
@@ -78,7 +78,7 @@ function valghalla_election_field_group_info() {
   $field_group->parent_name = 'group_election_tabs';
   $field_group->data = array(
     'label' => 'Ekstern tilmelding',
-    'weight' => '9',
+    'weight' => '10',
     'children' => array(
       0 => 'field_election_notif_conf_export',
       1 => 'field_election_disable_consent',
@@ -113,9 +113,9 @@ function valghalla_election_field_group_info() {
     'weight' => '6',
     'children' => array(
       0 => 'field_date',
-      1 => 'field_election_type',
+      1 => 'field_election_mails_send',
       2 => 'field_election_status',
-      3 => 'field_election_mails_send',
+      3 => 'field_election_type',
       4 => 'field_polling_stations',
       5 => 'field_election_report_broadcast',
       6 => 'field_email_address',
@@ -172,12 +172,12 @@ function valghalla_election_field_group_info() {
   $field_group->parent_name = 'group_election_tabs';
   $field_group->data = array(
     'label' => 'Valideringsindstillinger',
-    'weight' => '8',
+    'weight' => '9',
     'children' => array(
       0 => 'field_election_valid_age',
-      1 => 'field_election_valid_municipal',
-      2 => 'field_election_valid_citizenship',
-      3 => 'field_election_valid_civ_status',
+      1 => 'field_election_valid_citizenship',
+      2 => 'field_election_valid_civ_status',
+      3 => 'field_election_valid_municipal',
     ),
     'format_type' => 'htab',
     'format_settings' => array(

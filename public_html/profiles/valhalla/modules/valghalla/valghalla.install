@@ -87,9 +87,15 @@ function valghalla_update_7105() {
  * Update admin content view. Remove URL from title node.
  */
 function valghalla_update_7106() {
+  // Remove links from node title.
   $view = views_get_view('admin_views_node', TRUE);
   $view->display['default']->display_options['fields']['title']['link_to_node'] = 0;
   views_save_view($view);
+
+  // Disable admin views user view.
+  $views_status = variable_get('views_defaults', array());
+  $views_status['admin_views_user'] = TRUE;
+  variable_set('views_defaults', $views_status);
 }
 
 /**
@@ -100,23 +106,6 @@ function valghalla_update_7106() {
  */
 function valghalla_update_7107() {
   $permissions = array('view polling station');
-  foreach (array('administrator', 'Partisekretær', 'Valgsekretær') as $role_name) {
-    $role = user_role_load_by_name($role_name);
-    user_role_grant_permissions($role->rid, $permissions);
-  }
-}
-
-/**
- * Implements hook_update_N().
- *
- * Adding notification permission to roles:
- * 'administrator', 'Partisekretær', 'Valgsekretær'.
- */
-function valghalla_update_7108() {
-  $permissions = array(
-    'administer valghalla notification entities',
-    'view any valghalla notification entity',
-  );
   foreach (array('administrator', 'Partisekretær', 'Valgsekretær') as $role_name) {
     $role = user_role_load_by_name($role_name);
     user_role_grant_permissions($role->rid, $permissions);

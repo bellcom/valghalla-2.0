@@ -1259,7 +1259,7 @@ function valghalla_volunteers_field_default_field_instances() {
     ),
     'entity_type' => 'node',
     'field_name' => 'field_phone',
-    'label' => 'Telefon',
+    'label' => 'Mobil-nummer',
     'required' => 0,
     'settings' => array(
       'text_processing' => 0,
@@ -1299,7 +1299,7 @@ function valghalla_volunteers_field_default_field_instances() {
     ),
     'entity_type' => 'node',
     'field_name' => 'field_phone2',
-    'label' => 'Telefon 2',
+    'label' => 'Telefon',
     'required' => 0,
     'settings' => array(
       'text_processing' => 0,
@@ -1339,7 +1339,7 @@ function valghalla_volunteers_field_default_field_instances() {
     ),
     'entity_type' => 'node',
     'field_name' => 'field_polling_station',
-    'label' => 'Valgsted',
+    'label' => 'Foretrukne valgsted',
     'required' => 0,
     'settings' => array(
       'user_register_form' => FALSE,
@@ -1506,10 +1506,12 @@ function valghalla_volunteers_field_default_field_instances() {
   t('Efternavn');
   t('Ekstern tilmelding');
   t('Email');
+  t('Foretrukne valgsted');
   t('Fornavn');
   t('Fritagelse for Digital Post');
   t('Fritagelse for NemSMS');
   t('Hus nr.');
+  t('Mobil-nummer');
   t('Municipality');
   t('Mødetidspunkt');
   t('Parti');
@@ -1522,7 +1524,6 @@ function valghalla_volunteers_field_default_field_instances() {
   t('Status');
   t('Status besked');
   t('Telefon');
-  t('Telefon 2');
   t('Timer');
   t('Token');
   t('Valg');
