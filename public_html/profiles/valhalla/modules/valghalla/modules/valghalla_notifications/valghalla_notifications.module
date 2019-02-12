@@ -272,6 +272,7 @@ function valghalla_notifications_generate_options($gateway_id, $options = array(
 function valghalla_notifications_gateways() {
   $gateways =& drupal_static(__FUNCTION__);
   if (!isset($gateways)) {
+    $gateways = array();
     $keys = array(
       'name',
       'node_type',
