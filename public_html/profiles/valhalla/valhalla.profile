@@ -112,7 +112,7 @@ function valhalla_theme_settings() {
     'toggle_favicon' => 1,
     'toggle_main_menu' => 1,
     'toggle_secondary_menu' => 1,
-    'default_logo' => 0,
+    'default_logo' => 1,
     'default_favicon' => 1,
     'favicon_path' => '',
     'favicon_upload' => '',

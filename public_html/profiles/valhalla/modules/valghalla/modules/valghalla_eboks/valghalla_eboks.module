@@ -331,7 +331,7 @@ function valghalla_eboks_default_settings() {
     );
     foreach ($vcv_to_eboks_variables as $vcv_variable => $eboks_variable) {
       $vcv_value = variable_get($vcv_variable);
-      if (empty($value)) {
+      if (!empty($vcv_value)) {
         $variables_default[$eboks_variable] = $vcv_value;
       }
     }
