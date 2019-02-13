@@ -104,11 +104,18 @@ function _valghalla_external_server_signup_get_available_roles($election_nid, $p
   }
 
   $all_roles = odin_get_roles();
+  $all_roles_loaded = node_load_multiple(array_keys($all_roles));
   $volunteers_count = odin_get_volunteers_count($election_nid, $polling_stations, $all_roles, $party_tid);
 
   foreach ($volunteers_count['role_count'] as $role_nid => $role_count) {
     if ($role_count['assigned'] > $role_count['total']) {
-      $available_roles[$role_nid] = $all_roles[$role_nid];
+      $name = $all_roles[$role_nid];
+
+      $field_description = field_get_items('node', $all_roles_loaded[$role_nid], 'field_description');
+      if (!empty($field_description) && is_array($field_description)) {
+        $name = $field_description[0]['value'];
+      }
+      $available_roles[$role_nid] = $name;
     }
   }
 
