@@ -91,11 +91,12 @@ function valghalla_volunteer_validator_node_presave($node) {
     'field_first_name' => array('fornavn', 'mellemnavn'),
     'field_second_name' => 'efternavn',
   );
+
+  $names_arr = array();
   if (variable_get('valghalla_volunteer_validator_get_name')) {
     // Fetching names split.
     $data = vcv_person_lookup_extended_query($cpr);
     if ($data['status']) {
-      $names_arr = array();
       foreach ($field_map as $field => $index_keys) {
         if (!is_array($index_keys)) {
           $index_keys = array($index_keys);
@@ -113,7 +114,6 @@ function valghalla_volunteer_validator_node_presave($node) {
     }
   }
   else {
-    $names_arr = array();
     foreach ($field_map as $field => $index_keys) {
       $names_arr[] = trim($node_wrapper->{$field}->value());
     }
