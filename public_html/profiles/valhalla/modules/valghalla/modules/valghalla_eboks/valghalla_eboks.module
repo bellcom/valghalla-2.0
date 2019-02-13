@@ -318,14 +318,14 @@ function valghalla_eboks_default_settings() {
     'valghalla_eboks_serviceuuid' => 'fd885b8b-4a3f-46cb-b367-6c9dda1c78f6',
     'valghalla_eboks_wsdl' => $base_url . $base_path . drupal_get_path('module', 'valghalla_eboks') . '/PriveService/wsdl/token/PrintService.wsdl',
     'valghalla_eboks_location' => 'https://prod.serviceplatformen.dk/service/Print/Print/2',
+    'valghalla_eboks_usersystemuuid' => '8a0aa317-6805-427a-acd5-78f2af15a3c9',
+    'valghalla_eboks_accountinginfo' => 'Valghalla',
   );
 
   // Fetch variables from similar module.
   if (module_exists('vcv_serviceplatformen')) {
     $vcv_to_eboks_variables = array(
-      'vcv_serviceplatformen_usersystemuuid' => 'valghalla_eboks_usersystemuuid',
       'vcv_serviceplatformen_useruuid' => 'valghalla_eboks_useruuid',
-      'vcv_serviceplatformen_accountinginfo' => 'valghalla_eboks_accountinginfo',
       'vcv_serviceplatformen_certfile_passphrase' => 'valghalla_eboks_certfile_passphrase',
       'vcv_serviceplatformen_certfile' => 'valghalla_eboks_certfile',
     );
