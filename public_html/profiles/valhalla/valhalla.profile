@@ -231,4 +231,5 @@ function valhalla_apply_updates() {
   valghalla_update_7106();
   valghalla_update_7107();
   valghalla_update_7109();
+  valghalla_update_7114();
 }
