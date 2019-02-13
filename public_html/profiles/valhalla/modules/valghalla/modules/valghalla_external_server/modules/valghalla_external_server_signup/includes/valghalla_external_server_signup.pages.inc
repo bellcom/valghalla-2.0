@@ -250,10 +250,43 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
   }
   else {
     $form['polling_station_details'] = array(
-      '#prefix' => '<div id="js-polling-station-details">',
+      '#prefix' => '<div id="js-polling-station-details" class="form-group">',
       '#suffix' => '</div>',
       '#markup' => $polling_station_details_markup,
     );
+  }
+
+  $form['no_seats_message'] = array(
+    '#prefix' => '<div id="js-no-seats-message">',
+    '#suffix' => '</div>',
+    '#markup' => '',
+  );
+
+  // Checking if we have no seats available.
+  switch ($form_mode) {
+    case 'party':
+      if (empty($form_state['available_roles']) && empty($form_state['available_polling_stations'])) {
+        $form['no_seats_message']['#markup'] = _valghalla_external_server_signup_get_no_seats_message_html();
+      }
+      break;
+
+    case 'party_role':
+      if (empty($form_state['available_polling_stations'])) {
+        $form['no_seats_message']['#markup'] = _valghalla_external_server_signup_get_no_seats_message_html();
+      }
+      break;
+
+    case 'party_polling_station':
+      if (empty($form_state['available_roles'])) {
+        $form['no_seats_message']['#markup'] = _valghalla_external_server_signup_get_no_seats_message_html();
+      }
+      break;
+
+    case 'party_role_polling_station':
+      if (!_valghalla_external_server_signup_check_place_is_available($form_state['election']->nid, $form_state['party']->tid, $form_state['role']->nid, $form_state['polling_station']->nid)) {
+        $form['no_seats_message']['#markup'] = _valghalla_external_server_signup_get_no_seats_message_html();
+      }
+      break;
   }
 
   // Making the replacements.
@@ -370,6 +403,10 @@ function valghalla_external_server_signup_role_select_callback($form, &$form_sta
     }
 
     $commands[] = ajax_command_replace('#js-polling-station-details', drupal_render($form['polling_station_details']));
+
+    // Updating no seats message.
+    $form['no_seats_message']['#markup'] = empty($form_state['available_polling_stations']) ? _valghalla_external_server_signup_get_no_seats_message_html() : '';
+    $commands[] = ajax_command_replace('#js-no-seats-message', drupal_render($form['no_seats_message']));
   }
 
   return array('#type' => 'ajax', '#commands' => $commands);
@@ -416,6 +453,10 @@ function valghalla_external_server_signup_polling_station_select_callback($form,
     $role = ($role_selected) ? node_load($role_selected) : NULL;
     $form['role_details']['#markup'] = ($role) ? _valghalla_external_server_signup_get_role_detail_html($role) : '';
     $commands[] = ajax_command_replace('#js-role-details', drupal_render($form['role_details']));
+
+    // Updating no seats message.
+    $form['no_seats_message']['#markup'] = empty($form_state['available_roles']) ? _valghalla_external_server_signup_get_no_seats_message_html() : '';
+    $commands[] = ajax_command_replace('#js-no-seats-message', drupal_render($form['no_seats_message']));
   }
 
   return array('#type' => 'ajax', '#commands' => $commands);
@@ -474,6 +515,20 @@ function valghalla_external_server_signup_signup_form_validate($form, &$form_sta
 
   if (isset($form_state['values']['role_select']) && $form_state['values']['role_select'] === 0) {
     form_set_error('role_select', t('The field %field is required.', array('%field' => 'Role')));
+  }
+
+  if (strcmp($form_state['triggering_element']['#type'], 'submit') === 0) {
+    // Check place availability.
+    $election_nid = $form_state['election']->nid;
+    $party_tid = $form_state['party']->tid;
+    $role_nid = isset($form_state['role']->nid) ? $form_state['role']->nid : $form_state['values']['role_select'];
+    $polling_station_nid = isset($form_state['polling_station']) ? $form_state['polling_station']->nid : $form_state['values']['polling_station_select'];
+
+    if ($election_nid && $party_tid && $role_nid && $polling_station_nid) {
+      if (!_valghalla_external_server_signup_check_place_is_available($election_nid, $party_tid, $role_nid, $polling_station_nid)) {
+        form_set_error('', t('Pladserne er desværre blevet optaget'));
+      }
+    }
   }
 }
 
@@ -713,11 +768,16 @@ function valghalla_external_server_signup_field_visibility($form_state, $propery
   // Checking notification export config.
   $conf_export = $form_state['election_notif_conf_export'];
 
-  if ($role_uuid && array_key_exists($role_uuid, $conf_export) && isset($conf_export[$role_uuid][$propery_name])) {
-    return $conf_export[$role_uuid][$propery_name] === TRUE;
+  if ($conf_export) {
+    if ($role_uuid && array_key_exists($role_uuid, $conf_export) && isset($conf_export[$role_uuid][$propery_name])) {
+      return $conf_export[$role_uuid][$propery_name] === TRUE;
+    }
+    else {
+      return $conf_export['general'][$propery_name] === TRUE;
+    }
   }
   else {
-    return $conf_export['general'][$propery_name] === TRUE;
+    return TRUE;
   }
 }
 
