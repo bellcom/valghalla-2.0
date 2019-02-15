@@ -155,13 +155,14 @@ function valghalla_internal_server_perform_synch($force = TRUE) {
       drush_backend_batch_process();
     }
     else {
-      $destination = current_path();
-      if ($destination_array = drupal_get_destination()) {
-        $destination = reset($destination_array);
+      if (isset($_GET['destination'])) {
+        $destination = $_GET['destination'];
+        background_batch_process_batch($destination);
+        drupal_goto($destination);
       }
-
-      background_batch_process_batch($destination);
-      drupal_goto($destination);
+      else {
+        background_batch_process_batch(current_path());
+      }
     }
   }
 }

@@ -1406,6 +1406,14 @@ function valghalla_volunteers_form_volunteers_node_form_alter(&$form, &$form_sta
       }
     }
   }
+
+  // Hide N/A choise.
+  if (!empty($form['field_no_sms'][LANGUAGE_NONE]['#options']['_none'])) {
+    unset($form['field_no_sms'][LANGUAGE_NONE]['#options']['_none']);
+  }
+  if (!empty($form['field_no_mail'][LANGUAGE_NONE]['#options']['_none'])) {
+    unset($form['field_no_mail'][LANGUAGE_NONE]['#options']['_none']);
+  }
 }
 
 /**

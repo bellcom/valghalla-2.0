@@ -446,8 +446,8 @@ function valghalla_volunteers_field_default_field_bases() {
     'module' => 'list',
     'settings' => array(
       'allowed_values' => array(
-        0 => '',
-        1 => '',
+        0 => 'Tilmeldt',
+        1 => 'Fritaget',
       ),
       'allowed_values_function' => '',
     ),
@@ -471,8 +471,8 @@ function valghalla_volunteers_field_default_field_bases() {
     'module' => 'list',
     'settings' => array(
       'allowed_values' => array(
-        0 => '',
-        1 => '',
+        0 => 'Tilmeldt',
+        1 => 'Ikke tilmeldt',
       ),
       'allowed_values_function' => '',
     ),

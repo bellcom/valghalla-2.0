@@ -1151,7 +1151,7 @@ function valghalla_volunteers_field_default_field_instances() {
       'settings' => array(
         'display_label' => 1,
       ),
-      'type' => 'options_onoff',
+      'type' => 'options_buttons',
       'weight' => 29,
     ),
   );
@@ -1191,10 +1191,8 @@ function valghalla_volunteers_field_default_field_instances() {
     'widget' => array(
       'active' => 1,
       'module' => 'options',
-      'settings' => array(
-        'display_label' => 1,
-      ),
-      'type' => 'options_onoff',
+      'settings' => array(),
+      'type' => 'options_buttons',
       'weight' => 30,
     ),
   );

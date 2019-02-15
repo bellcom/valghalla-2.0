@@ -59,7 +59,11 @@ function _valghalla_helper_wrap_name($node, $container = 'p', $fcid = null) {
     $valid = 'notvalidated';
   }
 
-  $display = '(' . $party->name . ') ' . $node->title . ' (' . $rsvp_map[$rsvp] . ')' . $rsvp_markup . $reply_link;
+  $display = '';
+  if ($party) {
+    $display = '(' . $party->name . ') ';
+  }
+  $display .= $node->title . ' (' . $rsvp_map[$rsvp] . ')' . $rsvp_markup . $reply_link;
   return '<' . $container . ' class="volunteer ' . $valid . ' ' . $rsvp_class_map[$rsvp] . '">' . $display . '</' . $container . '>';
 }
 
