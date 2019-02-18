@@ -229,13 +229,20 @@ function valghalla_volunteers_rsvp() {
     3 => t('Nej, og jeg vil gerne fjernes fra listen'),
   );
 
+  $volunteer_name = NULL;
+  // Using name only if external server is not enabled, to prevent anonymized
+  // content from being shown.
+  if (!module_exists('valghalla_external_server')) {
+    $volunteer_name = $vlnt_node->title;
+  }
+
   return theme('rsvp', array(
-          'rsvp' => $rsvp,
-          'rsvp_status' => $rsvp_map[$rsvp],
-          'name' => $vlnt_node->title,
-          'params' => $params,
-          'post_script' => $post_script,
-      ));
+    'rsvp' => $rsvp,
+    'rsvp_status' => $rsvp_map[$rsvp],
+    'name' => $volunteer_name,
+    'params' => $params,
+    'post_script' => $post_script,
+  ));
 }
 
 /**
