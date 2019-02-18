@@ -35,6 +35,13 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
     valghalla_external_server_signup_terminate_signup();
   }
 
+  // Check is election is active.
+  $field_language = field_language('node', $election, 'field_election_status');
+  if (empty($election->field_election_status[$field_language][0]['value'])
+    || empty($election->status)) {
+    valghalla_external_server_signup_terminate_signup(1);
+  }
+
   // Getting role from form state.
   $role = isset($form_state['role']) ? $form_state['role'] : NULL;
   if (!$role) {
@@ -468,9 +475,18 @@ function valghalla_external_server_signup_polling_station_select_callback($form,
  * Cancels the subscription by redirecting user to front page
  * with a warning message.
  */
-function valghalla_external_server_signup_terminate_signup() {
+function valghalla_external_server_signup_terminate_signup($terminate_code = 0) {
   // Throwing the warning and redirecting to the main page.
-  drupal_set_message(t('Pladserne er desværre blevet optaget. Vælg evt. et andet valgsted.'), 'warning');
+  $messages = array(
+    0 => t('Tilmeldingslinket er ikke gyldigt eller er blevet deaktiveret.'),
+    1 => t('Tilmelding til valget er i øjeblikket deaktiveret.'),
+  );
+
+  if (empty($messages[$terminate_code])) {
+    $terminate_code = 0;
+  }
+
+  drupal_set_message($messages[$terminate_code], 'warning');
   drupal_goto();
 }
 
