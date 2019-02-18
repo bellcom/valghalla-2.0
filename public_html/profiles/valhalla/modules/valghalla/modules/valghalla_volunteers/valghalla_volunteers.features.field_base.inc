@@ -446,8 +446,8 @@ function valghalla_volunteers_field_default_field_bases() {
     'module' => 'list',
     'settings' => array(
       'allowed_values' => array(
-        0 => '',
-        1 => '',
+        0 => 'Tilmeldt',
+        1 => 'Fritaget',
       ),
       'allowed_values_function' => '',
     ),
@@ -471,8 +471,8 @@ function valghalla_volunteers_field_default_field_bases() {
     'module' => 'list',
     'settings' => array(
       'allowed_values' => array(
-        0 => '',
-        1 => '',
+        0 => 'Tilmeldt',
+        1 => 'Ikke tilmeldt',
       ),
       'allowed_values_function' => '',
     ),
@@ -564,15 +564,14 @@ function valghalla_volunteers_field_default_field_bases() {
     'module' => 'node_reference',
     'settings' => array(
       'referenceable_types' => array(
-        'absentee_ballot' => 0,
-        'article' => 0,
         'constituency' => 0,
+        'eboks' => 0,
         'election' => 0,
         'email' => 0,
-        'page' => 0,
         'panel' => 0,
         'polling_station' => 'polling_station',
         'roles' => 0,
+        'sms' => 0,
         'volunteers' => 0,
       ),
       'view' => array(

@@ -162,8 +162,8 @@ function entity_valghalla_notification_list_entities($vol_nid = FALSE) {
   $headers[] = t('Operations');
   $result = $query->execute();
   $ids = reset($result);
-  $entities = entity_valghalla_notification_load_multiple(array_keys($ids));
-  if (!empty($entities)) {
+  if (!empty($ids)) {
+    $entities = entity_valghalla_notification_load_multiple(array_keys($ids));
     foreach ($entities as $entity) {
       $message = strip_tags(str_replace('<br/>', '  ', $entity->message));
       $row = $row_data = array();
@@ -186,8 +186,7 @@ function entity_valghalla_notification_list_entities($vol_nid = FALSE) {
 
       $row['data'] = $row_data;
       if (strtolower($entity->status) == 'failed') {
-        $row['style'] = 'background-color:#ffdddd;';
-        $row['class'] = 'failed warning';
+        $row['class'] = 'failed danger';
       }
       $rows[] = $row;
     }
@@ -202,7 +201,7 @@ function entity_valghalla_notification_list_entities($vol_nid = FALSE) {
     // There were no entities. Tell the user.
     $content[] = array(
       '#type' => 'item',
-      '#markup' => t('No entity_valghalla_notification entities currently exist.'),
+      '#markup' => t('Ingen resultater.'),
     );
   }
   $content['pager'] = array('#theme' => 'pager');

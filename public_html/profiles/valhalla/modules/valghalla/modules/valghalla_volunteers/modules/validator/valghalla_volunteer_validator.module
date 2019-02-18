@@ -86,33 +86,39 @@ function valghalla_volunteer_validator_node_presave($node) {
     }
   }
 
-  // Fetching names split.
+  // Generating node title.
+  $field_map = array(
+    'field_first_name' => array('fornavn', 'mellemnavn'),
+    'field_second_name' => 'efternavn',
+  );
+
+  $names_arr = array();
   if (variable_get('valghalla_volunteer_validator_get_name')) {
-    $field_map = array(
-      'field_first_name' => array('fornavn', 'mellemnavn'),
-      'field_second_name' => 'efternavn',
-    );
-
+    // Fetching names split.
     $data = vcv_person_lookup_extended_query($cpr);
-
     if ($data['status']) {
-      $names_arr = array();
       foreach ($field_map as $field => $index_keys) {
         if (!is_array($index_keys)) {
           $index_keys = array($index_keys);
         }
         $value_arr = [];
         foreach ($index_keys as $index) {
-          $value_arr[] = $data['persondata']->navn->{$index};
+          if (!empty($data['persondata']->navn->{$index})) {
+            $value_arr[] = trim($data['persondata']->navn->{$index});
+          }
         }
         $value = implode(' ', $value_arr);
         $node_wrapper->{$field} = $value;
         $names_arr[] = $value;
       }
-
-      $node_wrapper->title = implode(' ', $names_arr);
     }
   }
+  else {
+    foreach ($field_map as $field => $index_keys) {
+      $names_arr[] = trim($node_wrapper->{$field}->value());
+    }
+  }
+  $node_wrapper->title = implode(' ', $names_arr);
 
   // Fetching subscription.
   if (variable_get('valghalla_volunteer_validator_get_subscription_status')) {

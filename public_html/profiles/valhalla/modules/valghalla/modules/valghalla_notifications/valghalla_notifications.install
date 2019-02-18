@@ -83,6 +83,14 @@ function valghalla_notifications_install() {
 }
 
 /**
+ * Implements hook_enable().
+ */
+function valghalla_notification_enable() {
+  // Set permissions for roles.
+  valghalla_notifications_update_7103();
+}
+
+/**
  * Implements hook_schema().
  */
 function valghalla_notifications_schema() {
@@ -169,4 +177,24 @@ function valghalla_notifications_update_7002() {
     'default' => '',
   );
   db_add_field('entity_valghalla_notification', 'recipient', $spec);
+}
+
+/**
+ * Implements hook_update_N().
+ *
+ * Adding notification permission to roles:
+ * 'administrator', 'Partisekretær', 'Valgsekretær'.
+ */
+function valghalla_notifications_update_7103() {
+  $permissions = array(
+    'administer valghalla notification entities',
+    'view any valghalla notification entity',
+  );
+  foreach (array('administrator', 'Partisekretær', 'Valgsekretær') as $role_name) {
+    $role = user_role_load_by_name($role_name);
+    if (empty($role)) {
+      continue;
+    }
+    user_role_grant_permissions($role->rid, $permissions);
+  }
 }

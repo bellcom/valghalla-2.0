@@ -30,6 +30,11 @@ function valhalla_form_install_configure_form_alter(&$form, $form_state) {
  */
 function valhalla_install_tasks(&$install_state) {
   $tasks = array(
+    'valhalla_enable_modules' => array(
+      'display_name' => st('Enable additional modules'),
+      'display' => FALSE,
+      'type' => 'normal',
+    ),
     'valhalla_theme_settings' => array(
       'display_name' => st('Theme settings'),
       'display' => FALSE,
@@ -53,6 +58,45 @@ function valhalla_settings_extra_submit(&$form, $form_state) {
 }
 
 /**
+ * Enable additional modules.
+ */
+function valhalla_enable_modules() {
+  $modules = array(
+    // Contrib modules.
+    'ckeditor',
+    'field_ui',
+    'mailsystem',
+    'mimemail',
+    'views_ui',
+    'contextual',
+    'shortcut',
+    'color',
+    // Valghalla modules.
+    'valghalla_lists',
+    'liste_beskeder',
+    'liste_frivillige_uden_email',
+    'liste_m_cpr_nummer',
+    'liste_parti_oversigt',
+    'liste_valghalla_export',
+    'liste_valghalla_kvittering',
+    'valghalla_notifications',
+    'valghalla_eboks',
+    'valghalla_mail',
+    'valghalla_sms',
+    'valghalla_signup',
+    'valghalla_signup_list',
+    'valghalla_volunteer_validator',
+    'valghalla_volunteers_import',
+    'valghalla_volunteers_invite',
+    'vcv_serviceplatformen',
+    'vcv_person_lookup_extended',
+    'vvv_validate_age',
+    'valghalla_status_report',
+  );
+  module_enable($modules);
+}
+
+/**
  * Set theme settings.
  */
 function valhalla_theme_settings() {
@@ -68,7 +112,7 @@ function valhalla_theme_settings() {
     'toggle_favicon' => 1,
     'toggle_main_menu' => 1,
     'toggle_secondary_menu' => 1,
-    'default_logo' => 0,
+    'default_logo' => 1,
     'default_favicon' => 1,
     'favicon_path' => '',
     'favicon_upload' => '',
@@ -186,6 +230,6 @@ function valhalla_apply_updates() {
   module_load_include('install', 'valghalla', 'valghalla');
   valghalla_update_7106();
   valghalla_update_7107();
-  valghalla_update_7108();
   valghalla_update_7109();
+  valghalla_update_7114();
 }

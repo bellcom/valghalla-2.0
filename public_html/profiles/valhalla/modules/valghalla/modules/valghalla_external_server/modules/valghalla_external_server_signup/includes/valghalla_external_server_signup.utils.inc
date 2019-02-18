@@ -104,11 +104,18 @@ function _valghalla_external_server_signup_get_available_roles($election_nid, $p
   }
 
   $all_roles = odin_get_roles();
+  $all_roles_loaded = node_load_multiple(array_keys($all_roles));
   $volunteers_count = odin_get_volunteers_count($election_nid, $polling_stations, $all_roles, $party_tid);
 
   foreach ($volunteers_count['role_count'] as $role_nid => $role_count) {
     if ($role_count['assigned'] > $role_count['total']) {
-      $available_roles[$role_nid] = $all_roles[$role_nid];
+      $name = $all_roles[$role_nid];
+
+      $field_description = field_get_items('node', $all_roles_loaded[$role_nid], 'field_description');
+      if (!empty($field_description) && is_array($field_description)) {
+        $name = $field_description[0]['value'];
+      }
+      $available_roles[$role_nid] = $name;
     }
   }
 
@@ -152,6 +159,31 @@ function _valghalla_external_server_signup_get_available_polling_stations($elect
 }
 
 /**
+ * Checks if the place is available.
+ *
+ * @param int $election_nid
+ *   Nid of the election.
+ * @param int $party_tid
+ *   Tid of the party.
+ * @param int $role_nid
+ *   Nid of the role.
+ * @param int $polling_station_nid
+ *   Nid of the polling station.
+ *
+ * @return bool
+ *   True if the place is available, false otherwise.
+ */
+function _valghalla_external_server_signup_check_place_is_available($election_nid, $party_tid, $role_nid, $polling_station_nid) {
+  $volunteers_count = odin_get_volunteers_count($election_nid, array($polling_station_nid => $polling_station_nid), array($role_nid => $role_nid), $party_tid);
+
+  if ($volunteers_count['role_count'][$role_nid]['assigned'] > $volunteers_count['role_count'][$role_nid]['total']) {
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
+/**
  * HTML snippet for presenting polling station address.
  *
  * @param mixed $polling_station
@@ -189,6 +221,20 @@ function _valghalla_external_server_signup_get_role_detail_html($role) {
   $meeting_time = $role->field_meetingtime['und'][0]['value'];
   $html = <<<"EOD"
   Rolle mødetidspunkt <b>$meeting_time</b>
+EOD;
+
+  return $html;
+}
+
+/**
+ * HTML snippet for no seats message.
+ *
+ * @return string
+ *   HTML snippet.
+ */
+function _valghalla_external_server_signup_get_no_seats_message_html() {
+  $html = <<<"EOD"
+      Pladserne er desværre blevet optaget
 EOD;
 
   return $html;

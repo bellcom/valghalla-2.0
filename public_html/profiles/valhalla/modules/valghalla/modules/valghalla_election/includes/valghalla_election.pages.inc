@@ -45,7 +45,7 @@ function valghalla_election_handle_seats_form($form, &$form_state, $polling_stat
   }
 
   // Alter form appearance.
-  foreach($form as $form_party_tid => $form_party) {
+  foreach ($form as $form_party_tid => $form_party) {
     $party = $form[$form_party_tid]['field_ppsp_party']['und'];
     $party_letter_form_value = $party['#default_value'][0];
     $party_letter = $party['#options'][$party_letter_form_value];
@@ -63,7 +63,6 @@ function valghalla_election_handle_seats_form($form, &$form_state, $polling_stat
     // Insert bottom.
     $form[$form_party_tid]['#suffix'] = '<hr>';
   }
-
 
   $form['#tree'] = TRUE;
 
@@ -88,7 +87,7 @@ function valghalla_election_handle_seats_form_validate($form, &$form_state) {
   foreach ($form as $entity_id => $entity_form_values) {
     if (isset($entity_form_values['#entity'])) {
       $entity_form_state = array(
-        'values' => $form_state['values'][$entity_id]
+        'values' => $form_state['values'][$entity_id],
       );
 
       // Getting form errors.
