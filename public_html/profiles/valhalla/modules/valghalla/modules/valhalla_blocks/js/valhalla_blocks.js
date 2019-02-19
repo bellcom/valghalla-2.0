@@ -6,7 +6,7 @@
       for (var int in deltas) {
         var value = deltas[int];
 
-        lazyLoadContent(value);
+        lazyLoadContent(value, settings);
       }
     }
   };
@@ -45,7 +45,7 @@ function _addButton() {
   $wrapper.html($button);
 }
 
-function lazyLoadContent(delta) {
+function lazyLoadContent(delta, settings) {
 
   // Remove button.
   _removeButton();
@@ -60,6 +60,8 @@ function lazyLoadContent(delta) {
     }
 
     // Add button.
-    _addButton();
+    if (settings.electionActive) {
+      _addButton();
+    }
   });
 }

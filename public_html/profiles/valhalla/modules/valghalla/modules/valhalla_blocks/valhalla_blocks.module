@@ -65,6 +65,12 @@ function valhalla_blocks_block_view($delta = '') {
 
       drupal_add_js(drupal_get_path('module', 'valhalla_blocks') . '/js/valhalla_blocks.js', 'file');
 
+      $election = node_load($_SESSION['election_nid']);
+      $field_status = field_get_items('node', $election, 'field_election_status');
+      drupal_add_js(
+        array('electionActive' => !empty($field_status[0]['value']) && !empty($election->status)),
+        array('type' => 'setting')
+      );
       $output = '<div id="valhalla_block-' . $delta . '" >
         <div class="progress progress-striped active">
           <div class="progress-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
