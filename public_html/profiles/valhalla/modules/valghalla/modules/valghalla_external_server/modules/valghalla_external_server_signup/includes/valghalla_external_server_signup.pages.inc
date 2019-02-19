@@ -269,29 +269,30 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
     '#markup' => '',
   );
 
+  $is_seat_available = TRUE;
   // Checking if we have no seats available.
   switch ($form_mode) {
     case 'party':
       if (empty($form_state['available_roles']) && empty($form_state['available_polling_stations'])) {
-        $form['no_seats_message']['#markup'] = _valghalla_external_server_signup_get_no_seats_message_html();
+        $is_seat_available = FALSE;
       }
       break;
 
     case 'party_role':
       if (empty($form_state['available_polling_stations'])) {
-        $form['no_seats_message']['#markup'] = _valghalla_external_server_signup_get_no_seats_message_html();
+        $is_seat_available = FALSE;
       }
       break;
 
     case 'party_polling_station':
       if (empty($form_state['available_roles'])) {
-        $form['no_seats_message']['#markup'] = _valghalla_external_server_signup_get_no_seats_message_html();
+        $is_seat_available = FALSE;
       }
       break;
 
     case 'party_role_polling_station':
       if (!_valghalla_external_server_signup_check_place_is_available($form_state['election']->nid, $form_state['party']->tid, $form_state['role']->nid, $form_state['polling_station']->nid)) {
-        $form['no_seats_message']['#markup'] = _valghalla_external_server_signup_get_no_seats_message_html();
+        $is_seat_available = FALSE;
       }
       break;
   }
@@ -339,11 +340,19 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
       '#required' => TRUE,
     );
 
-    $form['submit']['#states'] = array(
-      'enabled' => array(
-        ':input[name="terms_agreement"]' => array('checked' => TRUE),
-      ),
-    );
+    // Adding ajax behaviour only if seat is available.
+    if ($is_seat_available) {
+      $form['submit']['#states'] = array(
+        'enabled' => array(
+          ':input[name="terms_agreement"]' => array('checked' => TRUE),
+        ),
+      );
+    }
+  }
+
+  if (!$is_seat_available) {
+    $form['no_seats_message']['#markup'] = _valghalla_external_server_signup_get_no_seats_message_html();
+    $form['submit']['#disabled'] = 'disabled';
   }
 
   $form['#theme'] = array('valghalla_external_server_signup_form');
