@@ -54,6 +54,7 @@ function valhalla_blocks_block_view($delta = '') {
     case 'party_constituency_status':
 
       $block_cache = '';
+      $election_active = FALSE;
       if (isset($_SESSION['election_nid'])) {
         global $user;
         $cache = cache_get($delta . '_' . $user->uid . '_' . $_SESSION['election_nid']);
@@ -61,14 +62,15 @@ function valhalla_blocks_block_view($delta = '') {
         if ($cache) {
           $block_cache = $cache->data;
         }
+
+        $election = node_load($_SESSION['election_nid']);
+        $field_status = field_get_items('node', $election, 'field_election_status');
+        $election_active = !empty($field_status[0]['value']) && !empty($election->status);
       }
 
       drupal_add_js(drupal_get_path('module', 'valhalla_blocks') . '/js/valhalla_blocks.js', 'file');
-
-      $election = node_load($_SESSION['election_nid']);
-      $field_status = field_get_items('node', $election, 'field_election_status');
       drupal_add_js(
-        array('electionActive' => !empty($field_status[0]['value']) && !empty($election->status)),
+        array('electionActive' => $election_active),
         array('type' => 'setting')
       );
       $output = '<div id="valhalla_block-' . $delta . '" >
