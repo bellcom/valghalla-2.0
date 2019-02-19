@@ -220,6 +220,7 @@ function _valghalla_resource_export_resource_index($page, $fields, $parameters, 
 
   // Adding connection to valghalla_external_server_synch_queue.
   $node_select->join('valghalla_synch_queue', 'queue', 'queue.target_id = t.nid');
+  $node_select->condition('queue.type', 'node');
 
   services_resource_build_index_query($node_select, $page, $fields, $parameters, $page_size, 'node', $options);
 
@@ -237,6 +238,7 @@ function _valghalla_resource_export_resource_index($page, $fields, $parameters, 
 
   // Adding connection to valghalla_external_server_synch_queue.
   $taxonomy_select->join('valghalla_synch_queue', 'queue', 'queue.target_id = t.tid');
+  $taxonomy_select->condition('queue.type', 'taxonomy_term');
 
   services_resource_build_index_query($taxonomy_select, $page, $fields, $parameters, $page_size, 'taxonomy_term', $options);
   $results = services_resource_execute_index_query($taxonomy_select);
