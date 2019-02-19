@@ -49,6 +49,8 @@ function valghalla_synch_node_export_node_export_import_alter(&$nodes, $format, 
  */
 function _valghalla_synch_node_export_role_remapping(&$node) {
   foreach ($node->field_collection_deploy['field_volunteers_pr_pol_st_party'] as $fc_key => $field_volunteers_pr_pol_st_party) {
+    $new_roles_fields_data = array();
+
     // First we traverse to extract the data, and remove the old key.
     foreach ($field_volunteers_pr_pol_st_party as $field_key => $field_data) {
       if (strpos($field_key, 'field_role_n') === 0) {
