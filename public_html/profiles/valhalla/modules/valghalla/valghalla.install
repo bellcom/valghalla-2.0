@@ -129,7 +129,12 @@ function valghalla_update_7109() {
 
   foreach (array('administrator') as $role_name) {
     $role = user_role_load_by_name($role_name);
-
+    if (empty($role)) {
+      watchdog('valghalla_update', 'Role %role not found to set permissions.', array(
+        '%role' => $role_name,
+      ));
+      continue;
+    }
     user_role_grant_permissions($role->rid, $permissions);
   }
 }
