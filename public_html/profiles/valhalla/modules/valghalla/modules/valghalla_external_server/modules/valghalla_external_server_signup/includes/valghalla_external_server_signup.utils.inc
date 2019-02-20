@@ -234,7 +234,7 @@ EOD;
  */
 function _valghalla_external_server_signup_get_no_seats_message_html() {
   $html = <<<"EOD"
-      Pladserne er desværre blevet optaget
+      Der er ikke flere ledige pladser. Tilmelding er derfor ikke mulig på nuværende tidspunkt
 EOD;
 
   return $html;
