@@ -281,6 +281,7 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
     $form['polling_station_select']['#access'] = FALSE;
     $form['polling_station_details']['#access'] = FALSE;
     $form['terms_agreement']['#access'] = FALSE;
+    $form['submit']['#access'] = FALSE;
   }
 
   // Making the replacements.
