@@ -14,6 +14,7 @@ module_load_include('install', 'uuid', 'uuid');
  */
 function valghalla_internal_server_install() {
   // Module requires this variable to be FALSE.
+  variable_set('node_export_dependency_disable_modules', array('field_collection' => 'field_collection'));
   variable_set('node_export_dependency_attach_nodes', FALSE);
   variable_set('node_export_existing', 'revision');
 }

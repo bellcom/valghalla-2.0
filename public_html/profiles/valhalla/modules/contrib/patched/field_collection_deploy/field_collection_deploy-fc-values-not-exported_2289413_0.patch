@@ -1,0 +1,16 @@
+diff --git a/field_collection_deploy.module b/field_collection_deploy.module
+index 0aebee7..d365d18 100644
+--- a/field_collection_deploy.module
++++ b/field_collection_deploy.module
+@@ -183,7 +183,10 @@ function field_collection_deploy_import_field_collection($node, $field_collectio
+       // This is a hack!
+       $item_id = db_query_range('SELECT item_id FROM {field_collection_item} WHERE field_name = :field_name ORDER BY item_id DESC', 0, 1, array(':field_name' => $bundle))->fetchField();
+       $rev_id = db_query_range('SELECT revision_id FROM {field_collection_item} WHERE field_name = :field_name ORDER BY item_id DESC', 0, 1, array(':field_name' => $bundle))->fetchField();
+-      $language = ($node->language == '') ? LANGUAGE_NONE: $node->language;
++      
++      // Quick fix for issue https://www.drupal.org/node/2289413
++      $language = LANGUAGE_NONE;
++      
+       $field_values[$language][] = array(
+         'value' => $item_id,
+         'revision_id' => $rev_id);
