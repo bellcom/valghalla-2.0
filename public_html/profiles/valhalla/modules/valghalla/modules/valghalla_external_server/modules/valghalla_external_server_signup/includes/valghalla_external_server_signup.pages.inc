@@ -35,6 +35,13 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
     valghalla_external_server_signup_terminate_signup();
   }
 
+  // Check is election is active.
+  $field_language = field_language('node', $election, 'field_election_status');
+  if (empty($election->field_election_status[$field_language][0]['value'])
+    || empty($election->status)) {
+    valghalla_external_server_signup_terminate_signup(1);
+  }
+
   // Getting role from form state.
   $role = isset($form_state['role']) ? $form_state['role'] : NULL;
   if (!$role) {
@@ -70,10 +77,13 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
     }
   }
 
-  $form_mode = NULL;
-  $election_date_str = format_date(strtotime($election->field_date['da'][0]['value']), 'custom', 'd. F Y');
-
   drupal_set_title($election->title);
+
+  // Getting form mode.
+  $form_mode = valghalla_external_server_signup_get_form_mode($form_state);
+  if (!$form_mode) {
+    valghalla_external_server_signup_terminate_signup();
+  }
 
   $form['cpr'] = array(
     '#type' => 'textfield',
@@ -120,52 +130,6 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
     ),
     '#access' => !empty($party->field_party_subsc_accept_comment) ? $party->field_party_subsc_accept_comment['und'][0]['value'] : FALSE,
   );
-
-  if (!isset($form_state['role_in_url']) && !isset($form_state['polling_station_in_url'])) {
-    $form_mode = 'party';
-    $replacements = array(
-      odin_get_municipality(variable_get('valhalla_settings_municipality')),
-      $election->title,
-      $election_date_str,
-      $party->field_partinavn['und'][0]['value'],
-    );
-  }
-  elseif (isset($form_state['role_in_url']) && !isset($form_state['polling_station_in_url'])) {
-    $form_mode = 'party_role';
-    $replacements = array(
-      odin_get_municipality(variable_get('valhalla_settings_municipality')),
-      $election->title,
-      $election_date_str,
-      $party->field_partinavn['und'][0]['value'],
-      $role->field_description['und'][0]['value'],
-      $role->field_meetingtime['und'][0]['value'],
-    );
-  }
-  elseif (!isset($form_state['role_in_url']) && isset($form_state['polling_station_in_url'])) {
-    $form_mode = 'party_polling_station';
-    $replacements = array(
-      odin_get_municipality(variable_get('valhalla_settings_municipality')),
-      $election->title,
-      $election_date_str,
-      $party->field_partinavn['und'][0]['value'],
-      $polling_station->title,
-    );
-  }
-  elseif (isset($form_state['role_in_url']) && isset($form_state['polling_station_in_url'])) {
-    $form_mode = 'party_role_polling_station';
-    $replacements = array(
-      odin_get_municipality(variable_get('valhalla_settings_municipality')),
-      $election->title,
-      $election_date_str,
-      $party->field_partinavn['und'][0]['value'],
-      $role->field_description['und'][0]['value'],
-      $role->field_meetingtime['und'][0]['value'],
-      $polling_station->title,
-    );
-  }
-  else {
-    valghalla_external_server_signup_terminate_signup();
-  }
 
   // Building a form.
   if (!isset($form_state['role_in_url'])) {
@@ -256,51 +220,6 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
     );
   }
 
-  $form['no_seats_message'] = array(
-    '#prefix' => '<div id="js-no-seats-message">',
-    '#suffix' => '</div>',
-    '#markup' => '',
-  );
-
-  // Checking if we have no seats available.
-  switch ($form_mode) {
-    case 'party':
-      if (empty($form_state['available_roles']) && empty($form_state['available_polling_stations'])) {
-        $form['no_seats_message']['#markup'] = _valghalla_external_server_signup_get_no_seats_message_html();
-      }
-      break;
-
-    case 'party_role':
-      if (empty($form_state['available_polling_stations'])) {
-        $form['no_seats_message']['#markup'] = _valghalla_external_server_signup_get_no_seats_message_html();
-      }
-      break;
-
-    case 'party_polling_station':
-      if (empty($form_state['available_roles'])) {
-        $form['no_seats_message']['#markup'] = _valghalla_external_server_signup_get_no_seats_message_html();
-      }
-      break;
-
-    case 'party_role_polling_station':
-      if (!_valghalla_external_server_signup_check_place_is_available($form_state['election']->nid, $form_state['party']->tid, $form_state['role']->nid, $form_state['polling_station']->nid)) {
-        $form['no_seats_message']['#markup'] = _valghalla_external_server_signup_get_no_seats_message_html();
-      }
-      break;
-  }
-
-  // Making the replacements.
-  if ($form_mode) {
-    $form['#upper_text'] = variable_get('valghalla_external_server_signup_text_' . $form_mode . '_upper');
-    $form['#bottom_text'] = variable_get('valghalla_external_server_signup_text_' . $form_mode . '_bottom');
-    $tokens = array_keys(_valghalla_external_server_signup_text_get_replacement_tokens($form_mode));
-    $form['#upper_text'] = str_replace($tokens, $replacements, $form['#upper_text']);
-    $form['#bottom_text'] = str_replace($tokens, $replacements, $form['#bottom_text']);
-  }
-  if (!empty($party->field_party_subsc_message)) {
-    $form['#party_message'] = $party->field_party_subsc_message['und'][0]['value'];
-  }
-
   $form['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Tilmeld'),
@@ -332,11 +251,51 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
       '#required' => TRUE,
     );
 
+    // Adding ajax behaviour only if seat is available.
     $form['submit']['#states'] = array(
       'enabled' => array(
         ':input[name="terms_agreement"]' => array('checked' => TRUE),
       ),
     );
+  }
+
+  $form['no_seats_message'] = array(
+    '#prefix' => '<div id="js-no-seats-message">',
+    '#suffix' => '</div>',
+    '#markup' => '',
+  );
+
+  // Checking if we have no seats available.
+  $is_seat_available = valghalla_external_server_signup_form_is_seat_available($form_mode, $form_state);
+
+  if (!$is_seat_available) {
+    $form['no_seats_message']['#markup'] = _valghalla_external_server_signup_get_no_seats_message_html();
+    $form['submit']['#disabled'] = 'disabled';
+
+    $form['cpr']['#access'] = FALSE;
+    $form['email-container']['#access'] = FALSE;
+    $form['phone-container']['#access'] = FALSE;
+    $form['comment']['#access'] = FALSE;
+    $form['role_select']['#access'] = FALSE;
+    $form['role_details']['#access'] = FALSE;
+    $form['polling_station_select']['#access'] = FALSE;
+    $form['polling_station_details']['#access'] = FALSE;
+    $form['terms_agreement']['#access'] = FALSE;
+    $form['submit']['#access'] = FALSE;
+  }
+
+  // Making the replacements.
+  if ($form_mode) {
+    $replacements = valghalla_external_server_signup_get_form_replacements($form_mode, $form_state);
+
+    $form['#upper_text'] = variable_get('valghalla_external_server_signup_text_' . $form_mode . '_upper');
+    $form['#bottom_text'] = variable_get('valghalla_external_server_signup_text_' . $form_mode . '_bottom');
+    $tokens = array_keys(_valghalla_external_server_signup_text_get_replacement_tokens($form_mode));
+    $form['#upper_text'] = str_replace($tokens, $replacements, $form['#upper_text']);
+    $form['#bottom_text'] = str_replace($tokens, $replacements, $form['#bottom_text']);
+  }
+  if (!empty($party->field_party_subsc_message)) {
+    $form['#party_message'] = $party->field_party_subsc_message['und'][0]['value'];
   }
 
   $form['#theme'] = array('valghalla_external_server_signup_form');
@@ -468,9 +427,18 @@ function valghalla_external_server_signup_polling_station_select_callback($form,
  * Cancels the subscription by redirecting user to front page
  * with a warning message.
  */
-function valghalla_external_server_signup_terminate_signup() {
+function valghalla_external_server_signup_terminate_signup($terminate_code = 0) {
   // Throwing the warning and redirecting to the main page.
-  drupal_set_message(t('Pladserne er desværre blevet optaget. Vælg evt. et andet valgsted.'), 'warning');
+  $messages = array(
+    0 => t('Tilmeldingslinket er ikke gyldigt eller er blevet deaktiveret.'),
+    1 => t('Tilmelding til valget er i øjeblikket deaktiveret.'),
+  );
+
+  if (empty($messages[$terminate_code])) {
+    $terminate_code = 0;
+  }
+
+  drupal_set_message($messages[$terminate_code], 'warning');
   drupal_goto();
 }
 
@@ -789,4 +757,135 @@ function _external_signup_success_page() {
   $output = '<p>' . t('Du kan nu lukke siden.') . '</p>';
 
   return $output;
+}
+
+/**
+ * Function to determine form mode.
+ *
+ * @param mixed $form_state
+ *   State of the form.
+ *
+ * @return string
+ *   Form mode - party|party_role|party_polling_station|
+ *   party_role_polling_station|NULL.
+ */
+function valghalla_external_server_signup_get_form_mode($form_state) {
+  $form_mode = NULL;
+
+  if (!isset($form_state['role_in_url']) && !isset($form_state['polling_station_in_url'])) {
+    $form_mode = 'party';
+  }
+  elseif (isset($form_state['role_in_url']) && !isset($form_state['polling_station_in_url'])) {
+    $form_mode = 'party_role';
+  }
+  elseif (!isset($form_state['role_in_url']) && isset($form_state['polling_station_in_url'])) {
+    $form_mode = 'party_polling_station';
+  }
+  elseif (isset($form_state['role_in_url']) && isset($form_state['polling_station_in_url'])) {
+    $form_mode = 'party_role_polling_station';
+  }
+
+  return $form_mode;
+}
+
+/**
+ * Combines the replacements based on form mode.
+ *
+ * @param string $form_mode
+ *   Mode of the form.
+ * @param mixed $form_state
+ *   State of the form.
+ *
+ * @return array
+ *   Array of replacements.
+ */
+function valghalla_external_server_signup_get_form_replacements($form_mode, $form_state) {
+  $replacements = array();
+
+  $election_date_str = format_date(strtotime($form_state['election']->field_date['da'][0]['value']), 'custom', 'd. F Y');
+
+  if ($form_mode == 'party') {
+    $replacements = array(
+      odin_get_municipality(variable_get('valhalla_settings_municipality')),
+      $form_state['election']->title,
+      $election_date_str,
+      $form_state['party']->field_partinavn['und'][0]['value'],
+    );
+  }
+  elseif ($form_mode = 'party_role') {
+    $replacements = array(
+      odin_get_municipality(variable_get('valhalla_settings_municipality')),
+      $form_state['election']->title,
+      $election_date_str,
+      $form_state['party']->field_partinavn['und'][0]['value'],
+      $form_state['role']->field_description['und'][0]['value'],
+      $form_state['role']->field_meetingtime['und'][0]['value'],
+    );
+  }
+  elseif ($form_mode == 'party_polling_station') {
+    $replacements = array(
+      odin_get_municipality(variable_get('valhalla_settings_municipality')),
+      $form_state['election']->title,
+      $election_date_str,
+      $form_state['party']->field_partinavn['und'][0]['value'],
+      $form_state['polling_station']->title,
+    );
+  }
+  elseif ($form_mode == 'party_role_polling_station') {
+    $replacements = array(
+      odin_get_municipality(variable_get('valhalla_settings_municipality')),
+      $form_state['election']->title,
+      $election_date_str,
+      $form_state['party']->field_partinavn['und'][0]['value'],
+      $form_state['role']->field_description['und'][0]['value'],
+      $form_state['role']->field_meetingtime['und'][0]['value'],
+      $form_state['polling_station']->title,
+    );
+  }
+
+  return $replacements;
+}
+
+/**
+ * Checks if the seat is available for that form.
+ *
+ * @param string $form_mode
+ *   Mode of the form.
+ * @param mixed $form_state
+ *   State of the form.
+ *
+ * @return bool
+ *   True of false.
+ */
+function valghalla_external_server_signup_form_is_seat_available($form_mode, $form_state) {
+  $is_seat_available = TRUE;
+
+  // Checking if we have no seats available.
+  switch ($form_mode) {
+    case 'party':
+      if (empty($form_state['available_roles']) && empty($form_state['available_polling_stations'])) {
+        $is_seat_available = FALSE;
+      }
+      break;
+
+    case 'party_role':
+      if (empty($form_state['available_polling_stations'])) {
+        $is_seat_available = FALSE;
+      }
+      break;
+
+    case 'party_polling_station':
+      if (empty($form_state['available_roles'])) {
+        $is_seat_available = FALSE;
+      }
+      break;
+
+    case 'party_role_polling_station':
+      if (!_valghalla_external_server_signup_check_place_is_available($form_state['election']->nid, $form_state['party']->tid, $form_state['role']->nid, $form_state['polling_station']->nid)) {
+        $is_seat_available = FALSE;
+      }
+      break;
+  }
+
+  return $is_seat_available;
 }

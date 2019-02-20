@@ -10,7 +10,9 @@
  */
 ?>
 
-<h2><?php print t('Hej %name', array('%name' => $name)) ?></h2>
+<?php if (isset($name)): ?>
+  <h2><?php print t('Hej %name', array('%name' => $name)) ?></h2>
+<?php endif; ?>
 
 <div>
   <p><?php print t('Her kan du tilkendegive om du ønsker at udfylde den post vi har tiltænkt dig i det kommende valg.') ?></p>
