@@ -670,6 +670,7 @@ function valghalla_volunteers_polling_station_posts_to_fill($polling_station, $p
   $election_nid = $_SESSION['election_nid'];
   $election = node_load($election_nid);
   $party = taxonomy_term_load($party_tid);
+  $is_election_active = odin_is_election_active($election_nid);
 
   $volunteers = array();
   $party_posts_to_fill = array();
@@ -834,6 +835,7 @@ function valghalla_volunteers_polling_station_posts_to_fill($polling_station, $p
 
   // Finally returning our result.
   return array(
+    'election_is_active' => $is_election_active,
     'party_posts_to_fill' => $party_posts_to_fill,
     'station_nid' => $station_id,
   );

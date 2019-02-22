@@ -267,6 +267,22 @@ function odin_get_active_elections() {
 }
 
 /**
+ * Is election active?
+ * true = is active.
+ * false = not active.
+ */
+function odin_is_election_active($election_nid) {
+  $election = node_load($election_nid);
+  $field_status = field_get_items('node', $election, 'field_election_status');
+
+  if (!empty($field_status[0]['value']) && !empty($election->status)) {
+    return true;
+  }
+
+  return false;
+}
+
+/**
  * Retrieve constituencies for the election.
  */
 function odin_get_constituencies($election_nid) {
