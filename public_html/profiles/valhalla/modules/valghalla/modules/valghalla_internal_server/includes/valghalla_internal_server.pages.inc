@@ -14,6 +14,8 @@ function valghalla_internal_server_form_alter(&$form, &$form_state, $form_id) {
   if ($form_id === 'valhalla_admin_settings_form') {
     // Do synch, if asked.
     if (isset($form_state['triggering_element']) && $form_state['triggering_element']['#id'] == 'edit-synch-now') {
+      // Do sync even if it's failed.
+      variable_set('valghalla_synch_ok', TRUE);
       valghalla_internal_server_perform_synch(TRUE);
     }
 
@@ -102,6 +104,19 @@ function valghalla_internal_server_form_alter(&$form, &$form_state, $form_id) {
     $form['valghalla_internal_server_fs']['valghalla_external_server_synch_now_fs']['synch_now'] = array(
       '#type' => 'button',
       '#value' => t('Synch now'),
+    );
+
+    $form['valghalla_internal_server_fs']['valghalla_internal_server_run_failed_sync'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Kør fejl synch'),
+      '#default_value' => variable_get('valghalla_internal_server_run_failed_sync', VALGHALLA_INTERNAL_SERVER_RUN_FAILED_SYNC),
+    );
+
+    $form['valghalla_internal_server_fs']['valghalla_internal_server_failed_sync_report_mail'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Send report about failed sync to email:'),
+      '#default_value' => variable_get('valghalla_internal_server_failed_sync_report_mail'),
+      '#description' => t('In case of failed synchronization will be detected drupal will send email message to addresses listed in this field.'),
     );
 
     $form['valghalla_internal_server_fs']['valghalla_external_server_synch_now_fs'][] = array(

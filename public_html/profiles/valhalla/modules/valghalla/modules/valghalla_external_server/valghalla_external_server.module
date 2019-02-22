@@ -29,3 +29,22 @@ function valghalla_external_server_node_update($node) {
 function valghalla_external_server_valghalla_allowed_uris_alter(&$allowed_uris) {
   $allowed_uris[] = '/rest*';
 }
+
+/**
+ * Implements hook_menu().
+ */
+function valghalla_external_server_menu() {
+  $items['rest/sync-check-data'] = array(
+    'page callback' => 'valghalla_external_server_sync_check',
+    'access callback' => TRUE,
+  );
+  return $items;
+}
+
+/**
+ * Callback for sync check data.
+ */
+function valghalla_external_server_sync_check() {
+  $data = valghalla_synch_node_export_election_counts();
+  drupal_json_output($data);
+}

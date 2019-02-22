@@ -168,8 +168,11 @@ function valghalla_internal_server_free_last_selected_seat($volunteer) {
  */
 function valghalla_internal_server_generate_external_subscribe_url($election, $party, $role = NULL, $polling_station = NULL) {
   $subscribe_url = '';
-  if ($external_service_url = valghalla_internal_server_get_external_server_url()) {
-    if ($election && $party) {
+  if (!empty($election) && $external_service_url = valghalla_internal_server_get_external_server_url()) {
+    // External subscription allowed only for active election.
+    $field_status = field_get_items('node', $election, 'field_election_status');
+
+    if (!empty($field_status[0]['value']) && !empty($election->status) && $party) {
       // Adding election and party, mandatory params.
       $subscribe_url = $external_service_url . '/valghalla/external-signup?election=' . $election->uuid . '&party=' . $party->uuid;
 
