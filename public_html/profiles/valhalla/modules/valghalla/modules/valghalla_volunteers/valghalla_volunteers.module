@@ -332,10 +332,10 @@ function valghalla_volunteers_rsvp_form($form, &$form_state) {
   if (variable_get('valghalla_volunteers_check_cpr_match', TRUE) && $GLOBALS['user']->uid == 0) {
     $form['cpr'] = array(
       '#type' => 'textfield',
-      '#title' => 'CPR',
-      '#description' => 'Temporary field, until NemID login is added',
+      '#title' => 'CPR nummer',
+      '#description' => t('CPR nummer'),
       '#attributes' => array(
-        'placeholder' => 'Temporary field, until NemID login is added',
+        'placeholder' => t('CPR nummer'),
       ),
     );
   }
@@ -365,6 +365,15 @@ function valghalla_volunteers_rsvp_form($form, &$form_state) {
       '#type' => 'submit',
       '#value' => t('Send'),
   );
+
+  // Disabling form submit until CPR is present.
+  if (variable_get('valghalla_volunteers_check_cpr_match', TRUE) && $GLOBALS['user']->uid == 0) {
+    $form['submit']['#states'] = array(
+      'enabled' => array(
+        ':input[name="cpr"]' => array('filled' => TRUE),
+      ),
+    );
+  }
 
   return $form;
 }
