@@ -119,6 +119,12 @@ function valghalla_internal_server_form_alter(&$form, &$form_state, $form_id) {
       '#description' => t('In case of failed synchronization will be detected drupal will send email message to addresses listed in this field.'),
     );
 
+    $form['valghalla_internal_server_fs']['valghalla_internal_server_sync_check_pause'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Delay in seconds to let external server finish updating process:'),
+      '#default_value' => variable_get('valghalla_internal_server_sync_check_pause', VALGHALLA_INTERNAL_SERVER_SYNC_CHECK_DELAY),
+    );
+
     $form['valghalla_internal_server_fs']['valghalla_external_server_synch_now_fs'][] = array(
       '#markup' => '<div>' . t('Last pulled: @datetime', array('@datetime' => format_date(variable_get('valgalla_internal_server_last_clone_timestamp')))) . '</div>'
       . '<div>' . t('Last pushed: @datetime', array('@datetime' => format_date(variable_get('valgalla_internal_server_last_push_timestamp')))) . '</div>',

@@ -11,6 +11,7 @@ use ValghallaInternalServer\ExternalWebservice;
 
 define("VALGHALLA_INTERNAL_SERVER_MAX_SUBSEQ_WS_REQUESTS", 10);
 define("VALGHALLA_INTERNAL_SERVER_RUN_FAILED_SYNC", TRUE);
+define("VALGHALLA_INTERNAL_SERVER_SYNC_CHECK_DELAY", 5);
 define("VALGHALLA_INTERNAL_SERVER_SYNC_OK", TRUE);
 
 module_load_include('php', 'valghalla_internal_server', 'includes/ExternalWebservice.class');
@@ -193,6 +194,9 @@ function valghalla_internal_server_perform_synch($force = TRUE) {
  *   Destination path.
  */
 function valghalla_internal_server_finalize_synch($destination = NULL) {
+  // We need a pause to let external server finish all the updating processes.
+  sleep(variable_get('valghalla_internal_server_sync_check_pause', VALGHALLA_INTERNAL_SERVER_SYNC_CHECK_DELAY));
+
   $endpoint = variable_get('valghalla_external_server_endpoint');
   $result = drupal_http_request($endpoint . '/sync-check-data');
   if (in_array($result->code, array(200)) && !empty($result->data)) {
