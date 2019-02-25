@@ -376,6 +376,13 @@ function valghalla_volunteers_rsvp_form($form, &$form_state) {
       '#value' => t('Send'),
   );
 
+  // Disabling form submit until CPR is present.
+  if (variable_get('valghalla_volunteers_check_cpr_match', TRUE) && $GLOBALS['user']->uid == 0) {
+    if (!$form['#cpr']) {
+      $form['submit']['#disabled'] = 'disabled';
+    }
+  }
+
   return $form;
 }
 
@@ -674,6 +681,7 @@ function valghalla_volunteers_polling_station_posts_to_fill($polling_station, $p
   $election_nid = $_SESSION['election_nid'];
   $election = node_load($election_nid);
   $party = taxonomy_term_load($party_tid);
+  $is_election_active = odin_is_election_active($election_nid);
 
   $volunteers = array();
   $party_posts_to_fill = array();
@@ -747,6 +755,12 @@ function valghalla_volunteers_polling_station_posts_to_fill($polling_station, $p
     }
   }
 
+  // External subscription allowed only for active election.
+  $field_status = field_get_items('node', $election, 'field_election_status');
+  $external_subscribe_allowed = module_exists('valghalla_internal_server')
+    && !empty($field_status[0]['value'])
+    && !empty($election->status);
+
   // Traversing assigned posts.
   $assigned_posts = _valghalla_helper_get_posts_to_fill($polling_station, $party_tid);
   foreach ($assigned_posts as $assigned_post) {
@@ -814,7 +828,7 @@ function valghalla_volunteers_polling_station_posts_to_fill($polling_station, $p
 
     if (!$existing_post) {
       // Party subscribe URL.
-      if (module_exists('valghalla_internal_server')) {
+      if ($external_subscribe_allowed) {
         $role_loaded = node_load($assigned_post['role_nid']);
 
         $party_posts_to_fill[$party_tid]['posts'][$id]['post_subscribe_url'] = valghalla_internal_server_generate_external_subscribe_url($election, $party, $role_loaded, $polling_station);
@@ -823,7 +837,7 @@ function valghalla_volunteers_polling_station_posts_to_fill($polling_station, $p
   }
 
   // Party subscribe URL.
-  if (module_exists('valghalla_internal_server')) {
+  if ($external_subscribe_allowed) {
     if (!empty($party_posts_to_fill[$party_tid]['posts'])) {
       $party_loaded = taxonomy_term_load($party_tid);
       $party_posts_to_fill[$party_tid]['party_subscribe_url'] = valghalla_internal_server_generate_external_subscribe_url($election, $party_loaded, NULL, $polling_station);
@@ -832,6 +846,7 @@ function valghalla_volunteers_polling_station_posts_to_fill($polling_station, $p
 
   // Finally returning our result.
   return array(
+    'election_is_active' => $is_election_active,
     'party_posts_to_fill' => $party_posts_to_fill,
     'station_nid' => $station_id,
   );

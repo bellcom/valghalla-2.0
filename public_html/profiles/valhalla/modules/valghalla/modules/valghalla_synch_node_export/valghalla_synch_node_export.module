@@ -6,20 +6,6 @@
  */
 
 /**
- * Implements hook_node_export_dependency_alter().
- */
-function valghalla_synch_node_export_node_export_dependency_field_alter(&$handled, &$node, $dependency) {
-  if (is_array($handled)) {
-    foreach ($handled as $key => $element) {
-      // Adding parent uuid, if not set already.
-      if (!isset($handled[$key]['parent_uuid'])) {
-        $handled[$key]['parent_uuid'] = $dependency->uuid;
-      }
-    }
-  }
-}
-
-/**
  * Implements hook_node_export_node_alter().
  *
  * Addes the role UUID to the export info,
@@ -39,43 +25,14 @@ function valghalla_synch_node_export_node_export_node_alter(&$node, $original_no
 /**
  * Implements hook_node_export_import_alter().
  *
- * Updates the references inside $node->node_export_dependency
+ * Updates the references inside $node->field_collection_deploy
  * to the local created objects.
  */
 function valghalla_synch_node_export_node_export_import_alter(&$nodes, $format, $save) {
   foreach ($nodes as $node) {
-    if (isset($node->node_export_dependency)) {
+    if ($node->type == 'election') {
       // Do the role fields remapping.
       _valghalla_synch_node_export_role_remapping($node);
-
-      // Find all field_collection_items.
-      $field_collection_items = array();
-      foreach ($node->node_export_dependency as $dep_key => $dependency) {
-        if (isset($dependency['type']) && strcmp($dependency['type'], 'field_collection_item') === 0) {
-          $field_collection_items[$dependency['uuid']] = $dep_key;
-        }
-      }
-
-      foreach ($node->node_export_dependency as $dep_key => $dependency) {
-        // If element has a different parent uuid than node.
-        // This means it's not node's direct child.
-        if (isset($dependency['type']) && isset($dependency['parent_uuid']) && strcmp($dependency['parent_uuid'], $node->uuid) !== 0) {
-          unset($node->node_export_dependency[$dep_key]);
-
-          // Try to find a parent.
-          $parent_dep_key = $field_collection_items[$dependency['parent_uuid']];
-          if (isset($parent_dep_key)) {
-            // Find if that entity exists already.
-            $entity_ids = entity_get_id_by_uuid($dependency['type'], array($dependency['uuid']));
-            $entity_id = $entity_ids ? reset($entity_ids) : FALSE;
-
-            // Finally set the value.
-            if ($entity_id) {
-              $node->node_export_dependency[$parent_dep_key]['node_export_field_collection_data'][$dependency['field_name']][$dependency['langcode']][$dependency['delta']][$dependency['property']] = $entity_id;
-            }
-          }
-        }
-      }
     }
   }
 }
@@ -91,43 +48,35 @@ function valghalla_synch_node_export_node_export_import_alter(&$nodes, $format, 
  *   Node object to be altered.
  */
 function _valghalla_synch_node_export_role_remapping(&$node) {
-  // Find all field_collection_items.
-  foreach ($node->node_export_dependency as $dep_key => $dependency) {
-    if (isset($dependency['type']) && strcmp($dependency['type'], 'field_collection_item') === 0) {
-      $new_roles_fields_data = array();
+  foreach ($node->field_collection_deploy['field_volunteers_pr_pol_st_party'] as $fc_key => $field_volunteers_pr_pol_st_party) {
+    $new_roles_fields_data = array();
 
-      // If field_collection_item is if type field_volunteers_pr_pol_st_party,
-      // do the roles remapping, since role nid might be different.
-      if (strcmp($dependency['field_name'], 'field_volunteers_pr_pol_st_party') === 0) {
-        if (isset($dependency['node_export_field_collection_data']) && is_array($dependency['node_export_field_collection_data'])) {
-          // First we traverse to extract the data, and remove the old key.
-          foreach ($dependency['node_export_field_collection_data'] as $key => $element) {
-            if (strpos($key, 'field_role_n') === 0) {
-              $role_remote_nid = intval(str_replace('field_role_n', '', $key));
-              $role_uuid = $node->roles_uuids[$role_remote_nid];
-              if ($role_uuid) {
-                $match = entity_get_id_by_uuid('node', array($role_uuid));
-                $role_local_nid = intval($match[$role_uuid]);
-                if ($role_local_nid !== $role_remote_nid) {
-                  $new_key = 'field_role_n' . $role_local_nid;
-                  $data = $node->node_export_dependency[$dep_key]['node_export_field_collection_data'][$key];
-                  $new_roles_fields_data[$new_key] = $data;
+    // First we traverse to extract the data, and remove the old key.
+    foreach ($field_volunteers_pr_pol_st_party as $field_key => $field_data) {
+      if (strpos($field_key, 'field_role_n') === 0) {
+        $role_remote_nid = intval(str_replace('field_role_n', '', $field_key));
+        $role_uuid = $node->roles_uuids[$role_remote_nid];
+        if ($role_uuid) {
+          $match = entity_get_id_by_uuid('node', array($role_uuid));
+          $role_local_nid = intval($match[$role_uuid]);
+          if ($role_local_nid !== $role_remote_nid) {
+            $new_key = 'field_role_n' . $role_local_nid;
 
-                  // We don't need that value anymore, unset it.
-                  unset($node->node_export_dependency[$dep_key]['node_export_field_collection_data'][$key]);
-                }
-              }
-            }
-          }
+            $new_roles_fields_data[$new_key] = $field_data;
 
-          // Then we use the saved data to set the value anew.
-          foreach ($new_roles_fields_data as $role_field_key => $role_field_value) {
-            $node->node_export_dependency[$dep_key]['node_export_field_collection_data'][$role_field_key] = $role_field_value;
+            // We don't need that value anymore, unset it.
+            unset($node->field_collection_deploy['field_volunteers_pr_pol_st_party'][$fc_key][$field_key]);
           }
         }
       }
     }
+
+    // Then we use the saved data to set the value anew.
+    foreach ($new_roles_fields_data as $role_field_key => $role_field_value) {
+      $node->field_collection_deploy['field_volunteers_pr_pol_st_party'][$fc_key][$role_field_key] = $role_field_value;
+    }
   }
+
   unset($node->roles_uuids);
 }
 
