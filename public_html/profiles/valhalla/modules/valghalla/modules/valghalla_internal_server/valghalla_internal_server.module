@@ -129,7 +129,7 @@ function valghalla_internal_server_init() {
   }
 
   if (!variable_get('valghalla_synch_ok', VALGHALLA_INTERNAL_SERVER_SYNC_OK) && !variable_get('valghalla_internal_server_run_failed_sync')) {
-    drupal_set_message('Synchronization with external server is stoped!', 'warning', FALSE);
+    drupal_set_message('Synchronization with external server is stopped!', 'warning', FALSE);
   }
 }
 
@@ -197,8 +197,9 @@ function valghalla_internal_server_finalize_synch($destination = NULL) {
   // We need a pause to let external server finish all the updating processes.
   sleep(variable_get('valghalla_internal_server_sync_check_pause', VALGHALLA_INTERNAL_SERVER_SYNC_CHECK_DELAY));
 
-  $endpoint = variable_get('valghalla_external_server_endpoint');
-  $result = drupal_http_request($endpoint . '/sync-check-data');
+  $endpoint = valghalla_internal_server_get_external_server_url();
+  $result = drupal_http_request($endpoint . '/rest/sync-check-data');
+
   if (in_array($result->code, array(200)) && !empty($result->data)) {
     $ext_data = drupal_json_decode($result->data);
     $data = valghalla_synch_node_export_election_counts();
@@ -226,7 +227,7 @@ function valghalla_internal_server_finalize_synch($destination = NULL) {
       if ($report_to
         && module_exists('valghalla_mail')) {
         $params = array(
-          'subject' => t('Failed syncronization detected for !sitename', array('!sitename' => variable_get('site_name', $_SERVER['SERVER_NAME']))),
+          'subject' => t('Failed synchronization detected for !sitename', array('!sitename' => variable_get('site_name', $_SERVER['SERVER_NAME']))),
           'body' => format_string($message, $args),
           'format' => 'html',
           // We are no going to use token replacement here.
