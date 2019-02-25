@@ -23,6 +23,7 @@ function valghalla_external_server_install() {
   variable_set('validate_create_civil_status', 0);
 
   // Module requires this variable to be FALSE.
+  variable_set('node_export_dependency_disable_modules', array('field_collection' => 'field_collection'));
   variable_set('node_export_dependency_attach_nodes', FALSE);
   variable_set('node_export_existing', 'revision');
 
