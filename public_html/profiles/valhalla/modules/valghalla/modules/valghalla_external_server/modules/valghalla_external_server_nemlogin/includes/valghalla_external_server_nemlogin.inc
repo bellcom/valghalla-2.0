@@ -15,7 +15,7 @@
  *   Generated string.
  */
 function valghalla_external_server_nemlogin_login_link($destination) {
-  $idp = variable_get('valghalla_external_server_nemlogin_idp', 'https://test-nemlogin.bellcom.dk/simplesaml');
+  $idp = variable_get('valghalla_external_server_nemlogin_idp', 'https://nemlogin.bellcom.dk/simplesaml');
 
   $url = url($idp . VALGHALLA_EXTERNAL_SERVER_NEMLOGIN_URL_LOGIN, array(
     'query' => array(
