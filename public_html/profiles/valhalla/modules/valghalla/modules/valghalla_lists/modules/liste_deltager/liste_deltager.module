@@ -29,7 +29,7 @@ function liste_deltager_menu() {
   }
 
   $items['valghalla_lists/deltagere-fritaget'] = array(
-    'title' => 'Fritaget for kommunikation deltagerlister',
+    'title' => 'Fritaget for Digital post',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('liste_deltager_fritaget_form'),
     'access arguments' => array('liste deltager see list'),
@@ -626,7 +626,7 @@ function liste_deltager_polling_station_options() {
 function liste_deltager_fritaget_form($form, &$form_state) {
 
   $election_nid = NULL;
-  if (!empty($form_state['storage']['election_nid'])) {
+  if (isset($form_state['storage']['election_nid'])) {
     $election_nid = $form_state['storage']['election_nid'];
   }
   elseif (!empty($_SESSION['election_nid'])) {
@@ -639,11 +639,10 @@ function liste_deltager_fritaget_form($form, &$form_state) {
   );
   $form['filter']['election_nid'] = array(
     '#type' => 'select',
-    '#options' => array('' => t('Valg')) + odin_get_elections(),
+    '#options' => array('' => t('All')) + odin_get_elections(),
     '#default_value' => $election_nid,
     '#prefix' => '<div class="col-md-9">',
     '#suffix' => '</div>',
-
   );
   $form['filter']['submit'] = array(
     '#type' => 'submit',
@@ -671,12 +670,11 @@ function liste_deltager_fritaget_form($form, &$form_state) {
       ->propertyCondition('archived', 0)
       ->execute();
 
-    $keys = array();
     if (!empty($fc_info['field_collection_item'])) {
       $keys = array_keys($fc_info['field_collection_item']);
+      $query->leftJoin('field_data_field_electioninfo', 'fci', 'n.nid = fci.entity_id');
+      $query->condition('fci.field_electioninfo_value', $keys, 'IN');
     }
-    $query->leftJoin('field_data_field_electioninfo', 'fci', 'n.nid = fci.entity_id');
-    $query->condition('fci.field_electioninfo_value', $keys, 'IN');
   }
 
   $result = $query->execute()->fetchAll();
