@@ -135,3 +135,14 @@ function valghalla_external_server_requirements($phase) {
 
   return $requirements;
 }
+
+/**
+ * Implements hook_update_N().
+ *
+ * Enabling valghalla_external_server_nemlogin module.
+ */
+function valghalla_external_server_update_7101() {
+  module_enable(array(
+    'valghalla_external_server_nemlogin',
+  ));
+}
