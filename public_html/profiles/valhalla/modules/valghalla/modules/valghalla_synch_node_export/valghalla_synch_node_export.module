@@ -206,3 +206,31 @@ function valghalla_synch_node_export_anonymize_node($node, $cipherKey = NULL) {
   }
   return $node;
 }
+
+/**
+ * Helper function to get election counts.
+ *
+ * @return array
+ *   Array with  election counts.
+ */
+function valghalla_synch_node_export_election_counts() {
+  $election_query = new EntityFieldQuery();
+  $election_query->entityCondition('entity_type', 'node')
+    ->entityCondition('bundle', 'election');
+  $result = $election_query->execute();
+
+  $data = array();
+  if (!empty($result)) {
+    $nids = array_keys($result['node']);
+
+    // We also need the roles.
+    $roles = odin_get_roles();
+    foreach ($nids as $election_nid) {
+      $election = node_load($election_nid);
+      $polling_station_nids = odin_get_polling_stations($election_nid);
+      $counts = odin_get_volunteers_count($election_nid, array_keys($polling_station_nids), $roles);
+      $data[$election->uuid] = $counts['total_count'];
+    }
+  }
+  return $data;
+}

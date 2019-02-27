@@ -10,6 +10,8 @@ include_once 'valghalla_internal_server.features.inc';
 use ValghallaInternalServer\ExternalWebservice;
 
 define("VALGHALLA_INTERNAL_SERVER_MAX_SUBSEQ_WS_REQUESTS", 10);
+define("VALGHALLA_INTERNAL_SERVER_RUN_FAILED_SYNC", TRUE);
+define("VALGHALLA_INTERNAL_SERVER_SYNC_OK", TRUE);
 
 module_load_include('php', 'valghalla_internal_server', 'includes/ExternalWebservice.class');
 module_load_include('php', 'valghalla_internal_server', 'includes/ValghallaLogger.class');
@@ -124,6 +126,10 @@ function valghalla_internal_server_init() {
   if (!variable_get('valgalla_internal_server_heartbeat') || $minsSinceLastSynch > 15) {
     drupal_set_message(variable_get('valghalla_external_server_synch_error_message', 'Cannot connect to Valghalla external server'), 'warning', FALSE);
   }
+
+  if (!variable_get('valghalla_synch_ok', VALGHALLA_INTERNAL_SERVER_SYNC_OK) && !variable_get('valghalla_internal_server_run_failed_sync')) {
+    drupal_set_message('Synchronization with external server is stopped!', 'warning', FALSE);
+  }
 }
 
 /**
@@ -133,6 +139,12 @@ function valghalla_internal_server_init() {
  *   Make a force synch rather than depend on the schedule frequency.
  */
 function valghalla_internal_server_perform_synch($force = TRUE) {
+  if (!variable_get('valghalla_internal_server_run_failed_sync', VALGHALLA_INTERNAL_SERVER_RUN_FAILED_SYNC)
+    && !variable_get('valghalla_synch_ok', VALGHALLA_INTERNAL_SERVER_SYNC_OK)) {
+    watchdog('valghalla_internal_server', 'Synchronization is not valid. ', array(), WATCHDOG_WARNING);
+    return;
+  }
+
   // Update heartbeat.
   $ws = new ExternalWebservice();
   variable_set('valgalla_internal_server_heartbeat', $ws->heartbeat());
@@ -165,6 +177,84 @@ function valghalla_internal_server_perform_synch($force = TRUE) {
       }
     }
   }
+}
+
+/**
+ * Synchronization check process.
+ */
+function valghalla_internal_server_synch_check() {
+  $valghalla_synch_ok = FALSE;
+
+  $queue = valghalla_synch_queue_get_items_ordered();
+  if (!empty($queue)) {
+    watchdog('valghalla_internal_server', 'Internal server synchronization queue is not empty. Can not start synch check process.', array(), WATCHDOG_WARNING);
+    return FALSE;
+  }
+
+  $endpoint = valghalla_internal_server_get_external_server_url();
+  // JSON responce from external server with data to check synch process.
+  // See valghalla_external_server_sync_check().
+  $result = drupal_http_request($endpoint . '/rest/sync-check-data');
+
+  if (in_array($result->code, array(200)) && !empty($result->data)) {
+    $ext_data = drupal_json_decode($result->data);
+    if (!is_array($ext_data)) {
+      if ($ext_data == 'synch_queue_not_empty') {
+        watchdog('valghalla_internal_server', 'External server synchronization queue is not empty. Can not start synch check process.', array(), WATCHDOG_WARNING);
+      }
+      else {
+        watchdog('valghalla_internal_server', 'Fetched synchronization data is not correct. Can not start synch check process.', array(), WATCHDOG_WARNING);
+      }
+      return FALSE;
+    }
+    $data = valghalla_synch_node_export_election_counts();
+    $valghalla_synch_ok = TRUE;
+    foreach ($data as $election_uuid => $election_count) {
+      foreach (array('total', 'assigned') as $key) {
+        if (!isset($ext_data[$election_uuid][$key])
+          || $election_count[$key] != $ext_data[$election_uuid][$key]) {
+          $valghalla_synch_ok = FALSE;
+          break;
+        }
+      }
+    }
+    if (!$valghalla_synch_ok) {
+      $message = 'Sychronization with internal server failed.<br/>';
+      $message .= 'Internal server data !internal_data<br/>';
+      $message .= 'External server data: !external_data';
+      $args = array(
+        '!internal_data' => '<pre>' . print_r($data, 1) . '</pre>',
+        '!external_data' => '<pre>' . print_r($ext_data, 1) . '</pre>',
+      );
+      watchdog('valghalla_internal_server', $message, $args, WATCHDOG_WARNING);
+
+      $report_to = variable_get('valghalla_internal_server_failed_sync_report_mail', FALSE);
+      if ($report_to
+        && module_exists('valghalla_mail')) {
+        $params = array(
+          'subject' => t('Failed synchronization detected for !sitename', array('!sitename' => variable_get('site_name', $_SERVER['SERVER_NAME']))),
+          'body' => format_string($message, $args),
+          'format' => 'html',
+          // We are no going to use token replacement here.
+          'tokens' => array(),
+          'volunteer_nid' => 0,
+          'notification_type' => 'direct',
+        );
+        valghalla_notifications_direct_send('mail', $report_to, $params);
+      }
+    }
+    else {
+      drupal_set_message('Synchronization is ok!');
+    }
+    variable_set('valghalla_synch_ok', $valghalla_synch_ok);
+  }
+  else {
+    watchdog('valghalla_internal_server', 'Can not validate external sync. Synchronization check data from external server is empty', array(), WATCHDOG_WARNING);
+  }
+
+  // Set synch check timestamp.
+  variable_set('valgalla_internal_server_last_synch_check', time());
+  return $valghalla_synch_ok;
 }
 
 /**
