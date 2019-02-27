@@ -13,7 +13,7 @@ function valghalla_pages_admin_valghalla() {
     <div><h3>' . t('Liste over valg') . '</h3></div>';
 
   // Fetch all elecitons.
-  $rows = '';
+  $rows = array();
   $query = new EntityFieldQuery();
   $query->entityCondition('entity_type', 'node')
         ->entityCondition('bundle', 'election')
@@ -69,7 +69,8 @@ function valghalla_pages_admin_valghalla() {
         }
       }
 
-      $actions[] = '<a href="/valghalla/administration/valg/mails/' . $election->nid . '">E-mail skabeloner</a>';
+      $actions[] = l('Skabeloner', 'valghalla/administration/valg/notifications/' . $election->nid);
+      $actions[] = l(t('Validering'), 'admin/valghalla/validator/batch/validate/' . $election->nid);
 
       $action_links = implode(' | ', $actions);
 

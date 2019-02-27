@@ -1,0 +1,17 @@
+<?php
+
+/**
+ * @file
+ * Code for the Valghalla GDPR dump feature.
+ */
+
+include_once 'valghalla_gdpr_dump.features.inc';
+
+/**
+ * Implements hook_ctools_plugin_directory().
+ */
+function valghalla_gdpr_dump_ctools_plugin_directory($module, $plugin) {
+  if ($module == 'gdpr_dump' && \array_key_exists($plugin, gdpr_dump_ctools_plugin_type())) {
+    return 'plugins/' . $plugin;
+  }
+}

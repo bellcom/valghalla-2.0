@@ -28,6 +28,13 @@ function liste_deltager_menu() {
     );
   }
 
+  $items['valghalla_lists/deltagere-fritaget'] = array(
+    'title' => 'Fritaget for Digital post',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('liste_deltager_fritaget_form'),
+    'access arguments' => array('liste deltager see list'),
+  );
+
   return $items;
 }
 
@@ -322,7 +329,8 @@ function liste_deltager_get_volunteers($values) {
   // Prepare statement.
   $volunteer_query = new EntityFieldQuery();
   $volunteer_query->entityCondition('entity_type', 'field_collection_item')
-      ->entityCondition('bundle', 'field_electioninfo');
+      ->entityCondition('bundle', 'field_electioninfo')
+      ->propertyCondition('archived', 0);
 
   $roles = count($values['roles']) > 0 ? $values['roles'] : FALSE;
   $party_selected = $party = count($values['party']) > 0 ? $values['party'] : FALSE;
@@ -465,16 +473,13 @@ function liste_deltager_get_volunteers($values) {
       if (isset($values[$node->nid])) {
         continue;
       }
-      if ($role_field = field_get_items('node', $node, 'field_rolle_id')) {
-        $role_field_value = node_load($role_field[0]['nid'])->title;
-      }
       $values[$node->nid] = array(
         'name' => $node->title,
-        'role' => $role_field_value,
+        'role' => '',
         'mail' => ($email_field = field_get_items('node', $node, 'field_email')) ? $email_field[0]['email'] : '',
         'phone' => ($telf_field = field_get_items('node', $node, 'field_phone')) ? $telf_field[0]['value'] : '',
         'rsvp' => '',
-        'cpr' =>  $cpr_none,
+        'cpr' => $cpr_none,
         'age' => $age_none,
         'party' => $par_field,
         'party_post' => '',
@@ -527,14 +532,7 @@ function liste_deltager_none_polling_station($election_id, $roles, $party) {
     }
     // Does not contain fc.
     else {
-      $node_role = field_get_items('node', $node, 'field_rolle_id');
       $node_party = field_get_items('node', $node, 'field_party');
-
-      if ($node_role && array_key_exists($node_role[0]['nid'], $roles )
-          && !$roles[$node_role[0]['nid']]){
-        $role_selected = FALSE;
-      }
-
       if ($node_party && array_key_exists($node_party[0]['tid'], $party)
           && !$party[$node_party[0]['tid']]) {
         $party_selected = FALSE;
@@ -620,4 +618,99 @@ function liste_deltager_polling_station_options() {
   }
 
   return $options;
+}
+
+/**
+ * Form callback for unsubscriber volunteers.
+ */
+function liste_deltager_fritaget_form($form, &$form_state) {
+
+  $election_nid = NULL;
+  if (isset($form_state['storage']['election_nid'])) {
+    $election_nid = $form_state['storage']['election_nid'];
+  }
+  elseif (!empty($_SESSION['election_nid'])) {
+    $election_nid = $_SESSION['election_nid'];
+  }
+
+  $form['filter'] = array(
+    '#type' => 'container',
+    '#attributes' => array('class' => array('row')),
+  );
+  $form['filter']['election_nid'] = array(
+    '#type' => 'select',
+    '#options' => array('' => t('All')) + odin_get_elections(),
+    '#default_value' => $election_nid,
+    '#prefix' => '<div class="col-md-9">',
+    '#suffix' => '</div>',
+  );
+  $form['filter']['submit'] = array(
+    '#type' => 'submit',
+    '#prefix' => '<div class="no-print col-md-3">',
+    '#value' => t('Opdater'),
+    '#suffix' => '</div>',
+  );
+
+  $query = db_select('node', 'n')
+    ->fields('n', array('nid'))
+    ->condition('type', 'volunteers');
+
+  $query->leftJoin('field_data_field_no_mail', 'nm', 'n.nid = nm.entity_id');
+  $query->leftJoin('field_data_field_no_sms', 'ns', 'n.nid = ns.entity_id');
+  $or = db_or()
+    ->condition('nm.field_no_mail_value', 1)
+    ->condition('ns.field_no_sms_value', 1);
+  $query->condition($or);
+
+  if (!empty($election_nid)) {
+    $inner = new EntityFieldQuery();
+    $fc_info = $inner->entityCondition('entity_type', 'field_collection_item')
+      ->entityCondition('bundle', 'field_electioninfo')
+      ->fieldCondition('field_election', 'target_id', $election_nid)
+      ->propertyCondition('archived', 0)
+      ->execute();
+
+    if (!empty($fc_info['field_collection_item'])) {
+      $keys = array_keys($fc_info['field_collection_item']);
+      $query->leftJoin('field_data_field_electioninfo', 'fci', 'n.nid = fci.entity_id');
+      $query->condition('fci.field_electioninfo_value', $keys, 'IN');
+    }
+  }
+
+  $result = $query->execute()->fetchAll();
+  $nids = array();
+  foreach ($result as $res) {
+    $nids[] = $res->nid;
+  }
+
+  $header = array(
+    'Navn',
+    'DP',
+    'SMS',
+    'Handlinger',
+  );
+  $rows = array();
+
+  foreach (node_load_multiple($nids) as $volunteer) {
+    $rows[$volunteer->nid] = array(
+      $volunteer->title,
+      !empty(field_get_items('node', $volunteer, 'field_no_mail')) ? 'Fritaget' : '',
+      !empty(field_get_items('node', $volunteer, 'field_no_sms')) ? 'Fritaget' : '',
+      l(t('Edit'), 'node/' . $volunteer->nid . '/edit', array('query' => array('destination' => current_path()))),
+    );
+  }
+
+  $form['volunteres']['#markup'] = theme('table', array('header' => $header, 'rows' => $rows));
+
+  return $form;
+}
+
+/**
+ * Submit handler for liste_deltager_fritaget_form form.
+ */
+function liste_deltager_fritaget_form_submit(&$form, &$form_state) {
+  if (isset($form_state['values']['election_nid'])) {
+    $form_state['storage']['election_nid'] = $form_state['values']['election_nid'];
+    $form_state['rebuild'] = TRUE;
+  }
 }

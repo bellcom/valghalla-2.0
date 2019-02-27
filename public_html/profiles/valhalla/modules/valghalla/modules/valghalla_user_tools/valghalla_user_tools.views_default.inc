@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * valghalla_user_tools.views_default.inc
@@ -146,6 +147,21 @@ function valghalla_user_tools_views_default_views() {
   $handler->display->display_options['fields']['field_party']['table'] = 'field_data_field_party';
   $handler->display->display_options['fields']['field_party']['field'] = 'field_party';
   $handler->display->display_options['fields']['field_party']['type'] = 'taxonomy_term_reference_plain';
+  /* Felt: Indhold: Fritagelse for Digital Post */
+  $handler->display->display_options['fields']['field_no_mail']['id'] = 'field_no_mail';
+  $handler->display->display_options['fields']['field_no_mail']['table'] = 'field_data_field_no_mail';
+  $handler->display->display_options['fields']['field_no_mail']['field'] = 'field_no_mail';
+  $handler->display->display_options['fields']['field_no_mail']['label'] = '';
+  $handler->display->display_options['fields']['field_no_mail']['exclude'] = TRUE;
+  $handler->display->display_options['fields']['field_no_mail']['element_label_colon'] = FALSE;
+  $handler->display->display_options['fields']['field_no_mail']['type'] = 'list_key';
+  /* Felt: Indhold: Fritagelse for NemSMS */
+  $handler->display->display_options['fields']['field_no_sms']['id'] = 'field_no_sms';
+  $handler->display->display_options['fields']['field_no_sms']['table'] = 'field_data_field_no_sms';
+  $handler->display->display_options['fields']['field_no_sms']['field'] = 'field_no_sms';
+  $handler->display->display_options['fields']['field_no_sms']['label'] = '';
+  $handler->display->display_options['fields']['field_no_sms']['exclude'] = TRUE;
+  $handler->display->display_options['fields']['field_no_sms']['element_label_colon'] = FALSE;
   /* Sorteringskriterie: Indhold: Oprettelsesdato */
   $handler->display->display_options['sorts']['created']['id'] = 'created';
   $handler->display->display_options['sorts']['created']['table'] = 'node';
@@ -274,14 +290,14 @@ function valghalla_user_tools_views_default_views() {
   $view->description = '';
   $view->tag = 'default';
   $view->base_table = 'node';
-  $view->human_name = 'Mail skabeloner';
+  $view->human_name = 'Notifikations skabeloner';
   $view->core = 7;
   $view->api_version = '3.0';
   $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
 
   /* Display: Master */
   $handler = $view->new_display('default', 'Master', 'default');
-  $handler->display->display_options['title'] = 'Mailskabeloner';
+  $handler->display->display_options['title'] = 'Skabelonoversigt';
   $handler->display->display_options['use_more_always'] = FALSE;
   $handler->display->display_options['use_more_text'] = 'mere';
   $handler->display->display_options['access']['type'] = 'perm';
@@ -315,7 +331,7 @@ function valghalla_user_tools_views_default_views() {
   $handler->display->display_options['header']['area']['table'] = 'views';
   $handler->display->display_options['header']['area']['field'] = 'area';
   $handler->display->display_options['header']['area']['empty'] = TRUE;
-  $handler->display->display_options['header']['area']['content'] = '<a class="btn btn-success" href="/node/add/email">+ Tilføj skabelon</a>';
+  $handler->display->display_options['header']['area']['content'] = '<a class="btn btn-success" href="/valghalla/administration/notifications/add?destination=valghalla/administration/mail-skabeloner">+ Tilføj skabelon</a>';
   $handler->display->display_options['header']['area']['format'] = 'full_html';
   /* Felt: Indhold: Titel */
   $handler->display->display_options['fields']['title']['id'] = 'title';
@@ -326,6 +342,10 @@ function valghalla_user_tools_views_default_views() {
   $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
   $handler->display->display_options['fields']['title']['element_label_colon'] = FALSE;
   $handler->display->display_options['fields']['title']['link_to_node'] = FALSE;
+  /* Felt: Indhold: Type */
+  $handler->display->display_options['fields']['type']['id'] = 'type';
+  $handler->display->display_options['fields']['type']['table'] = 'node';
+  $handler->display->display_options['fields']['type']['field'] = 'type';
   /* Felt: Indhold: Emne */
   $handler->display->display_options['fields']['field_subject']['id'] = 'field_subject';
   $handler->display->display_options['fields']['field_subject']['table'] = 'field_data_field_subject';
@@ -363,25 +383,51 @@ function valghalla_user_tools_views_default_views() {
   $handler->display->display_options['filters']['type']['field'] = 'type';
   $handler->display->display_options['filters']['type']['value'] = array(
     'email' => 'email',
+    'sms' => 'sms',
+    'eboks' => 'eboks',
   );
+  /* Filterkriterie: Indhold: Type */
+  $handler->display->display_options['filters']['type_1']['id'] = 'type_1';
+  $handler->display->display_options['filters']['type_1']['table'] = 'node';
+  $handler->display->display_options['filters']['type_1']['field'] = 'type';
+  $handler->display->display_options['filters']['type_1']['value'] = array(
+    'email' => 'email',
+    'sms' => 'sms',
+    'eboks' => 'eboks',
+  );
+  $handler->display->display_options['filters']['type_1']['exposed'] = TRUE;
+  $handler->display->display_options['filters']['type_1']['expose']['operator_id'] = 'type_1_op';
+  $handler->display->display_options['filters']['type_1']['expose']['label'] = 'Type';
+  $handler->display->display_options['filters']['type_1']['expose']['operator'] = 'type_1_op';
+  $handler->display->display_options['filters']['type_1']['expose']['identifier'] = 'type_1';
+  $handler->display->display_options['filters']['type_1']['expose']['remember_roles'] = array(
+    2 => '2',
+    1 => 0,
+    5 => 0,
+    3 => 0,
+    4 => 0,
+  );
+  $handler->display->display_options['filters']['type_1']['expose']['reduce'] = TRUE;
 
   /* Display: Page */
   $handler = $view->new_display('page', 'Page', 'page');
   $handler->display->display_options['path'] = 'valghalla/administration/mail-skabeloner';
   $handler->display->display_options['menu']['type'] = 'normal';
-  $handler->display->display_options['menu']['title'] = 'Mail skabeloner';
+  $handler->display->display_options['menu']['title'] = 'Skabelonoversigt';
   $handler->display->display_options['menu']['weight'] = '0';
   $handler->display->display_options['menu']['context'] = 0;
+  $handler->display->display_options['menu']['context_only_inline'] = 0;
   $translatables['mail_templates'] = array(
     t('Master'),
-    t('Mailskabeloner'),
+    t('Skabelonoversigt'),
     t('mere'),
     t('Udfør'),
     t('Gendan'),
     t('Sortér efter'),
     t('Stigende'),
     t('Faldende'),
-    t('<a class="btn btn-success" href="/node/add/email">+ Tilføj skabelon</a>'),
+    t('<a class="btn btn-success" href="/valghalla/administration/notifications/add?destination=valghalla/administration/mail-skabeloner">+ Tilføj skabelon</a>'),
+    t('Type'),
     t('Emne'),
     t('Brødtekst'),
     t('Redigér-link'),
@@ -454,7 +500,7 @@ function valghalla_user_tools_views_default_views() {
   $handler->display->display_options['fields']['edit_term']['table'] = 'taxonomy_term_data';
   $handler->display->display_options['fields']['edit_term']['field'] = 'edit_term';
   $handler->display->display_options['fields']['edit_term']['label'] = 'Rediger';
-  /* Filterkriterie: Ordforråd: Internt navn */
+  /* Filterkriterie: Ordforråd: Maskinnavn */
   $handler->display->display_options['filters']['machine_name']['id'] = 'machine_name';
   $handler->display->display_options['filters']['machine_name']['table'] = 'taxonomy_vocabulary';
   $handler->display->display_options['filters']['machine_name']['field'] = 'machine_name';
@@ -556,7 +602,7 @@ function valghalla_user_tools_views_default_views() {
   $handler->display->display_options['fields']['field_role_hours']['id'] = 'field_role_hours';
   $handler->display->display_options['fields']['field_role_hours']['table'] = 'field_data_field_role_hours';
   $handler->display->display_options['fields']['field_role_hours']['field'] = 'field_role_hours';
-  /* Felt: Indhold: Valgsted Rækkefølge */
+  /* Felt: Indhold: Role Rækkefølge */
   $handler->display->display_options['fields']['field_role_weight']['id'] = 'field_role_weight';
   $handler->display->display_options['fields']['field_role_weight']['table'] = 'field_data_field_role_weight';
   $handler->display->display_options['fields']['field_role_weight']['field'] = 'field_role_weight';
@@ -571,7 +617,7 @@ function valghalla_user_tools_views_default_views() {
   $handler->display->display_options['fields']['edit_node']['id'] = 'edit_node';
   $handler->display->display_options['fields']['edit_node']['table'] = 'views_entity_node';
   $handler->display->display_options['fields']['edit_node']['field'] = 'edit_node';
-  /* Sorteringskriterie: Indhold: Valgsted Rækkefølge (field_role_weight) */
+  /* Sorteringskriterie: Indhold: Role Rækkefølge (field_role_weight) */
   $handler->display->display_options['sorts']['field_role_weight_value']['id'] = 'field_role_weight_value';
   $handler->display->display_options['sorts']['field_role_weight_value']['table'] = 'field_data_field_role_weight';
   $handler->display->display_options['sorts']['field_role_weight_value']['field'] = 'field_role_weight_value';
@@ -996,18 +1042,10 @@ function valghalla_user_tools_views_default_views() {
   $handler->display->display_options['fields']['entity_id']['table'] = 'field_data_body';
   $handler->display->display_options['fields']['entity_id']['field'] = 'body';
   $handler->display->display_options['fields']['entity_id']['label'] = 'indhold';
-  /* Felt: : field_chairman */
-  $handler->display->display_options['fields']['entity_id_2']['id'] = 'entity_id_2';
-  $handler->display->display_options['fields']['entity_id_2']['table'] = 'field_data_field_chairman';
-  $handler->display->display_options['fields']['entity_id_2']['field'] = 'field_chairman';
   /* Felt: Indhold: Valgkontakt */
   $handler->display->display_options['fields']['entity_id_3']['id'] = 'entity_id_3';
   $handler->display->display_options['fields']['entity_id_3']['table'] = 'field_data_field_contact';
   $handler->display->display_options['fields']['entity_id_3']['field'] = 'field_contact';
-  /* Felt: Felt: Parti */
-  $handler->display->display_options['fields']['entity_id_5']['id'] = 'entity_id_5';
-  $handler->display->display_options['fields']['entity_id_5']['table'] = 'field_data_field_party';
-  $handler->display->display_options['fields']['entity_id_5']['field'] = 'field_party';
   /* Felt: Indhold: Andre kontaktoplysninger */
   $handler->display->display_options['fields']['entity_id_6']['id'] = 'entity_id_6';
   $handler->display->display_options['fields']['entity_id_6']['table'] = 'field_data_field_venue_contact';
@@ -1016,18 +1054,10 @@ function valghalla_user_tools_views_default_views() {
   $handler->display->display_options['fields']['entity_id_7']['id'] = 'entity_id_7';
   $handler->display->display_options['fields']['entity_id_7']['table'] = 'field_data_field_venue_contact_name';
   $handler->display->display_options['fields']['entity_id_7']['field'] = 'field_venue_contact_name';
-  /* Felt: Handler mangler eller er i stykker */
-  $handler->display->display_options['fields']['entity_id_8']['id'] = 'entity_id_8';
-  $handler->display->display_options['fields']['entity_id_8']['table'] = 'field_data_field_volunteers_pr_party';
-  $handler->display->display_options['fields']['entity_id_8']['field'] = 'field_volunteers_pr_party';
   /* Felt: Indhold: Valgkreds */
   $handler->display->display_options['fields']['entity_id_9']['id'] = 'entity_id_9';
   $handler->display->display_options['fields']['entity_id_9']['table'] = 'field_data_field_constituency';
   $handler->display->display_options['fields']['entity_id_9']['field'] = 'field_constituency';
-  /* Felt: Handler mangler eller er i stykker */
-  $handler->display->display_options['fields']['entity_id_10']['id'] = 'entity_id_10';
-  $handler->display->display_options['fields']['entity_id_10']['table'] = 'field_data_field_dig_election';
-  $handler->display->display_options['fields']['entity_id_10']['field'] = 'field_dig_election';
   /* Sorteringskriterie: Indhold: Titel */
   $handler->display->display_options['sorts']['title']['id'] = 'title';
   $handler->display->display_options['sorts']['title']['table'] = 'node';
@@ -1072,17 +1102,6 @@ function valghalla_user_tools_views_default_views() {
   $handler->display->display_options['fields']['nid']['element_type'] = 'h4';
   $handler->display->display_options['fields']['nid']['element_label_type'] = '0';
   $handler->display->display_options['fields']['nid']['element_wrapper_type'] = '0';
-  /* Felt: : field_chairman */
-  $handler->display->display_options['fields']['entity_id_2']['id'] = 'entity_id_2';
-  $handler->display->display_options['fields']['entity_id_2']['table'] = 'field_data_field_chairman';
-  $handler->display->display_options['fields']['entity_id_2']['field'] = 'field_chairman';
-  $handler->display->display_options['fields']['entity_id_2']['exclude'] = TRUE;
-  /* Felt: Felt: Parti */
-  $handler->display->display_options['fields']['entity_id_5']['id'] = 'entity_id_5';
-  $handler->display->display_options['fields']['entity_id_5']['table'] = 'field_data_field_party';
-  $handler->display->display_options['fields']['entity_id_5']['field'] = 'field_party';
-  $handler->display->display_options['fields']['entity_id_5']['label'] = 'field_party';
-  $handler->display->display_options['fields']['entity_id_5']['exclude'] = TRUE;
   /* Felt: Indhold: Valgkreds */
   $handler->display->display_options['fields']['entity_id_9']['id'] = 'entity_id_9';
   $handler->display->display_options['fields']['entity_id_9']['table'] = 'field_data_field_constituency';
@@ -1182,20 +1201,11 @@ function valghalla_user_tools_views_default_views() {
   $handler->display->display_options['fields']['entity_id']['field'] = 'body';
   $handler->display->display_options['fields']['entity_id']['label'] = 'indhold';
   $handler->display->display_options['fields']['entity_id']['exclude'] = TRUE;
-  /* Felt: : field_chairman */
-  $handler->display->display_options['fields']['entity_id_2']['id'] = 'entity_id_2';
-  $handler->display->display_options['fields']['entity_id_2']['table'] = 'field_data_field_chairman';
-  $handler->display->display_options['fields']['entity_id_2']['field'] = 'field_chairman';
   /* Felt: Indhold: Valgkontakt */
   $handler->display->display_options['fields']['entity_id_3']['id'] = 'entity_id_3';
   $handler->display->display_options['fields']['entity_id_3']['table'] = 'field_data_field_contact';
   $handler->display->display_options['fields']['entity_id_3']['field'] = 'field_contact';
   $handler->display->display_options['fields']['entity_id_3']['exclude'] = TRUE;
-  /* Felt: Felt: Parti */
-  $handler->display->display_options['fields']['entity_id_5']['id'] = 'entity_id_5';
-  $handler->display->display_options['fields']['entity_id_5']['table'] = 'field_data_field_party';
-  $handler->display->display_options['fields']['entity_id_5']['field'] = 'field_party';
-  $handler->display->display_options['fields']['entity_id_5']['exclude'] = TRUE;
   /* Felt: Indhold: Andre kontaktoplysninger */
   $handler->display->display_options['fields']['entity_id_6']['id'] = 'entity_id_6';
   $handler->display->display_options['fields']['entity_id_6']['table'] = 'field_data_field_venue_contact';
@@ -1206,11 +1216,6 @@ function valghalla_user_tools_views_default_views() {
   $handler->display->display_options['fields']['entity_id_7']['table'] = 'field_data_field_venue_contact_name';
   $handler->display->display_options['fields']['entity_id_7']['field'] = 'field_venue_contact_name';
   $handler->display->display_options['fields']['entity_id_7']['exclude'] = TRUE;
-  /* Felt: Handler mangler eller er i stykker */
-  $handler->display->display_options['fields']['entity_id_8']['id'] = 'entity_id_8';
-  $handler->display->display_options['fields']['entity_id_8']['table'] = 'field_data_field_volunteers_pr_party';
-  $handler->display->display_options['fields']['entity_id_8']['field'] = 'field_volunteers_pr_party';
-  $handler->display->display_options['fields']['entity_id_8']['exclude'] = TRUE;
   /* Felt: Indhold: Valgkreds */
   $handler->display->display_options['fields']['entity_id_9']['id'] = 'entity_id_9';
   $handler->display->display_options['fields']['entity_id_9']['table'] = 'field_data_field_constituency';
@@ -1287,20 +1292,11 @@ function valghalla_user_tools_views_default_views() {
   $handler->display->display_options['fields']['entity_id']['field'] = 'body';
   $handler->display->display_options['fields']['entity_id']['label'] = 'indhold';
   $handler->display->display_options['fields']['entity_id']['exclude'] = TRUE;
-  /* Felt: : field_chairman */
-  $handler->display->display_options['fields']['entity_id_2']['id'] = 'entity_id_2';
-  $handler->display->display_options['fields']['entity_id_2']['table'] = 'field_data_field_chairman';
-  $handler->display->display_options['fields']['entity_id_2']['field'] = 'field_chairman';
   /* Felt: Indhold: Valgkontakt */
   $handler->display->display_options['fields']['entity_id_3']['id'] = 'entity_id_3';
   $handler->display->display_options['fields']['entity_id_3']['table'] = 'field_data_field_contact';
   $handler->display->display_options['fields']['entity_id_3']['field'] = 'field_contact';
   $handler->display->display_options['fields']['entity_id_3']['exclude'] = TRUE;
-  /* Felt: Felt: Parti */
-  $handler->display->display_options['fields']['entity_id_5']['id'] = 'entity_id_5';
-  $handler->display->display_options['fields']['entity_id_5']['table'] = 'field_data_field_party';
-  $handler->display->display_options['fields']['entity_id_5']['field'] = 'field_party';
-  $handler->display->display_options['fields']['entity_id_5']['exclude'] = TRUE;
   /* Felt: Indhold: Andre kontaktoplysninger */
   $handler->display->display_options['fields']['entity_id_6']['id'] = 'entity_id_6';
   $handler->display->display_options['fields']['entity_id_6']['table'] = 'field_data_field_venue_contact';
@@ -1311,11 +1307,6 @@ function valghalla_user_tools_views_default_views() {
   $handler->display->display_options['fields']['entity_id_7']['table'] = 'field_data_field_venue_contact_name';
   $handler->display->display_options['fields']['entity_id_7']['field'] = 'field_venue_contact_name';
   $handler->display->display_options['fields']['entity_id_7']['exclude'] = TRUE;
-  /* Felt: Handler mangler eller er i stykker */
-  $handler->display->display_options['fields']['entity_id_8']['id'] = 'entity_id_8';
-  $handler->display->display_options['fields']['entity_id_8']['table'] = 'field_data_field_volunteers_pr_party';
-  $handler->display->display_options['fields']['entity_id_8']['field'] = 'field_volunteers_pr_party';
-  $handler->display->display_options['fields']['entity_id_8']['exclude'] = TRUE;
   /* Felt: Indhold: Valgkreds */
   $handler->display->display_options['fields']['entity_id_9']['id'] = 'entity_id_9';
   $handler->display->display_options['fields']['entity_id_9']['table'] = 'field_data_field_constituency';
@@ -1338,18 +1329,13 @@ function valghalla_user_tools_views_default_views() {
     t('næste ›'),
     t('sidste »'),
     t('indhold'),
-    t('field_chairman'),
     t('Valgkontakt'),
-    t('Parti'),
     t('Andre kontaktoplysninger'),
     t('Lokalekontakt'),
-    t('Handler i stykker field_data_field_volunteers_pr_party.field_volunteers_pr_party'),
     t('Valgkreds'),
-    t('Handler i stykker field_data_field_dig_election.field_dig_election'),
     t('Alle'),
     t('Block'),
     t('Nid'),
-    t('field_party'),
     t('Digital valgliste'),
     t('Side m  CPR'),
     t('<div class="icon-digital-valglist">&nbsp;</div>'),

@@ -1,0 +1,13 @@
+<?php
+
+/**
+ * @file
+ * Contains install function for Valghalla eboks module.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function valghalla_eboks_install() {
+  valghalla_eboks_default_settings();
+}

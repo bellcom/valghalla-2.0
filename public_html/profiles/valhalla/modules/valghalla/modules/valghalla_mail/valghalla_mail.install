@@ -1,19 +1,21 @@
 <?php
+
 /**
- * Valghalla mail module
+ * @file
+ * Valghalla mail module.
  *
- * @file valghalla_mail.install
+ *  Valghalla_mail.install.
  *
  * @copyright 2012 OS2 - Offentligt Digitaliseringsfællesskab.
  * See README.md at https://github.com/os2web/valghalla_mail
  */
 
 /**
- * Implements hook_install()
+ * Implements hook_install().
  *
  * @author Thomas Thune Hansen <tth@bellcom.dk>
  */
-function valghalla_mail_install(){
+function valghalla_mail_install() {
   // Set default values for reminder.
   variable_set('valghalla_rsvp_reminder_days', '14, 7, 5, 3');
 
@@ -32,7 +34,7 @@ function valghalla_mail_install(){
   $rsvp_no = clone $node;
   $rsvp_never = clone $node;
 
-  if( variable_get('valhalla_rsvp_email_subject', FALSE)){
+  if (variable_get('valhalla_rsvp_email_subject', FALSE)) {
     $invitation->title = 'Invitation';
     $invitation->field_subject[LANGUAGE_NONE][]['value'] = variable_get('valhalla_rsvp_email_subject');
     $invitation->body[LANGUAGE_NONE][0]['value'] = variable_get('valhalla_rsvp_email_body');
@@ -41,7 +43,7 @@ function valghalla_mail_install(){
     variable_get('valghalla_mail_invitation', $invitation->nid);
   }
 
-  if( variable_get('valhalla_rsvp_reminder_subject', FALSE)){
+  if (variable_get('valhalla_rsvp_reminder_subject', FALSE)) {
     $reminder->title = 'Påmindelse';
     $reminder->field_subject[LANGUAGE_NONE][]['value'] = variable_get('valhalla_rsvp_reminder_subject');
     $reminder->body[LANGUAGE_NONE][0]['value'] = variable_get('valhalla_rsvp_reminder_body');
@@ -50,7 +52,7 @@ function valghalla_mail_install(){
     variable_get('valghalla_mail_reminder', $reminder->nid);
   }
 
-  if( variable_get('valhalla_rsvp_status_subject_yes', FALSE)){
+  if (variable_get('valhalla_rsvp_status_subject_yes', FALSE)) {
     $rsvp_yes->title = 'RSVP Ja';
     $rsvp_yes->field_subject[LANGUAGE_NONE][]['value'] = variable_get('valhalla_rsvp_status_subject_yes');
     $rsvp_yes->body[LANGUAGE_NONE][0]['value'] = variable_get('valhalla_rsvp_status_body_yes');
@@ -59,7 +61,7 @@ function valghalla_mail_install(){
     variable_get('valghalla_mail_rsvp_yes', $rsvp_yes->nid);
   }
 
-  if( variable_get('valhalla_rsvp_status_subject_no', FALSE)){
+  if (variable_get('valhalla_rsvp_status_subject_no', FALSE)) {
     $rsvp_no->title = 'RSVP Nej';
     $rsvp_no->field_subject[LANGUAGE_NONE][]['value'] = variable_get('valhalla_rsvp_status_subject_no');
     $rsvp_no->body[LANGUAGE_NONE][0]['value'] = variable_get('valhalla_rsvp_status_body_no');
@@ -68,7 +70,7 @@ function valghalla_mail_install(){
     variable_get('valghalla_mail_rsvp_no', $rsvp_no->nid);
   }
 
-  if( variable_get('valhalla_rsvp_status_subject_never', FALSE)){
+  if (variable_get('valhalla_rsvp_status_subject_never', FALSE)) {
     $rsvp_never->title = 'RSVP Aldrig';
     $rsvp_never->field_subject[LANGUAGE_NONE][]['value'] = variable_get('valhalla_rsvp_status_subject_never');
     $rsvp_never->body[LANGUAGE_NONE][0]['value'] = variable_get('valhalla_rsvp_status_body_never');
@@ -77,7 +79,7 @@ function valghalla_mail_install(){
     variable_get('valghalla_mail_rsvp_never', $rsvp_never->nid);
   }
 
-  // Delete variables since they are no longer needed
+  // Delete variables since they are no longer needed.
   variable_del('valhalla_rsvp_email_subject');
   variable_del('valhalla_rsvp_email_body');
   variable_del('valhalla_rsvp_reminder_subject');
@@ -88,6 +90,8 @@ function valghalla_mail_install(){
   variable_del('valhalla_rsvp_status_body_no');
   variable_del('valhalla_rsvp_status_subject_never');
   variable_del('valhalla_rsvp_status_body_never');
+
+  valghalla_mail_update_7102();
 }
 
 /**

@@ -1,0 +1,236 @@
+<?php
+
+/**
+ * @file
+ * Valghalla_synch_node_export.module.
+ */
+
+/**
+ * Implements hook_node_export_node_alter().
+ *
+ * Addes the role UUID to the export info,
+ * it is required for doing the mapping on the second server,
+ * since role nid can be different.
+ */
+function valghalla_synch_node_export_node_export_node_alter(&$node, $original_node) {
+  if ($node->type == 'election') {
+    $node->roles_uuids = array();
+    $roles_loaded = node_load_multiple(array_keys(odin_get_roles()));
+    foreach ($roles_loaded as $role) {
+      $node->roles_uuids[$role->nid] = $role->uuid;
+    }
+  }
+}
+
+/**
+ * Implements hook_node_export_import_alter().
+ *
+ * Updates the references inside $node->field_collection_deploy
+ * to the local created objects.
+ */
+function valghalla_synch_node_export_node_export_import_alter(&$nodes, $format, $save) {
+  foreach ($nodes as $node) {
+    if ($node->type == 'election') {
+      // Do the role fields remapping.
+      _valghalla_synch_node_export_role_remapping($node);
+    }
+  }
+}
+
+/**
+ * Changes the keys of the role-related fields.
+ *
+ * Since the role fields are using nids in their name, which can be different
+ * between installations, we are using UUIDs to rename the field according
+ * to the local installation NIDs.
+ *
+ * @param mixed $node
+ *   Node object to be altered.
+ */
+function _valghalla_synch_node_export_role_remapping(&$node) {
+  foreach ($node->field_collection_deploy['field_volunteers_pr_pol_st_party'] as $fc_key => $field_volunteers_pr_pol_st_party) {
+    $new_roles_fields_data = array();
+
+    // First we traverse to extract the data, and remove the old key.
+    foreach ($field_volunteers_pr_pol_st_party as $field_key => $field_data) {
+      if (strpos($field_key, 'field_role_n') === 0) {
+        $role_remote_nid = intval(str_replace('field_role_n', '', $field_key));
+        $role_uuid = $node->roles_uuids[$role_remote_nid];
+        if ($role_uuid) {
+          $match = entity_get_id_by_uuid('node', array($role_uuid));
+          $role_local_nid = intval($match[$role_uuid]);
+          if ($role_local_nid !== $role_remote_nid) {
+            $new_key = 'field_role_n' . $role_local_nid;
+
+            $new_roles_fields_data[$new_key] = $field_data;
+
+            // We don't need that value anymore, unset it.
+            unset($node->field_collection_deploy['field_volunteers_pr_pol_st_party'][$fc_key][$field_key]);
+          }
+        }
+      }
+    }
+
+    // Then we use the saved data to set the value anew.
+    foreach ($new_roles_fields_data as $role_field_key => $role_field_value) {
+      $node->field_collection_deploy['field_volunteers_pr_pol_st_party'][$fc_key][$role_field_key] = $role_field_value;
+    }
+  }
+
+  unset($node->roles_uuids);
+}
+
+/**
+ * Returns the name of the openssl method that is used for encryption.
+ *
+ * @return string
+ *   Name of the encryption method.
+ */
+function valghalla_synch_node_export_get_encryption_method() {
+  return 'aes-128-cbc';
+}
+
+/**
+ * Returns initialization vector.
+ */
+function valghalla_synch_node_export_get_iv() {
+  return '1234567890123456';
+}
+
+/**
+ * Encrypts the data.
+ *
+ * If key is not provided, site hash salt is used.
+ *
+ * @param string $data
+ *   Data to encrypt.
+ * @param mixed $key
+ *   The key.
+ *
+ * @return string
+ *   Encrypted data.
+ */
+function valghalla_synch_node_export_get_encrypt($data, $key = NULL) {
+  if (!$key) {
+    $key = drupal_get_hash_salt();
+  }
+  $iv = valghalla_synch_node_export_get_iv();
+  $method = valghalla_synch_node_export_get_encryption_method();
+  return openssl_encrypt($data, $method, $key, 0, $iv);
+}
+
+/**
+ * Decrypts the data.
+ *
+ * If key is not provided, site hash salt is used.
+ *
+ * @param string $encrypted_data
+ *   Data to decrypt.
+ * @param mixed $key
+ *   The key.
+ *
+ * @return string
+ *   Decrypted data.
+ */
+function valghalla_synch_node_export_get_decrypt($encrypted_data, $key = NULL) {
+  if (!$key) {
+    $key = drupal_get_hash_salt();
+  }
+  $iv = valghalla_synch_node_export_get_iv();
+  $method = valghalla_synch_node_export_get_encryption_method();
+  return openssl_decrypt($encrypted_data, $method, $key, 0, $iv);
+}
+
+/**
+ * Anonymizes the volunteer node.
+ *
+ * Unsets the sensitive values and encrypts the CPR.
+ *
+ * @param mixed $node
+ *   Volunteer node.
+ * @param string $cipherKey
+ *   Key to be used for encryption.
+ *
+ * @return mixed
+ *   Anonymized volunteer node.
+ */
+function valghalla_synch_node_export_anonymize_node($node, $cipherKey = NULL) {
+  // Do the anonymization for volunteers only.
+  if ($node->type == 'volunteers') {
+    // Deleting field content.
+    $node->field_first_name = array();
+    $node->field_second_name = array();
+    $node->field_address_bnummer = array();
+    $node->field_address_city = array();
+    $node->field_address_coname = array();
+    $node->field_address_door = array();
+    $node->field_address_floor = array();
+    $node->field_address_road = array();
+    $node->field_address_road_no = array();
+    $node->field_address_zipcode = array();
+    $node->field_cpr_valid_date = array();
+    $node->field_municipality = array();
+    $node->field_phone2 = array();
+
+    // Encrypting CPR field.
+    $field_cpr_number = field_get_items('node', $node, 'field_cpr_number');
+    if (!empty($field_cpr_number) && is_array($field_cpr_number)) {
+      $cpr = $field_cpr_number[0]['value'];
+
+      $cpr_field_language = field_language('node', $node, 'field_cpr_number');
+      $cpr_encrypted = valghalla_synch_node_export_get_encrypt($cpr, $cipherKey);
+      $node->field_cpr_number[$cpr_field_language][0]['value'] = $cpr_encrypted;
+    }
+
+    // Encrypting email field.
+    $field_email = field_get_items('node', $node, 'field_email');
+    if (!empty($field_email) && is_array($field_email)) {
+      $email = $field_email[0]['email'];
+
+      $email_field_language = field_language('node', $node, 'field_email');
+      $email_encrypted = valghalla_synch_node_export_get_encrypt($email, $cipherKey);
+      $node->field_email[$email_field_language][0]['email'] = $email_encrypted;
+    }
+
+    // Encrypting phone field.
+    $field_phone = field_get_items('node', $node, 'field_phone');
+    if (!empty($field_phone) && is_array($field_phone)) {
+      $phone = $field_phone[0]['value'];
+
+      $phone_field_language = field_language('node', $node, 'field_phone');
+      $phone_encrypted = valghalla_synch_node_export_get_encrypt($phone, $cipherKey);
+      $node->field_phone[$phone_field_language][0]['value'] = $phone_encrypted;
+    }
+
+    $node->title = 'Anonymized volunteer node, CPR: ' . $cpr_encrypted;
+  }
+  return $node;
+}
+
+/**
+ * Helper function to get election counts.
+ *
+ * @return array
+ *   Array with  election counts.
+ */
+function valghalla_synch_node_export_election_counts() {
+  $election_query = new EntityFieldQuery();
+  $election_query->entityCondition('entity_type', 'node')
+    ->entityCondition('bundle', 'election');
+  $result = $election_query->execute();
+
+  $data = array();
+  if (!empty($result)) {
+    $nids = array_keys($result['node']);
+
+    // We also need the roles.
+    $roles = odin_get_roles();
+    foreach ($nids as $election_nid) {
+      $election = node_load($election_nid);
+      $polling_station_nids = odin_get_polling_stations($election_nid);
+      $counts = odin_get_volunteers_count($election_nid, array_keys($polling_station_nids), $roles);
+      $data[$election->uuid] = $counts['total_count'];
+    }
+  }
+  return $data;
+}

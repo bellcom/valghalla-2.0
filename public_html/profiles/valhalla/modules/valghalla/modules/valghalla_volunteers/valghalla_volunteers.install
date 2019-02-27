@@ -1,6 +1,18 @@
 <?php
 
 /**
+ * @file
+ * Install file for valghalla_volunteer.install.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function valghalla_volunteers_install() {
+  valghalla_volunteers_update_7000();
+}
+
+/**
  * Assign permissions to roles.
  */
 function valghalla_volunteers_update_7000() {
@@ -15,4 +27,45 @@ function valghalla_volunteers_update_7000() {
       user_role_grant_permissions($role->rid, array('access entire user profile form'));
     }
   }
+}
+
+/**
+ * Helper function to change field max length.
+ *
+ * @param string $field_name
+ *   Name of the field.
+ * @param int $maxlength
+ *   New length of the field.
+ */
+function _valghalla_volunteer_change_field_maxlength($field_name, $maxlength = 255) {
+  db_query("ALTER TABLE field_data_" . $field_name . " CHANGE " . $field_name . "_value " . $field_name . "_value VARCHAR( " . $maxlength . " ) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL");
+  db_query("ALTER TABLE field_revision_" . $field_name . " CHANGE " . $field_name . "_value " . $field_name . "_value VARCHAR( " . $maxlength . " ) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL");
+
+  $qry = "SELECT data FROM field_config WHERE field_name = :field_name";
+  $result = db_query($qry, array(':field_name' => $field_name))->fetchObject();
+
+  $data = unserialize($result->data);
+  $data['settings']['max_length'] = (string) $maxlength;
+  $data = serialize($data);
+
+  $qry = "UPDATE field_config SET data = :data WHERE field_name = :field_name";
+  db_query($qry, array(':data' => $data, ':field_name' => $field_name));
+}
+
+/**
+ * Implements hook_update_N().
+ *
+ * Update field_cpr_number max length to 255.
+ */
+function valghalla_volunteers_update_7101() {
+  _valghalla_volunteer_change_field_maxlength('field_cpr_number');
+}
+
+/**
+ * Implements hook_update_N().
+ *
+ * Update field_phone max length to 255.
+ */
+function valghalla_volunteers_update_7102() {
+  _valghalla_volunteer_change_field_maxlength('field_phone');
 }

@@ -1,0 +1,7 @@
+name = 'Valghalla status report'
+description = 'Provides PDF status reports of elections'
+package = Valghalla
+core = 7.x
+
+dependencies[] = "valghalla_volunteers"
+dependencies[] = "odin"

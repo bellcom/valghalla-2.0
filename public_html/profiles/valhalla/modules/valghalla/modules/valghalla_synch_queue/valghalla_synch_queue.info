@@ -1,0 +1,6 @@
+name = Valghalla Synch Queue
+description = Provides functionality to store queue of resources that need to by synched
+package = Valghalla - Synch
+dependencies[] = uuid
+
+core = "7.x"

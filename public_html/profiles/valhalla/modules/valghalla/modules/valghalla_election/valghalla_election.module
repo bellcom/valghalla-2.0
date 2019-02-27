@@ -1,29 +1,41 @@
 <?php
 
-include_once('valghalla_election.features.inc');
 /**
- * Valhalla eleciton module
- *
  * @file
- *  valghalla_election.module
+ * Valhalla eleciton module.
  */
 
+include_once 'valghalla_election.features.inc';
+
+module_load_include('inc', 'valghalla_election', 'includes/valghalla_election.pages');
+
 /**
- * implements hook_menu()
+ * Implements hook_menu().
  */
-function valghalla_election_menu(){
+function valghalla_election_menu() {
   $items = array();
 
   $items['valghalla/election'] = array(
     'page callback' => 'valghalla_election_set_election',
-    'access callback' => true,
+    'access callback' => TRUE,
+  );
+
+  $items['station/%/seats'] = array(
+    'title' => 'Handle election seats',
+    'access arguments' => array('administer valghalla'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('valghalla_election_handle_seats_form', 1),
+    'type' => MENU_CALLBACK,
   );
 
   return $items;
 }
 
-function valghalla_election_set_election($action, $election_nid = false){
-  if(!$election_nid){
+/**
+ * Election status update function.
+ */
+function valghalla_election_set_election($action, $election_nid = FALSE) {
+  if (!$election_nid) {
     drupal_goto('<front>');
     return;
   }
@@ -33,6 +45,7 @@ function valghalla_election_set_election($action, $election_nid = false){
     case 'stop':
       $election_node->field_election_status = array();
       break;
+
     case 'start':
       $election_node->field_election_status[$election_node->language][0]['value'] = 1;
       break;
@@ -48,8 +61,8 @@ function valghalla_election_set_election($action, $election_nid = false){
 function valghalla_election_form_alter(&$form, &$form_state, $form_id) {
   $destination = current_path();
   if (isset($form['type']) && isset($form['#node']) && $form_id == 'election_node_form') {
+    // Adding role_and_diaet field.
     $roles = valghalla_election_get_roles();
-    // form fieldset
     $description = t("Roller diæter");
     if (empty($roles)) {
       $description .= " <a href='/node/add/roles?destination=$destination'>Opret roller</a>";
@@ -61,19 +74,18 @@ function valghalla_election_form_alter(&$form, &$form_state, $form_id) {
       '#description' => $description,
     );
 
-    foreach ($roles as $key =>$role) {
-
+    foreach ($roles as $key => $role) {
       if (isset($form['#node']->nid)) {
-        // get value form table field_election_roles_diaet.
+        // Get value form table field_election_roles_diaet.
         if (db_table_exists('field_election_roles_diaet')) {
-          $result = db_query("SELECT * FROM {field_election_roles_diaet} r WHERE r.nid = " .$form['#node']->nid ."")
-                    ->fetchObject();
-          if($result !== FALSE) {
+          $result = db_query("SELECT * FROM {field_election_roles_diaet} r WHERE r.nid = " . $form['#node']->nid . "")
+            ->fetchObject();
+          if ($result !== FALSE) {
             $data = unserialize($result->role_diaet_value);
           }
 
         }
-        $form['role_and_diaet']['role_diaet'.$role->nid] = array(
+        $form['role_and_diaet']['role_diaet' . $role->nid] = array(
           '#type' => 'textfield',
           '#title' => $role->title,
           '#required' => TRUE,
@@ -81,7 +93,7 @@ function valghalla_election_form_alter(&$form, &$form_state, $form_id) {
         );
       }
       else {
-        $form['role_and_diaet']['role_diaet'.$role->nid] = array(
+        $form['role_and_diaet']['role_diaet' . $role->nid] = array(
           '#type' => 'textfield',
           '#title' => $role->title,
           '#required' => TRUE,
@@ -89,8 +101,30 @@ function valghalla_election_form_alter(&$form, &$form_state, $form_id) {
         );
       }
     }
+    $form['#group_children']['role_and_diaet'] = 'group_diaet';
+
     $form['actions']['submit']['#submit'][] = 'valghalla_election_form_submit';
+
+    // Hide system field from form.
+    $form['field_election_notif_conf_export']['#access'] = FALSE;
   }
+  elseif ($form_id === 'field_collection_item_form' && $form['#bundle'] === 'field_volunteers_pr_pol_st_party') {
+    // Disabling some of the fields.
+    $form['field_ppsp_polling_station']['#disabled'] = TRUE;
+    $form['field_ppsp_party']['#disabled'] = TRUE;
+
+    // Add extra validation handler for polling station node.
+    $form['#validate'][] = 'valghalla_election_field_volunteers_pr_pol_st_party_form_validate';
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * Disable taxonomy description.
+ */
+function valghalla_election_form_taxonomy_form_term_alter(&$form, &$form_state) {
+  $form['description']['#access'] = FALSE;
 }
 
 /**
@@ -99,38 +133,98 @@ function valghalla_election_form_alter(&$form, &$form_state, $form_id) {
 function valghalla_election_form_submit($form, &$form_state) {
   $nid = $form_state['node']->nid;
   $roles = valghalla_election_get_roles();
-  $data =  array();
+  $data = array();
   foreach ($roles as $role) {
-    $data[$role->nid] = $form_state['values']['role_diaet'.$role->nid];
+    $data[$role->nid] = $form_state['values']['role_diaet' . $role->nid];
   }
   $result = db_query("SELECT * FROM {field_election_roles_diaet} r WHERE r.nid = " . $nid . "")
-                    ->fetchField();
+    ->fetchField();
   // Update existed row.
   if ($result) {
     db_update('field_election_roles_diaet')
       ->fields(array(
         'role_diaet_value' => serialize($data),
-        ))
+      ))
       ->condition('nid', $nid, '=')
       ->execute();
   }
-  // Insert new row
+  // Insert new row.
   else {
     db_insert('field_election_roles_diaet')
       ->fields(array(
         'nid' => $nid,
         'role_diaet_value' => serialize($data),
-        ))
-       ->execute();
+      ))
+      ->execute();
+  }
+
+  valghalla_election_handle_polling_stations_fc(node_load($nid));
+}
+
+/**
+ * Handle creating/deleting field_volunteers_pr_pol_st_party field collection.
+ *
+ * @param mixed $node
+ *   Election node.
+ */
+function valghalla_election_handle_polling_stations_fc($node) {
+  $pollingStations = field_get_items('node', $node, 'field_polling_stations');
+  $pollingStationsIds = array();
+  $createVPPSPForPollingIds = array();
+
+  foreach ($pollingStations as $ps) {
+    $pollingStationsIds[$ps['target_id']] = $ps['target_id'];
+    $createVPPSPForPollingIds[$ps['target_id']] = $ps['target_id'];
+  }
+
+  // Deleting the field collections that are not relevant anymore.
+  if (!$node->is_new) {
+    $vppspIdsToDelete = array();
+    foreach ($node->field_volunteers_pr_pol_st_party['und'] as $key => $value) {
+      if (isset($value['entity'])) {
+        $vppsp = $value['entity'];
+      }
+      else {
+        $vppsp = entity_load_single('field_collection_item', $value['value']);
+      }
+
+      $vppspPollingStationId = $vppsp->field_ppsp_polling_station['und'][0]['nid'];
+      if (!in_array($vppspPollingStationId, $pollingStationsIds)) {
+        // Add to array for deletion.
+        $vppspIdsToDelete[] = $vppsp->item_id;
+        // Unset them from node.
+        unset($node->field_volunteers_pr_pol_st_party[LANGUAGE_NONE][$key]);
+      }
+
+      // Unset polling station for the list.
+      unset($createVPPSPForPollingIds[$vppspPollingStationId]);
+    }
+
+    // Delete field collection items.
+    entity_delete_multiple('field_collection_item', $vppspIdsToDelete);
+  }
+
+  // Adding new field collections.
+  foreach ($createVPPSPForPollingIds as $createVPPSPForPollingId) {
+    foreach (odin_get_parties() as $party_tid => $party_name) {
+      $fc = entity_create('field_collection_item', array('field_name' => 'field_volunteers_pr_pol_st_party'));
+      $fc->setHostEntity('node', $node);
+      $fc->field_ppsp_polling_station[LANGUAGE_NONE][0]['nid'] = $createVPPSPForPollingId;
+      $fc->field_ppsp_party[LANGUAGE_NONE][0]['tid'] = $party_tid;
+      $fc->save();
+    }
   }
 }
 
+/**
+ * Get role nodes function.
+ */
 function valghalla_election_get_roles() {
   $query = new EntityFieldQuery();
   $entities = $query->entityCondition('entity_type', 'node')
-        ->entityCondition('bundle', 'roles')
-        ->propertyCondition('status', 1)
-        ->execute();
+    ->entityCondition('bundle', 'roles')
+    ->propertyCondition('status', 1)
+    ->execute();
   if (!empty($entities)) {
     return $nodes = node_load_multiple(array_keys($entities['node']));
   }
@@ -144,14 +238,78 @@ function valghalla_election_node_delete($node) {
   if ($node->type == 'election') {
     // Delete the election diaet.
     db_delete('field_election_roles_diaet')
-        ->condition('nid', $node->nid)
-        ->execute();
+      ->condition('nid', $node->nid)
+      ->execute();
+  }
+}
+
+/**
+ * Validation handler for field_volunteers_pr_pol_st_party form.
+ */
+function valghalla_election_field_volunteers_pr_pol_st_party_form_validate($form, $form_state) {
+  foreach ($form_state['values'] as $field_name => $field_value) {
+    // Extract polling station nid tid.
+    if ($field_name == 'field_ppsp_polling_station') {
+      $polling_station_nid = $field_value[LANGUAGE_NONE][0]['nid'];
+    }
+
+    // Extract party tid.
+    if ($field_name == 'field_ppsp_party') {
+      $party_tid = $field_value[LANGUAGE_NONE][0]['tid'];
+    }
+
+    if (strpos($field_name, 'field_role_n') !== FALSE) {
+      $role_nid = str_replace('field_role_n', '', $field_name);
+      $count = $field_value[LANGUAGE_NONE][0]['number_vo'];
+      if (!is_numeric($count)) {
+        form_set_error('field_role_n' . $role_nid, 'Angiv en numerisk værdi');
+      }
+    }
+    if (isset($polling_station_nid) && isset($party_tid) && isset($role_nid)) {
+      $map[$polling_station_nid][$party_tid][$role_nid] = $count;
+    }
+  }
+
+  $election_nid = $form['#entity']->hostEntityId();
+  $polling_stations = odin_get_polling_stations($election_nid);
+  $roles = odin_get_roles();
+  $parties = odin_get_parties();
+
+  // Loop through all combinations and find out if any of the input values
+  // are lower than the already allocated count.
+  foreach ($map as $polling_station_nid => $parties_map) {
+    foreach ($parties_map as $party_tid => $roles_map) {
+      foreach ($roles_map as $role_nid => $count) {
+        $volunteer_query = new EntityFieldQuery();
+        $volunteer_query->entityCondition('entity_type', 'field_collection_item')
+          ->entityCondition('bundle', 'field_electioninfo')
+          ->propertyCondition('archived', 0)
+          ->fieldCondition('field_election', 'target_id', $election_nid)
+          ->fieldCondition('field_post_role', 'target_id', $role_nid)
+          ->fieldCondition('field_post_party', 'target_id', $party_tid)
+          ->fieldCondition('field_vlnt_station', 'target_id', $polling_station_nid);
+
+        $query_result = $volunteer_query->execute();
+        if (!empty($query_result)) {
+          $result = array_keys(array_shift($query_result));
+
+          if ($result) {
+            $allocated = count($result);
+
+            if ($allocated > $count) {
+              form_set_error('field_role_n' . $role_nid, 'Deltagere - Det indtastede antal er mindre end antallet af tilføjede deltagere. Valgsted: ' . $polling_stations[$polling_station_nid] . ', Parti: ' . $parties[$party_tid] . ', Rolle: ' . $roles[$role_nid] . ', antal: ' . $allocated . ', indtastet: ' . $count);
+            }
+          }
+        }
+      }
+    }
   }
 }
 
 /**
  * Updating, create a new table. {field_election_roles_diaet}.
- * @see also valghalla_election_schema().
+ *
+ * @see valghalla_election_schema()
  */
 function valghalla_election_update_7100() {
   if (!db_table_exists('field_election_roles_diaet')) {
@@ -174,5 +332,29 @@ function valghalla_election_update_7100() {
       'primary key' => array('nid'),
     );
     db_create_table('field_election_roles_diaet', $schema['field_election_roles_diaet']);
+  }
+}
+
+/**
+ * Implements hook_cron().
+ */
+function valghalla_election_cron() {
+  // Load all election that happens today and unpublish it.
+  $query = new EntityFieldQuery();
+  $election_ids = $query->entityCondition('entity_type', 'node')
+    ->entityCondition('bundle', 'election')
+    ->fieldCondition('field_election_status', 'value', 1)
+    ->execute();
+  if (empty($election_ids['node'])) {
+    return;
+  }
+
+  foreach (node_load_multiple(array_keys($election_ids['node'])) as $election) {
+    $election_date = field_get_items('node', $election, 'field_date');
+    if (empty($election_date[0]['value'])
+      || strtotime($election_date[0]['value']) < REQUEST_TIME) {
+      $election->field_election_status[$election->language][0]['value'] = 0;
+      node_save($election);
+    }
   }
 }

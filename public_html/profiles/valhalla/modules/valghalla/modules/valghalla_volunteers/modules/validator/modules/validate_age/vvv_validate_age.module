@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Valghalla volunteers validate, validate age module.
@@ -13,7 +14,7 @@
  */
 function vvv_validate_age_menu() {
   $items['admin/valghalla/validator/validate_age'] = array(
-    'title' => t('Indstillinger for "Valider Alder"'),
+    'title' => 'Indstillinger for "Valider Alder"',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('vvv_validate_age_settings'),
     'access arguments' => array('administer valghalla'),
@@ -32,6 +33,7 @@ function vvv_validate_age_valghalla_volunteer_validator_validate() {
       'label' => t('Valider alder'),
       'description' => t('Valider deltagerens alder'),
       'validate' => 'vvv_validate_age_validate',
+      'validate_per_election' => 'vvv_validate_age_validate_per_election',
       'config' => 'admin/valghalla/validator/validate_age',
     ),
   );
@@ -61,15 +63,11 @@ function vvv_validate_age_settings() {
 /**
  * Validation on age.
  */
-function vvv_validate_age_validate($volunteer, $process) {
-  
-  // Do not validate, if disable
-  if ( ($process == 'single' AND !variable_get('validate_single_age', FALSE)) 
-          OR ( $process == 'batch' AND !variable_get('validate_batch_age', FALSE) )) {
-// we do not validate if disable
-    return array(
-      'valid' => TRUE,
-    );
+function vvv_validate_age_validate($volunteer) {
+  // Do not validate, if disable.
+  if (!variable_get('validate_create_age', FALSE)) {
+    // We do not validate if disable.
+    return array('valid' => TRUE);
   }
 
   $date = &drupal_static(__FUNCTION__);
@@ -117,10 +115,52 @@ function vvv_validate_age_validate($volunteer, $process) {
   if ($years < $min_age) {
     return array(
       'valid' => FALSE,
-      'text' => t('Deltagerens alder er under: ') . $min_age,
+      'text' => t('Deltagerens alder er under: !age', array('!age' => $min_age)),
     );
   }
   return array(
     'valid' => TRUE,
+  );
+}
+
+/**
+ * Validation on age per election.
+ *
+ * @param string $cpr
+ *   CPR number.
+ * @param array $context
+ *   Validation context.
+ *
+ * @return array
+ *   Result array.
+ */
+function vvv_validate_age_validate_per_election($cpr, array $context) {
+  // Do not validate, if disable.
+  if (empty($context['validate_age'])) {
+    // We do not validate if disable.
+    return array('valid' => TRUE);
+  }
+
+  try {
+    $election_date = isset($context['election_date']) ? $context['election_date'] : NULL;
+    $years = _valghalla_helper_get_age_from_cpr($cpr, $election_date ?: 'now');
+  }
+  catch (Exception $e) {
+    return array(
+      'status' => FALSE,
+      'text' => t('Deltageren har ikke en gyldig fødselsdato'),
+    );
+  }
+
+  $min_age = variable_get('vvv_validate_age_age', 18);
+
+  if ($years < $min_age) {
+    return array(
+      'status' => FALSE,
+      'text' => t('Deltagerens alder er under: !age', array('!age' => $min_age)),
+    );
+  }
+  return array(
+    'status' => TRUE,
   );
 }

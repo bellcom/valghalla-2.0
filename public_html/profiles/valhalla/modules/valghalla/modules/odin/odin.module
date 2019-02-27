@@ -111,10 +111,12 @@ function odin_get_volunteers_count($election_nid, $polling_station_nids, $roles,
     );
 
   foreach ($roles as $role_nid => $role_title) {
+    $role_count[$role_nid]['role_name'] = $role_title;
+
     //
     // Total assinged roles
     //
-    $assigned_count = _valghalla_helper_get_roles_count($polling_station_nids, $role_nid, $user_party_id);
+    $assigned_count = _valghalla_helper_get_roles_count($polling_station_nids, $role_nid, $user_party_id, $election_nid);
     $role_count[$role_nid]['assigned'] = is_numeric($assigned_count) ? $assigned_count: 0;
     $total_count['assigned'] += $role_count[$role_nid]['assigned'];
 
@@ -125,6 +127,7 @@ function odin_get_volunteers_count($election_nid, $polling_station_nids, $roles,
 
     $volunteer_query->entityCondition('entity_type', 'field_collection_item')
       ->entityCondition('bundle', 'field_electioninfo')
+      ->propertyCondition('archived', 0)
       ->fieldCondition('field_election', 'target_id', $election_nid)
       ->fieldCondition('field_vlnt_station', 'target_id', $polling_station_nids)
       ->fieldCondition('field_post_role', 'target_id', $role_nid);
@@ -136,7 +139,7 @@ function odin_get_volunteers_count($election_nid, $polling_station_nids, $roles,
     $query_result = $volunteer_query->execute();
     $result       = array_shift($query_result);
 
-    $role_count[$role_nid]['total'] = count($result);
+    $role_count[$role_nid]['total'] = empty($result) ? 0 : count($result);
     $total_count['total'] += $role_count[$role_nid]['total'];
 
     //
@@ -146,6 +149,7 @@ function odin_get_volunteers_count($election_nid, $polling_station_nids, $roles,
 
     $volunteer_query->entityCondition('entity_type', 'field_collection_item')
       ->entityCondition('bundle', 'field_electioninfo')
+      ->propertyCondition('archived', 0)
       ->fieldCondition('field_election', 'target_id', $election_nid)
       ->fieldCondition('field_vlnt_station', 'target_id', $polling_station_nids)
       ->fieldCondition('field_post_role', 'target_id', $role_nid)
@@ -159,7 +163,7 @@ function odin_get_volunteers_count($election_nid, $polling_station_nids, $roles,
     $query_result = $volunteer_query->execute();
     $result       = array_shift($query_result);
 
-    $role_count[$role_nid]['rsvp_ok'] = count($result);
+    $role_count[$role_nid]['rsvp_ok'] = empty($result) ? 0 : count($result);
     $total_count['rsvp_ok'] += $role_count[$role_nid]['rsvp_ok'];
 
     //
@@ -169,6 +173,7 @@ function odin_get_volunteers_count($election_nid, $polling_station_nids, $roles,
 
     $volunteer_query->entityCondition('entity_type', 'field_collection_item')
       ->entityCondition('bundle', 'field_electioninfo')
+      ->propertyCondition('archived', 0)
       ->fieldCondition('field_election', 'target_id', $election_nid)
       ->fieldCondition('field_vlnt_station', 'target_id', $polling_station_nids)
       ->fieldCondition('field_post_role', 'target_id', $role_nid)
@@ -182,7 +187,7 @@ function odin_get_volunteers_count($election_nid, $polling_station_nids, $roles,
     $query_result = $volunteer_query->execute();
     $result       = array_shift($query_result);
 
-    $role_count[$role_nid]['rsvp_no'] = count($result);
+    $role_count[$role_nid]['rsvp_no'] = empty($result) ? 0 : count($result);
     $total_count['rsvp_no'] += $role_count[$role_nid]['rsvp_no'];
   }
 
@@ -245,6 +250,36 @@ function odin_get_elections() {
   }
 
   return $data;
+}
+
+/**
+ * Get active elections.
+ */
+function odin_get_active_elections() {
+  $nids = db_select('field_data_field_election_status', 'es')
+    ->fields('es', array('entity_id'))
+    ->condition('es.bundle', 'election')
+    ->condition('es.field_election_status_value', 1)
+    ->execute()
+    ->fetchAll(PDO::FETCH_COLUMN);
+
+  return $nids;
+}
+
+/**
+ * Is election active?
+ * true = is active.
+ * false = not active.
+ */
+function odin_is_election_active($election_nid) {
+  $election = node_load($election_nid);
+  $field_status = field_get_items('node', $election, 'field_election_status');
+
+  if (!empty($field_status[0]['value']) && !empty($election->status)) {
+    return true;
+  }
+
+  return false;
 }
 
 /**
@@ -322,6 +357,7 @@ function odin_volunteer_has_post_on_election($volunteer_nid, $election_nid) {
 
   $fc_query->entityCondition('entity_type', 'field_collection_item')
     ->entityCondition('bundle', 'field_electioninfo')
+    ->propertyCondition('archived', 0)
     ->fieldCondition('field_election', 'target_id', $election_nid);
 
   $result = $fc_query->execute();
@@ -376,4 +412,195 @@ function odin_get_future_elections() {
     return array_keys(array_shift($result));
   }
   return FALSE;
+}
+
+/**
+ * Helper, get a list of polling stations with enough free spots.
+ */
+
+/**
+ * Helper to get a list of polling stations with enough free spots.
+ *
+ * @param int $election_nid
+ *   Nid of election
+ * @param int $qty
+ *   Number of seats that needs to be available.
+ * @param int $role_nid
+ *   Nid of the role.
+ * @param int $party_tid
+ *   Nid of the party, can be NULL.
+ *
+ * @return array
+ *   List of polling station grouped by constituency.
+ */
+function odin_get_signup_available_polling_stations($election_nid, $qty, $role_nid, $party_tid = NULL) {
+  $election_node = node_load($election_nid);
+
+  $roles[$role_nid] = $role_nid;
+
+  // Generate options list, with polling stations with enough free seats.
+  $polling_stations_field = field_get_items('node', $election_node, 'field_polling_stations');
+
+  foreach ($polling_stations_field as $data) {
+    $polling_station_nids[$data['target_id']] = $data['target_id'];
+  }
+
+  $options = array();
+  $constituencies = array();
+  $polling_stations = array();
+  foreach (node_load_multiple($polling_station_nids) as $polling_station) {
+    $count = odin_get_volunteers_count($election_node->nid, array($polling_station->nid), $roles, $party_tid);
+
+    if (($count['total_count']['assigned'] - $count['total_count']['total']) >= $qty) {
+      if ($constituency_field = field_get_items('node', $polling_station, 'field_constituency')) {
+        // We save the data in 2 arrays, and don't populate options yes, as we
+        // have to sort the options according to the title of the
+        // constituencies.
+        $constituency = node_load($constituency_field[0]['nid']);
+        $constituencies[$constituency->nid] = $constituency->title;
+        $polling_stations[$constituency->nid][$polling_station->nid] = $polling_station->title;
+      }
+      else {
+        $options[$polling_station->nid] = $polling_station->title;
+      }
+    }
+  }
+
+  if ($constituencies && $polling_stations) {
+    natsort($constituencies);
+
+    foreach ($constituencies as $constituency_nid => $constituency_title) {
+      $options[$constituency_title] = $polling_stations[$constituency_nid];
+    }
+  }
+
+  return $options;
+}
+
+/**
+ * Returns a mapped list of all municipalities.
+ *
+ * Key is the municipality ID, and value is the municipality name.
+ *
+ * @return array
+ *   List of municipalities.
+ */
+function odin_get_municipalities() {
+  return array(
+    580 => 'Aabenraa',
+    851 => 'Aalborg',
+    751 => 'Aarhus',
+    492 => 'Ærø',
+    165 => 'Albertslund',
+    201 => 'Allerød',
+    420 => 'Assens',
+    151 => 'Ballerup',
+    530 => 'Billund',
+    400 => 'Bornholm',
+    153 => 'Brøndby',
+    810 => 'Brønderslev',
+    155 => 'Dragør',
+    240 => 'Egedal',
+    561 => 'Esbjerg',
+    430 => 'Faaborg-Midtfyn',
+    563 => 'Fanø',
+    710 => 'Favrskov',
+    320 => 'Faxe',
+    210 => 'Fredensborg',
+    607 => 'Fredericia',
+    147 => 'Frederiksberg',
+    813 => 'Frederikshavn',
+    250 => 'Frederikssund',
+    190 => 'Furesø',
+    157 => 'Gentofte',
+    159 => 'Gladsaxe',
+    161 => 'Glostrup',
+    253 => 'Greve',
+    270 => 'Gribskov',
+    376 => 'Guldborgsund',
+    510 => 'Haderslev',
+    260 => 'Halsnæs',
+    766 => 'Hedensted',
+    217 => 'Helsingør',
+    163 => 'Herlev',
+    657 => 'Herning',
+    219 => 'Hillerød',
+    860 => 'Hjørring',
+    169 => 'Høje-Taastrup',
+    316 => 'Holbæk',
+    661 => 'Holstebro',
+    615 => 'Horsens',
+    223 => 'Hørsholm',
+    167 => 'Hvidovre',
+    756 => 'Ikast-Brande',
+    183 => 'Ishøj',
+    849 => 'Jammerbugt',
+    326 => 'Kalundborg',
+    440 => 'Kerteminde',
+    101 => 'København',
+    259 => 'Køge',
+    621 => 'Kolding',
+    825 => 'Læsø',
+    482 => 'Langeland',
+    350 => 'Lejre',
+    665 => 'Lemvig',
+    360 => 'Lolland',
+    173 => 'Lyngby-Taarbæk',
+    846 => 'Mariagerfjord',
+    410 => 'Middelfart',
+    773 => 'Morsø',
+    370 => 'Næstved',
+    707 => 'Norddjurs',
+    480 => 'Nordfyns',
+    450 => 'Nyborg',
+    727 => 'Odder',
+    461 => 'Odense',
+    306 => 'Odsherred',
+    730 => 'Randers',
+    840 => 'Rebild',
+    760 => 'Ringkøbing-Skjern',
+    329 => 'Ringsted',
+    175 => 'Rødovre',
+    265 => 'Roskilde',
+    230 => 'Rudersdal',
+    741 => 'Samsø',
+    740 => 'Silkeborg',
+    746 => 'Skanderborg',
+    779 => 'Skive',
+    330 => 'Slagelse',
+    269 => 'Solrød',
+    540 => 'Sønderborg',
+    340 => 'Sorø',
+    336 => 'Stevns',
+    671 => 'Struer',
+    479 => 'Svendborg',
+    706 => 'Syddjurs',
+    185 => 'Tårnby',
+    787 => 'Thisted',
+    550 => 'Tønder',
+    187 => 'Vallensbæk',
+    573 => 'Varde',
+    575 => 'Vejen',
+    630 => 'Vejle',
+    820 => 'Vesthimmerlands',
+    791 => 'Viborg',
+    390 => 'Vordingborg'
+  );
+}
+
+/**
+ * Gets a municipality name by the provided ID.
+ *
+ * @param int $id
+ *   Id of municipality.
+ *
+ * @return string
+ *   Name of the found municipality or empty string.
+ */
+function odin_get_municipality($id) {
+  $all_municipalities = odin_get_municipalities();
+  if (array_key_exists($id, $all_municipalities)) {
+    return $all_municipalities[$id];
+  }
+  return '';
 }

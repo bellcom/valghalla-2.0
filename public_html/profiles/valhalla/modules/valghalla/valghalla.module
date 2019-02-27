@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Valghalla module.
@@ -16,17 +17,33 @@ function valghalla_menu() {
     'file path' => drupal_get_path('module', 'system'),
     'file' => 'system.admin.inc',
     'access callback' => array('user_is_logged_in'),
+    'type' => MENU_NORMAL_ITEM,
   );
 
   $items['valghalla/administration'] = array(
-    'title' => t('Administration'),
+    'title' => 'Administration',
     'page callback' => 'system_admin_menu_block_page',
     'file path' => drupal_get_path('module', 'system'),
     'file' => 'system.admin.inc',
     'access callback' => array('user_is_logged_in'),
+    'type' => MENU_NORMAL_ITEM,
   );
   return $items;
 }
+
+/**
+ * Implements hook_menu_local_tasks_alter().
+ */
+function valghalla_menu_local_tasks_alter(&$data, $router_item, $root_path) {
+  if (!empty($data['tabs'][0]['output']) && is_array($data['tabs'][0]['output'])) {
+    foreach ($data['tabs'][0]['output'] as $key => $item) {
+      if (!empty($item['#link']['path']) && $item['#link']['path'] == 'node/%/view') {
+        unset($data['tabs'][0]['output'][$key]);
+      }
+    }
+  }
+}
+
 
 /**
  * Implements hook_theme().
@@ -42,7 +59,7 @@ function valghalla_custom_theme() {
  * Implements hook_init().
  */
 function valghalla_init() {
-  // Redirect user to login, if not already logged in;
+  // Redirect user to login, if not already logged in.
   global $user;
   $allowed_uris = array(
     '/cron.php*',
@@ -88,14 +105,25 @@ function valghalla_block_view($delta = '') {
     // Election switcher is just a normal block with a form.
     case 'election_party_switcher':
       if (user_is_logged_in()) {
+
+        // Set election session from cookie, if none set.
+        if (!isset($_SESSION['election_nid'])) {
+
+          if (isset($_COOKIE['election_nid'])) {
+            $_SESSION['election_nid'] = $_COOKIE['election_nid'];
+          }
+        }
+
+        // Grab form.
         $election_form = drupal_get_form('valghalla_change_election_party_form');
+
         return array("content" => drupal_render($election_form));
       }
       break;
 
     case 'valghalla_version_tag':
       if (user_is_logged_in()) {
-        $version = file_get_contents($_SERVER['DOCUMENT_ROOT'] . '/valghalla.version' );
+        $version = file_get_contents($_SERVER['DOCUMENT_ROOT'] . '/valghalla.version');
         return array("content" => '<small><a href="https://github.com/OS2Valghalla/valghalla/tags">v.' . $version . '</a></small>');
       }
   }
@@ -175,8 +203,11 @@ function valghalla_change_election_party_form() {
  * Set election nid in $_SESSION. And update user party tid.
  */
 function valghalla_change_election_party_form_submit(&$form, $form_state) {
+  $election_nid = $form_state['values']['election'];
+
   // Set election to watch.
-  $_SESSION['election_nid'] = $form_state['values']['election'];
+  setcookie('election_nid', $election_nid, strtotime('+30 days'));
+  $_SESSION['election_nid'] = $election_nid;
 
   if (user_access('valghalla change party')) {
     // Set party.
@@ -210,4 +241,30 @@ function valghalla_permission() {
       'title' => t('Tilladelse til at se alle partier'),
     ),
   );
+}
+
+/**
+ * Implements hook_update_dependencies().
+ */
+function valghalla_update_dependencies() {
+  // Update field_phone max length to 255.
+  $dependencies['valghalla_volunteers'][7102] = array(
+    'valghalla_volunteers' => 7101,
+  );
+
+  // Update sql storages before revert features.
+  $dependencies['valghalla'][7105] = array(
+    'valghalla_volunteers' => 7102,
+  );
+  return $dependencies;
+}
+
+/**
+ * Implements hook_form_BASE_FORM_ID_alter().
+ */
+function valghalla_form_node_form_alter(&$form, &$form_state, $form_id) {
+  // Do not validate form on deleting action.
+  if (isset($form['actions']['delete'])) {
+    $form['actions']['delete']['#limit_validation_errors'] = array();
+  }
 }
