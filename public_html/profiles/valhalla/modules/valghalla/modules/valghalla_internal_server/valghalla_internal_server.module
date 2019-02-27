@@ -231,8 +231,13 @@ function valghalla_internal_server_synch_check() {
       $report_to = variable_get('valghalla_internal_server_failed_sync_report_mail', FALSE);
       if ($report_to
         && module_exists('valghalla_mail')) {
+        global $base_url;
+        $message = $base_url . "<br>" . $message;
         $params = array(
-          'subject' => t('Failed synchronization detected for !sitename', array('!sitename' => variable_get('site_name', $_SERVER['SERVER_NAME']))),
+          'subject' => t('Failed synchronization detected for !sitename. !base_url', array(
+            '!sitename' => variable_get('site_name', $_SERVER['SERVER_NAME']),
+            '!base_url' => $base_url,
+          )),
           'body' => format_string($message, $args),
           'format' => 'html',
           // We are no going to use token replacement here.
