@@ -330,14 +330,24 @@ function valghalla_volunteers_rsvp_form($form, &$form_state) {
   }
 
   if (variable_get('valghalla_volunteers_check_cpr_match', TRUE) && $GLOBALS['user']->uid == 0) {
-    $form['cpr'] = array(
-      '#type' => 'textfield',
-      '#title' => 'CPR nummer',
-      '#description' => t('CPR nummer'),
-      '#attributes' => array(
-        'placeholder' => t('CPR nummer'),
-      ),
-    );
+    if (module_exists('valghalla_external_server_nemlogin')) {
+      $cpr = valghalla_external_server_nemlogin_fetch_cpr();
+
+      if (!$cpr) {
+        $form['nemid_login_link'] = array(
+          '#markup' => '<div class="form-group">' . l(t('Login med Nemlogin'), valghalla_external_server_nemlogin_login_link(request_uri())) . '</div>',
+        );
+      }
+      else {
+        $form['#cpr'] = $cpr;
+        $form_state['cpr'] = $cpr;
+
+        // Logout url.
+        $form['nemid_logout_link'] = array(
+          '#markup' => '<div class="form-group">' . l(t('Log ud af NemID'), 'nemlogin/logout', array('query' => array('callback' => request_uri()))) . '</div>',
+        );
+      }
+    }
   }
 
   $form['rsvp'] = array(
@@ -368,11 +378,9 @@ function valghalla_volunteers_rsvp_form($form, &$form_state) {
 
   // Disabling form submit until CPR is present.
   if (variable_get('valghalla_volunteers_check_cpr_match', TRUE) && $GLOBALS['user']->uid == 0) {
-    $form['submit']['#states'] = array(
-      'enabled' => array(
-        ':input[name="cpr"]' => array('filled' => TRUE),
-      ),
-    );
+    if (!$form['#cpr']) {
+      $form['submit']['#disabled'] = 'disabled';
+    }
   }
 
   return $form;
@@ -388,31 +396,34 @@ function valghalla_volunteers_rsvp_form_validate($form, &$form_state) {
   }
 
   if (variable_get('valghalla_volunteers_check_cpr_match', TRUE) && $GLOBALS['user']->uid == 0) {
-    $cpr = $form_state['values']['cpr'];
+    if (module_exists('valghalla_external_server_nemlogin')) {
+      $cpr = $form_state['cpr'];
 
-    // Adding dash, if missing. E.g. 123456-7890.
-    if (preg_match('/[0-9]{10}/', $cpr)) {
-      $cpr = substr($cpr, 0, 6) . '-' . substr($cpr, 6, 4);
-      $form_state['values']['cpr'] = $cpr;
-    }
+      // Adding dash, if missing. E.g. 123456-7890.
+      if (preg_match('/[0-9]{10}/', $cpr)) {
+        $cpr = substr($cpr, 0, 6) . '-' . substr($cpr, 6, 4);
+        $form_state['cpr'] = $cpr;
+      }
 
-    if (!preg_match('/[0-9]{6}-[0-9]{4}/', $cpr)) {
-      form_set_error('cpr', t('Wrong CPR format, correct format is 123456-7890'));
-    }
+      if (!preg_match('/[0-9]{6}-[0-9]{4}/', $cpr)) {
+        form_set_error('cpr', t('Wrong CPR format, correct format is 123456-7890'));
+      }
 
-    if (module_exists('valghalla_synch_node_export') && module_exists('valghalla_external_server')) {
-      $cpr = valghalla_synch_node_export_get_encrypt($cpr);
-    }
+      if (module_exists('valghalla_synch_node_export') && module_exists('valghalla_external_server')) {
+        $cpr = valghalla_synch_node_export_get_encrypt($cpr);
+      }
 
-    // Getting CPR from volunteer node, which is attached to the field collection.
-    $fc = _valghalla_volunteers_validate_key(arg(2));
-    $volunteer = $fc->hostEntity();
-    if ($field_cpr_number = field_get_items('node', $volunteer, 'field_cpr_number')) {
-      $expected_cpr = $field_cpr_number[0]['value'];
-    }
+      // Getting CPR from volunteer node, which is attached to the field collection.
+      $fc = _valghalla_volunteers_validate_key(arg(2));
+      $volunteer = $fc->hostEntity();
+      if ($field_cpr_number = field_get_items('node', $volunteer, 'field_cpr_number')) {
+        $expected_cpr = $field_cpr_number[0]['value'];
+      }
 
-    if (strcmp($cpr, $expected_cpr) !== 0) {
-      form_set_error('cpr', t('This token is not valid for the provided CPR'));
+      if (strcmp($cpr, $expected_cpr) !== 0) {
+        print_r(valghalla_synch_node_export_get_decrypt($expected_cpr));
+        form_set_error('cpr', t('This token is not valid for the provided CPR'));
+      }
     }
   }
 }
