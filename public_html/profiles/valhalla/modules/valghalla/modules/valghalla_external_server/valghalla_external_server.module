@@ -49,7 +49,7 @@ function valghalla_external_server_menu() {
  */
 function valghalla_external_server_sync_check() {
   $queue = valghalla_synch_queue_get_items_ordered();
-  if (empty($queue)) {
+  if (!empty($queue)) {
     $data = 'synch_queue_not_empty';
   }
   else {
