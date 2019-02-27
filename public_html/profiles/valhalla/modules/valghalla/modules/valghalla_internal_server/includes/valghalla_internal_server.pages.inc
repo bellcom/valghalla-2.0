@@ -21,7 +21,9 @@ function valghalla_internal_server_form_alter(&$form, &$form_state, $form_id) {
     // Do synch check, if asked.
     if (isset($form_state['triggering_element']) && $form_state['triggering_element']['#id'] == 'edit-check-synch-now') {
       // Do sync even if it's failed.
-      valghalla_internal_server_synch_check();
+      if (!valghalla_internal_server_synch_check()) {
+        drupal_set_message("Synchronization check failed. See log messages for details.", 'warning');
+      }
     }
 
     $form['valghalla_internal_server_enable'] = array(

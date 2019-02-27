@@ -183,10 +183,12 @@ function valghalla_internal_server_perform_synch($force = TRUE) {
  * Synchronization check process.
  */
 function valghalla_internal_server_synch_check() {
+  $valghalla_synch_ok = FALSE;
+
   $queue = valghalla_synch_queue_get_items_ordered();
   if (!empty($queue)) {
-    watchdog('valghalla_internal_server', 'Internal server synchronization queue is not empty. Can not start synch check process.');
-    return;
+    watchdog('valghalla_internal_server', 'Internal server synchronization queue is not empty. Can not start synch check process.', array(), WATCHDOG_WARNING);
+    return FALSE;
   }
 
   $endpoint = valghalla_internal_server_get_external_server_url();
@@ -198,12 +200,12 @@ function valghalla_internal_server_synch_check() {
     $ext_data = drupal_json_decode($result->data);
     if (!is_array($ext_data)) {
       if ($ext_data == 'synch_queue_not_empty') {
-        watchdog('valghalla_internal_server', 'External server synchronization queue is not empty. Can not start synch check process.');
+        watchdog('valghalla_internal_server', 'External server synchronization queue is not empty. Can not start synch check process.', array(), WATCHDOG_WARNING);
       }
       else {
         watchdog('valghalla_internal_server', 'Fetched synchronization data is not correct. Can not start synch check process.', array(), WATCHDOG_WARNING);
       }
-      return;
+      return FALSE;
     }
     $data = valghalla_synch_node_export_election_counts();
     $valghalla_synch_ok = TRUE;
@@ -252,6 +254,7 @@ function valghalla_internal_server_synch_check() {
 
   // Set synch check timestamp.
   variable_set('valgalla_internal_server_last_synch_check', time());
+  return $valghalla_synch_ok;
 }
 
 /**
