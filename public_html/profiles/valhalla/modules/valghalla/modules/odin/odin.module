@@ -116,7 +116,7 @@ function odin_get_volunteers_count($election_nid, $polling_station_nids, $roles,
     //
     // Total assinged roles
     //
-    $assigned_count = _valghalla_helper_get_roles_count($polling_station_nids, $role_nid, $user_party_id);
+    $assigned_count = _valghalla_helper_get_roles_count($polling_station_nids, $role_nid, $user_party_id, $election_nid);
     $role_count[$role_nid]['assigned'] = is_numeric($assigned_count) ? $assigned_count: 0;
     $total_count['assigned'] += $role_count[$role_nid]['assigned'];
 
@@ -264,6 +264,22 @@ function odin_get_active_elections() {
     ->fetchAll(PDO::FETCH_COLUMN);
 
   return $nids;
+}
+
+/**
+ * Is election active?
+ * true = is active.
+ * false = not active.
+ */
+function odin_is_election_active($election_nid) {
+  $election = node_load($election_nid);
+  $field_status = field_get_items('node', $election, 'field_election_status');
+
+  if (!empty($field_status[0]['value']) && !empty($election->status)) {
+    return true;
+  }
+
+  return false;
 }
 
 /**

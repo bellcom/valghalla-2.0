@@ -233,8 +233,10 @@ function _valghalla_helper_get_posts_to_fill($polling_station, $party_tid){
  * Get a count of roles on polling station for party.
  *
  */
-function _valghalla_helper_get_roles_count($polling_station_nids, $role_nid, $party_tid = NULL){
-  $election_nid = ($_SESSION['election_nid']) ? $_SESSION['election_nid'] : variable_get('valghalla_signup_election_nid', FALSE);
+function _valghalla_helper_get_roles_count($polling_station_nids, $role_nid, $party_tid = NULL, $election_nid = NULL){
+  if (empty($election_nid)) {
+    $election_nid = ($_SESSION['election_nid']) ? $_SESSION['election_nid'] : variable_get('valghalla_signup_election_nid', FALSE);
+  }
 
   if ($election_nid) {
     $query = db_select('field_data_field_role_n' . $role_nid, 'vr');
