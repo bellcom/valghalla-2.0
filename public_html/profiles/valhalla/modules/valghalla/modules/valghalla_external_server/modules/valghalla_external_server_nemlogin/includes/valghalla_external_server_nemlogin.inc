@@ -27,8 +27,9 @@ function valghalla_external_server_nemlogin_login_link($destination) {
 }
 
 /**
- * Fetches the CPR from the session.
+ * One time fetch function for the CPR from the session.
  *
+ * This function is used to store CPR value between redirects.
  * Is none found, null is returned.
  *
  * @return string
@@ -36,7 +37,9 @@ function valghalla_external_server_nemlogin_login_link($destination) {
  */
 function valghalla_external_server_nemlogin_fetch_cpr() {
   if (isset($_SESSION['valghalla_external_server_nemlogin_cpr'])) {
-    return $_SESSION['valghalla_external_server_nemlogin_cpr'];
+    $cpr = $_SESSION['valghalla_external_server_nemlogin_cpr'];
+    unset($_SESSION['valghalla_external_server_nemlogin_cpr']);
+    return $cpr;
   }
 
   return NULL;

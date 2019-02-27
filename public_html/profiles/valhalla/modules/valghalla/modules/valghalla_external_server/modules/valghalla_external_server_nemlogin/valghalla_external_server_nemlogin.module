@@ -62,7 +62,7 @@ function valghalla_external_server_nemlogin_menu_settings_form() {
     '#title' => t('URL of IDP system.'),
     '#required' => TRUE,
     '#default_value' => variable_get('valghalla_external_server_nemlogin_idp'),
-    '#description' => t('E.g. https://nemlogin.bellcom.dk/simplesaml. NB! Do not include the trailing slash.')
+    '#description' => t('E.g. https://nemlogin.bellcom.dk/simplesaml. NB! Do not include the trailing slash.'),
   );
 
   return system_settings_form($form);
@@ -81,7 +81,7 @@ function valghalla_external_server_nemlogin_menu_settings_form_validate($form, $
   $url_to_test = array(
     $idp . VALGHALLA_EXTERNAL_SERVER_NEMLOGIN_URL_LOGINSERVICE,
     $idp . VALGHALLA_EXTERNAL_SERVER_NEMLOGIN_URL_LOGIN,
-    $idp . VALGHALLA_EXTERNAL_SERVER_NEMLOGIN_URL_LOGOUT
+    $idp . VALGHALLA_EXTERNAL_SERVER_NEMLOGIN_URL_LOGOUT,
   );
 
   // Testing if we have access to all URLs.
@@ -90,7 +90,7 @@ function valghalla_external_server_nemlogin_menu_settings_form_validate($form, $
     if ($url_request->code != 200 && $url_request->redirect_code != 302) {
       form_set_error('valghalla_external_server_nemlogin_idp', t('%url cannot be accessed. Response code: %code', array(
         '%url' => $url,
-        '%code' => $url_request->code
+        '%code' => $url_request->code,
       )));
     }
   }
@@ -128,6 +128,10 @@ function valghalla_external_server_nemlogin_login_callback() {
         $cpr = substr($cpr, 0, 6) . '-' . substr($cpr, 6, 4);
       }
 
+      // We need to store CPR value between redirects
+      // to be able use it in a a sugnup form.
+      // This value will be deleted after first using.
+      // @see valghalla_external_server_nemlogin_fetch_cpr() function.
       $_SESSION['valghalla_external_server_nemlogin_cpr'] = $cpr;
     }
   }
@@ -136,7 +140,8 @@ function valghalla_external_server_nemlogin_login_callback() {
     watchdog('Valghalla nemlogin', 'Could not fetch CPR. Response is empty', array(), WATCHDOG_WARNING);
   }
 
-  drupal_goto(drupal_get_destination());
+  $destination = drupal_get_destination();
+  valghalla_external_server_nemlogin_destroy_simplesamle_session($destination['destination']);
 }
 
 /**
@@ -152,13 +157,25 @@ function valghalla_external_server_nemlogin_logout_callback() {
   if (isset($_GET['callback'])) {
     $callback = $_GET['callback'];
   }
+  valghalla_external_server_nemlogin_destroy_simplesamle_session($callback);
+}
 
+/**
+ * Destroy SimpleSaml session function.
+ *
+ * @param string $callback
+ *   Callback path for simplesaml environment.
+ */
+function valghalla_external_server_nemlogin_destroy_simplesamle_session($callback = '') {
+  global $base_url;
   $getParams = http_build_query(
     array(
-      'RelayState' => $GLOBALS['base_url'] . base_path() . $callback,
+      'RelayState' => $base_url . base_path() . $callback,
     )
   );
 
   $idp = variable_get('valghalla_external_server_nemlogin_idp', 'https://nemlogin.bellcom.dk/simplesaml');
-  drupal_goto($idp . VALGHALLA_EXTERNAL_SERVER_NEMLOGIN_URL_LOGOUT . '?' . $getParams);
+  $url = $idp . VALGHALLA_EXTERNAL_SERVER_NEMLOGIN_URL_LOGOUT . '?' . $getParams;
+  header('Location: ' . $url, TRUE, 302);
+  drupal_exit($url);
 }
