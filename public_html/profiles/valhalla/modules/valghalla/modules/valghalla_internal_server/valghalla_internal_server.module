@@ -127,7 +127,7 @@ function valghalla_internal_server_init() {
     drupal_set_message(variable_get('valghalla_external_server_synch_error_message', 'Cannot connect to Valghalla external server'), 'warning', FALSE);
   }
 
-  if (!variable_get('valghalla_synch_ok', VALGHALLA_INTERNAL_SERVER_SYNC_OK) && !variable_get('valghalla_internal_server_run_failed_sync')) {
+  if (!variable_get('valghalla_synch_ok', VALGHALLA_INTERNAL_SERVER_SYNC_OK) && !variable_get('valghalla_internal_server_run_failed_sync', VALGHALLA_INTERNAL_SERVER_RUN_FAILED_SYNC)) {
     drupal_set_message('Synchronization with external server is stopped!', 'warning', FALSE);
   }
 }
