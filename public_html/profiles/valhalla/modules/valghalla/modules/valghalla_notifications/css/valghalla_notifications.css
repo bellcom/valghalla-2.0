@@ -1,0 +1,49 @@
+#valghalla-notifications-send-message-form li.active {
+  font-weight: bold;
+}
+#valghalla-notifications-send-message-form li {
+  list-style: none;
+}
+.valghalla-notification-subject {
+  padding: 10px 10px;
+  margin-bottom: 10px;
+  background: #e3e3e3;
+  font-weight: bold;
+}
+.valghalla-notification-body {
+  background: #f5f5f5;
+  padding: 20px 10px;
+}
+
+#edit-notifications,
+#edit-valghalla-notifications-mails {
+  width: 49%;
+  float: left;
+  margin-right: 0.5%;
+}
+#edit-valghalla-notifications-cancel {
+  width: 49%;
+}
+.form-item-valghalla-notifications-cancellation-from-participants-others {
+  float: left;
+  padding-right: 10px !important;
+}
+.form-item-valghalla-notifications-cancellation-from-participants-to-mails {
+  padding: 0 0 0 5px !important;
+}
+#edit-actions {
+  clear: both;
+}
+.notifications .form-type-radios.form-group {
+  margin-bottom: 0;
+}
+.notifications .form-type-radios label {
+  margin-right: 10px;
+}
+.notifications .form-type-radio.radio {
+  display: inline-block;
+  margin: 0 0 5px 0;
+}
+.notifications .form-type-radio.radio:first-child {
+  margin: 0 0 5px 0;
+}

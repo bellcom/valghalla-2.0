@@ -1,0 +1,61 @@
+<?php
+
+/**
+ * @file
+ * Valghalla_synch_queue.install.
+ */
+
+module_load_include('install', 'uuid', 'uuid');
+
+/**
+ * Implements hook_schema().
+ */
+function valghalla_synch_queue_schema() {
+  $schema['valghalla_synch_queue'] = array(
+    'description' => 'Table to store the queue of the items that must be synched from the external server to a backend server',
+    'fields' => array(
+      'target_uuid' => uuid_schema_field_definition(),
+      'target_id' => array(
+        'description' => 'The primary identifier for a node or taxonomy_term',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'type' => array(
+        'description' => 'Title type of the resource (node / taxonomy_term)',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'changed' => array(
+        'description' => 'The Unix timestamp when the resource was most recently saved.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'deleted' => array(
+        'description' => 'Indicates if resource is deleted.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+    ),
+    'primary key' => array('target_uuid'),
+  );
+
+  return $schema;
+}
+
+/**
+ * Add deleted field to valghalla_synch_queue table.
+ */
+function valghalla_synch_queue_update_7101() {
+  $field = array(
+    'description' => 'Indicates if resource is deleted.',
+    'type' => 'int',
+    'not null' => TRUE,
+    'default' => 0,
+  );
+  db_add_field('valghalla_synch_queue', 'deleted', $field);
+}

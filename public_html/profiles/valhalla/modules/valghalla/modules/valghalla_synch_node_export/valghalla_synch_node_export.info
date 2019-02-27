@@ -1,0 +1,8 @@
+name = Valghalla Synch Node export
+description = Various hooks that are required for node_export
+package = Valghalla - Synch
+dependencies[] = field_collection_deploy
+dependencies[] = node_export
+dependencies[] = node_export_dependency
+
+core = "7.x"

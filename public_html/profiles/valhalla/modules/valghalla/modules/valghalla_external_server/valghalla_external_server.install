@@ -1,0 +1,148 @@
+<?php
+
+/**
+ * @file
+ * Valghalla_external_server.install.
+ */
+
+/**
+ * Implements hook_install().
+ *
+ * Sets required variables.
+ */
+function valghalla_external_server_install() {
+  // Disables the CPR validation.
+  variable_set('valghalla_volunteer_validator_enable', 0);
+  variable_set('valghalla_volunteer_validator_get_address', 0);
+  variable_set('valghalla_volunteer_validator_get_name', 0);
+  variable_set('valghalla_volunteer_validator_get_subscription_status', 0);
+
+  variable_set('validate_create_age', 0);
+  variable_set('validate_create_municipality', 0);
+  variable_set('validate_create_citizenship', 0);
+  variable_set('validate_create_civil_status', 0);
+
+  // Module requires this variable to be FALSE.
+  variable_set('node_export_dependency_disable_modules', array('field_collection' => 'field_collection'));
+  variable_set('node_export_dependency_attach_nodes', FALSE);
+  variable_set('node_export_existing', 'revision');
+
+  // Load all volunteers.
+  $query = new EntityFieldQuery();
+  $result = $query->entityCondition('entity_type', 'node')
+    ->entityCondition('bundle', 'volunteers')
+    ->execute();
+
+  // Anonymize the volunteer node.
+  $volunteers = node_load_multiple(array_keys($result['node']));
+  if (!empty($volunteers) && is_array($volunteers)) {
+    foreach ($volunteers as $volunteer) {
+      $volunteer = valghalla_synch_node_export_anonymize_node($volunteer);
+      node_save($volunteer);
+
+      // Deleting all revisions of that volunteer.
+      $revisions = node_revision_list($volunteer);
+      array_shift($revisions);
+
+      foreach ($revisions as $revision) {
+        node_revision_delete($revision->vid);
+      }
+
+      // Remove this node from synch queue.
+      valghalla_synch_queue_remove_item($volunteer->uuid);
+    }
+  }
+}
+
+/**
+ * Implements hook_enable().
+ *
+ * Disables the CPR validation.
+ */
+function valghalla_external_server_enable() {
+  variable_set('valghalla_volunteer_validator_enable', 0);
+  variable_set('valghalla_volunteer_validator_get_address', 0);
+  variable_set('valghalla_volunteer_validator_get_name', 0);
+  variable_set('valghalla_volunteer_validator_get_subscription_status', 0);
+
+  variable_set('validate_create_age', 0);
+  variable_set('validate_create_municipality', 0);
+  variable_set('validate_create_citizenship', 0);
+  variable_set('validate_create_civil_status', 0);
+}
+
+/**
+ * Implements hook_requirements().
+ */
+function valghalla_external_server_requirements($phase) {
+  $requirements = array();
+  switch ($phase) {
+    case 'runtime':
+
+      $not_allowed_modules = array(
+        // Contrib modules.
+        'ckeditor',
+        'contact',
+        'field_ui',
+        'imce',
+        'locationmap',
+        'mailsystem',
+        'mimemail',
+        'panels_ipe',
+        'panels_mini',
+        'search',
+        'views_ui',
+        'contextual',
+        'dashboard',
+        'shortcut',
+        'color',
+
+        // Valghalla modules.
+        'valghalla_lists',
+        'liste_beskeder',
+        'liste_frivillige_uden_email',
+        'liste_m_cpr_nummer',
+        'liste_parti_oversigt',
+        'liste_valghalla_export',
+        'liste_valghalla_kvittering',
+        'valghalla_notifications',
+        'valghalla_signup',
+        'valghalla_signup_list',
+        'valghalla_volunteer_validator',
+        'valghalla_volunteers_import',
+        'valghalla_volunteers_invite',
+        'vcv_serviceplatformen',
+        'vcv_person_lookup_extended',
+        'vvv_validate_age',
+      );
+
+      $exists_modules = array();
+      foreach ($not_allowed_modules as $module) {
+        if (module_exists($module)) {
+          $exists_modules[] = $module;
+        }
+      }
+
+      if (!empty($exists_modules)) {
+        $requirements['valghalla_external_server'] = array(
+          'title' => t('Modules that should be disabled'),
+          'severity' => REQUIREMENT_ERROR,
+          'value' => t('Enabled: !list', array('!list' => theme('item_list', array('items' => $exists_modules)))),
+        );
+      }
+      break;
+  }
+
+  return $requirements;
+}
+
+/**
+ * Implements hook_update_N().
+ *
+ * Enabling valghalla_external_server_nemlogin module.
+ */
+function valghalla_external_server_update_7101() {
+  module_enable(array(
+    'valghalla_external_server_nemlogin',
+  ));
+}

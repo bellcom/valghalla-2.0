@@ -63,21 +63,6 @@ function get_posts_array($polling_station, $user_party_id) {
   // $station_role_id is the "uniqe" id for the current role from the current party on the
   // current station. This is set during the add volunteer to station routine
   $post_id = rand(1,20) . rand(1,20);
-  foreach($posts_to_fill as $key => $value){
-    $station_role_id = $user_party_id . $role_array[$value] . $station_id;
-
-    $volunteer_query = new EntityFieldQuery();
-    $volunteer_query->fieldCondition('field_polling_station_post', 'value', $station_role_id, 'like')
-      ->entityCondition('bundle', 'volunteers')
-      ->entityCondition('entity_type', 'node')
-      ->propertyCondition('status', 1);
-
-    $reset_query = $volunteer_query->execute();
-    $volunteers[$value] = reset($reset_query);
-
-    // yani: this array contains all the existed volunteers, used to compare with $existing later.
-    $volunteers_2[$value] = $volunteers[$value];
-  }
 
   // tth: Populate "existing"-array with volunteer data
   foreach($posts_to_fill as $key => $value){

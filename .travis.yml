@@ -1,0 +1,21 @@
+language: php
+
+php:
+  - 7.2
+
+mysql:
+  database: drupal
+  username: root
+  encoding: utf8
+
+install:
+  - mysql -e 'create database drupal;'
+  - composer global require drush/drush:8.x-dev
+  - export PATH="$HOME/.config/composer/vendor/bin:$PATH"
+  - echo 'sendmail_path = /bin/true' > $(php --ini|grep -m 1 "ini files in:"|cut -d ":" -f 2)/sendmail.ini
+  - phpenv rehash
+
+script:
+  - cd public_html
+  - drush --verbose site-install valhalla --db-url=mysql://root:@127.0.0.1/drupal --yes
+  - drush cc all --yes

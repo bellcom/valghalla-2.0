@@ -1,0 +1,200 @@
+<?php
+
+/**
+ * @file
+ * Contains install function for Valghalla notifications module.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function valghalla_notifications_install() {
+  // Copy values from email notification.
+  $election_nodes = node_load_multiple(array(), array('type' => 'election'));
+  $role_nodes = node_load_multiple(array(), array('type' => 'roles'));
+  $types = valghalla_notifications_get_types();
+
+  if (empty($election_nodes) || empty($role_nodes)) {
+    return;
+  }
+
+  foreach ($election_nodes as $election) {
+    foreach ($types as $type => $type_title) {
+      $tpl_nid = variable_get('valghalla_mail_' . $election->nid . '_' . $type, FALSE);
+      if (!empty($tpl_nid)) {
+        if ($tpl_nid == 1) {
+          $tpl_nid = '-1';
+        }
+        variable_set('valghalla_notifications_' . $election->nid . '_' . $type . '_mail', $tpl_nid);
+        variable_set('valghalla_notifications_' . $election->nid . '_' . $type . '_gateway_id', 'mail');
+        // Cleanup old variable.
+        variable_del('valghalla_mail_' . $election->nid . '_' . $type);
+      }
+    }
+
+    foreach ($role_nodes as $role_node) {
+      foreach ($types as $type => $type_title) {
+        $tpl_nid = variable_get('valghalla_mail_' . $election->nid . '_' . $role_node->nid . '_' . $type, 0);
+        if (!empty($tpl_nid)) {
+          if ($tpl_nid == 1) {
+            $tpl_nid = '-1';
+          }
+          variable_set('valghalla_notifications_' . $election->nid . '_' . $role_node->nid . '_' . $type . '_mail', $tpl_nid);
+          variable_set('valghalla_notifications_' . $election->nid . '_' . $role_node->nid . '_' . $type . '_gateway_id', 'mail');
+          // Cleanup old variable.
+          variable_del('valghalla_mail_' . $election->nid . '_' . $role_node->nid . '_' . $type);
+        }
+      }
+    }
+  }
+
+  $roles = db_query("SELECT name, rid FROM {role} WHERE rid > 2");
+  foreach ($roles as $role) {
+    if ($role->name == 'Valgsekretær') {
+      continue;
+    }
+
+    $cancellation_from_participants_by_role = variable_get('valghalla_mail_cancellation_from_participants_' . $role->rid);
+    if (!empty($cancellation_from_participants_by_role)) {
+      variable_set('valghalla_notifications_cancellation_from_participants_' . $role->rid, $cancellation_from_participants_by_role);
+      // Cleanup old variable.
+      variable_del('valghalla_mail_cancellation_from_participants_' . $role->rid);
+    }
+  }
+
+  $mail_variables = array(
+    'cancellation_from_participants_',
+    'cancellation_from_participants_mail_rsvp_never',
+    'cancellation_from_participants_mail_rsvp_no',
+    'cancellation_from_participants_others',
+    'cancellation_from_participants_to_mails',
+    'invitation',
+    'last_run',
+    'send_invitation_on_add',
+  );
+  foreach ($mail_variables as $var_suff) {
+    $var_value = variable_get('valghalla_mail_' . $var_suff);
+    if (!empty($var_value)) {
+      variable_set('valghalla_notifications_' . $var_suff, $var_value);
+      // Cleanup old variable.
+      variable_del('valghalla_mail_' . $var_suff);
+    }
+  }
+}
+
+/**
+ * Implements hook_enable().
+ */
+function valghalla_notification_enable() {
+  // Set permissions for roles.
+  valghalla_notifications_update_7103();
+}
+
+/**
+ * Implements hook_schema().
+ */
+function valghalla_notifications_schema() {
+  $schema = array();
+
+  $schema['entity_valghalla_notification'] = array(
+    'description' => 'The base table for valghalla notifications entity.',
+    'fields' => array(
+      'id' => array(
+        'description' => 'Primary key of the valghalla notifications entity.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'bundle_type' => array(
+        'description' => 'The bundle type',
+        'type' => 'text',
+        'size' => 'medium',
+        'not null' => TRUE,
+      ),
+      'type' => array(
+        'description' => 'Notification type',
+        'type' => 'varchar',
+        'length' => 255,
+        'default' => '',
+      ),
+      'recipient' => array(
+        'description' => 'Notification receiver',
+        'type' => 'varchar',
+        'length' => 255,
+        'default' => '',
+      ),
+      'message' => array(
+        'description' => 'Notification message',
+        'type' => 'text',
+        'not null' => FALSE,
+        'size' => 'big',
+      ),
+      'vol_id' => array(
+        'description' => 'The Volunteer reference',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'gateway' => array(
+        'description' => 'Notification gateway',
+        'type' => 'varchar',
+        'length' => 255,
+        'default' => '',
+      ),
+      'status' => array(
+        'description' => 'Status',
+        'type' => 'varchar',
+        'length' => 255,
+        'default' => '',
+      ),
+      'status_info' => array(
+        'description' => 'Notification status details',
+        'type' => 'text',
+        'not null' => FALSE,
+        'size' => 'big',
+      ),
+      'created' => array(
+        'description' => 'The Unix timestamp of the entity creation time.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+    ),
+    'primary key' => array('id'),
+  );
+
+  return $schema;
+}
+
+/**
+ * Add recipient field to {entity_valghalla_notification} table.
+ */
+function valghalla_notifications_update_7002() {
+  $spec = array(
+    'description' => 'Notification recipient',
+    'type' => 'varchar',
+    'length' => 255,
+    'default' => '',
+  );
+  db_add_field('entity_valghalla_notification', 'recipient', $spec);
+}
+
+/**
+ * Implements hook_update_N().
+ *
+ * Adding notification permission to roles:
+ * 'administrator', 'Partisekretær', 'Valgsekretær'.
+ */
+function valghalla_notifications_update_7103() {
+  $permissions = array(
+    'administer valghalla notification entities',
+    'view any valghalla notification entity',
+  );
+  foreach (array('administrator', 'Partisekretær', 'Valgsekretær') as $role_name) {
+    $role = user_role_load_by_name($role_name);
+    if (empty($role)) {
+      continue;
+    }
+    user_role_grant_permissions($role->rid, $permissions);
+  }
+}

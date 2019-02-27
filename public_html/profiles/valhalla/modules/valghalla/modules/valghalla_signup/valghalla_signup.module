@@ -43,12 +43,16 @@ function valghalla_signup_valghalla_allowed_uris_alter(&$allowed_uris) {
  * Form callback for administration page.
  */
 function valghalla_signup_administration_form() {
+  if (module_exists('valghalla_external_server')) {
+    drupal_set_message('Valghalla External Server module is enabled, which conflicts with Valghalla Signup module. Please contant your system administrator.', 'warning');
+  }
+
   $form['valghalla_signup_enable'] = array(
     '#title' => t('Aktiver ekstern tilmelding'),
     '#type' => 'checkbox',
     '#default_value' => variable_get('valghalla_signup_enable', FALSE),
   );
-   $form['valghalla_signup_addrss_validation_disable'] = array(
+  $form['valghalla_signup_addrss_validation_disable'] = array(
     '#title' => t('Disables address field validation'),
     '#type' => 'checkbox',
     '#default_value' => variable_get('valghalla_signup_addrss_validation_disable', FALSE),
@@ -256,7 +260,7 @@ function valghalla_signup_signup_form($form, &$form_state) {
       '#suffix' => '</div></div>',
     );
 
-    if ($pollingstations = valghalla_signup_get_avaiable_polling_stations($election_nid, $qty, $role_nid)) {
+    if ($pollingstations = odin_get_signup_available_polling_stations($election_nid, $qty, $role_nid)) {
 
       array_unshift($pollingstations, 'Vælg valgsted');
       $form['pollingstation_nid'] = array(
@@ -388,7 +392,7 @@ function _valghalla_signup_birthdate_pre_render($element) {
 /**
  * Validation for signup form.
  */
-function valghalla_signup_signup_form_validate($form, &$form_state) {  
+function valghalla_signup_signup_form_validate($form, &$form_state) {
   if (isset($form_state['values']['volunteers'])) {
     if ($form_state['values']['pollingstation_nid'] <= 0) {
       form_set_error('pollingstation_nid', 'Du skal vælge et valgsted.');
@@ -431,7 +435,7 @@ function valghalla_signup_signup_form_submit($form, &$form_state) {
   $role_nid = $form_state['values']['role_nid'];
   $election_nid = variable_get('valghalla_signup_election_nid', FALSE);
 
-  $polling_station_nids = valghalla_signup_get_avaiable_polling_stations($election_nid, $qty, $role_nid);
+  $polling_station_nids = odin_get_signup_available_polling_stations($election_nid, $qty, $role_nid);
 
   $polling_station_nid = $form_state['values']['pollingstation_nid'];
   foreach ($polling_station_nids as $constituency) {
@@ -485,7 +489,6 @@ function valghalla_signup_add_volunteer($volunteer, $polling_station_nid) {
   $volunteer_node->field_email[LANGUAGE_NONE][]['email'] = $volunteer['email'];
   $volunteer_node->field_phone[LANGUAGE_NONE][]['value'] = $volunteer['phone'];
   $volunteer_node->field_party[LANGUAGE_NONE][]['tid'] = $volunteer_party_tid;
-  $volunteer_node->field_rsvp_comment[LANGUAGE_NONE][]['value'] = $volunteer['comment'];
 
   $volunteer_node->field_external_signup[LANGUAGE_NONE][]['value'] = 1;
 
@@ -506,51 +509,4 @@ function valghalla_signup_add_volunteer($volunteer, $polling_station_nid) {
     // If the post cannot be added, we have no need for the volunteer.
     node_delete($volunteer_node->nid);
   }
-}
-
-/**
- * Helper, get a list of polling stations with enough free spots.
- */
-function valghalla_signup_get_avaiable_polling_stations($election_nid, $qty, $role_nid) {
-  $election_node = node_load($election_nid);
-
-  $roles[$role_nid] = $role_nid;
-
-  // Generate options list, with polling stations with enough free seats.
-  $polling_stations_field = field_get_items('node', $election_node, 'field_polling_stations');
-
-  foreach ($polling_stations_field as $data) {
-    $polling_station_nids[$data['target_id']] = $data['target_id'];
-  }
-
-  $options = array();
-  $constituencies = array();
-  $polling_stations = array();
-  foreach (node_load_multiple($polling_station_nids) as $polling_station) {
-    $count = odin_get_volunteers_count($election_node->nid, array($polling_station->nid), $roles);
-
-    if (($count['total_count']['assigned'] - $count['total_count']['total']) >= $qty) {
-      if ($constituency_field = field_get_items('node', $polling_station, 'field_constituency')) {
-        // We save the data in 2 arrays, and don't populate options yes, as we
-        // have to sort the options according to the title of the
-        // constituencies.
-        $constituency = node_load($constituency_field[0]['nid']);
-        $constituencies[$constituency->nid] = $constituency->title;
-        $polling_stations[$constituency->nid][$polling_station->nid] = $polling_station->title;
-      }
-      else {
-        $options[$polling_station->nid] = $polling_station->title;
-      }
-    }
-  }
-
-  if ($constituencies && $polling_stations) {
-    natsort($constituencies);
-
-    foreach ($constituencies as $constituency_nid => $constituency_title) {
-      $options[$constituency_title] = $polling_stations[$constituency_nid];
-    }
-  }
-
-  return $options;
 }

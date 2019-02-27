@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * valghalla_user_tools.features.field_instance.inc
@@ -23,6 +24,12 @@ function valghalla_user_tools_field_default_field_instances() {
         'settings' => array(),
         'type' => 'text_default',
         'weight' => 1,
+      ),
+      'full' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
       ),
     ),
     'entity_type' => 'user',
@@ -57,6 +64,12 @@ function valghalla_user_tools_field_default_field_instances() {
         'settings' => array(),
         'type' => 'text_default',
         'weight' => 2,
+      ),
+      'full' => array(
+        'label' => 'above',
+        'settings' => array(),
+        'type' => 'hidden',
+        'weight' => 0,
       ),
     ),
     'entity_type' => 'user',

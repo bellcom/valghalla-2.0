@@ -1,0 +1,349 @@
+<?php
+
+/**
+ * @file
+ * Valghalla eboks module.
+ */
+
+use Drupal\Valghalla\Pdf;
+use Mpdf\Output\Destination;
+
+/**
+ * Code for the Valghalla eboks. feature.
+ */
+include_once 'valghalla_eboks.features.inc';
+
+/**
+ * Implements hook_notifications_info().
+ */
+function valghalla_eboks_notifications_info() {
+  return array(
+    'eboks' => array(
+      'name' => 'eBoks',
+      'node_type' => 'eboks',
+      'get_message_callback' => 'valghalla_eboks_get_message',
+      'send_message_callback' => 'valghalla_eboks_send_message',
+      'send_to_callback' => 'valghalla_eboks_send_to',
+    ),
+  );
+}
+
+/**
+ * Implements hook_ctools_plugin_directory().
+ */
+function valghalla_eboks_ctools_plugin_directory($module, $plugin) {
+  if ($module == 'valghalla_sms' && \array_key_exists($plugin, valghalla_sms_ctools_plugin_type())) {
+    return 'plugins/' . $plugin;
+  }
+}
+
+/**
+ * Get message callback.
+ */
+function valghalla_eboks_get_message($template_node) {
+  $body_field = field_get_items('node', $template_node, 'body');
+  $subject_field = field_get_items('node', $template_node, 'field_eboks_subject');
+
+  $attachments = array();
+  $files = field_get_items('node', $template_node, 'field_eboks_attachments');
+  if (!empty($files)) {
+    foreach ($files as $file_info) {
+      $file = file_load($file_info['fid']);
+      $parts = pathinfo($file->uri);
+      $attachments[] = array(
+        'filecontent' => file_get_contents($file->uri),
+        'filename' => $file->filename,
+        'filemime' => $file->filemime,
+        'extension' => $parts['extension'],
+      );
+    }
+  }
+  $body = $body_field[0]['value'];
+  $format = $body_field[0]['format'];
+  $subject = $subject_field[0]['value'];
+  return array(
+    'subject' => $subject,
+    'body' => $body,
+    'format' => $format,
+    'attachments' => $attachments,
+  );
+}
+
+/**
+ * Send message callback.
+ */
+function valghalla_eboks_send_message($to, $params, $context = array()) {
+  module_load_include('inc', 'valghalla_eboks', 'includes/ServicePlatformenPrintDP');
+
+  /** @var EntityInterface $notification */
+  $notification = entity_get_controller('entity_valghalla_notification')->create(array(
+    'type' => $params['notification_type'],
+    'gateway' => 'eboks',
+    'recipient' => !empty($context['CVR']) ? $to : substr($to, 0, 6) . '-' . str_repeat('x', 4),
+    'vol_id' => $params['volunteer_nid'],
+    'status' => 'Failed',
+  ));
+
+  $notification->save();
+  $params['notification_id'] = $notification->id;
+
+  $service = new ServiceplatformenPrintDP();
+  $service->prepareRequest($params);
+  $type = 'CPR';
+  if (!empty($context['CVR'])) {
+    $type = 'CVR';
+  }
+  $service->setTo($to, $type);
+  $result = $service->sendMessage();
+  if (!$result['status']) {
+    watchdog('valghalla_eboks', 'WS request failed. Error message: %message', array('%message' => $result['text']), WATCHDOG_ERROR);
+  }
+
+  $notification->status = $result['status'] ? 'Succeed' : 'Failed';
+  $notification->message = $params['title_text'] . '<br>' . $params['rendered_message'];
+  if (!empty($params['attachments'])) {
+    $files = array();
+    foreach ($params['attachments'] as $attachment) {
+      $files[] = $attachment['filename'];
+    }
+    $notification->message .= t('Attachments:') . theme('item_list', array('items' => $files));
+  }
+  $notification->status_info = $result['response'];
+  $notification->save();
+  return $result['status'];
+}
+
+/**
+ * Get send to data callback.
+ */
+function valghalla_eboks_send_to($entity) {
+  if ($field = field_get_items('node', $entity, 'field_cpr_number')) {
+    return $field[0]['value'];
+  }
+  return FALSE;
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function valghalla_eboks_form_valghalla_notifications_admin_settings_alter(&$form, &$form_state, $form_id) {
+  $form['print_service'] = array(
+    '#title' => t('Print service'),
+    '#type' => 'fieldset',
+  );
+
+  $form['print_service']['valghalla_eboks_serviceagreementuuid'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Serviceaftale UUID'),
+    '#default_value' => variable_get('valghalla_eboks_serviceagreementuuid', ''),
+  );
+
+  $form['print_service']['valghalla_eboks_serviceuuid'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Service UUID'),
+    '#default_value' => variable_get('valghalla_eboks_serviceuuid', ''),
+  );
+
+  $form['print_service']['valghalla_eboks_wsdl'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Service WSDL URL location'),
+    '#default_value' => variable_get('valghalla_eboks_wsdl', ''),
+    '#maxlength' => 256,
+  );
+  array_unshift($form['#submit'], 'valghalla_eboks_wsdl_submit');
+
+  $form['print_service']['valghalla_eboks_location'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Service URL location'),
+    '#default_value' => variable_get('valghalla_eboks_location', ''),
+  );
+
+  $form['print_service']['valghalla_eboks_usersystemuuid'] = array(
+    '#type' => 'textfield',
+    '#title' => t('System UUID'),
+    '#default_value' => variable_get('valghalla_eboks_usersystemuuid', ''),
+  );
+
+  $form['print_service']['valghalla_eboks_useruuid'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Kommune UUID'),
+    '#default_value' => variable_get('valghalla_eboks_useruuid', ''),
+  );
+
+  $form['print_service']['valghalla_eboks_accountinginfo'] = array(
+    '#type' => 'textfield',
+    '#title' => t('AccountingInfo'),
+    '#default_value' => variable_get('valghalla_eboks_accountinginfo', ''),
+  );
+
+  $form['print_service']['valghalla_eboks_sys_id'] = array(
+    '#type' => 'textfield',
+    '#title' => t('SystemID'),
+    '#default_value' => variable_get('valghalla_eboks_sys_id', ''),
+    '#description' => t('SystemID er et samlende begreb for SysID hos Digital post og AfsenderSystemID hos Fjernprintleverandøren.'),
+  );
+
+  $form['print_service']['valghalla_eboks_materiale_id_dp'] = array(
+    '#type' => 'textfield',
+    '#title' => t('MaterialeID Digital POST'),
+    '#default_value' => variable_get('valghalla_eboks_materiale_id_dp', ''),
+    '#description' => t('ID på en brevtype i Digital post bred forstand. Afsender opretter brevtypen, som tildeles et entydig ID.'),
+  );
+
+  $form['print_service']['valghalla_eboks_materiale_id_nemsms'] = array(
+    '#type' => 'textfield',
+    '#title' => t('MaterialeID NemSMS'),
+    '#default_value' => variable_get('valghalla_eboks_materiale_id_nemsms', ''),
+    '#description' => t('ID på en brevtype i NemSMS bred forstand. Afsender opretter brevtypen, som tildeles et entydig ID.'),
+  );
+
+  $form['print_service']['valghalla_eboks_certfile_passphrase'] = array(
+    '#type' => 'password',
+    '#title' => t('Certfile passphrase'),
+    '#default_value' => variable_get('valghalla_eboks_certfile_passphrase', ''),
+  );
+
+  $form['print_service']['valghalla_eboks_certfile'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Certfile'),
+    '#default_value' => variable_get('valghalla_eboks_certfile', ''),
+    '#description' => t('Absolute path to SSL certificate file for service soap request'),
+  );
+
+  $form['print_service']['valghalla_eboks_debug'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Debug'),
+    '#default_value' => variable_get('valghalla_eboks_debug', FALSE),
+    '#description' => t('Request files will be stored for debug in !location', array('!location' => file_directory_temp() . '/service-print-soap')),
+  );
+
+  $form['print_service']['valghalla_eboks_test_cpr'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Send test eboks message to CPR number'),
+
+  );
+
+  $form['print_service']['valghalla_eboks_test_cvr'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Send test eboks message to CVR number'),
+  );
+  $form['#submit'][] = 'valghalla_eboks_test_submit';
+}
+
+/**
+ * Custom submit handler for eboks settings.
+ */
+function valghalla_eboks_wsdl_submit(&$form, &$form_state) {
+  if ($form_state['values']['valghalla_eboks_certfile_passphrase'] == '') {
+    unset($form_state['values']['valghalla_eboks_certfile_passphrase']);
+  }
+
+  if ($valghalla_eboks_wsdl = $form_state['values']['valghalla_eboks_wsdl']) {
+    // If it is relative URL make is absolute.
+    if (substr($valghalla_eboks_wsdl, 0, 4) !== "http") {
+      global $base_url, $base_path;
+      $form_state['values']['valghalla_eboks_wsdl'] = $base_url . $base_path . drupal_get_path('module', 'valghalla_eboks') . '/' . $valghalla_eboks_wsdl;
+    }
+  }
+
+  if (empty($form_state['values']['valghalla_eboks_debug']) && file_exists(file_directory_temp() . '/service-print-soap')) {
+    $files = glob(file_directory_temp() . '/service-print-soap/*');
+    foreach ($files as $file) {
+      if (is_file($file)) {
+        unlink($file);
+      }
+    }
+  }
+}
+
+/**
+ * Custom submit handler for test eboks action.
+ */
+function valghalla_eboks_test_submit(&$form, &$form_state) {
+  $to = NULL;
+  $context = [];
+  if (!empty($form_state['values']['valghalla_eboks_test_cvr'])) {
+    $to = $form_state['values']['valghalla_eboks_test_cvr'];
+    $context['CVR'] = TRUE;
+  }
+
+  if (!empty($form_state['values']['valghalla_eboks_test_cpr'])) {
+    $to = $form_state['values']['valghalla_eboks_test_cpr'];
+    $context['CPR'] = TRUE;
+  }
+
+  if (empty($to)) {
+    return;
+  }
+
+  $args = array('!site' => variable_get('site_name'));
+  $message_content = format_string('This message has been sent from !site by the Valghalla notifications module. Eboks Gateway has been successfully configured.', $args);
+  $pdf = new Pdf();
+  $pdf->WriteHTML('<h1>Attachment</h1><p>' . $message_content . '</p>');
+  $file = $pdf->Output('', Destination::STRING_RETURN);
+  $params = array(
+    'subject' => format_string('Eboks Gateway has been successfully configured for @site', $args),
+    'body' => $message_content,
+    'format' => 'filtered_html',
+    // We are no going to use token replacement here.
+    'tokens' => array(),
+    'attachments' => array(
+      array(
+        'filecontent' => $file,
+        'filename' => 'test-' . date('Ymd-His') . '.pdf',
+        'filemime' => 'application/pdf',
+        'extension' => 'pdf',
+      ),
+    ),
+    'volunteer_nid' => 0,
+    'notification_type' => 'direct',
+  );
+  if (valghalla_notifications_direct_send('eboks', $to, $params, $context)) {
+    drupal_set_message(format_string('Test message has been sent to !type !number.', array(
+      '!type' => empty($form_state['values']['valghalla_eboks_test_cpr']) ? 'CVR' : 'CPR',
+      '!number' => $to,
+    )));
+  }
+  else {
+    drupal_set_message('Test message sending failed. Please check error log for details.', 'warning');
+  }
+}
+
+/**
+ * Initiate function to get default settings for eboks.
+ */
+function valghalla_eboks_default_settings() {
+  global $base_url, $base_path;
+  $variables_default = array(
+    'valghalla_eboks_serviceuuid' => 'fd885b8b-4a3f-46cb-b367-6c9dda1c78f6',
+    'valghalla_eboks_wsdl' => $base_url . $base_path . drupal_get_path('module', 'valghalla_eboks') . '/PriveService/wsdl/token/PrintService.wsdl',
+    'valghalla_eboks_location' => 'https://prod.serviceplatformen.dk/service/Print/Print/2',
+    'valghalla_eboks_usersystemuuid' => '8a0aa317-6805-427a-acd5-78f2af15a3c9',
+    'valghalla_eboks_accountinginfo' => 'Valghalla',
+  );
+
+  // Fetch variables from similar module.
+  if (module_exists('vcv_serviceplatformen')) {
+    $vcv_to_eboks_variables = array(
+      'vcv_serviceplatformen_useruuid' => 'valghalla_eboks_useruuid',
+      'vcv_serviceplatformen_certfile_passphrase' => 'valghalla_eboks_certfile_passphrase',
+      'vcv_serviceplatformen_certfile' => 'valghalla_eboks_certfile',
+    );
+    foreach ($vcv_to_eboks_variables as $vcv_variable => $eboks_variable) {
+      $vcv_value = variable_get($vcv_variable);
+      if (!empty($vcv_value)) {
+        $variables_default[$eboks_variable] = $vcv_value;
+      }
+    }
+  }
+  foreach ($variables_default as $variable => $default_value) {
+    $value = variable_get($variable);
+    if (empty($value)) {
+      variable_set($variable, $default_value);
+      drupal_set_message(t('Default value for !variable has been set to "!value"', array(
+        '!variable' => $variable,
+        '!value' => $default_value,
+      )));
+    }
+  }
+}

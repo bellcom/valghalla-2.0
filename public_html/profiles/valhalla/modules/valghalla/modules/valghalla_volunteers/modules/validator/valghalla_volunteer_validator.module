@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Volunteer validate module.
@@ -26,6 +27,14 @@ function valghalla_volunteer_validator_menu() {
     'file' => 'valghalla_volunteer_validator.admin.inc',
   );
 
+  $items['admin/valghalla/validator/batch/validate/%'] = array(
+    'title' => 'Deltager validering',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('valghalla_volunteer_validator_validate_batch', 5),
+    'access arguments' => array('administer valghalla'),
+    'file' => 'valghalla_volunteer_validator.admin.inc',
+  );
+
   return $items;
 }
 
@@ -41,6 +50,84 @@ function valghalla_volunteer_validator_ctools_plugin_type() {
       'use hooks' => TRUE,
     ),
   );
+}
+
+/**
+ * Implements hook_node_presave().
+ */
+function valghalla_volunteer_validator_node_presave($node) {
+  if ($node->type != 'volunteers') {
+    return;
+  }
+  $node_wrapper = entity_metadata_wrapper('node', $node);
+  $cpr = $node_wrapper->field_cpr_number->value();
+
+  // Fetching the name and address.
+  if (variable_get('valghalla_volunteer_validator_get_address', FALSE)) {
+    $get_address_messages = valghalla_volunteer_validator_query_service('get_address', $cpr);
+
+    foreach ($get_address_messages as $get_address_message) {
+      if ($get_address_message['status']) {
+        $field_map = array(
+          'field_address_road' => 'road',
+          'field_address_road_no' => 'road_no',
+          'field_address_floor' => 'floor',
+          'field_address_door' => 'door',
+          'field_address_zipcode' => 'zipcode',
+          'field_address_city' => 'city',
+          'field_address_coname' => 'coname',
+          'field_municipality' => 'municipality',
+        );
+
+        foreach ($field_map as $field => $index) {
+          $node_wrapper->{$field} = $get_address_message[$index];
+        }
+      }
+    }
+  }
+
+  // Generating node title.
+  $field_map = array(
+    'field_first_name' => array('fornavn', 'mellemnavn'),
+    'field_second_name' => 'efternavn',
+  );
+
+  $names_arr = array();
+  if (variable_get('valghalla_volunteer_validator_get_name')) {
+    // Fetching names split.
+    $data = vcv_person_lookup_extended_query($cpr);
+    if ($data['status']) {
+      foreach ($field_map as $field => $index_keys) {
+        if (!is_array($index_keys)) {
+          $index_keys = array($index_keys);
+        }
+        $value_arr = [];
+        foreach ($index_keys as $index) {
+          if (!empty($data['persondata']->navn->{$index})) {
+            $value_arr[] = trim($data['persondata']->navn->{$index});
+          }
+        }
+        $value = implode(' ', $value_arr);
+        $node_wrapper->{$field} = $value;
+        $names_arr[] = $value;
+      }
+    }
+  }
+  else {
+    foreach ($field_map as $field => $index_keys) {
+      $names_arr[] = trim($node_wrapper->{$field}->value());
+    }
+  }
+  $node_wrapper->title = implode(' ', $names_arr);
+
+  // Fetching subscription.
+  if (variable_get('valghalla_volunteer_validator_get_subscription_status')) {
+    $subscriptions = valghalla_volunteer_validator_query_service('get_subscriptions_status', $cpr);
+    if (!empty($subscriptions[0]['status'])) {
+      $node_wrapper->field_no_mail = (int) $subscriptions[0]['digital_post'] == FALSE ? '1' : '0';
+      $node_wrapper->field_no_sms = $subscriptions[0]['nem_sms'] == FALSE ? '1' : '0';
+    }
+  }
 }
 
 /**
@@ -70,57 +157,38 @@ function valghalla_volunteer_validator_node_validate($node, $form, &$form_state)
     }
   }
 
-  // Query service.
-  if (variable_get('valghalla_volunteer_validator_enable', FALSE)) {
-    // To reduce calls to the service, we fetch the address right away, if
-    // address querying is enabled.
-    if (variable_get('valghalla_volunteer_validator_get_address', FALSE)) {
-      $get_address_messages = valghalla_volunteer_validator_query_service('get_address', $cpr);
+  // Skip validation via services if disabled.
+  if (!variable_get('valghalla_volunteer_validator_enable', FALSE)) {
+    return;
+  }
 
-      foreach ($get_address_messages as $get_address_message) {
-        if ($get_address_message['status']) {
-          // If we successfully fetch address data from the service, save this to
-          // the volunteer.
-          // These are the fields, and their corresponding offsets from the
-          // service message array.
-          $field_map = array(
-            'field_address_road' => 'road',
-            'field_address_road_no' => 'road_no',
-            'field_address_floor' => 'floor',
-            'field_address_door' => 'door',
-            'field_address_zipcode' => 'zipcode',
-            'field_address_city' => 'city',
-            'field_address_coname' => 'coname',
-            'field_municipality' => 'municipality',
-          );
+  $query = drupal_get_query_parameters();
+  if (!empty($query['election_nid'])) {
+    $election = node_load($query['election_nid']);
+  }
 
-          if (variable_get('valghalla_volunteer_validator_get_name')) {
-            form_set_value($form['title'], $get_address_message['name'], $form_state);
-          }
+  if (!empty($query['party_tid'])) {
+    $party_tid = $query['party_tid'];
+    $party = taxonomy_term_load($party_tid);
+  }
 
-          foreach ($field_map as $field => $index) {
-            $language = field_language('node', $node, $field);
-
-            form_set_value(array(
-                '#parents' => array($field, $language, 0, 'value')
-              ), $get_address_message[$index], $form_state
-            );
-          }
-        }
-      }
+  // Run validator.
+  if (empty($election) && empty($party)) {
+    $messages = valghalla_volunteer_validator_query_service('validate_cpr', $cpr);
+    $messages = array_merge($messages, valghalla_volunteer_validator_validate($node));
+  }
+  else {
+    $election_config = valghalla_volunteer_validator_get_election_config($election, $party);
+    $messages = valghalla_volunteer_validator_query_service('validate_cpr_per_election', $cpr, $election_config);
+    $field_election_date = field_get_items('node', $election, 'field_date');
+    if ($election_config['validate_age'] && !empty($field_election_date[0]['value'])) {
+      $messages = array_merge($messages, valghalla_volunteer_validator_validate_service('validate_per_election', $cpr, array('election_date' => $field_election_date[0]['value'])));
     }
+  }
 
-    //run validator
-    $messages = valghalla_volunteer_validator_query_service('validate_cpr', $cpr, 'single');
-
-    foreach ($messages as $message) {
-      if ($message['status'] === FALSE) {
-        form_set_error('field_cpr_number', t('Det angivne CPR-nummer kan ikke valideres: @text', array('@text' => $message['text'])));
-      }
-    }
-
-    if ($errors = valghalla_volunteer_validator_validate($node, 'single')) {
-      form_set_error('field_cpr_number', t('Det angivne CPR-nummer kan ikke valideres: @text', array('@text' => $errors['age']['text'])));
+  foreach ($messages as $message) {
+    if ($message['status'] === FALSE) {
+      form_set_error('field_cpr_number', t('Det angivne CPR-nummer kan ikke valideres: @text', array('@text' => $message['text'])));
     }
   }
 }
@@ -150,13 +218,22 @@ function valghalla_volunteer_validator_form_volunteers_node_form_alter(&$form, &
     }
   }
 
-  if (variable_get('valghalla_volunteer_validator_get_name')) {
-    if (!$form['title']['#default_value']) {
-      $form['title']['#default_value'] = 'Hentes når indholdet gemmes';
-    }
-    $form['title']['#disabled'] = TRUE;
-    $form['title']['#suffix'] = '<em>Indholdet af dette felt bliver automatisk hentet fra CPR service, når indholdet gemmes.</em>';
+  if (!$form['title']['#default_value']) {
+    $form['title']['#default_value'] = 'Hentes når indholdet gemmes';
   }
+  $form['title']['#disabled'] = TRUE;
+  $form['title']['#description'] = '<em>Indholdet af dette felt bliver automatisk hentet fra CPR service, når indholdet gemmes.</em>';
+
+  if (variable_get('valghalla_volunteer_validator_get_name')) {
+    $form['field_first_name']['#disabled'] = TRUE;
+    $form['field_second_name']['#disabled'] = TRUE;
+  }
+
+  if (variable_get('valghalla_volunteer_validator_get_subscription_status')) {
+    $form['field_no_mail']['#access'] = FALSE;
+    $form['field_no_sms']['#access'] = FALSE;
+  }
+
 }
 
 /**
@@ -190,7 +267,7 @@ function valghalla_volunteer_validator_query_service($action, $cpr, $process = '
   $enabled_services = variable_get('valghalla_volunteer_validator_cpr_service', FALSE);
   $plugins = ctools_get_plugins('valghalla_volunteer_validator', 'cpr_service');
 
-  foreach($plugins as $plugin_key => $plugin) {
+  foreach ($plugins as $plugin_key => $plugin) {
     if ($enabled_services[$plugin_key] && isset($plugin[$action]) && function_exists($plugin[$action])) {
       $message = call_user_func($plugin[$action], $cpr, $process);
       $messages[] = $message;
@@ -201,9 +278,29 @@ function valghalla_volunteer_validator_query_service($action, $cpr, $process = '
 }
 
 /**
+ * Validate volunteer, using enabled validate plugins.
+ */
+function valghalla_volunteer_validator_validate_service($action, $cpr, $context) {
+  $messages = array();
+  ctools_include('plugins');
+
+  $enabled_services = variable_get('valghalla_volunteer_validator_services', FALSE);
+  $plugins = ctools_get_plugins('valghalla_volunteer_validator', 'validate');
+
+  foreach ($plugins as $plugin_key => $plugin) {
+    if ($enabled_services[$plugin_key] && isset($plugin[$action]) && function_exists($plugin[$action])) {
+      $message = call_user_func($plugin[$action], $cpr, $context);
+      $messages[] = $message;
+    }
+  }
+
+  return $messages;
+}
+
+/**
  * Validate volunteer, using enabled plugins.
  */
-function valghalla_volunteer_validator_validate(&$volunteer, $cpr_message) {
+function valghalla_volunteer_validator_validate(&$volunteer) {
   ctools_include('plugins');
   $plugins = ctools_get_plugins('valghalla_volunteer_validator', 'validate');
 
@@ -213,7 +310,7 @@ function valghalla_volunteer_validator_validate(&$volunteer, $cpr_message) {
   foreach ($enabled as $service) {
     if (isset($plugins[$service])) {
       $callback = $plugins[$service]['validate'];
-      $message = call_user_func($callback, $volunteer, $cpr_message);
+      $message = call_user_func($callback, $volunteer);
 
       if (!$message['valid']) {
         $log[$service] = $message;
@@ -273,4 +370,60 @@ function valghalla_volunteer_validator_get_cpr($volunteer) {
       node_save($volunteer);
     }
   }
+}
+
+/**
+ * Composes an array of validation configurations saved on election.
+ *
+ * The party validation configurations can override the election validation
+ * configurations.
+ *
+ * @param mixed $election
+ *   Election node.
+ * @param mixed $party
+ *   Party taxonomy term if settings need to be retrieved with party override.
+ *
+ * @return array
+ *   Validation configuration of election.
+ */
+function valghalla_volunteer_validator_get_election_config($election, $party = NULL) {
+  $election_config = array(
+    'validate_municipality' => FALSE,
+    'validate_citizenship' => FALSE,
+    'validate_civil_status' => FALSE,
+    'validate_age' => FALSE,
+  );
+
+  $field_election_valid_municipal = field_get_items('node', $election, 'field_election_valid_municipal');
+  if (!empty($field_election_valid_municipal)) {
+    $election_config['validate_municipality'] = ($field_election_valid_municipal[0]['value'] == 1);
+  }
+
+  $field_election_valid_citizenship = field_get_items('node', $election, 'field_election_valid_citizenship');
+  if (!empty($field_election_valid_citizenship)) {
+    $election_config['validate_citizenship'] = ($field_election_valid_citizenship[0]['value'] == 1);
+  }
+
+  $field_election_valid_civ_status = field_get_items('node', $election, 'field_election_valid_civ_status');
+  if (!empty($field_election_valid_civ_status)) {
+    $election_config['validate_civil_status'] = ($field_election_valid_civ_status[0]['value'] == 1);
+  }
+
+  $field_election_valid_age = field_get_items('node', $election, 'field_election_valid_age');
+  if (!empty($field_election_valid_age)) {
+    $election_config['validate_age'] = ($field_election_valid_age[0]['value'] == 1);
+  }
+
+  if (empty($party)) {
+    return $election_config;
+  }
+
+  $field_party_skip_valid_municipal = field_get_items('taxonomy_term', $party, 'field_party_skip_valid_municipal');
+  if (!empty($field_party_skip_valid_municipal)) {
+    if ($field_party_skip_valid_municipal[0]['value'] == 1) {
+      $election_config['validate_municipality'] = FALSE;
+    }
+  }
+
+  return $election_config;
 }

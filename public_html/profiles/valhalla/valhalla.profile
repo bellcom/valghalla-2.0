@@ -26,12 +26,83 @@ function valhalla_form_install_configure_form_alter(&$form, $form_state) {
 }
 
 /**
+ * Implements hook_install_tasks().
+ */
+function valhalla_install_tasks(&$install_state) {
+  $tasks = array(
+    'valhalla_enable_modules' => array(
+      'display_name' => st('Enable additional modules'),
+      'display' => FALSE,
+      'type' => 'normal',
+    ),
+    'valhalla_theme_settings' => array(
+      'display_name' => st('Theme settings'),
+      'display' => FALSE,
+      'type' => 'normal',
+    ),
+    'valhalla_apply_updates' => array(
+      'display_name' => st('Apply updates'),
+      'display' => FALSE,
+      'type' => 'normal',
+    ),
+  );
+
+  return $tasks;
+}
+
+/**
  * Extra submit handler.
  */
 function valhalla_settings_extra_submit(&$form, $form_state) {
-  $variables["theme_default"] = 'valhalla_bs';
+  valhalla_theme_settings();
+}
 
-  $variables["theme_valhalla_bs_settings"] = array(
+/**
+ * Enable additional modules.
+ */
+function valhalla_enable_modules() {
+  $modules = array(
+    // Contrib modules.
+    'ckeditor',
+    'field_ui',
+    'mailsystem',
+    'mimemail',
+    'views_ui',
+    'contextual',
+    'shortcut',
+    'color',
+    // Valghalla modules.
+    'valghalla_lists',
+    'liste_beskeder',
+    'liste_frivillige_uden_email',
+    'liste_m_cpr_nummer',
+    'liste_parti_oversigt',
+    'liste_valghalla_export',
+    'liste_valghalla_kvittering',
+    'valghalla_notifications',
+    'valghalla_eboks',
+    'valghalla_mail',
+    'valghalla_sms',
+    'valghalla_signup',
+    'valghalla_signup_list',
+    'valghalla_volunteer_validator',
+    'valghalla_volunteers_import',
+    'valghalla_volunteers_invite',
+    'vcv_serviceplatformen',
+    'vcv_person_lookup_extended',
+    'vvv_validate_age',
+    'valghalla_status_report',
+  );
+  module_enable($modules);
+}
+
+/**
+ * Set theme settings.
+ */
+function valhalla_theme_settings() {
+  $variables["theme_default"] = 'site';
+
+  $variables["theme_site_settings"] = array(
     'toggle_logo' => 1,
     'toggle_name' => 0,
     'toggle_slogan' => 0,
@@ -41,7 +112,7 @@ function valhalla_settings_extra_submit(&$form, $form_state) {
     'toggle_favicon' => 1,
     'toggle_main_menu' => 1,
     'toggle_secondary_menu' => 1,
-    'default_logo' => 0,
+    'default_logo' => 1,
     'default_favicon' => 1,
     'favicon_path' => '',
     'favicon_upload' => '',
@@ -139,10 +210,26 @@ function valhalla_settings_extra_submit(&$form, $form_state) {
 
   $variables["valghalla_limit_uris"] = TRUE;
 
+  $variables["jquery_update_jquery_version"] = '1.10';
+  $variables["jquery_update_jquery_cdn"] = 'none';
+  $variables["jquery_update_compression_type"] = '';
+  $variables["jquery_update_jquery_admin_version"] = '';
+
   foreach ($variables as $variable => $value) {
     variable_set($variable, $value);
   }
 
   // Set default home page.
   variable_set('site_frontpage', 'status');
+}
+
+/**
+ * Apply valghalla update during installtion.
+ */
+function valhalla_apply_updates() {
+  module_load_include('install', 'valghalla', 'valghalla');
+  valghalla_update_7106();
+  valghalla_update_7107();
+  valghalla_update_7109();
+  valghalla_update_7114();
 }

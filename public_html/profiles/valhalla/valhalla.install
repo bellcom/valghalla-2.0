@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * This file install the Valhalla profile.
@@ -75,12 +76,37 @@ function valhalla_install() {
   user_role_grant_permissions(DRUPAL_ANONYMOUS_RID, array('access content'));
   user_role_grant_permissions(DRUPAL_AUTHENTICATED_RID, array('access content'));
 
-  theme_enable(array('valghalla_theme', 'AT Subtheme'));
+  // Create a default roles for site, with all available permissions assigned.
+  $roles = array(
+    'administrator',
+    'Partisekretær',
+    'Valgsekretær',
+  );
+  foreach ($roles as $role) {
+    $admin_role = new stdClass();
+    $admin_role->name = $role;
+    $admin_role->weight = 2;
+    user_role_save($admin_role);
+    if ($role == 'administrator') {
+      user_role_grant_permissions($admin_role->rid, array_keys(module_invoke_all('permission')));
+    }
+  }
+
+  // Set this as the administrator role.
+  variable_set('user_admin_role', $admin_role->rid);
+
+  // Assign user 1 the "administrator" role.
+  db_insert('users_roles')
+    ->fields(array('uid' => 1, 'rid' => $admin_role->rid))
+    ->execute();
+
+  theme_enable(array('site'));
   theme_disable(array('bartik', 'rubik'));
 
   // Set admin theme to Rubik.
   variable_set('admin_theme', 'seven');
-  // Set admin theme on node/edit and node/add
+
+  // Set admin theme on node/edit and node/add.
   module_disable(array('update'));
   // Set default TZ.
   variable_set('date_default_timezone', "Europe/Berlin");
@@ -121,17 +147,4 @@ function valhalla_install() {
     $edit->vid = $vid;
     taxonomy_term_save($edit);
   };
-
-  // Create meeting time.
-  $terms = array('8:00');
-
-  $taxonomy = taxonomy_vocabulary_machine_name_load('volonteers_meeting_time');
-  $vid = $taxonomy->vid;
-  foreach ($terms as $term) {
-    $edit = new stdClass();
-    $edit->name = $term;
-    $edit->vid = $vid;
-    taxonomy_term_save($edit);
-  };
-  features_revert_module('valghalla_mail');
 }

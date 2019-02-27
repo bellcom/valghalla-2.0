@@ -1,0 +1,209 @@
+<?php
+
+/**
+ * @file
+ * Valghalla sms module.
+ */
+
+/**
+ * Code for the Valghalla sms. feature.
+ */
+include_once 'valghalla_sms.features.inc';
+
+/**
+ * Implements hook_menu().
+ */
+function valghalla_sms_menu() {
+  $items['valghalla-sms-computopic/%'] = array(
+    'page callback' => 'valghalla_sms_computopic',
+    'page arguments' => array(1),
+    'type' => MENU_CALLBACK,
+    'access callback' => TRUE,
+    'file' => 'plugins/valghalla_sms_gateway/ComputopicsSMS.inc',
+  );
+  return $items;
+}
+
+/**
+ * Implements hook_valghalla_allowed_uris_alter().
+ */
+function valghalla_sms_valghalla_allowed_uris_alter(&$allowed_uris) {
+  $allowed_uris[] = '/valghalla-sms-computopic/*';
+}
+
+/**
+ * Implements hook_notifications_info().
+ */
+function valghalla_sms_notifications_info() {
+  return array(
+    'sms' => array(
+      'name' => 'SMS',
+      'node_type' => 'sms',
+      'get_message_callback' => 'valghalla_sms_get_message',
+      'send_message_callback' => 'valghalla_sms_send_message',
+      'send_to_callback' => 'valghalla_sms_send_to',
+    ),
+  );
+}
+
+/**
+ * Get function for listing sms gateway plugins.
+ */
+function valghalla_sms_plugins($id = NULL) {
+  ctools_include('plugins');
+  return ctools_get_plugins('valghalla_sms', 'valghalla_sms_gateway', $id);
+}
+
+/**
+ * Implements hook_ctools_plugin_directory().
+ */
+function valghalla_sms_ctools_plugin_directory($module, $plugin) {
+  if ($module == 'valghalla_sms' && \array_key_exists($plugin, valghalla_sms_ctools_plugin_type())) {
+    return 'plugins/' . $plugin;
+  }
+}
+
+/**
+ * Implements hook_ctools_plugin_type().
+ */
+function valghalla_sms_ctools_plugin_type() {
+  return [
+    'valghalla_sms_gateway' => [
+      'label' => 'sms_gateway',
+      'use hooks' => FALSE,
+    ],
+  ];
+}
+
+/**
+ * Get message callback.
+ */
+function valghalla_sms_get_message($template_node) {
+  $body_field = field_get_items('node', $template_node, 'field_sms_body');
+
+  $body = $body_field[0]['value'];
+  $format = 'plain_text';
+  return array(
+    'body' => $body,
+    'format' => $format,
+  );
+}
+
+/**
+ * Send message callback.
+ */
+function valghalla_sms_send_message($to, $params, $context) {
+  $from = variable_get('valghalla_sms_from', FALSE);
+  $sms_gateway_id = variable_get('valghalla_sms_default_gateway', FALSE);
+  $sms_gateway = valghalla_sms_plugins($sms_gateway_id);
+  $message_body = format_string($params['body'], $params['tokens']);
+
+  if (empty($sms_gateway)) {
+    watchdog('valghalla_sms', 'Default SMS gateway is not set.', array(), WATCHDOG_ERROR);
+    return FALSE;
+  }
+
+  $notification_recipient = substr($to, 0, 6) . '-' . str_repeat('x', 4);
+  if ($sms_gateway_id != 'NemSMS' || !empty($context['CVR'])) {
+    $notification_recipient = $to;
+  }
+
+  /** @var EntityInterface $notification */
+  $notification = entity_get_controller('entity_valghalla_notification')->create(array(
+    'type' => $params['notification_type'],
+    'recipient' => $notification_recipient,
+    'gateway' => 'SMS ' . $sms_gateway['title'],
+    'vol_id' => $params['volunteer_nid'],
+    'message' => $message_body,
+    'status' => 'Failed',
+  ));
+  $notification->save();
+  $params['notification_id'] = $notification->id;
+  $params['from'] = $from;
+
+  if (!function_exists($sms_gateway['callback'])) {
+    watchdog('valghalla_sms', 'Broken SMS gateway %title. Missing callback', array('%title' => $sms_gateway['title']), WATCHDOG_ERROR);
+    return FALSE;
+  }
+
+  $result = call_user_func($sms_gateway['callback'], $to, $message_body, $params);
+  if ($result['status'] === TRUE) {
+    $notification->status = 'Success';
+  }
+  else {
+    $notification->status = $result['status'] ?: 'Failed';
+  }
+  $notification->status_info = $result['response'];
+  $notification->save();
+
+  return $result['status'];
+}
+
+/**
+ * Get send to data callback.
+ */
+function valghalla_sms_send_to($entity) {
+  // Call plugin send_to_callback if exist.
+  $sms_gateway = valghalla_sms_plugins(variable_get('valghalla_sms_default_gateway', FALSE));
+  if (!empty($sms_gateway['send_to_callback'])
+    && function_exists($sms_gateway['send_to_callback'])) {
+    return call_user_func($sms_gateway['send_to_callback'], $entity);
+  }
+
+  if ($field = field_get_items('node', $entity, 'field_phone')) {
+    return $field[0]['value'];
+  }
+  return FALSE;
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function valghalla_sms_form_sms_node_form_alter(&$form, &$form_state, $form_id) {
+  $form['field_sms_body']['#suffix'] = _valghalla_helper_get_volunteer_info_params('info');
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function valghalla_sms_form_valghalla_notifications_admin_settings_alter(&$form, &$form_state, $form_id) {
+  $form['sms_gateway_settings'] = array(
+    '#title' => t('Generelle SMS Gateway instillinger'),
+    '#type' => 'fieldset',
+  );
+
+  $plugins = array('' => t('None'));
+  foreach (valghalla_sms_plugins() as $plugin_name => $plugin) {
+    $plugins[$plugin_name] = $plugin['title'];
+  }
+  $form['sms_gateway_settings']['valghalla_sms_default_gateway'] = array(
+    '#type' => 'select',
+    '#title' => t('Standard gateway'),
+    '#options' => $plugins,
+    '#default_value' => variable_get('valghalla_sms_default_gateway', FALSE),
+  );
+
+  $form['sms_gateway_settings']['valghalla_sms_from'] = array(
+    '#type' => 'textfield',
+    '#title' => t('SMS afsender navn'),
+    '#default_value' => variable_get('valghalla_sms_from', FALSE),
+  );
+
+  $form['sms_gateway_computopic'] = array(
+    '#title' => t('Computopic SMS Gateway'),
+    '#type' => 'fieldset',
+  );
+
+  $form['sms_gateway_computopic']['valghalla_sms_computopic_user'] = array(
+    '#type' => 'textfield',
+    '#title' => t('User'),
+    '#default_value' => variable_get('valghalla_sms_computopic_user', FALSE),
+  );
+
+  $form['sms_gateway_computopic']['valghalla_sms_computopic_pass'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Password'),
+    '#default_value' => variable_get('valghalla_sms_computopic_pass', FALSE),
+  );
+
+}

@@ -362,7 +362,6 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
           ),
         ),
       ),
-      'field_label' => array(),
       'field_party' => array(
         'da' => array(
           array(
@@ -381,9 +380,6 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
       ),
       'field_phone2' => array(),
       'field_polling_station' => array(),
-      'field_polling_station_post' => array(),
-      'field_rolle_id' => array(),
-      'field_meeting_time' => array(),
       'field_ending_time' => array(),
       'field_cpr_status' => array(),
       'field_external_signup' => array(
@@ -456,16 +452,16 @@ class FeatureContext extends RawDrupalContext implements SnippetAcceptingContext
     }
 
     /**
-     * @Then valghalla_mail_volunteer_no_mail() should return :arg1 for that user
+     * @Then valghalla_notifications_volunteer_no_notification() should return :arg1 for that user
      */
-    public function valghallaMailVolunteerNoMailShouldReturnForThatUser($arg1)
+    public function valghallaNotificationVolunteerNoNotificationShouldReturnForThatUser($arg1)
     {
       $value = ($arg1 == "TRUE");
 
       if ($node = node_load($this->attendeeNid)) {
-        $noMail = (bool)valghalla_mail_volunteer_no_mail($node);
+        $noMail = (bool)valghalla_notifications_volunteer_no_notification($node);
         if ($noMail !== $value) {
-          throw new \Exception("valghalla_mail_volunteer_no_mail() returned other than expected \"$arg1\"");
+          throw new \Exception("valghalla_notifications_volunteer_no_notification() returned other than expected \"$arg1\"");
         }
         return;
       }

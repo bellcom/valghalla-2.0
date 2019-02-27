@@ -38,7 +38,9 @@ function _valghalla_helper_wrap_name($node, $container = 'p', $fcid = null) {
 
   if ($rsvp_message) {
     if (!empty($rsvp_message[0]['value'])) {
-      $rsvp_markup = '<span class="rsvp-message-icon fa fa-envelope-o"></span><span style="display:none;" class="rsvp-message">' . $rsvp_message[0]['value'] . '</span>';
+      $rsvp_markup = '<button class="btn btn-default btn-xs">';
+      $rsvp_markup .=   '<span class="rsvp-message-icon fa fa-envelope-o" data-toggle="popover" data-placement="top" data-title="' . t('Deltagerens svar') . '" data-content="' . $rsvp_message[0]['value'] . '"></span>';
+      $rsvp_markup .= '</button>';
     }
   }
 
@@ -48,7 +50,7 @@ function _valghalla_helper_wrap_name($node, $container = 'p', $fcid = null) {
 
   if (user_access('add volunteer to station') && ($rsvp == 0 || variable_get('valghalla_volunteers_always_show_rsvp_link', FALSE))) {
     $field_token = field_get_items('field_collection_item', $fc, 'field_token');
-    $reply_link = '<a title="Svar for denne tilforordnede" class="reply edit" href="/volunteers/rsvp/'  . $field_token[0]['value'] . '"><span class="glyphicon glyphicon-comment"></span></a>';
+    $reply_link = '<a class="btn btn-default btn-xs" data-toggle="tooltip" data-placement="top" title="Svar for denne tilforordnede" class="reply edit" href="/volunteers/rsvp/'  . $field_token[0]['value'] . '"><span class="glyphicon glyphicon-comment"></span></a>';
   }
 
   $valid = '';
@@ -57,7 +59,11 @@ function _valghalla_helper_wrap_name($node, $container = 'p', $fcid = null) {
     $valid = 'notvalidated';
   }
 
-  $display = '(' . $party->name . ') ' . $node->title . ' (' . $rsvp_map[$rsvp] . ')' . $rsvp_markup . $reply_link;
+  $display = '';
+  if ($party) {
+    $display = '(' . $party->name . ') ';
+  }
+  $display .= $node->title . ' (' . $rsvp_map[$rsvp] . ')' . $rsvp_markup . $reply_link;
   return '<' . $container . ' class="volunteer ' . $valid . ' ' . $rsvp_class_map[$rsvp] . '">' . $display . '</' . $container . '>';
 }
 
@@ -71,6 +77,7 @@ function _valghalla_volunteers_validate_key($token) {
   $volunteer_query = new EntityFieldQuery();
   $volunteer_query->entityCondition('entity_type', 'field_collection_item')
     ->entityCondition('bundle', 'field_electioninfo')
+    ->propertyCondition('archived', 0)
     ->fieldCondition('field_token', 'value', $token);
   $result = $volunteer_query->execute();
 
@@ -226,20 +233,28 @@ function _valghalla_helper_get_posts_to_fill($polling_station, $party_tid){
  * Get a count of roles on polling station for party.
  *
  */
-function _valghalla_helper_get_roles_count($polling_station_nids, $role_nid, $party_tid = NULL){
-  // This query is crazy. I just copied it from the valghalla_blocks module.
-  // But it does what it is supposed to.
-  $query = db_select('field_data_field_role_n'.$role_nid, 'vr');
-  $query->innerJoin('field_data_field_party_list', 'vp', 'vp.entity_id=vr.entity_id ' );
-  $query->innerJoin('field_data_field_volunteers_pr_party_1', 'vpp', 'vpp.field_volunteers_pr_party_1_value=vr.entity_id' );
-  $query->addExpression('SUM(vr.field_role_n'.$role_nid.'_number_vo)');
-  if ($party_tid) {
-    $query->condition('vp.field_party_list_party_list', $party_tid);
+function _valghalla_helper_get_roles_count($polling_station_nids, $role_nid, $party_tid = NULL, $election_nid = NULL){
+  if (empty($election_nid)) {
+    $election_nid = ($_SESSION['election_nid']) ? $_SESSION['election_nid'] : variable_get('valghalla_signup_election_nid', FALSE);
   }
-  $query->condition('vpp.entity_id', $polling_station_nids, 'IN');
-  $res = $query->execute()->fetchColumn();
 
-  return $res;
+  if ($election_nid) {
+    $query = db_select('field_data_field_role_n' . $role_nid, 'vr');
+    $query->innerJoin('field_data_field_ppsp_party', 'vp', 'vp.entity_id=vr.entity_id');
+    $query->innerJoin('field_data_field_ppsp_polling_station', 'vps', 'vps.entity_id=vr.entity_id');
+    $query->innerJoin('field_data_field_volunteers_pr_pol_st_party', 'vpp', 'vpp.field_volunteers_pr_pol_st_party_value=vr.entity_id');
+    $query->addExpression('SUM(vr.field_role_n' . $role_nid . '_number_vo)');
+    if ($party_tid) {
+      $query->condition('vp.field_ppsp_party_tid', $party_tid);
+    }
+    $query->condition('vps.field_ppsp_polling_station_nid', $polling_station_nids, 'IN');
+    $query->condition('vpp.entity_id', $election_nid);
+    $res = $query->execute()->fetchColumn();
+
+    return $res;
+  }
+
+  return 0;
 }
 
 /**
@@ -355,8 +370,16 @@ function _valghalla_helper_get_token_values($entity) {
   // RSVP link.
   //
   if ($field = field_get_items('field_collection_item', $entity, 'field_token')) {
-    global $base_url;
-    $url = $base_url . '/volunteers/rsvp/' . $field[0]['value'];
+    $link_base_url = NULL;
+    if (module_exists('valghalla_internal_server') && variable_get('valghalla_internal_server_enable')) {
+      $link_base_url = valghalla_internal_server_get_external_server_url();
+    }
+    else {
+      global $base_url;
+      $link_base_url = $base_url;
+    }
+
+    $url = $link_base_url . '/volunteers/rsvp/' . $field[0]['value'];
     $link = '<a href="' . $url . '">' . $url . '</a>';
   }
 
@@ -428,7 +451,7 @@ function _valghalla_helper_get_token_values($entity) {
  * @author Thomas Thune Hansen <tth@bellcom.dk>
  */
 function _valghalla_helper_get_volunteer_info_params($node) {
-  return "<p><b>Erstatningstokens til brug i emne- og indholdsfeltet:</b></p>
+  return "<p><strong>Erstatningstokens til brug i emne- og indholdsfeltet:</strong></p>
           <ul>
           <li><em>!name</em>" . t(' vil blive erstattet af modtagerens navn') . "</li>
           <li><em>!email</em>" . t(' vil blive erstattet af modtagerens email adresse') . "</li>
@@ -454,11 +477,12 @@ function _valghalla_helper_get_volunteer_info_params($node) {
  * Returns the correct age from CPR number taking century into account
  *
  * @param string $cpr
+ * @param string $compare_date
  *
  * @return int
  * @author Henrik Farre <hf@bellcom.dk>
  */
-function _valghalla_helper_get_age_from_cpr($cpr)
+function _valghalla_helper_get_age_from_cpr($cpr, $compare_date = 'now')
 {
   // Based on http://kronsell.net/cpralder.htm
   // Also see http://da.wikipedia.org/wiki/CPR-nummer#Under_eller_over_100_.C3.A5r
@@ -497,7 +521,7 @@ function _valghalla_helper_get_age_from_cpr($cpr)
   $year  = $year_prefix . $year;
 
   $date     = DateTime::createFromFormat('d-m-Y', $day . '-' . $month . '-' . $year);
-  $now      = new DateTime();
+  $now      = new DateTime($compare_date);
   $interval = $now->diff($date);
 
   return $interval->y;

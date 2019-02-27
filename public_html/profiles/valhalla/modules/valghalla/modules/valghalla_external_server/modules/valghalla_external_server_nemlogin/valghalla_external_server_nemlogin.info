@@ -1,0 +1,4 @@
+name = Valghalla External Server Nemlogin
+description = Provides a login link for Nemlogin, requires simplesaml integration
+package = Valghalla - Synch
+core = 7.x
