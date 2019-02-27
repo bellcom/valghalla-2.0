@@ -209,22 +209,30 @@ function valghalla_internal_server_synch_check() {
     }
     $data = valghalla_synch_node_export_election_counts();
     $valghalla_synch_ok = TRUE;
+    $fails = array();
+
     foreach ($data as $election_uuid => $election_count) {
       foreach (array('total', 'assigned') as $key) {
         if (!isset($ext_data[$election_uuid][$key])
           || $election_count[$key] != $ext_data[$election_uuid][$key]) {
           $valghalla_synch_ok = FALSE;
-          break;
+          $nodes = entity_uuid_load('node', array($election_uuid));
+          $election = reset($nodes);
+          $fails[] = array(
+            $election_uuid => array(
+              'election title' => $election->title,
+              'internal_data' => $data[$election_uuid],
+              'external_data' => isset($ext_data[$election_uuid]) ? $ext_data[$election_uuid] : NULL,
+            ),
+          );
         }
       }
     }
     if (!$valghalla_synch_ok) {
-      $message = 'Sychronization with internal server failed.<br/>';
-      $message .= 'Internal server data !internal_data<br/>';
-      $message .= 'External server data: !external_data';
+      $message = 'Sychronization with internal server failed.' . "<br>\n";
+      $message .= 'Not mached data !fails';
       $args = array(
-        '!internal_data' => '<pre>' . print_r($data, 1) . '</pre>',
-        '!external_data' => '<pre>' . print_r($ext_data, 1) . '</pre>',
+        '!fails' => '<pre>' . print_r($fails, 1) . '</pre>',
       );
       watchdog('valghalla_internal_server', $message, $args, WATCHDOG_WARNING);
 
