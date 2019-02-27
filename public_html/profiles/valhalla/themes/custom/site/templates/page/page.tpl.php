@@ -87,15 +87,6 @@
                 </li>
               <?php endif; ?>
 
-              <li class="flexy-navigation__item flexy-navigation__item--dropdown">
-                <a href="#"><?php print t('Valghalla Manual'); ?></a>
-                <ul class="flexy-navigation__item__dropdown-menu">
-                  <li class="flexy-navigation__item__dropdown-menu__item"><a href="http://valghalla.dk/valghalla-manual" target="_blank"><?php print t('Valghalla Manual'); ?></a></li>
-                  <li class="flexy-navigation__item__dropdown-menu__item"><a href="http://valghalla.dk/sites/default/files/valhalla-vejledning-til-valgsekretren.pdf" target="_blank"><?php print t('Vejledning til valgsekretær'); ?></a></li>
-                  <li class="flexy-navigation__item__dropdown-menu__item"><a href="http://valghalla.dk/sites/default/files/kom-godt-i-gang-med-valhalla-partier.pdf" target="_blank"><?php print t('Kom godt i gang'); ?></a></li>
-                </ul>
-              </li>
-
             </ul>
           </nav>
           <!-- End - navigation -->
