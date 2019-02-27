@@ -18,6 +18,11 @@ function valghalla_internal_server_form_alter(&$form, &$form_state, $form_id) {
       variable_set('valghalla_synch_ok', TRUE);
       valghalla_internal_server_perform_synch(TRUE);
     }
+    // Do synch check, if asked.
+    if (isset($form_state['triggering_element']) && $form_state['triggering_element']['#id'] == 'edit-check-synch-now') {
+      // Do sync even if it's failed.
+      valghalla_internal_server_synch_check();
+    }
 
     $form['valghalla_internal_server_enable'] = array(
       '#type' => 'checkbox',
@@ -106,28 +111,33 @@ function valghalla_internal_server_form_alter(&$form, &$form_state, $form_id) {
       '#value' => t('Synch now'),
     );
 
-    $form['valghalla_internal_server_fs']['valghalla_internal_server_run_failed_sync'] = array(
+    $form['valghalla_internal_server_fs']['valghalla_external_server_synch_now_fs'][] = array(
+      '#markup' => '<div>' . t('Last pulled: @datetime', array('@datetime' => format_date(variable_get('valgalla_internal_server_last_clone_timestamp')))) . '</div>'
+      . '<div>' . t('Last pushed: @datetime', array('@datetime' => format_date(variable_get('valgalla_internal_server_last_push_timestamp')))) . '</div>',
+    );
+
+    $form['valghalla_internal_server_fs']['valghalla_external_server_synch_check'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Synchronization check settings'),
+      '#collapsible' => TRUE,
+      '#collapsed' => FALSE,
+    );
+    $form['valghalla_internal_server_fs']['valghalla_external_server_synch_check']['valghalla_internal_server_run_failed_sync'] = array(
       '#type' => 'checkbox',
       '#title' => t('Kør fejl synch'),
       '#default_value' => variable_get('valghalla_internal_server_run_failed_sync', VALGHALLA_INTERNAL_SERVER_RUN_FAILED_SYNC),
     );
 
-    $form['valghalla_internal_server_fs']['valghalla_internal_server_failed_sync_report_mail'] = array(
+    $form['valghalla_internal_server_fs']['valghalla_external_server_synch_check']['valghalla_internal_server_failed_sync_report_mail'] = array(
       '#type' => 'textfield',
       '#title' => t('Send report about failed sync to email:'),
       '#default_value' => variable_get('valghalla_internal_server_failed_sync_report_mail'),
       '#description' => t('In case of failed synchronization will be detected drupal will send email message to addresses listed in this field.'),
     );
 
-    $form['valghalla_internal_server_fs']['valghalla_internal_server_sync_check_pause'] = array(
-      '#type' => 'textfield',
-      '#title' => t('Delay in seconds to let external server finish updating process:'),
-      '#default_value' => variable_get('valghalla_internal_server_sync_check_pause', VALGHALLA_INTERNAL_SERVER_SYNC_CHECK_DELAY),
-    );
-
-    $form['valghalla_internal_server_fs']['valghalla_external_server_synch_now_fs'][] = array(
-      '#markup' => '<div>' . t('Last pulled: @datetime', array('@datetime' => format_date(variable_get('valgalla_internal_server_last_clone_timestamp')))) . '</div>'
-      . '<div>' . t('Last pushed: @datetime', array('@datetime' => format_date(variable_get('valgalla_internal_server_last_push_timestamp')))) . '</div>',
+    $form['valghalla_internal_server_fs']['valghalla_external_server_synch_check']['check_synch_now'] = array(
+      '#type' => 'button',
+      '#value' => t('Check synchronization now'),
     );
 
     $form = system_settings_form($form);

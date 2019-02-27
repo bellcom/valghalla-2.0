@@ -19,5 +19,14 @@ function valghalla_internal_server_drush_command() {
       'Perform Valghalla internal server synch (alias)' => 'drush valg-is',
     ),
   );
+  $items['valghalla-internal-synch-check'] = array(
+    'callback' => 'valghalla_internal_server_synch_check',
+    'description' => 'Drush command perform Valghalla Internal server synchronization check process.',
+    'aliases' => array('valg-isc'),
+    'examples' => array(
+      'Perform Valghalla internal server synchronization check' => 'drush valghalla-internal-synch-check',
+      'Perform Valghalla internal server synchronization check (alias)' => 'drush valg-iss',
+    ),
+  );
   return $items;
 }

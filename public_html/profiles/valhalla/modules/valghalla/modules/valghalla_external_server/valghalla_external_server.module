@@ -43,8 +43,17 @@ function valghalla_external_server_menu() {
 
 /**
  * Callback for sync check data.
+ *
+ * JSON responce for internal server with data to check synch process.
+ * See valghalla_internal_server_synch_check().
  */
 function valghalla_external_server_sync_check() {
-  $data = valghalla_synch_node_export_election_counts();
+  $queue = valghalla_synch_queue_get_items_ordered();
+  if (empty($queue)) {
+    $data = 'synch_queue_not_empty';
+  }
+  else {
+    $data = valghalla_synch_node_export_election_counts();
+  }
   drupal_json_output($data);
 }
