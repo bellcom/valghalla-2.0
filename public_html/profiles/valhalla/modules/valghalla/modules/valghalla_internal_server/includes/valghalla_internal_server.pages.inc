@@ -140,6 +140,10 @@ function valghalla_internal_server_form_alter(&$form, &$form_state, $form_id) {
       '#value' => t('Check synchronization now'),
     );
 
+    $form['valghalla_internal_server_fs']['valghalla_external_server_synch_check'][] = array(
+      '#markup' => '<div>' . t('Last synchronization check: @datetime', array('@datetime' => format_date(variable_get('valgalla_internal_server_last_synch_check')))) . '</div>',
+    );
+
     $form = system_settings_form($form);
     array_unshift($form['#submit'], 'valghalla_internal_server_settings_form_submit');
   }

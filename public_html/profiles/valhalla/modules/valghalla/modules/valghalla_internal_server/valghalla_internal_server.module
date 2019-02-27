@@ -241,11 +241,17 @@ function valghalla_internal_server_synch_check() {
         valghalla_notifications_direct_send('mail', $report_to, $params);
       }
     }
+    else {
+      drupal_set_message('Synchronization is ok!');
+    }
     variable_set('valghalla_synch_ok', $valghalla_synch_ok);
   }
   else {
     watchdog('valghalla_internal_server', 'Can not validate external sync. Synchronization check data from external server is empty', array(), WATCHDOG_WARNING);
   }
+
+  // Set synch check timestamp.
+  variable_set('valgalla_internal_server_last_synch_check', time());
 }
 
 /**
