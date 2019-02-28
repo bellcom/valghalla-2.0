@@ -32,6 +32,8 @@ function valghalla_external_server_nemlogin_login_link($destination) {
  * This function is used to store CPR value between redirects.
  * Is none found, null is returned.
  *
+ * After function execution CPR is deleted from the session.
+ *
  * @return string
  *   The CPR stored in the session.
  */

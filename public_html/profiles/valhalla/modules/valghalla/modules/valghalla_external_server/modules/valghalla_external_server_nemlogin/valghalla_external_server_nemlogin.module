@@ -129,8 +129,8 @@ function valghalla_external_server_nemlogin_login_callback() {
       }
 
       // We need to store CPR value between redirects
-      // to be able use it in a a sugnup form.
-      // This value will be deleted after first using.
+      // to be able use it in a a signup form.
+      // This value will be deleted after first usage.
       // @see valghalla_external_server_nemlogin_fetch_cpr() function.
       $_SESSION['valghalla_external_server_nemlogin_cpr'] = $cpr;
     }
