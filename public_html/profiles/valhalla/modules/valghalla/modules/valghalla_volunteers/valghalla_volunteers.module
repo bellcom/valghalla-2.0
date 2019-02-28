@@ -1079,7 +1079,31 @@ function valghalla_volunteers_get_volunteers(){
  *
  * @author Thomas Thune Hansen <tth@bellcom.dk>
  */
-function valghalla_volunteers_add_volunteer_to_post($volunteer_nid, $pollingstation_nid, $role_nid, $party_tid, $election_nid, $confirmed = 0){
+
+/**
+ * Adding volunteer to post.
+ *
+ * @param int $volunteer_nid
+ *   Nid of volunteer.
+ * @param int $pollingstation_nid
+ *   Nid of polling station.
+ * @param int $role_nid
+ *   Nid of role.
+ * @param int $party_tid
+ *   Tid of party.
+ * @param int $election_nid
+ *   Nid of election.
+ * @param int $confirmed
+ *   Whether volunteer post is confirmed right away (skipping invitation).
+ * @param bool $invitation_synch
+ *   Whether the volunteer must be synched to external server right away -
+ *   only when inviting.
+ *
+ * @return array
+ *   fcid - Field collection id.
+ *   html - html rendered name of volunteer.
+ */
+function valghalla_volunteers_add_volunteer_to_post($volunteer_nid, $pollingstation_nid, $role_nid, $party_tid, $election_nid, $confirmed = 0, $invitation_synch = TRUE){
   // Save info to field collection.
   $fc = entity_create('field_collection_item', array('field_name' => 'field_electioninfo'));
 
@@ -1095,6 +1119,12 @@ function valghalla_volunteers_add_volunteer_to_post($volunteer_nid, $pollingstat
 
   if (variable_get('valghalla_notifications_send_invitation_on_add', TRUE) && !$confirmed) {
     valghalla_volunteers_notify($election_nid, $role_nid, $fc, 'invitation');
+
+    if ($invitation_synch && module_exists('valghalla_internal_server')) {
+      // Forcing synch before sending the invitation message, so that sent is
+      // valid at all times.
+      valghalla_internal_server_perform_synch(TRUE);
+    }
   }
   else if ($confirmed) {
     valghalla_volunteers_notify($election_nid, $role_nid, $fc, 'confirmed');
@@ -1690,11 +1720,5 @@ function valghalla_volunteers_notify($election_nid, $role_nid, $fc, $type) {
   }
   else {
     watchdog('valghalla_volunteers','Notifikation blev ikke afsend. Modul valghalla_notifications er ikke aktiveret.', array(), WATCHDOG_WARNING);
-  }
-
-  if ($type == 'invitation' && module_exists('valghalla_internal_server')) {
-    // Forcing synch before sending the invitation message, so that sent is
-    // valid at all times.
-    valghalla_internal_server_perform_synch(TRUE);
   }
 }
