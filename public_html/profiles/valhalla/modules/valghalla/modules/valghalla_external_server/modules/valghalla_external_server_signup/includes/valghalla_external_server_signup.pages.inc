@@ -556,7 +556,7 @@ function valghalla_external_server_signup_signup_form_submit($form, &$form_state
           'query' => array(
             'callback' => 'valghalla/external-signup-success',
           ),
-        )
+        ),
       );
     }
     else {

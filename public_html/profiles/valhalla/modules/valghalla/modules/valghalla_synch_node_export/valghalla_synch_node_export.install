@@ -8,8 +8,8 @@
 /**
  * Implements hook_update_N().
  *
- * Enables field_collection_deploy and toggles off 'field_collection' module from
- * node_export_dependency.
+ * Enables field_collection_deploy and toggles off 'field_collection' module
+ * from node_export_dependency.
  */
 function valghalla_synch_node_export_update_7101() {
   module_enable(array(

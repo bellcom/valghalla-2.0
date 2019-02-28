@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Valghalla_external_server_nemlogin.inc
+ * Valghalla_external_server_nemlogin.inc.
  */
 
 /**
@@ -20,8 +20,8 @@ function valghalla_external_server_nemlogin_login_link($destination) {
   $url = url($idp . VALGHALLA_EXTERNAL_SERVER_NEMLOGIN_URL_LOGIN, array(
     'query' => array(
       'mnemo' => 'bellcom.dk',
-      'forward' => $GLOBALS['base_url'] . base_path() . 'nemlogin/login-callback?destination=' . urlencode($destination)
-    )
+      'forward' => $GLOBALS['base_url'] . base_path() . 'nemlogin/login-callback?destination=' . urlencode($destination),
+    ),
   ));
   return $url;
 }
