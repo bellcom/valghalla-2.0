@@ -472,7 +472,7 @@ function valghalla_notifications_notify_volunteer($election_nid, $role_nid, $fc,
   );
 
   if (empty($template_nid)) {
-    watchdog('valghalla_notifications', 'Message template not to send %type notification for volunteer %name via %gateway', $placeholders, WATCHDOG_ERROR);
+    watchdog('valghalla_notifications', 'Message template not found to send %type notification for volunteer %name via %gateway', $placeholders, WATCHDOG_ERROR);
     return FALSE;
   }
 
