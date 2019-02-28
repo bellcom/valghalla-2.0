@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Valghalla_external_server_nemlogin.inc
+ * Valghalla_external_server_nemlogin.inc.
  */
 
 /**
@@ -20,23 +20,28 @@ function valghalla_external_server_nemlogin_login_link($destination) {
   $url = url($idp . VALGHALLA_EXTERNAL_SERVER_NEMLOGIN_URL_LOGIN, array(
     'query' => array(
       'mnemo' => 'bellcom.dk',
-      'forward' => $GLOBALS['base_url'] . base_path() . 'nemlogin/login-callback?destination=' . urlencode($destination)
-    )
+      'forward' => $GLOBALS['base_url'] . base_path() . 'nemlogin/login-callback?destination=' . urlencode($destination),
+    ),
   ));
   return $url;
 }
 
 /**
- * Fetches the CPR from the session.
+ * One time fetch function for the CPR from the session.
  *
+ * This function is used to store CPR value between redirects.
  * Is none found, null is returned.
+ *
+ * After function execution CPR is deleted from the session.
  *
  * @return string
  *   The CPR stored in the session.
  */
 function valghalla_external_server_nemlogin_fetch_cpr() {
   if (isset($_SESSION['valghalla_external_server_nemlogin_cpr'])) {
-    return $_SESSION['valghalla_external_server_nemlogin_cpr'];
+    $cpr = $_SESSION['valghalla_external_server_nemlogin_cpr'];
+    unset($_SESSION['valghalla_external_server_nemlogin_cpr']);
+    return $cpr;
   }
 
   return NULL;

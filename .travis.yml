@@ -11,11 +11,14 @@ mysql:
 install:
   - mysql -e 'create database drupal;'
   - composer global require drush/drush:8.x-dev
+  - composer global require drupal/coder
   - export PATH="$HOME/.config/composer/vendor/bin:$PATH"
+  - phpcs --config-set installed_paths ../../drupal/coder/coder_sniffer
   - echo 'sendmail_path = /bin/true' > $(php --ini|grep -m 1 "ini files in:"|cut -d ":" -f 2)/sendmail.ini
   - phpenv rehash
 
 script:
+  - phpcs
   - cd public_html
   - drush --verbose site-install valhalla --db-url=mysql://root:@127.0.0.1/drupal --yes
   - drush cc all --yes

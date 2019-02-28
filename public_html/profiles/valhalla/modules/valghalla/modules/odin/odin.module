@@ -95,7 +95,8 @@ function odin_party_tid_for_next_free_seat($election_nid, $polling_station_nid, 
 }
 
 /**
- * Get count for roles and total
+ * Get count for roles and total.
+ *
  * @params
  *  $eleciton_nid
  *  $polling_station_nids
@@ -104,11 +105,15 @@ function odin_party_tid_for_next_free_seat($election_nid, $polling_station_nid, 
  */
 function odin_get_volunteers_count($election_nid, $polling_station_nids, $roles, $user_party_id = NULL) {
   $total_count = array(
-      'assigned' => 0,
-      'total' => 0,
-      'rsvp_ok' => 0,
-      'rsvp_no' => 0,
-    );
+    'assigned' => 0,
+    'total' => 0,
+    'rsvp_ok' => 0,
+    'rsvp_no' => 0,
+  );
+
+  if (empty($polling_station_nids)) {
+    return array('total_count' => $total_count);
+  }
 
   foreach ($roles as $role_nid => $role_title) {
     $role_count[$role_nid]['role_name'] = $role_title;

@@ -341,11 +341,6 @@ function valghalla_volunteers_rsvp_form($form, &$form_state) {
       else {
         $form['#cpr'] = $cpr;
         $form_state['cpr'] = $cpr;
-
-        // Logout url.
-        $form['nemid_logout_link'] = array(
-          '#markup' => '<div class="form-group">' . l(t('Log ud af NemID'), 'nemlogin/logout', array('query' => array('callback' => request_uri()))) . '</div>',
-        );
       }
     }
   }

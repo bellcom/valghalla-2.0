@@ -95,11 +95,6 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
   else {
     $form['#cpr'] = $cpr;
     $form_state['cpr'] = $cpr;
-
-    // Logout url.
-    $form['nemid_logout_link'] = array(
-      '#markup' => l(t('Log ud af NemID'), 'nemlogin/logout', array('query' => array('callback' => request_uri()))),
-    );
   }
 
   $form['email-container'] = array(
@@ -561,7 +556,7 @@ function valghalla_external_server_signup_signup_form_submit($form, &$form_state
           'query' => array(
             'callback' => 'valghalla/external-signup-success',
           ),
-        )
+        ),
       );
     }
     else {
