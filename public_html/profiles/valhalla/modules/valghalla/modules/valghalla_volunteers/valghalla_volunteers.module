@@ -1715,6 +1715,10 @@ function valghalla_volunteers_preprocess_views_view_table(&$variables) {
  * Wrapper with module existing check.
  */
 function valghalla_volunteers_notify($election_nid, $role_nid, $fc, $type) {
+  if (!odin_is_election_active($election_nid)) {
+    return FALSE;
+  }
+
   if (module_exists('valghalla_notifications')) {
     valghalla_notifications_notify_volunteer($election_nid, $role_nid, $fc, $type);
   }
