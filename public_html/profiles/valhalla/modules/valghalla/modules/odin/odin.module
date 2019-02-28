@@ -330,6 +330,9 @@ function odin_get_polling_stations($election_nid) {
 
   $polling_stations_field = field_get_items('node', $election_node, 'field_polling_stations');
 
+  if (empty($polling_stations_field)) {
+    return array();
+  }
   foreach ($polling_stations_field as $data) {
     $nids[$data['target_id']] = $data['target_id'];
   }
