@@ -238,7 +238,7 @@ function _valghalla_helper_get_roles_count($polling_station_nids, $role_nid, $pa
     $election_nid = ($_SESSION['election_nid']) ? $_SESSION['election_nid'] : variable_get('valghalla_signup_election_nid', FALSE);
   }
 
-  if ($election_nid) {
+  if ($election_nid && !empty($polling_station_nids)) {
     $query = db_select('field_data_field_role_n' . $role_nid, 'vr');
     $query->innerJoin('field_data_field_ppsp_party', 'vp', 'vp.entity_id=vr.entity_id');
     $query->innerJoin('field_data_field_ppsp_polling_station', 'vps', 'vps.entity_id=vr.entity_id');
