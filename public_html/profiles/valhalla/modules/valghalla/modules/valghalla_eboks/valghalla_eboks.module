@@ -95,7 +95,7 @@ function valghalla_eboks_send_message($to, $params, $context = array()) {
   }
   $service->setTo($to, $type);
   $result = $service->sendMessage();
-  if (!$result['status']) {
+  if (!$result['status'] && !empty($result['text'])) {
     watchdog('valghalla_eboks', 'WS request failed. Error message: %message', array('%message' => $result['text']), WATCHDOG_ERROR);
   }
 

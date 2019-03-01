@@ -43,12 +43,18 @@ class ServicePlatformenPrint {
     $certfile_passphrase = variable_get('valghalla_eboks_certfile_passphrase');
     $certfile = variable_get('valghalla_eboks_certfile');
 
-    $this->client = new SoapClient($wsdl_address, array(
-      'location' => $service_location,
-      'local_cert' => $certfile,
-      'passphrase' => $certfile_passphrase,
-      'trace' => TRUE,
-    ));
+    try {
+      $this->client = new SoapClient($wsdl_address, array(
+        'location' => $service_location,
+        'local_cert' => $certfile,
+        'passphrase' => $certfile_passphrase,
+        'trace' => TRUE,
+      ));
+    }
+    catch (Exception $e) {
+      watchdog('ServicePlatformenPrint', $e->getMessage(), array(), WATCHDOG_ERROR);
+    }
+
 
     $serviceagreementuuid = variable_get('valghalla_eboks_serviceagreementuuid');
     $usersystemuuid = variable_get('valghalla_eboks_usersystemuuid');
@@ -81,16 +87,22 @@ class ServicePlatformenPrint {
    * Send message method call.
    */
   public function sendMessage() {
+    if (empty($this->client)) {
+      return array(
+        'status' => FALSE,
+        'response' => 'WS call failed. Check error log for details.',
+      );
+    }
+
     ini_set('soap.wsdl_cache_enabled', 0);
     ini_set('soap.wsdl_cache_ttl', 0);
     try {
       $result = $this->client->afsendBrev($this->request);
-      $xml_result = new SimpleXMLElement($this->client->afsendBrev($this->request));
       $response = array(
         'status' => FALSE,
-        'response' => $result,
+        'response' => $this->client->__getLastResponse(),
       );
-      if (!empty($xml_result->AfsendBreveResponse->resultat) && $xml_result->AfsendBreveResponse->resultat) {
+      if (!empty($result->resultat) && $result->resultat) {
         $response['status'] = TRUE;
       }
     }
@@ -99,6 +111,7 @@ class ServicePlatformenPrint {
         'status' => FALSE,
         'text' => $e->faultstring,
         'code' => $e->faultcode,
+        'response' => $this->client->__getLastResponse(),
       );
     }
     if (variable_get('valghalla_eboks_debug', FALSE)) {
@@ -110,7 +123,7 @@ class ServicePlatformenPrint {
       file_unmanaged_save_data($this->client->__getLastRequest(), $path, FILE_EXISTS_REPLACE);
       watchdog('ServicePlatformenPrint', 'XML-request filesaved to %path', array('%path' => $path));
     }
-    $response['response'] = $this->client->__getLastResponse();
+
     return $response;
 
   }
