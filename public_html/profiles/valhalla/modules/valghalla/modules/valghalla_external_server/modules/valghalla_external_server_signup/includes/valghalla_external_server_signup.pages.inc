@@ -85,6 +85,10 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
     valghalla_external_server_signup_terminate_signup();
   }
 
+  $form['cpr'] = array(
+    '#type' => 'hidden',
+  );
+
   $cpr = valghalla_external_server_nemlogin_fetch_cpr();
 
   if (!$cpr) {
@@ -94,7 +98,7 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
   }
   else {
     $form['#cpr'] = $cpr;
-    $form_state['cpr'] = $cpr;
+    $form['cpr']['#default_value'] = $cpr;
   }
 
   $form['email-container'] = array(
@@ -451,12 +455,12 @@ function valghalla_external_server_signup_terminate_signup($terminate_code = 0) 
  * Also changes the format of CPR, if needed.
  */
 function valghalla_external_server_signup_signup_form_validate($form, &$form_state) {
-  $cpr = $form_state['cpr'];
+  $cpr = $form_state['values']['cpr'];
 
   // Adding dash, if missing. E.g. 123456-7890.
   if (preg_match('/[0-9]{10}/', $cpr)) {
     $cpr = substr($cpr, 0, 6) . '-' . substr($cpr, 6, 4);
-    $form_state['cpr'] = $cpr;
+    $form_state['values']['cpr'] = $cpr;
   }
   if (!preg_match('/[0-9]{6}-[0-9]{4}/', $cpr)) {
     form_set_error('cpr', t('Wrong CPR format, correct format is 123456-7890'));
@@ -512,7 +516,7 @@ function valghalla_external_server_signup_signup_form_submit($form, &$form_state
   $polling_station_nid = isset($form_state['polling_station']) ? $form_state['polling_station']->nid : $form_state['values']['polling_station_select'];
 
   if ($polling_station_nid && $role_nid && $party_tid && $election_nid) {
-    $cpr = $form_state['cpr'];
+    $cpr = $form_state['values']['cpr'];
     $cpr = valghalla_synch_node_export_get_encrypt($cpr);
 
     $volunteer_node = odin_load_volunteer_by_cpr($cpr);
