@@ -331,7 +331,23 @@ function valghalla_volunteers_rsvp_form($form, &$form_state) {
 
   if (variable_get('valghalla_volunteers_check_cpr_match', TRUE) && $GLOBALS['user']->uid == 0) {
     if (module_exists('valghalla_external_server_nemlogin')) {
+      // Attempt to fetch CPR from session.
       $cpr = valghalla_external_server_nemlogin_fetch_cpr();
+      if ($cpr) {
+        $cpr = valghalla_synch_node_export_get_encrypt($cpr);
+      }
+
+      // Attempt to fetch CPR from form state.
+      if (!$cpr && isset($form_state['input'])) {
+        if (isset($form_state['input']['cpr'])) {
+          $cpr = $form_state['input']['cpr'];
+        }
+      }
+
+      $form['cpr'] = array(
+        '#type' => 'hidden',
+        '#default_value' => $cpr,
+      );
 
       if (!$cpr) {
         $form['nemid_login_link'] = array(
@@ -340,7 +356,6 @@ function valghalla_volunteers_rsvp_form($form, &$form_state) {
       }
       else {
         $form['#cpr'] = $cpr;
-        $form_state['cpr'] = $cpr;
       }
     }
   }
@@ -392,12 +407,12 @@ function valghalla_volunteers_rsvp_form_validate($form, &$form_state) {
 
   if (variable_get('valghalla_volunteers_check_cpr_match', TRUE) && $GLOBALS['user']->uid == 0) {
     if (module_exists('valghalla_external_server_nemlogin')) {
-      $cpr = $form_state['cpr'];
+      $cpr = valghalla_synch_node_export_get_decrypt($form_state['values']['cpr']);
 
       // Adding dash, if missing. E.g. 123456-7890.
       if (preg_match('/[0-9]{10}/', $cpr)) {
         $cpr = substr($cpr, 0, 6) . '-' . substr($cpr, 6, 4);
-        $form_state['cpr'] = $cpr;
+        $form_state['input']['cpr'] = valghalla_synch_node_export_get_encrypt($cpr);
       }
 
       if (!preg_match('/[0-9]{6}-[0-9]{4}/', $cpr)) {
@@ -416,7 +431,6 @@ function valghalla_volunteers_rsvp_form_validate($form, &$form_state) {
       }
 
       if (strcmp($cpr, $expected_cpr) !== 0) {
-        print_r(valghalla_synch_node_export_get_decrypt($expected_cpr));
         form_set_error('cpr', t('This token is not valid for the provided CPR'));
       }
     }
