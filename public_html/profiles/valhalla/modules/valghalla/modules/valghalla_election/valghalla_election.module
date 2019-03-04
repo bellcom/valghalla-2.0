@@ -168,45 +168,70 @@ function valghalla_election_form_submit($form, &$form_state) {
  *   Election node.
  */
 function valghalla_election_handle_polling_stations_fc($node) {
-  $pollingStations = field_get_items('node', $node, 'field_polling_stations');
-  $pollingStationsIds = array();
-  $createVPPSPForPollingIds = array();
+  $allParties = odin_get_parties();
 
+  $pollingStations = field_get_items('node', $node, 'field_polling_stations');
+
+  $actualVPPSPPollingStationParties = array();
+  $vppspIdsToDelete = array();
+
+  // Make an actual list of VPPSP fields the must existing for this election.
   foreach ($pollingStations as $ps) {
-    $pollingStationsIds[$ps['target_id']] = $ps['target_id'];
-    $createVPPSPForPollingIds[$ps['target_id']] = $ps['target_id'];
+    $polling_station_id = $ps['target_id'];
+    $actualVPPSPPollingStationParties[$polling_station_id] = array();
+
+    foreach ($allParties as $party_tid => $party_name) {
+      $actualVPPSPPollingStationParties[$polling_station_id][$party_tid] = $party_tid;
+    }
   }
 
-  // Deleting the field collections that are not relevant anymore.
-  if (!$node->is_new) {
-    $vppspIdsToDelete = array();
-    foreach ($node->field_volunteers_pr_pol_st_party['und'] as $key => $value) {
-      if (isset($value['entity'])) {
-        $vppsp = $value['entity'];
-      }
-      else {
-        $vppsp = entity_load_single('field_collection_item', $value['value']);
+  // Making list of VPPSP to delete.
+  foreach ($node->field_volunteers_pr_pol_st_party['und'] as $key => $value) {
+    if (isset($value['entity'])) {
+      $vppsp = $value['entity'];
+    }
+    else {
+      $vppsp = entity_load_single('field_collection_item', $value['value']);
+    }
+
+    $field_ppsp_polling_station = field_get_items('field_collection_item', $vppsp, 'field_ppsp_polling_station');
+    if ($field_ppsp_polling_station && is_array($field_ppsp_polling_station)) {
+      $vppspPollingStationId = $field_ppsp_polling_station[0]['nid'];
+    }
+
+    if (!isset($actualVPPSPPollingStationParties[$vppspPollingStationId])) {
+      // Add to array for deletion.
+      $vppspIdsToDelete[] = $vppsp->item_id;
+      // Unset them from node.
+      unset($node->field_volunteers_pr_pol_st_party[LANGUAGE_NONE][$key]);
+    }
+    else {
+      $field_ppsp_party = field_get_items('field_collection_item', $vppsp, 'field_ppsp_party');
+      if ($field_ppsp_party && is_array($field_ppsp_party)) {
+        $vppspPartiTid = $field_ppsp_party[0]['nid'];
       }
 
-      $vppspPollingStationId = $vppsp->field_ppsp_polling_station['und'][0]['nid'];
-      if (!in_array($vppspPollingStationId, $pollingStationsIds)) {
+      // Party was deleted.
+      if (!taxonomy_term_load($vppspPartiTid)) {
         // Add to array for deletion.
         $vppspIdsToDelete[] = $vppsp->item_id;
         // Unset them from node.
         unset($node->field_volunteers_pr_pol_st_party[LANGUAGE_NONE][$key]);
+
       }
-
-      // Unset polling station for the list.
-      unset($createVPPSPForPollingIds[$vppspPollingStationId]);
+      else {
+        // Remove the combination we already have.
+        unset($actualVPPSPPollingStationParties[$vppspPollingStationId][$vppspPartiTid]);
+      }
     }
-
-    // Delete field collection items.
-    entity_delete_multiple('field_collection_item', $vppspIdsToDelete);
   }
 
-  // Adding new field collections.
-  foreach ($createVPPSPForPollingIds as $createVPPSPForPollingId) {
-    foreach (odin_get_parties() as $party_tid => $party_name) {
+  // Delete deleting multiple VPPSP field collection items..
+  entity_delete_multiple('field_collection_item', $vppspIdsToDelete);
+
+  // Adding field collections for missing polling station->party combinations.
+  foreach ($actualVPPSPPollingStationParties as $createVPPSPForPollingId => $parties) {
+    foreach ($parties as $party_tid) {
       $fc = entity_create('field_collection_item', array('field_name' => 'field_volunteers_pr_pol_st_party'));
       $fc->setHostEntity('node', $node);
       $fc->field_ppsp_polling_station[LANGUAGE_NONE][0]['nid'] = $createVPPSPForPollingId;
