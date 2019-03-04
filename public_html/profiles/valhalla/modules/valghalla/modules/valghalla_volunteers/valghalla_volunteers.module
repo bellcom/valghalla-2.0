@@ -331,7 +331,13 @@ function valghalla_volunteers_rsvp_form($form, &$form_state) {
 
   if (variable_get('valghalla_volunteers_check_cpr_match', TRUE) && $GLOBALS['user']->uid == 0) {
     if (module_exists('valghalla_external_server_nemlogin')) {
+      // Attempt to fetch CPR from session or form state.
       $cpr = valghalla_external_server_nemlogin_fetch_cpr();
+      if (!$cpr && isset($form_state['values'])) {
+        if (isset($form_state['values']['cpr'])) {
+          $cpr = $form_state['values']['cpr'];
+        }
+      }
 
       $form['cpr'] = array(
         '#type' => 'hidden',

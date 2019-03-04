@@ -89,7 +89,13 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
     '#type' => 'hidden',
   );
 
+  // Attempt to fetch CPR from session or form state.
   $cpr = valghalla_external_server_nemlogin_fetch_cpr();
+  if (!$cpr && isset($form_state['values'])) {
+    if (isset($form_state['values']['cpr'])) {
+      $cpr = $form_state['values']['cpr'];
+    }
+  }
 
   if (!$cpr) {
     $form['nemid_login_link'] = array(
