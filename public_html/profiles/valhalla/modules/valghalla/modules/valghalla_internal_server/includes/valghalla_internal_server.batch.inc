@@ -307,18 +307,36 @@ function valghalla_internal_server_batch_push_op($item, $operation_details, &$co
       ValghallaLogger::info(sprintf('Deleting taxonomy term %s', $item->target_uuid));
       $context['message'] = t('Deleting taxonomy term @uuid', array('@uuid' => $item->target_uuid));
 
-      // Actual webservice call.
-      $result = $ws->deleteTerm($item->target_uuid);
-      if ($result === 3) {
-        ValghallaLogger::info(sprintf('Term %s is successfully deleted on external server', $item->target_uuid));
+      // Check if term exists on external server.
+      $item_on_external_server = $ws->getTermByUuid($item->target_uuid);
+
+      if (!empty($item_on_external_server)) {
+        // Deleting item on remote.
+        $result = $ws->deleteTerm($item->target_uuid);
+
+        if ($result === 3) {
+          ValghallaLogger::info(sprintf('Term %s is successfully deleted on external server', $item->target_uuid));
+          $context['results'][] = array(
+            'message' => t('Term "@uuid" is successfully deleted on external server', array(
+              '@uuid' => $item->target_uuid,
+            )),
+            'type' => 'status',
+          );
+
+          valghalla_synch_queue_remove_item($item->target_uuid);
+        }
+      }
+      else {
+        // Item is not present on remote, delete it from the queue.
+        valghalla_synch_queue_remove_item($item->target_uuid);
+
+        ValghallaLogger::info(sprintf('Term %s is not preset on external server, deleted the item from the queue', $item->target_uuid));
         $context['results'][] = array(
-          'message' => t('Term "@uuid" is successfully deleted on external server', array(
+          'message' => t('Term "@uuid" not present on external server, item removed from the queue', array(
             '@uuid' => $item->target_uuid,
           )),
           'type' => 'status',
         );
-
-        valghalla_synch_queue_remove_item($item->target_uuid);
       }
     }
     elseif ($item->type == 'node') {
@@ -326,18 +344,35 @@ function valghalla_internal_server_batch_push_op($item, $operation_details, &$co
       ValghallaLogger::info(sprintf('Deleting node %s', $item->target_uuid));
       $context['message'] = t('Deleting node @uuid', array('@uuid' => $item->target_uuid));
 
-      // Actual webservice call.
-      $result = $ws->deleteNode($item->target_uuid);
-      if ($result === TRUE) {
-        ValghallaLogger::info(sprintf('Node %s is successfully deleted on external server', $item->target_uuid));
+      // Check if term exists on external server.
+      $item_on_external_server = $ws->getNodeByUuid($item->target_uuid);
+
+      if (!empty($item_on_external_server)) {
+        // Deleting item on external server.
+        $result = $ws->deleteNode($item->target_uuid);
+        if ($result === TRUE) {
+          ValghallaLogger::info(sprintf('Node %s is successfully deleted on external server', $item->target_uuid));
+          $context['results'][] = array(
+            'message' => t('Node "@uuid" is successfully deleted on external server', array(
+              '@uuid' => $item->target_uuid,
+            )),
+            'type' => 'status',
+          );
+
+          valghalla_synch_queue_remove_item($item->target_uuid);
+        }
+      }
+      else {
+        // Item is not present on remote, delete it from the queue.
+        valghalla_synch_queue_remove_item($item->target_uuid);
+
+        ValghallaLogger::info(sprintf('Node %s is not preset on external server, deleted the item from the queue', $item->target_uuid));
         $context['results'][] = array(
-          'message' => t('Node "@uuid" is successfully deleted on external server', array(
+          'message' => t('Node "@uuid" not present on external server, item removed from the queue', array(
             '@uuid' => $item->target_uuid,
           )),
           'type' => 'status',
         );
-
-        valghalla_synch_queue_remove_item($item->target_uuid);
       }
     }
   }
