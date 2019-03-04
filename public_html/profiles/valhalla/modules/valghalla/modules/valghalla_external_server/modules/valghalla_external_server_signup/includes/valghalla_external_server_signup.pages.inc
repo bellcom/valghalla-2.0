@@ -85,17 +85,23 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
     valghalla_external_server_signup_terminate_signup();
   }
 
-  $form['cpr'] = array(
-    '#type' => 'hidden',
-  );
-
-  // Attempt to fetch CPR from session or form state.
+  // Attempt to fetch CPR from session.
   $cpr = valghalla_external_server_nemlogin_fetch_cpr();
-  if (!$cpr && isset($form_state['values'])) {
-    if (isset($form_state['values']['cpr'])) {
-      $cpr = $form_state['values']['cpr'];
+  if ($cpr) {
+    $cpr = valghalla_synch_node_export_get_encrypt($cpr);
+  }
+
+  // Attempt to fetch CPR from form state.
+  if (!$cpr && isset($form_state['input'])) {
+    if (isset($form_state['input']['cpr'])) {
+      $cpr = $form_state['input']['cpr'];
     }
   }
+
+  $form['cpr'] = array(
+    '#type' => 'hidden',
+    '#default_value' => $cpr,
+  );
 
   if (!$cpr) {
     $form['nemid_login_link'] = array(
@@ -103,8 +109,7 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
     );
   }
   else {
-    $form['#cpr'] = $cpr;
-    $form['cpr']['#default_value'] = $cpr;
+    $form['#cpr'] = valghalla_synch_node_export_get_decrypt($cpr);
   }
 
   $form['email-container'] = array(
@@ -461,12 +466,12 @@ function valghalla_external_server_signup_terminate_signup($terminate_code = 0) 
  * Also changes the format of CPR, if needed.
  */
 function valghalla_external_server_signup_signup_form_validate($form, &$form_state) {
-  $cpr = $form_state['values']['cpr'];
+  $cpr = valghalla_synch_node_export_get_decrypt($form_state['values']['cpr']);
 
   // Adding dash, if missing. E.g. 123456-7890.
   if (preg_match('/[0-9]{10}/', $cpr)) {
     $cpr = substr($cpr, 0, 6) . '-' . substr($cpr, 6, 4);
-    $form_state['values']['cpr'] = $cpr;
+    $form_state['input']['cpr'] = valghalla_synch_node_export_get_encrypt($cpr);
   }
   if (!preg_match('/[0-9]{6}-[0-9]{4}/', $cpr)) {
     form_set_error('cpr', t('Wrong CPR format, correct format is 123456-7890'));
@@ -523,7 +528,6 @@ function valghalla_external_server_signup_signup_form_submit($form, &$form_state
 
   if ($polling_station_nid && $role_nid && $party_tid && $election_nid) {
     $cpr = $form_state['values']['cpr'];
-    $cpr = valghalla_synch_node_export_get_encrypt($cpr);
 
     $volunteer_node = odin_load_volunteer_by_cpr($cpr);
 
