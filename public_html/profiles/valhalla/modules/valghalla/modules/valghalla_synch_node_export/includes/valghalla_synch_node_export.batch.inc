@@ -22,7 +22,6 @@ function valghalla_synch_node_export_batch_delete_orphaned_fcs($fc_items) {
     drupal_set_message(t('No orphaned field collection items were found.'));
   }
 
-
   $operations = array();
   for ($i = 0; $i < count($fc_items); $i++) {
     $operations[] = array(
