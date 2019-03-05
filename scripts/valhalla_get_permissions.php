@@ -64,7 +64,7 @@ ksort($permissions);
 // Generating csv reports.
 foreach ($roles as $role) {
   $file = fopen($report_dir . DIRECTORY_SEPARATOR . 'permissions-' . $role . '.csv', 'w');
-  fputcsv($file, array("Permission\Host") + $sites);
+  fputcsv($file, array_merge(array("Permission\Host"), $sites));
   foreach ($permissions as $permission) {
     $row = array();
     foreach ($sites as $site) {
@@ -75,7 +75,7 @@ foreach ($roles as $role) {
         $row[] = '0';
       }
     }
-    fputcsv($file, array($permission) + $row);
+    fputcsv($file, array_merge(array($permission), $row));
   }
   fclose($file);
 }
