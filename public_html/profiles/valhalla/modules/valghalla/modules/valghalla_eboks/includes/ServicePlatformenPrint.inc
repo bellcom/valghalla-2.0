@@ -54,7 +54,6 @@ class ServicePlatformenPrint {
       watchdog('ServicePlatformenPrint', $e->getMessage(), array(), WATCHDOG_ERROR);
     }
 
-
     $serviceagreementuuid = variable_get('valghalla_eboks_serviceagreementuuid');
     $usersystemuuid = variable_get('valghalla_eboks_usersystemuuid');
     $useruuid = variable_get('valghalla_eboks_useruuid');
