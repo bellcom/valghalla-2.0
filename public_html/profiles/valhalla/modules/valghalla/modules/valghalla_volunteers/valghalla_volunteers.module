@@ -62,6 +62,12 @@ function valghalla_volunteers_menu() {
       'page callback' => 'valghalla_volunteers_rsvp',
       'type' => MENU_CALLBACK,
     ),
+    'volunteers/rsvp-invalid' => array(
+      'title' => t('RSVP er ugyldig'),
+      'access arguments' => array('volunteers rsvp'),
+      'page callback' => 'valghalla_volunteers_rsvp_invalid_page',
+      'type' => MENU_CALLBACK,
+    ),
     'volunteers/login' => array(
       'title' => t('Anmodning om svar: Login'),
       'access arguments' => array('volunteers rsvp'),
@@ -192,8 +198,7 @@ function valghalla_volunteers_rsvp() {
 
   module_load_include('inc', 'valghalla_volunteers', 'valghalla_volunteers');
   if (!is_object($fc)) {
-    drupal_set_message(t('Din login token er ikke gyldig.'), 'error');
-    drupal_goto('volunteers/login');
+    drupal_goto('volunteers/rsvp-invalid');
   }
 
   $vlnt_node = $fc->hostEntity();
@@ -243,6 +248,21 @@ function valghalla_volunteers_rsvp() {
     'params' => $params,
     'post_script' => $post_script,
   ));
+}
+
+/**
+ * RSVP token invalid page callback.
+ *
+ * @return string
+ *   HTML text output.
+ */
+function valghalla_volunteers_rsvp_invalid_page() {
+  drupal_set_title(t('Invitationslinket er ugyldig'));
+
+  $output = '<p>' . t('Invitationslinket der benyttes er ikke længere gyldig.') . '</p>';
+  $output .= '<p>' . t('Denne side kan lukkes.') . '</p>';
+
+  return $output;
 }
 
 /**
