@@ -24,7 +24,6 @@ class ServicePlatformenPrint {
    */
   protected $request;
 
-
   /**
    * System ID.
    *
