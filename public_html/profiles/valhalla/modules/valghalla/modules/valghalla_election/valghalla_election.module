@@ -176,12 +176,14 @@ function valghalla_election_handle_polling_stations_fc($node) {
   $vppspIdsToDelete = array();
 
   // Make an actual list of VPPSP fields the must existing for this election.
-  foreach ($pollingStations as $ps) {
-    $polling_station_id = $ps['target_id'];
-    $actualVPPSPPollingStationParties[$polling_station_id] = array();
+  if (!empty($pollingStations)) {
+    foreach ($pollingStations as $ps) {
+      $polling_station_id = $ps['target_id'];
+      $actualVPPSPPollingStationParties[$polling_station_id] = array();
 
-    foreach ($allParties as $party_tid => $party_name) {
-      $actualVPPSPPollingStationParties[$polling_station_id][$party_tid] = $party_tid;
+      foreach ($allParties as $party_tid => $party_name) {
+        $actualVPPSPPollingStationParties[$polling_station_id][$party_tid] = $party_tid;
+      }
     }
   }
 
@@ -192,6 +194,13 @@ function valghalla_election_handle_polling_stations_fc($node) {
     }
     else {
       $vppsp = entity_load_single('field_collection_item', $value['value']);
+    }
+
+    // Not existing vppsp.
+    if (!$vppsp) {
+      // Unset them from node.
+      unset($node->field_volunteers_pr_pol_st_party[LANGUAGE_NONE][$key]);
+      continue;
     }
 
     $field_ppsp_polling_station = field_get_items('field_collection_item', $vppsp, 'field_ppsp_polling_station');
@@ -208,20 +217,19 @@ function valghalla_election_handle_polling_stations_fc($node) {
     else {
       $field_ppsp_party = field_get_items('field_collection_item', $vppsp, 'field_ppsp_party');
       if ($field_ppsp_party && is_array($field_ppsp_party)) {
-        $vppspPartiTid = $field_ppsp_party[0]['nid'];
+        $vppspPartyTid = $field_ppsp_party[0]['tid'];
       }
 
       // Party was deleted.
-      if (!taxonomy_term_load($vppspPartiTid)) {
+      if (!taxonomy_term_load($vppspPartyTid)) {
         // Add to array for deletion.
         $vppspIdsToDelete[] = $vppsp->item_id;
         // Unset them from node.
         unset($node->field_volunteers_pr_pol_st_party[LANGUAGE_NONE][$key]);
-
       }
       else {
         // Remove the combination we already have.
-        unset($actualVPPSPPollingStationParties[$vppspPollingStationId][$vppspPartiTid]);
+        unset($actualVPPSPPollingStationParties[$vppspPollingStationId][$vppspPartyTid]);
       }
     }
   }
