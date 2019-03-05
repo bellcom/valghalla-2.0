@@ -5,6 +5,9 @@
  * Valghalla_synch_node_export.module.
  */
 
+module_load_include('inc', 'valghalla_synch_node_export', 'includes/valghalla_synch_node_export.batch');
+module_load_include('inc', 'valghalla_synch_node_export', 'includes/valghalla_synch_node_export.utils');
+
 /**
  * Implements hook_node_export_node_alter().
  *
@@ -233,4 +236,48 @@ function valghalla_synch_node_export_election_counts() {
     }
   }
   return $data;
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function valghalla_synch_node_export_form_alter(&$form, &$form_state, $form_id) {
+  if ($form_id === 'valhalla_admin_settings_form') {
+    // Do synch, if asked.
+    if (isset($form_state['triggering_element']) && $form_state['triggering_element']['#id'] == 'edit-delete-orphaned-fcs') {
+      valghalla_synch_node_export_delete_orphaned_fcs_init();
+    }
+
+    $form['valghalla_synch_node_export_fs'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Delete orphaned field collections'),
+      '#collapsible' => TRUE,
+      '#collapsed' => FALSE,
+      '#weight' => 20,
+    );
+
+    $form['valghalla_synch_node_export_fs']['delete_orphaned_fcs'] = array(
+      '#type' => 'button',
+      '#value' => t('Delete orphaned field collections'),
+    );
+  }
+}
+
+/**
+ * Initializes orphaned field collection items delete batch operation.
+ */
+function valghalla_synch_node_export_delete_orphaned_fcs_init() {
+  $orphaned_fc = valgahalla_synch_node_export_find_orphaned_fc_items();
+
+  // Using batch to do the heavy operations.
+  $batch = valghalla_synch_node_export_batch_delete_orphaned_fcs($orphaned_fc);
+  batch_set($batch);
+
+  // If batch is not force started, it must be started manually.
+  if (drupal_is_cli() && function_exists('drush_main')) {
+    drush_backend_batch_process();
+  }
+  else {
+    batch_process(current_path());
+  }
 }
