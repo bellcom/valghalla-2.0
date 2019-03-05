@@ -236,9 +236,13 @@ function valghalla_internal_server_synch_check() {
       );
       watchdog('valghalla_internal_server', $message, $args, WATCHDOG_WARNING);
 
+      $now = time();
       $report_to = variable_get('valghalla_internal_server_failed_sync_report_mail', FALSE);
+      $sync_report_frequesncy = variable_get('valghalla_internal_server_failed_sync_report_frequency', 0);
+      $sync_report_last = variable_get('valghalla_internal_server_failed_sync_report_last');
       if ($report_to
-        && module_exists('valghalla_mail')) {
+        && module_exists('valghalla_mail')
+        && $now - $sync_report_last > $sync_report_frequesncy) {
         global $base_url;
         $message = $base_url . "<br>" . $message;
         $params = array(
@@ -253,7 +257,10 @@ function valghalla_internal_server_synch_check() {
           'volunteer_nid' => 0,
           'notification_type' => 'direct',
         );
-        valghalla_notifications_direct_send('mail', $report_to, $params);
+        if (valghalla_notifications_direct_send('mail', $report_to, $params)) {
+          variable_set('valghalla_internal_server_failed_sync_report_last', $now);
+          watchdog('valghalla_internal_server', 'Sync failed report has been send.');
+        }
       }
     }
     else {

@@ -137,6 +137,28 @@ function valghalla_internal_server_form_alter(&$form, &$form_state, $form_id) {
       '#description' => t('In case of failed synchronization will be detected drupal will send email message to addresses listed in this field.'),
     );
 
+    $form['valghalla_internal_server_fs']['valghalla_external_server_synch_check']['valghalla_internal_server_failed_sync_report_frequency'] = array(
+      '#type' => 'select',
+      '#title' => t('Report sending frequency'),
+      '#options' => array(
+        0 => 'Every check',
+        900 => '15 minutes',
+        1800 => '30 minutes',
+        3600 => '1 hour',
+        10800 => '3 hours',
+        21600 => '6 hours',
+        43200 => '12 hours',
+        86400 => '1 day',
+      ),
+      '#default_value' => variable_get('valghalla_internal_server_failed_sync_report_frequency', 0),
+      '#description' => t('Attempt send failed report every check, but keep delays between sending at least specific time..'),
+      '#states' => array(
+        'invisible' => array(
+          ':input[name="valghalla_internal_server_failed_sync_report_mail"]' => array('value' => ''),
+        ),
+      ),
+    );
+
     $form['valghalla_internal_server_fs']['valghalla_external_server_synch_check']['check_synch_now'] = array(
       '#type' => 'button',
       '#value' => t('Check synchronization now'),
