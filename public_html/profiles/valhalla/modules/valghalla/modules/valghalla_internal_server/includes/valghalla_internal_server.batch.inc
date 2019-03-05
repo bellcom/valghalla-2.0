@@ -438,7 +438,7 @@ function valghalla_internal_server_batch_push_op($item, $operation_details, &$co
         $result = $ws->pushNodeSerialized($data);
 
         // Operation was successful.
-        if ($result->nid) {
+        if (isset($result->nid)) {
           ValghallaLogger::info(sprintf('Node %s is successfully pushed, and its remote nid is %d', $existingItem->title, $result->nid));
           $context['results'][] = array(
             'message' => t('Node "@title" is successfully pushed, and its remote nid is @rnid', array(
@@ -451,7 +451,7 @@ function valghalla_internal_server_batch_push_op($item, $operation_details, &$co
           valghalla_synch_queue_remove_item($existingItem->uuid);
         }
         else {
-          ValghallaLogger::error(sprintf('Node %s push failed, error: %s', $existingItem->title, $result));
+          ValghallaLogger::error(sprintf('Node %s push failed, error: %s', $existingItem->title, implode(' ', $result)));
           $context['results'][] = array(
             'message' => t('Node "@title" push failed, message: @message', array(
               '@title' => $existingItem->title,
