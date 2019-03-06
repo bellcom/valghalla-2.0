@@ -281,3 +281,41 @@ function valghalla_synch_node_export_delete_orphaned_fcs_init() {
     batch_process(current_path());
   }
 }
+
+/**
+ * Implements hook_query_TAG_alter().
+ *
+ * Valgahalla_synch_node_export_find_orphaned_fc_items -
+ *   Valghalla Electioninfo node empty tag.
+ */
+function valghalla_synch_node_export_query_veine_alter(QueryAlterableInterface $query) {
+  $vlt_query = new EntityFieldQuery();
+  $vlt_query->entityCondition('entity_type', 'node')
+    ->entityCondition('bundle', 'volunteers');
+  $result = $vlt_query->execute();
+  if (isset($result['node'])) {
+    $all_volunteers_ids = array_keys($result['node']);
+  }
+
+  $query->join('field_data_field_electioninfo', 'fei', 'fei.field_electioninfo_value = field_collection_item.item_id');
+  $query->condition('fei.entity_id', $all_volunteers_ids, 'NOT IN');
+}
+
+/**
+ * Implements hook_query_TAG_alter().
+ *
+ * Valgahalla_synch_node_export_find_orphaned_fc_items -
+ *   Valghalla Volunteers_pr_pol_st_party node empty tag.
+ */
+function valghalla_synch_node_export_query_vvppspne_alter(QueryAlterableInterface $query) {
+  $vlt_query = new EntityFieldQuery();
+  $vlt_query->entityCondition('entity_type', 'node')
+    ->entityCondition('bundle', 'election');
+  $result = $vlt_query->execute();
+  if (isset($result['node'])) {
+    $all_election_ids = array_keys($result['node']);
+  }
+
+  $query->join('field_data_field_volunteers_pr_pol_st_party', 'fvppsp', 'fvppsp.field_volunteers_pr_pol_st_party_value = field_collection_item.item_id');
+  $query->condition('fvppsp.entity_id', $all_election_ids, 'NOT IN');
+}
