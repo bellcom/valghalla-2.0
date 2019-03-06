@@ -285,37 +285,111 @@ function valghalla_synch_node_export_delete_orphaned_fcs_init() {
 /**
  * Implements hook_query_TAG_alter().
  *
- * Valgahalla_synch_node_export_find_orphaned_fc_items -
- *   Valghalla Electioninfo node empty tag.
+ * Field_electioninfo - empty host node.
  */
-function valghalla_synch_node_export_query_veine_alter(QueryAlterableInterface $query) {
-  $vlt_query = new EntityFieldQuery();
-  $vlt_query->entityCondition('entity_type', 'node')
-    ->entityCondition('bundle', 'volunteers');
-  $result = $vlt_query->execute();
-  if (isset($result['node'])) {
-    $all_volunteers_ids = array_keys($result['node']);
-  }
+function valghalla_synch_node_export_query_ei_host_null_alter(QueryAlterableInterface $query) {
+  $query_exists = db_select('node', 'n');
+  $query_exists->addExpression('NULL');
+  $query_exists->where('n.nid=f.entity_id');
 
-  $query->join('field_data_field_electioninfo', 'fei', 'fei.field_electioninfo_value = field_collection_item.item_id');
-  $query->condition('fei.entity_id', $all_volunteers_ids, 'NOT IN');
+  $query->join('field_data_field_electioninfo', 'f', 'f.field_electioninfo_value = field_collection_item.item_id');
+  $query->notExists($query_exists);
 }
 
 /**
  * Implements hook_query_TAG_alter().
  *
- * Valgahalla_synch_node_export_find_orphaned_fc_items -
- *   Valghalla Volunteers_pr_pol_st_party node empty tag.
+ * Field_electioninfo - empty field_election node.
  */
-function valghalla_synch_node_export_query_vvppspne_alter(QueryAlterableInterface $query) {
-  $vlt_query = new EntityFieldQuery();
-  $vlt_query->entityCondition('entity_type', 'node')
-    ->entityCondition('bundle', 'election');
-  $result = $vlt_query->execute();
-  if (isset($result['node'])) {
-    $all_election_ids = array_keys($result['node']);
-  }
+function valghalla_synch_node_export_query_ei_field_election_empty_alter(QueryAlterableInterface $query) {
+  $query_exists = db_select('node', 'n');
+  $query_exists->addExpression('NULL');
+  $query_exists->where('n.nid=f.field_election_target_id');
 
-  $query->join('field_data_field_volunteers_pr_pol_st_party', 'fvppsp', 'fvppsp.field_volunteers_pr_pol_st_party_value = field_collection_item.item_id');
-  $query->condition('fvppsp.entity_id', $all_election_ids, 'NOT IN');
+  $query->leftJoin('field_data_field_election', 'f', 'f.entity_id = field_collection_item.item_id');
+  $query->notExists($query_exists);
+}
+
+/**
+ * Implements hook_query_TAG_alter().
+ *
+ * Field_electioninfo - empty field_post_role node.
+ */
+function valghalla_synch_node_export_query_ei_field_post_role_empty_alter(QueryAlterableInterface $query) {
+  $query_exists = db_select('node', 'n');
+  $query_exists->addExpression('NULL');
+  $query_exists->where('n.nid=f.field_post_role_target_id');
+
+  $query->leftJoin('field_data_field_post_role', 'f', 'f.entity_id = field_collection_item.item_id');
+  $query->notExists($query_exists);
+}
+
+/**
+ * Implements hook_query_TAG_alter().
+ *
+ * Field_electioninfo - empty field_vlnt_station node.
+ */
+function valghalla_synch_node_export_query_ei_field_vlnt_station_empty_alter(QueryAlterableInterface $query) {
+  $query_exists = db_select('node', 'n');
+  $query_exists->addExpression('NULL');
+  $query_exists->where('n.nid=f.field_vlnt_station_target_id');
+
+  $query->leftJoin('field_data_field_vlnt_station', 'f', 'f.entity_id = field_collection_item.item_id');
+  $query->notExists($query_exists);
+}
+
+/**
+ * Implements hook_query_TAG_alter().
+ *
+ * Field_electioninfo - empty field_post_party taxonomy term.
+ */
+function valghalla_synch_node_export_query_ei_field_post_party_empty_alter(QueryAlterableInterface $query) {
+  $query_exists = db_select('taxonomy_term_data', 't');
+  $query_exists->addExpression('NULL');
+  $query_exists->where('t.tid=f.field_post_party_target_id');
+
+  $query->leftJoin('field_data_field_post_party', 'f', 'f.entity_id = field_collection_item.item_id');
+  $query->notExists($query_exists);
+}
+
+/**
+ * Implements hook_query_TAG_alter().
+ *
+ * Field_electioninfo - empty host node.
+ */
+function valghalla_synch_node_export_query_vppsp_host_null_alter(QueryAlterableInterface $query) {
+  $query_exists = db_select('node', 'n');
+  $query_exists->addExpression('NULL');
+  $query_exists->where('n.nid=f.entity_id');
+
+  $query->join('field_data_field_volunteers_pr_pol_st_party', 'f', 'f.entity_id = field_collection_item.item_id');
+  $query->notExists($query_exists);
+}
+
+/**
+ * Implements hook_query_TAG_alter().
+ *
+ * Field_volunteers_pr_pol_st_party - empty field_ppsp_polling_station node.
+ */
+function valghalla_synch_node_export_query_vppsp_field_ppsp_polling_station_empty_alter(QueryAlterableInterface $query) {
+  $query_exists = db_select('node', 'n');
+  $query_exists->addExpression('NULL');
+  $query_exists->where('n.nid=f.field_ppsp_polling_station_nid');
+
+  $query->join('field_data_field_ppsp_polling_station', 'f', 'f.entity_id = field_collection_item.item_id');
+  $query->notExists($query_exists);
+}
+
+/**
+ * Implements hook_query_TAG_alter().
+ *
+ * Field_volunteers_pr_pol_st_party - empty field_ppsp_party node.
+ */
+function valghalla_synch_node_export_query_vppsp_field_ppsp_party_empty_alter(QueryAlterableInterface $query) {
+  $query_exists = db_select('taxonomy_term_data', 't');
+  $query_exists->addExpression('NULL');
+  $query_exists->where('t.tid=f.field_ppsp_party_tid');
+
+  $query->join('field_data_field_ppsp_party', 'f', 'f.entity_id = field_collection_item.item_id');
+  $query->notExists($query_exists);
 }
