@@ -695,7 +695,7 @@ function liste_deltager_fritaget_form($form, &$form_state) {
     $wrapper = entity_metadata_wrapper('node', $volunteer);
     $rows[$volunteer->nid] = array(
       $wrapper->title,
-      $wrapper->field_no_mail->value() ? 'Fritaget' : '',
+      $wrapper->field_no_mail->value() == '1' ? 'Fritaget' : '',
       $wrapper->field_no_sms->value() == '1' ? 'Fritaget' : '',
       l(t('Edit'), 'node/' . $volunteer->nid . '/edit', array('query' => array('destination' => current_path()))),
     );
