@@ -631,3 +631,77 @@ function odin_get_municipality($id) {
   }
   return '';
 }
+
+/**
+ * Helper function to get/check full election counts.
+ */
+function odin_volunteers_full_counts($check = FALSE) {
+  $election_query = new EntityFieldQuery();
+  $election_query->entityCondition('entity_type', 'node')
+    ->entityCondition('bundle', 'election');
+  $result = $election_query->execute();
+
+  $counts = array();
+  if (!empty($result)) {
+    $nids = array_keys($result['node']);
+
+    // We also need the roles.
+    $roles = odin_get_roles();
+    $parties = odin_get_parties();
+    foreach ($nids as $election_nid) {
+      $election = node_load($election_nid);
+      $polling_station_nids = odin_get_polling_stations($election_nid);
+      $polling_station_count = array();
+      foreach ($polling_station_nids as $polling_station_nid => $polling_station_title) {
+        // If the array of restricting stations is not empty we only let the
+        // user see the polling stations in this array.
+        if (!empty($restrict_polling_stations) &&
+          !in_array($polling_station_nid, $restrict_polling_stations)) {
+          continue;
+        }
+
+        $polling_station_count[$polling_station_nid] = odin_get_volunteers_count(
+          $election_nid,
+          array($polling_station_nid),
+          $roles);
+      }
+      $constituency_nids = odin_get_constituencies($election_nid);
+      $roles = odin_get_roles();
+      $counts[$election->uuid] = array(
+        'title' => $election->title,
+        'counts' => array(),
+      );
+      foreach ($constituency_nids as $constituency_nid => $polling_station_nids) {
+        foreach ($polling_station_nids as $polling_station_nid => $polling_station_title) {
+          foreach ($parties as $party_tid => $party) {
+            foreach ($roles as $role_nid => $role) {
+              $assigned = _valghalla_helper_get_roles_count(array($polling_station_nid), $role_nid, $party_tid, $election_nid);
+              if ($assigned == 0) {
+                continue;
+              }
+              $status = odin_get_volunteers_count($election_nid, array($polling_station_nid), array($role_nid => $role), $party_tid);
+
+              // Check count regarding correct value.
+              if (!empty($status['total_count']['total'] && !empty($status['total_count']['assigned']))
+                && $status['total_count']['total'] > $status['total_count']['assigned']
+                && $check) {
+                $role = node_load($role_nid);
+                drupal_set_message(format_string('!total vs !assigned on !election -> !polling_station -> !role',
+                  array(
+                    '!total' => $status['total_count']['total'],
+                    '!assigned' => $status['total_count']['assigned'],
+                    '!election' => $election->title,
+                    '!polling_station' => $polling_station_title,
+                    '!role' => $role->title,
+                  )), 'warning');
+              }
+
+              $counts[$election->uuid]['counts'][$constituency_nid][$polling_station_nid][$party_tid][$role_nid] = $status['total_count'];
+            }
+          }
+        }
+      }
+    }
+  }
+  return !$check ? $counts : NULL;
+}
