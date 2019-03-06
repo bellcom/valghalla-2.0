@@ -293,6 +293,9 @@ function odin_is_election_active($election_nid) {
  */
 function odin_get_constituencies($election_nid) {
   $polling_stations = odin_get_polling_stations($election_nid);
+  if (empty($polling_stations)) {
+    return array();
+  }
 
   $sql = <<<EOL
     SELECT
