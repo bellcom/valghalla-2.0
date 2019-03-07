@@ -639,15 +639,9 @@ function odin_get_municipality($id) {
  * Helper function to get/check full election counts.
  */
 function odin_volunteers_full_counts($check = FALSE) {
-  $election_query = new EntityFieldQuery();
-  $election_query->entityCondition('entity_type', 'node')
-    ->entityCondition('bundle', 'election');
-  $result = $election_query->execute();
-
+  $nids = odin_get_future_elections();
   $counts = array();
-  if (!empty($result)) {
-    $nids = array_keys($result['node']);
-
+  if (!empty($nids)) {
     // We also need the roles.
     $roles = odin_get_roles();
     $parties = odin_get_parties();

@@ -1,16 +1,13 @@
 <?php
+
 /**
  * @file
  * Code for the valghalla volunteers feature.
  */
 
 include_once 'valghalla_volunteers.features.inc';
-/**
- *
- * @comments
- *  tth: Thomas Thune Hansen <tth@bellcom.dk>
- */
 require_once 'valghalla_volunteers.inc';
+module_load_include('inc', 'valghalla_volunteers', 'includes/valghalla_volunteers.utils');
 
 /**
  * Implements hook_permission().
@@ -141,6 +138,15 @@ function valghalla_volunteers_menu() {
     'access arguments' => array('add volunteer to station'),
     'page callback' => 'valghalla_volunteers_to_polling_station_ajax',
     'page arguments' => array(3),
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+  $items['volunteers/%/%/%/%'] = array(
+    'title' => 'Volunteers by election, pooling station, party, role',
+    'access arguments' => array('administer volunteers'),
+    'page callback' => 'valghalla_volunteers_assigned',
+    'page arguments' => array(1, 2, 3, 4),
+    'file' => 'includes/valghalla_volunteer.utils.inc',
     'type' => MENU_NORMAL_ITEM,
   );
 
