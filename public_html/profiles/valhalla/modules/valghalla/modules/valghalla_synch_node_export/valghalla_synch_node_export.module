@@ -292,7 +292,7 @@ function valghalla_synch_node_export_query_ei_host_null_alter(QueryAlterableInte
   $query_exists->addExpression('NULL');
   $query_exists->where('n.nid=f.entity_id');
 
-  $query->join('field_data_field_electioninfo', 'f', 'f.field_electioninfo_value = field_collection_item.item_id');
+  $query->leftJoin('field_data_field_electioninfo', 'f', 'f.field_electioninfo_value = field_collection_item.item_id');
   $query->notExists($query_exists);
 }
 
@@ -362,7 +362,7 @@ function valghalla_synch_node_export_query_vppsp_host_null_alter(QueryAlterableI
   $query_exists->addExpression('NULL');
   $query_exists->where('n.nid=f.entity_id');
 
-  $query->join('field_data_field_volunteers_pr_pol_st_party', 'f', 'f.entity_id = field_collection_item.item_id');
+  $query->leftJoin('field_data_field_volunteers_pr_pol_st_party', 'f', 'f.field_volunteers_pr_pol_st_party_value = field_collection_item.item_id');
   $query->notExists($query_exists);
 }
 
@@ -376,7 +376,7 @@ function valghalla_synch_node_export_query_vppsp_field_ppsp_polling_station_empt
   $query_exists->addExpression('NULL');
   $query_exists->where('n.nid=f.field_ppsp_polling_station_nid');
 
-  $query->join('field_data_field_ppsp_polling_station', 'f', 'f.entity_id = field_collection_item.item_id');
+  $query->leftJoin('field_data_field_ppsp_polling_station', 'f', 'f.entity_id = field_collection_item.item_id');
   $query->notExists($query_exists);
 }
 
@@ -390,6 +390,6 @@ function valghalla_synch_node_export_query_vppsp_field_ppsp_party_empty_alter(Qu
   $query_exists->addExpression('NULL');
   $query_exists->where('t.tid=f.field_ppsp_party_tid');
 
-  $query->join('field_data_field_ppsp_party', 'f', 'f.entity_id = field_collection_item.item_id');
+  $query->leftJoin('field_data_field_ppsp_party', 'f', 'f.entity_id = field_collection_item.item_id');
   $query->notExists($query_exists);
 }

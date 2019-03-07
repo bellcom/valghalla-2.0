@@ -19,6 +19,7 @@ function valgahalla_synch_node_export_find_orphaned_fc_items() {
   $efq = new EntityFieldQuery();
   $efq->entityCondition('entity_type', 'field_collection_item');
   $efq->propertyCondition('field_name', 'field_electioninfo');
+  $efq->propertyCondition('archived', 0);
   $efq->addTag('ei_host_null');
   $result = $efq->execute();
 
@@ -93,6 +94,7 @@ function valgahalla_synch_node_export_find_orphaned_fc_items() {
   $efq = new EntityFieldQuery();
   $efq->entityCondition('entity_type', 'field_collection_item');
   $efq->propertyCondition('field_name', 'field_volunteers_pr_pol_st_party');
+  $efq->propertyCondition('archived', 0);
   $efq->addTag('vppsp_host_null');
   $result = $efq->execute();
 
@@ -108,6 +110,7 @@ function valgahalla_synch_node_export_find_orphaned_fc_items() {
   $efq = new EntityFieldQuery();
   $efq->entityCondition('entity_type', 'field_collection_item');
   $efq->propertyCondition('field_name', 'field_volunteers_pr_pol_st_party');
+  $efq->propertyCondition('archived', 0);
   $efq->addTag('vppsp_field_ppsp_polling_station_empty');
   $result = $efq->execute();
 
@@ -122,6 +125,7 @@ function valgahalla_synch_node_export_find_orphaned_fc_items() {
   $efq = new EntityFieldQuery();
   $efq->entityCondition('entity_type', 'field_collection_item');
   $efq->propertyCondition('field_name', 'field_volunteers_pr_pol_st_party');
+  $efq->propertyCondition('archived', 0);
   $efq->addTag('vppsp_field_ppsp_party_empty');
   $result = $efq->execute();
 
