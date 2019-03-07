@@ -21,10 +21,11 @@
           </h2>
 
           <div class="boxy__heading__meta">
-            <?php foreach($parties_status[$party_tid]['status']['role_count'] as $role_count): ?>
+            <?php foreach($parties_status[$party_tid]['status']['role_count'] as $role_nid => $role_count): ?>
               <?php if ($role_count['assigned'] != 0) : ?>
                 <div class="boxy__heading__meta-data">
-                  <?php print $role_count['role_name'] . ': ' . $role_count['total'] . '/' . $role_count['assigned']?>
+                  <?php print $role_count['role_name'] . ': ' . $role_count['total'] . '/' . $role_count['assigned'] ?>
+                  <a title="List field collections. Help page." href="<?php print '/volunteers/' . $election_nid . '/' . $pollingstation_nid . '/' . $party_tid . '/' . $role_nid; ?>" target="_blank" style="display:none">*</a>
                 </div>
               <?php endif; ?>
             <?php endforeach; ?>

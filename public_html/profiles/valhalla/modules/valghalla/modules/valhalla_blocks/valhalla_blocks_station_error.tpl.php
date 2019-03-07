@@ -1,4 +1,12 @@
-<div id="valhalla-station-error-list" style="border:  4px solid red">
+<?php
+
+/**
+ * @file
+ * Station error tpl.
+ */
+?>
+
+<div id="valhalla-station-error-list" style="border: 4px solid red">
 <?php if (!empty($extra)): ?>
   <div class="valhalla-station-error-list-wrapper">
     <table>
@@ -22,4 +30,3 @@
   </div>
 <?php endif;?>
 </div>
-

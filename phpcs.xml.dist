@@ -26,6 +26,7 @@
 
   <!-- Legacy code with changes -->
   <file>public_html/profiles/valhalla/modules/valghalla/modules/valghalla_election</file>
+  <file>public_html/profiles/valhalla/modules/valghalla/modules/valhalla_blocks</file>
   <file>public_html/profiles/valhalla/modules/valghalla/modules/odin</file>
 
   <exclude-pattern>*.features.*</exclude-pattern>
