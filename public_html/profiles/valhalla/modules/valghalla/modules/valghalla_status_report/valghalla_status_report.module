@@ -724,11 +724,6 @@ function _valghalla_status_report_cron() {
     $days = explode(',', $days_arr);
     $days = array_map('trim', $days);
     if (!in_array($days_to_election, $days)) {
-      watchdog('valghalla_notification', 'Status report blev ikke kørt idet idag ikke er nogen rykker dag. Valg: %election_date Dage til valget: %todays Report dage: %report_days', array(
-        '%todays' => $days_to_election,
-        '%report_days' => $days_arr,
-        '%election_date' => $election_date,
-      ), WATCHDOG_NOTICE);
       continue;
     }
 

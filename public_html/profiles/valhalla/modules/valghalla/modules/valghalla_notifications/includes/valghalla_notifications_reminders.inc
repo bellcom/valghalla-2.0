@@ -43,16 +43,9 @@ function valghalla_notifications_rsvp_reminder($last_run_ts) {
     $days_to_election = floor(($election_date1 - $today_date) / 86400);
 
     // Check dates.
-    $notification_days_arr = variable_get('valghalla_notifications_rsvp_reminder_days');
     $notification_days = explode(',', variable_get('valghalla_notifications_rsvp_reminder_days'));
     $notification_days = array_map('trim', $notification_days);
     if (!in_array($days_to_election, $notification_days)) {
-      watchdog('valghalla_notification', 'RSVP reminder blev ikke kørt idet idag ikke er nogen rykker dag. Valg: %election_date Dage til valget: %todays Rykkerdage: %godays', array(
-        '%todays' => $days_to_election,
-        '%godays' => $notification_days_arr,
-        '%election_date' => $election_date,
-      ), WATCHDOG_NOTICE
-      );
       return;
     }
 
@@ -121,12 +114,6 @@ function valghalla_notifications_togo_reminder($last_run_ts) {
     // Check dates.
     $togo_notification_days = variable_get('valghalla_notifications_reminder_togo_days');
     if (intval($togo_notification_days) != $days_to_election) {
-      watchdog('valghalla_notification', 'ToGO påmindelse blev ikke kørt idet idag ikke er nogen rykker dag. Valg: %election_date Dage til valget: %todays Rykkerdage: %godays', array(
-        '%todays' => $days_to_election,
-        '%godays' => $togo_notification_days,
-        '%election_date' => $election_date,
-      ), WATCHDOG_NOTICE
-      );
       return;
     }
 
