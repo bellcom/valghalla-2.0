@@ -13,3 +13,7 @@ De overordnede mål er:
 * Mest mulig uddelegering ved at smidiggøre partiforeningernes opgave
 * Størst mulig automatiseringsgrad af bekræftelser m.m.
 * Hurtigere effektuering ved efterfølgende valg gennem genbrug af data
+
+## Build status
+
+Develop branch state ![alt text](https://travis-ci.org/bellcom/valghalla.svg?branch=develop)
