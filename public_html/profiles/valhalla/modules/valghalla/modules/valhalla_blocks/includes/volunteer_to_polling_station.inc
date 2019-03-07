@@ -1,16 +1,12 @@
 <?php
 
 /**
- * block add_volunteer_to_polling_station section
+ * @file
+ * Block add_volunteer_to_polling_station section.
  */
 
 /**
- * the form
- *
- * @global stdClass $user
- * @param string $form
- * @param array $form_state
- * @return array
+ * All volunteers to pooling stationg form.
  */
 function valhalla_add_volunteer_to_polling_station_form($form, &$form_state) {
   global $user, $language;
@@ -29,7 +25,8 @@ function valhalla_add_volunteer_to_polling_station_form($form, &$form_state) {
       $select->join('field_data_field_party', 'p', 'p.entity_id = cn.entity_id');
       $select->condition('p.field_party_tid', $party_id);
     }
-  } elseif (isset($roles['Valgsekretær']) || isset($roles['administrator'])) {
+  }
+  elseif (isset($roles['Valgsekretær']) || isset($roles['administrator'])) {
     $postfix_party = TRUE;
   }
 
@@ -49,7 +46,7 @@ function valhalla_add_volunteer_to_polling_station_form($form, &$form_state) {
     $volunteer_options[$node->nid] = $title;
 
     if (isset($node->field_polling_station[$language->language][0]['nid'])) {
-      $in_use[$node->field_polling_station[$language->language][0]['nid']][$node->nid] = true;
+      $in_use[$node->field_polling_station[$language->language][0]['nid']][$node->nid] = TRUE;
     }
   }
   $form = array();
@@ -77,7 +74,7 @@ function valhalla_add_volunteer_to_polling_station_form($form, &$form_state) {
       '#collapsed' => TRUE,
     );
 
-    foreach (node_load_multiple($polling_station_ids, array(), TRUE) AS $polling_station) {
+    foreach (node_load_multiple($polling_station_ids, array(), TRUE) as $polling_station) {
       $form['constituency_' . $constituency->nid]['polling_station_' . $polling_station->nid] = array(
         '#type' => 'fieldset',
         '#tree' => TRUE,
@@ -89,26 +86,23 @@ function valhalla_add_volunteer_to_polling_station_form($form, &$form_state) {
 
   $form['submit'] = array(
     '#type' => 'submit',
-    '#value' => t('Opdatér')
+    '#value' => t('Opdatér'),
   );
 
   return $form;
 }
 
 /**
- * handle save actions
- *
- * @param string $form
- * @param array $form_state
+ * Submit handler for valhalla_add_volunteer_to_polling_station_form.
  */
 function valhalla_add_volunteer_to_polling_station_form_submit($form, &$form_state) {
   global $language;
-  
+
   foreach ($form_state['values'] as $field => $data) {
     if (substr($field, 0, 16) == 'polling_station_' && substr_count($field, '_') == 2) {
       $polling_station_id = array_pop(explode('_', $field));
 
-      foreach($data as $volunteer_id) {
+      foreach ($data as $volunteer_id) {
         if ($volunteer_id > 0) {
           $node = node_load($volunteer_id);
           $node->field_polling_station[$language->language][0]['nid'] = $polling_station_id;
@@ -139,6 +133,3 @@ function valhalla_add_volunteer_to_polling_station_form_submit($form, &$form_sta
 
   drupal_set_message(t('Skemaet er nu opdateret.'));
 }
-
-
-
