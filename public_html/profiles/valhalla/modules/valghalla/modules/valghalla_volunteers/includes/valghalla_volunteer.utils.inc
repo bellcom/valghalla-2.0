@@ -65,6 +65,7 @@ function valghalla_volunteers_assigned($election_nid, $polling_station_nid, $par
     'Valgsted',
     'Patri',
     'Role',
+    'Action',
   );
   $rows = array();
 
@@ -80,9 +81,72 @@ function valghalla_volunteers_assigned($election_nid, $polling_station_nid, $par
       empty($pooling_station) ? NULL : $pooling_station->title,
       empty($party) ? NULL : $party->name,
       empty($role) ? NULL : $role->title,
+      l(t('Delete'), 'volunteers/cleanup-fc/' . $fc_id, array('query' => array('destination' => current_path()))),
     );
     $rows[$fc_id] = $row;
   }
 
   return theme('table', array('header' => $header, 'rows' => $rows));
+}
+
+/**
+ * Remove broken volunteers.
+ */
+function valghalla_volunteers_remove_broken($fc_id) {
+  $fc = entity_load_single('field_collection_item', $fc_id);
+  if (empty($fc)) {
+    return array('#markup' => t('Field collection with id %fc_id is empty.', array('%fc_id' => $fc_id)));
+  }
+
+  $volunteer = $fc->hostEntity();
+  $election = field_get_items('field_collection_item', $fc, 'field_election');
+  $post_role = field_get_items('field_collection_item', $fc, 'field_post_role');
+  $post_party = field_get_items('field_collection_item', $fc, 'field_post_party');
+  $vlnt_station = field_get_items('field_collection_item', $fc, 'field_vlnt_station');
+
+  if (!empty($volunteer)
+    && !empty($election) && !empty(node_load($election[0]['target_id']))
+    && !empty($post_role) && !empty(node_load($post_role[0]['target_id']))
+    && !empty($post_party) && !empty(taxonomy_term_load($post_party[0]['target_id']))
+    && !empty($vlnt_station) && !empty(node_load($vlnt_station[0]['target_id']))) {
+    $form['warning'] = array(
+      '#type' => 'item',
+      '#prefix' => '<strong>',
+      '#suffix' => '</strong>',
+      '#markup' => t("This field collection doesn't seems to be broken. Are you sure?"),
+    );
+  }
+  else {
+    $form['warning'] = array(
+      '#type' => 'item',
+      '#markup' => t("This field collection looks broken."),
+    );
+  }
+
+  $form['fc_id'] = array(
+    '#type' => 'hidden',
+    '#value' => $fc_id,
+  );
+  $form['#submit'][] = 'valghalla_volunteers_remove_broken_submit';
+  $message = t('You are going to delete field collection %fc_id that bind volunteer%volunteer_text to election place.', array(
+    '%fc_id' => $fc_id,
+    '%volunteer_text' => empty($volunteer->title) ? '' : (' for volunteer ' . $volunteer->title),
+  ));
+
+  return confirm_form($form, 'Remove broken field collection', '<front>', $message);
+}
+
+/**
+ * Remove broken volunteers submit action.
+ */
+function valghalla_volunteers_remove_broken_submit(&$form, &$form_state) {
+  if ($form_state['values']['confirm']) {
+    $fc_id = $form_state['values']['fc_id'];
+    $fc = entity_load_single('field_collection_item', $fc_id);
+    $fc->delete();
+
+    $message = t('Field collection %fc_id has been deleted as broken.', array('%fc_id' => $fc_id));
+    watchdog('content', $message, array());
+    drupal_set_message($message);
+  }
 }

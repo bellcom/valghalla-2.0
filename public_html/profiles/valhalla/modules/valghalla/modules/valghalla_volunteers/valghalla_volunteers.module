@@ -150,6 +150,15 @@ function valghalla_volunteers_menu() {
     'type' => MENU_NORMAL_ITEM,
   );
 
+  $items['volunteers/cleanup-fc/%'] = array(
+    'title' => 'Volunteers by election, pooling station, party, role',
+    'access arguments' => array('administer volunteers'),
+    'page callback' => 'valghalla_volunteers_remove_broken',
+    'page arguments' => array(2),
+    'file' => 'includes/valghalla_volunteer.utils.inc',
+    'type' => MENU_NORMAL_ITEM,
+  );
+
   return $items;
 }
 
