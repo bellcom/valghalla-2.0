@@ -92,7 +92,7 @@ function valghalla_volunteers_assigned($election_nid, $polling_station_nid, $par
 /**
  * Remove broken volunteers.
  */
-function valghalla_volunteers_remove_broken($fc_id) {
+function valghalla_volunteers_remove_broken($form, &$form_state, $fc_id) {
   $fc = entity_load_single('field_collection_item', $fc_id);
   if (empty($fc)) {
     return array('#markup' => t('Field collection with id %fc_id is empty.', array('%fc_id' => $fc_id)));
