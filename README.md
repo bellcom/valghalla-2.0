@@ -1,0 +1,15 @@
+Valghalla - rekruttering af valgtilforordnede
+-----------------------------
+Valghalla er et webbaseret system til håndtering af valgstyrere og tilforordnede i forbindelse med valg. Løsningen er oprindeligt udviklet af Aarhus Kommune og gratis tilgængeligt for alle.
+
+Valghalla er udviklet til at forenkle og digitalisere processen med at rekruttere tilforordnede til valg. Og så er den Open Source, så andre kommuner kan få glæde af den. Valghalla er et produkt der udvikles og vdeligeholdes af OS2. Se mere her: https://os2.eu/produkt/os2valghalla
+
+De overordnede mål er:
+
+* Digitalisere en tung, manuel opgave og bibeholde meget højt datasikkerhedsniveau
+* Anvendelse af automatiserede e-mails, der hvor det er muligt
+* Give valgsekretariatet i kommunen et simpelt overblik over en kompleks opgave
+* Give partiforeningerne overblikket over deres andel af valget
+* Mest mulig uddelegering ved at smidiggøre partiforeningernes opgave
+* Størst mulig automatiseringsgrad af bekræftelser m.m.
+* Hurtigere effektuering ved efterfølgende valg gennem genbrug af data
