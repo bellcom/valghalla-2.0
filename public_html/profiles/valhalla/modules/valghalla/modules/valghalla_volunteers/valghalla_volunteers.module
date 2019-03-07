@@ -23,6 +23,9 @@ function valghalla_volunteers_permission() {
     'add volunteers' => array(
       'title' => t('Tilføj deltagere'),
     ),
+    'debug volunteers' => array(
+      'title' => t('Access to debug volunteers data'),
+    ),
     'see all psn numbers' => array(
       'title' => t('Se alle CPR numre'),
     ),
@@ -686,12 +689,15 @@ function valghalla_volunteers_to_polling_station_markup($polling_station, $user_
       'status' => $status
     );
 
+    $debug = user_access('debug volunteers');
+
     // Return the themed values.
     return theme('station', array(
       'parties_status' => $parties_status,
       'pollingstation_nid' => $posts_array['station_nid'],
       'party_posts_to_fill' => $posts_array['party_posts_to_fill'],
       'election_nid' => $_SESSION['election_nid'],
+      'debug' => $debug,
     ));
   }
 }
