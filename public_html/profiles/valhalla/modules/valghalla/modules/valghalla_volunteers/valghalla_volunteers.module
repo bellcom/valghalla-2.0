@@ -486,6 +486,8 @@ function valghalla_volunteers_rsvp_form_submit($form, &$form_state) {
   // Send e-mail to email-address set on election.
   if (isset($form_state['values']['rsvp_comment']) && $form_state['values']['rsvp_comment'] !== '') {
     $comment = $form_state['values']['rsvp_comment'];
+    $recipient = '';
+    $election_nid = '';
 
     // Get e-mail address.
     $field_election = field_get_items('field_collection_item', $fc, 'field_election');
@@ -516,7 +518,7 @@ function valghalla_volunteers_rsvp_form_submit($form, &$form_state) {
       valghalla_notifications_direct_send('mail', $recipient, $params);
     }
     else {
-      watchdog('valghalla_volunteers','Notifikation blev ikke afsend. Modul valghalla_notifications er ikke aktiveret.', array(), WATCHDOG_WARNING);
+      watchdog('valghalla_volunteers','Notifikation blev ikke afsendt. Modulet \"valghalla_notifications\" er ikke aktiveret.', array(), WATCHDOG_WARNING);
     }
   }
 }
@@ -640,7 +642,7 @@ function valghalla_volunteers_to_polling_station($station_nid = NULL) {
                     {{item.label}}
                   </td>
                   <td class="text-right">
-                    <a class="js-select-volunteer" ng-click="reset()" data-volunteer_nid="{{item.volunteer_nid}}"><span class="btn btn-sm btn-success">' . t('Vælg') . '</span></a>
+                    <button class="js-select-volunteer btn btn-sm btn-success" ng-click="reset()" data-volunteer_nid="{{item.volunteer_nid}}">' . t('Vælg') . '</button>
                   </td>
                 <tr>
               </table>
@@ -711,14 +713,29 @@ function valghalla_volunteers_to_polling_station_markup($polling_station, $user_
  *   Nid of the polling station.
  * @param int $party_tid
  *   Tid of the party.
+ * @param int $election_nid
+ *   Election nid.
  *
  * @return array
  *   Array of the posts to fill with the information about existing posts.
  */
-function valghalla_volunteers_polling_station_posts_to_fill($polling_station, $party_tid) {
+function valghalla_volunteers_polling_station_posts_to_fill($polling_station, $party_tid, $election_nid = NULL) {
   // Initializing variables.
   $station_id = $polling_station->nid;
-  $election_nid = $_SESSION['election_nid'];
+
+  // If we didn't pass an election nid, TRY to use the one from the session.
+  if (!$election_nid) {
+    if (isset($_SESSION['election_nid'])) {
+      $election_nid = $_SESSION['election_nid'];
+    }
+  }
+
+  // We don't know the election nid - so to prevent any false bleeps, we make a
+  // gentle abort.
+  if (!$election_nid) {
+    return array();
+  }
+
   $election = node_load($election_nid);
   $party = taxonomy_term_load($party_tid);
   $is_election_active = odin_is_election_active($election_nid);

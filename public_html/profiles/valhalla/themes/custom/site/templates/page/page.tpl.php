@@ -50,10 +50,17 @@
         <div class="flexy-row">
 
           <!-- Begin - logo -->
-          <a href="<?php print $front_page; ?>" class="flexy-header__logo">
-            <img src="<?php print $logo; ?>"
-                 alt="<?php print t('@site_name logo', array('@site_name' => $site_name)); ?>"/>
-          </a>
+          <?php if ($server_type === 'external'): ?>
+            <span class="flexy-header__logo">
+              <img src="<?php print $logo; ?>"
+                   alt="<?php print t('@site_name logo', array('@site_name' => $site_name)); ?>"/>
+            </span>
+          <?php else: ?>
+            <a href="<?php print $front_page; ?>" class="flexy-header__logo">
+              <img src="<?php print $logo; ?>"
+                   alt="<?php print t('@site_name logo', array('@site_name' => $site_name)); ?>"/>
+            </a>
+          <?php endif; ?>
           <!-- End - logo -->
 
           <div class="flexy-spacer"></div>

@@ -6,8 +6,8 @@ var valghalla_volunteers = valghalla_volunteers || [];
   Drupal.behaviors.valghalla_volunteers = {
     attach: function (context, settings) {
 
-      // Fetch info about post
-      $('.entity-list--volunteer-form input').on('focus', function(){
+      // Fetch info about post.
+      $('.entity-list--volunteer-form input').on('focus', function () {
         var $parent = $(this).parent().parent();
         var $el = $parent.find('.js-add-volunteer');
         volunteer_info.post_id = $parent.attr('data-post');
@@ -19,25 +19,25 @@ var valghalla_volunteers = valghalla_volunteers || [];
         $(this).autocomplete({
           minLength: 0,
           source: valghalla_volunteers,
-          focus: function( event, ui ) {
+          focus: function (event, ui) {
             return false;
           },
-          select: function( event, ui ) {
+          select: function (event, ui) {
             ui.item.volunteer_item = volunteer_tmp_element;
             Drupal.behaviors.valghalla_volunteers.autocompleteSelect(ui.item);
 
             return false;
           }
         })
-        .data( "ui-autocomplete" )._renderItem = function(ul, item){
-          return $( "<li>" )
-            .append("<a data-volunteer_nid='"+ item.volunteer_nid +"'>" + item.label + "<br>" + item.desc + "</a>")
-            .appendTo( ul );
+            .data("ui-autocomplete")._renderItem = function (ul, item) {
+          return $("<li>")
+              .append("<a data-volunteer_nid='" + item.volunteer_nid + "'>" + item.label + "<br>" + item.desc + "</a>")
+              .appendTo(ul);
         };
       });
 
       // Add to polling station modal: ---------------------->
-      $('.js-add-volunteer').on('click', function(){
+      $('.js-add-volunteer').on('click', function () {
         var $parent = $(this).parent();
         var $el = $(this);
 
@@ -48,8 +48,8 @@ var valghalla_volunteers = valghalla_volunteers || [];
         $('.js-add-volunteer-modal').modal();
       });
 
-      // Remove volunteer from post
-      $('.js-remove-volunteer').on('click', function(){
+      // Remove volunteer from post.
+      $('.js-remove-volunteer').on('click', function () {
         var fcid = $(this).attr('data-fcid');
         $parent = $(this).parent();
 
@@ -62,7 +62,8 @@ var valghalla_volunteers = valghalla_volunteers || [];
               confirmButtonClass: 'btn-danger',
               cancelButtonText: Drupal.t('Annullér'),
               confirmButtonText: Drupal.t('Ja, fjern deltageren'),
-              closeOnConfirm: false
+              closeOnConfirm: false,
+              showLoaderOnConfirm: true
             },
             function () {
               $.post('/ajax/volunteers/station/remove', {'fcid': fcid}, function (data) {
@@ -84,11 +85,17 @@ var valghalla_volunteers = valghalla_volunteers || [];
             });
       });
 
-      // Select volunteer from modal
-      $('.modal').on('click', '.js-select-volunteer', function(event) {
+      // Select volunteer from modal.
+      $('.modal').on('click', '.js-select-volunteer', function (event) {
+        var $button = $(this);
+        var $icon = $('<i />').addClass('fa fa-refresh fa-spin fa-fw');
+        $button.attr('disabled', true);
+        $button.append($icon);
+
         volunteer_info.volunteer_nid = $(this).attr('data-volunteer_nid');
 
-        $.post('/ajax/volunteers/station/add', volunteer_info, function(data){
+        $.post('/ajax/volunteers/station/add', volunteer_info, function (data) {
+          $button.attr('disabled', false);
 
           // Hide modal.
           $('.modal').modal('hide');
@@ -106,7 +113,7 @@ var valghalla_volunteers = valghalla_volunteers || [];
             });
 
             // Refresh after 2.5 sec.
-            setTimeout(function() {
+            setTimeout(function () {
               location.reload();
             }, 2500);
           })
@@ -116,11 +123,11 @@ var valghalla_volunteers = valghalla_volunteers || [];
       Drupal.behaviors.valghalla_volunteers.populateTable();
       // <------------------- Add to polling station modal
     },
-    autocompleteSelect: function( item ){
+    autocompleteSelect: function (item) {
       volunteer_info.volunteer_nid = item.volunteer_nid;
 
       // Add volunteer.
-      $.post('/ajax/volunteers/station/add', volunteer_info, function(data) {
+      $.post('/ajax/volunteers/station/add', volunteer_info, function (data) {
 
         // Show a modal.
         swal({
@@ -132,16 +139,16 @@ var valghalla_volunteers = valghalla_volunteers || [];
         });
 
         // Refresh after 2.5 sec.
-        setTimeout(function() {
+        setTimeout(function () {
           location.reload();
         }, 2500);
       });
     },
-    populateTable: function(){
-      $.get('/ajax/volunteers/station/getvolunteers', function(data){
+    populateTable: function () {
+      $.get('/ajax/volunteers/station/getvolunteers', function (data) {
 
         valghalla_volunteers = [];
-        for (var key in data){
+        for (var key in data) {
 
           valghalla_volunteers.push({
             label: "(" + data[key].volunteer_party + ") " + data[key].volunteer_name,
@@ -154,10 +161,10 @@ var valghalla_volunteers = valghalla_volunteers || [];
         $(document).trigger('volunteersLoaded');
       });
     },
-    unsetVolunteer: function(nid){
+    unsetVolunteer: function (nid) {
       var data = Drupal.settings.valghalla_volunteers.volunteers;
-      for (var key in data){
-        if(data[key].volunteer_nid === nid){
+      for (var key in data) {
+        if (data[key].volunteer_nid === nid) {
           Drupal.settings.valghalla_volunteers.volunteers.splice(key, 1);
         }
       }
@@ -170,10 +177,14 @@ var valghalla_volunteers = valghalla_volunteers || [];
       var $breadcrumb = $('.breadcrumb');
 
       // If we don't have a wrapper, stop what we are doing!
-      if ($wrapper.length === 0) return;
+      if ($wrapper.length === 0) {
+        return;
+      }
 
       // Don't proceed if a breadcrumb is present. This will break styling.
-      if ($breadcrumb.length > 0) return;
+      if ($breadcrumb.length > 0) {
+        return;
+      }
 
       // Inserts a button into the wrapper.
       $wrapper.html($button.removeClass('hidden'));

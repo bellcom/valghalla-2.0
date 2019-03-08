@@ -1,11 +1,8 @@
 angular.module('volunteersTable', ['angular-table']).controller('volunteerController', ['$scope', '$window', '$filter', function ($scope, $window, $filter) {
-  $scope.volunteers = [{label: 'Henter'}];
-
-  /** redo this **/
   function load() {
     $scope.volunteers = $window.valghalla_volunteers;
 
-    // $scope.$apply();
+    $scope.$apply();
     $scope.$evalAsync();
   }
 
