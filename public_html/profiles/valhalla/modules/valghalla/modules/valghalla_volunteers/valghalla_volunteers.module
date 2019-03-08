@@ -483,6 +483,8 @@ function valghalla_volunteers_rsvp_form_submit($form, &$form_state) {
   // Send e-mail to email-address set on election.
   if (isset($form_state['values']['rsvp_comment']) && $form_state['values']['rsvp_comment'] !== '') {
     $comment = $form_state['values']['rsvp_comment'];
+    $recipient = '';
+    $election_nid = '';
 
     // Get e-mail address.
     $field_election = field_get_items('field_collection_item', $fc, 'field_election');
@@ -513,7 +515,7 @@ function valghalla_volunteers_rsvp_form_submit($form, &$form_state) {
       valghalla_notifications_direct_send('mail', $recipient, $params);
     }
     else {
-      watchdog('valghalla_volunteers','Notifikation blev ikke afsend. Modul valghalla_notifications er ikke aktiveret.', array(), WATCHDOG_WARNING);
+      watchdog('valghalla_volunteers','Notifikation blev ikke afsendt. Modulet \"valghalla_notifications\" er ikke aktiveret.', array(), WATCHDOG_WARNING);
     }
   }
 }
