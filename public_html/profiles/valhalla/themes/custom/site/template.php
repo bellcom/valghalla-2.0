@@ -59,6 +59,12 @@ function site_preprocess_page(&$variables) {
 
   // Election party switcher.
   $variables['election_party_switcher'] = module_invoke('valghalla', 'block_view', 'election_party_switcher');
+
+  // External/internal.
+  $variables['server_type'] = 'internal';
+  if (module_exists('valghalla_external_server')) {
+    $variables['server_type'] = 'external';
+  }
 }
 
 /**
