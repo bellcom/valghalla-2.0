@@ -707,14 +707,29 @@ function valghalla_volunteers_to_polling_station_markup($polling_station, $user_
  *   Nid of the polling station.
  * @param int $party_tid
  *   Tid of the party.
+ * @param int $election_nid
+ *   Election nid.
  *
  * @return array
  *   Array of the posts to fill with the information about existing posts.
  */
-function valghalla_volunteers_polling_station_posts_to_fill($polling_station, $party_tid) {
+function valghalla_volunteers_polling_station_posts_to_fill($polling_station, $party_tid, $election_nid = NULL) {
   // Initializing variables.
   $station_id = $polling_station->nid;
-  $election_nid = $_SESSION['election_nid'];
+
+  // If we didn't pass an election nid, TRY to use the one from the session.
+  if (!$election_nid) {
+    if (isset($_SESSION['election_nid'])) {
+      $election_nid = $_SESSION['election_nid'];
+    }
+  }
+
+  // We don't know the election nid - so to prevent any false bleeps, we make a
+  // gentle abort.
+  if (!$election_nid) {
+    return array();
+  }
+
   $election = node_load($election_nid);
   $party = taxonomy_term_load($party_tid);
   $is_election_active = odin_is_election_active($election_nid);
