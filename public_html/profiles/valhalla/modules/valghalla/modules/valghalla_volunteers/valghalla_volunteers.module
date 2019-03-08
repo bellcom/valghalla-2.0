@@ -639,7 +639,7 @@ function valghalla_volunteers_to_polling_station($station_nid = NULL) {
                     {{item.label}}
                   </td>
                   <td class="text-right">
-                    <a class="js-select-volunteer" ng-click="reset()" data-volunteer_nid="{{item.volunteer_nid}}"><span class="btn btn-sm btn-success">' . t('Vælg') . '</span></a>
+                    <button class="js-select-volunteer btn btn-sm btn-success" ng-click="reset()" data-volunteer_nid="{{item.volunteer_nid}}">' . t('Vælg') . '</button>
                   </td>
                 <tr>
               </table>

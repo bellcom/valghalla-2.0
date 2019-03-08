@@ -87,9 +87,15 @@ var valghalla_volunteers = valghalla_volunteers || [];
 
       // Select volunteer from modal.
       $('.modal').on('click', '.js-select-volunteer', function (event) {
+        var $button = $(this);
+        var $icon = $('<i />').addClass('fa fa-refresh fa-spin fa-fw');
+        $button.attr('disabled', true);
+        $button.append($icon);
+
         volunteer_info.volunteer_nid = $(this).attr('data-volunteer_nid');
 
         $.post('/ajax/volunteers/station/add', volunteer_info, function (data) {
+          $button.attr('disabled', false);
 
           // Hide modal.
           $('.modal').modal('hide');
