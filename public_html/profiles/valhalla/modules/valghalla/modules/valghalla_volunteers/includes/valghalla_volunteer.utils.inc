@@ -9,17 +9,7 @@
  * Helper function to get volunteers.
  */
 function valghalla_volunteers_get_assigned_volunteers($election_nid = NULL, $polling_station_nid = NULL, $party_tid = NULL, $role_nid = NULL) {
-  // Total assigned for role.
-  $volunteer_query = new EntityFieldQuery();
-  $volunteer_query->entityCondition('entity_type', 'field_collection_item')
-    ->entityCondition('bundle', 'field_electioninfo')
-    ->propertyCondition('archived', 0)
-    ->fieldCondition('field_election', 'target_id', $election_nid)
-    ->fieldCondition('field_vlnt_station', 'target_id', $polling_station_nid)
-    ->fieldCondition('field_post_role', 'target_id', $role_nid);
-
-  $volunteer_query->fieldCondition('field_post_party', 'target_id', $party_tid);
-  $query_result = $volunteer_query->execute();
+  $query_result = valghalla_volunteers_get_fc_electioninfo($election_nid, $polling_station_nid, $party_tid, $role_nid);
   $result = array_shift($query_result);
 
   foreach ($result as $fc_id => $fc_row) {
@@ -149,4 +139,27 @@ function valghalla_volunteers_remove_broken_submit(&$form, &$form_state) {
     watchdog('content', $message, array());
     drupal_set_message($message);
   }
+}
+
+function valghalla_volunteers_get_fc_electioninfo($condition = array()) {
+  // Total assigned for role.
+  $volunteer_query = new EntityFieldQuery();
+  $volunteer_query->entityCondition('entity_type', 'field_collection_item')
+    ->entityCondition('bundle', 'field_electioninfo')
+    ->propertyCondition('archived', 0);
+
+  if ($election_nid) {
+    $volunteer_query->fieldCondition('field_election', 'target_id', $election_nid);
+  }
+  if ($polling_station_nid) {
+    $volunteer_query->fieldCondition('field_vlnt_station', 'target_id', $polling_station_nid);
+  }
+  if ($party_tid) {
+    $volunteer_query->fieldCondition('field_post_party', 'target_id', $party_tid);
+  }
+  if ($role_nid) {
+    $volunteer_query->fieldCondition('field_post_role', 'target_id', $role_nid);
+  }
+
+  return $volunteer_query->execute();
 }
