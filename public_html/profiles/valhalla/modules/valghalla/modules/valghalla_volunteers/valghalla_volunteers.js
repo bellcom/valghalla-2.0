@@ -48,8 +48,8 @@ var valghalla_volunteers = valghalla_volunteers || [];
         $('.js-add-volunteer-modal').modal();
       });
 
-      // Remove volunteer from post
-      $('.js-remove-volunteer').on('click', function(){
+      // Remove volunteer from post.
+      $('.js-remove-volunteer').on('click', function () {
         var fcid = $(this).attr('data-fcid');
         $parent = $(this).parent();
 
@@ -62,7 +62,8 @@ var valghalla_volunteers = valghalla_volunteers || [];
               confirmButtonClass: 'btn-danger',
               cancelButtonText: Drupal.t('Annullér'),
               confirmButtonText: Drupal.t('Ja, fjern deltageren'),
-              closeOnConfirm: false
+              closeOnConfirm: false,
+              showLoaderOnConfirm: true
             },
             function () {
               $.post('/ajax/volunteers/station/remove', {'fcid': fcid}, function (data) {
@@ -84,8 +85,8 @@ var valghalla_volunteers = valghalla_volunteers || [];
             });
       });
 
-      // Select volunteer from modal
-      $('.modal').on('click', '.js-select-volunteer', function(event) {
+      // Select volunteer from modal.
+      $('.modal').on('click', '.js-select-volunteer', function (event) {
         volunteer_info.volunteer_nid = $(this).attr('data-volunteer_nid');
 
         $.post('/ajax/volunteers/station/add', volunteer_info, function(data){
@@ -106,7 +107,7 @@ var valghalla_volunteers = valghalla_volunteers || [];
             });
 
             // Refresh after 2.5 sec.
-            setTimeout(function() {
+            setTimeout(function () {
               location.reload();
             }, 2500);
           })
