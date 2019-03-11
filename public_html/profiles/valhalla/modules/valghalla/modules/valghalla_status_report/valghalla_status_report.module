@@ -28,7 +28,6 @@ function valghalla_status_report_cron() {
   $last_run = variable_get('valghalla_status_report_last_run');
   // Only run once a day.
   if (date('Ymd') <= date('Ymd', $last_run)) {
-    watchdog('valghalla_status_report', 'Status report no blev ikke kørt da den allerede er kørt i dag: %last_run', array('%last_run' => $last_run), WATCHDOG_NOTICE);
     return;
   }
   _valghalla_status_report_cron();
