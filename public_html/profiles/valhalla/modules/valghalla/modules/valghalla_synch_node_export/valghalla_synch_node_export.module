@@ -355,7 +355,7 @@ function valghalla_synch_node_export_query_ei_field_post_party_empty_alter(Query
 /**
  * Implements hook_query_TAG_alter().
  *
- * Field_electioninfo - empty host node.
+ * Field_volunteers_pr_pol_st_party - empty host node.
  */
 function valghalla_synch_node_export_query_vppsp_host_null_alter(QueryAlterableInterface $query) {
   $query_exists = db_select('node', 'n');
