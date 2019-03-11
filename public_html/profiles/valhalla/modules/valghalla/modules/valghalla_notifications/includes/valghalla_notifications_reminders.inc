@@ -16,8 +16,6 @@
 function valghalla_notifications_rsvp_reminder($last_run_ts) {
   // Only run once a day.
   if (date('Ymd') <= date('Ymd', $last_run_ts)) {
-    $check_data = date('d-m-Y', $last_run_ts);
-    watchdog('valghalla_notification', 'RSVP reminder no blev ikke kørt da den allerede er kørt i dag: %last_run', array('%last_run' => $check_data), WATCHDOG_NOTICE);
     return;
   }
 
@@ -92,8 +90,6 @@ function valghalla_notifications_rsvp_reminder($last_run_ts) {
 function valghalla_notifications_togo_reminder($last_run_ts) {
   // Only run once a day.
   if (date('Ymd') <= date('Ymd', $last_run_ts)) {
-    $check_data = date('d-m-Y', $last_run_ts);
-    watchdog('valghalla_notification', 'ToGO påmindelse blev ikke kørt da den allerede er kørt i dag: %last_run', array('%last_run' => $check_data), WATCHDOG_NOTICE);
     return;
   }
 
