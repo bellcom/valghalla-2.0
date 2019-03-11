@@ -1,11 +1,11 @@
 // author:   Samuel Mueller 
-// version: 1.0.4 
-// license:  MIT 
-// homepage: http://github.com/samu/angular-table 
+// version: 1.0.7
+// license:  MIT
+// homepage: http://github.com/samu/angular-table
 (function() {
   var ColumnConfiguration, PageSequence, PaginatedSetup, ScopeConfigWrapper, Setup, StandardSetup, Table, TableConfiguration, configurationVariableNames, paginationTemplate,
-    __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+      __hasProp = {}.hasOwnProperty,
+      __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   angular.module("angular-table", []);
 
@@ -49,7 +49,7 @@
       if (this.sortable) {
         element.attr("ng-click", "predicate = '" + this.attribute + "'; descending = !descending;");
         icon = angular.element("<i style='margin-left: 10px;'></i>");
-        icon.attr("ng-class", "getSortIcon('" + this.attribute + "', predicate)");
+        icon.attr("ng-class", "getSortIcon('" + this.attribute + "', predicate, descending)");
         return element.append(icon);
       }
     };
@@ -81,6 +81,7 @@
       this.maxPages = "" + this.configObjectName + ".maxPages";
       this.currentPage = "" + this.configObjectName + ".currentPage";
       this.orderBy = "" + this.configObjectName + ".orderBy";
+      this.paginatorLabels = "" + this.configObjectName + ".paginatorLabels";
     }
 
     return configurationVariableNames;
@@ -120,6 +121,19 @@
 
     ScopeConfigWrapper.prototype.getOrderBy = function() {
       return this.scope.$eval(this.configurationVariableNames.orderBy) || 'orderBy';
+    };
+
+    ScopeConfigWrapper.prototype.getPaginatorLabels = function() {
+      var paginatorLabelsDefault;
+      paginatorLabelsDefault = {
+        stepBack: '‹',
+        stepAhead: '›',
+        jumpBack: '«',
+        jumpAhead: '»',
+        first: 'First',
+        last: 'Last'
+      };
+      return this.scope.$eval(this.configurationVariableNames.paginatorLabels) || paginatorLabelsDefault;
     };
 
     return ScopeConfigWrapper;
@@ -279,7 +293,7 @@
       tdString = "";
       for (_i = 0, _len = tds.length; _i < _len; _i++) {
         td = tds[_i];
-        tdString += "<td>&nbsp;</td>";
+        tdString += "<td><span>&nbsp;</span></td>";
       }
       fillerTr = angular.element(document.createElement("tr"));
       fillerTr.attr("ng-show", this.configurationVariableNames.fillLastPage);
@@ -433,11 +447,11 @@
     Table.prototype.post = function($scope, $element, $attributes, $filter) {
       this.setupInitialSorting($scope);
       if (!$scope.getSortIcon) {
-        $scope.getSortIcon = function(predicate, currentPredicate) {
+        $scope.getSortIcon = function(predicate, currentPredicate, descending) {
           if (predicate !== $scope.predicate) {
             return "glyphicon glyphicon-minus";
           }
-          if ($scope.descending) {
+          if (descending) {
             return "glyphicon glyphicon-chevron-down";
           } else {
             return "glyphicon glyphicon-chevron-up";
@@ -512,7 +526,7 @@
 
   })();
 
-  paginationTemplate = "<div style='margin: 0px;'> <ul class='pagination'> <li ng-class='{disabled: getCurrentPage() <= 0}'> <a href='' ng-click='stepPage(-numberOfPages)'>First</a> </li> <li ng-show='showSectioning()' ng-class='{disabled: getCurrentPage() <= 0}'> <a href='' ng-click='jumpBack()'>&laquo;</a> </li> <li ng-class='{disabled: getCurrentPage() <= 0}'> <a href='' ng-click='stepPage(-1)'>&lsaquo;</a> </li> <li ng-class='{active: getCurrentPage() == page}' ng-repeat='page in pageSequence.data'> <a href='' ng-click='goToPage(page)'>{{page + 1}}</a> </li> <li ng-class='{disabled: getCurrentPage() >= numberOfPages - 1}'> <a href='' ng-click='stepPage(1)'>&rsaquo;</a> </li> <li ng-show='showSectioning()' ng-class='{disabled: getCurrentPage() >= numberOfPages - 1}'> <a href='' ng-click='jumpAhead()'>&raquo;</a> </li> <li ng-class='{disabled: getCurrentPage() >= numberOfPages - 1}'> <a href='' ng-click='stepPage(numberOfPages)'>Last</a> </li> </ul> </div>";
+  paginationTemplate = "<div style='margin: 0px;'> <ul class='pagination'> <li ng-class='{disabled: getCurrentPage() <= 0}'> <a href='' ng-click='stepPage(-numberOfPages)'>{{getPaginatorLabels().first}}</a> </li> <li ng-show='showSectioning()' ng-class='{disabled: getCurrentPage() <= 0}'> <a href='' ng-click='jumpBack()'>{{getPaginatorLabels().jumpBack}}</a> </li> <li ng-class='{disabled: getCurrentPage() <= 0}'> <a href='' ng-click='stepPage(-1)'>{{getPaginatorLabels().stepBack}}</a> </li> <li ng-class='{active: getCurrentPage() == page}' ng-repeat='page in pageSequence.data'> <a href='' ng-click='goToPage(page)' ng-bind='page + 1'></a> </li> <li ng-class='{disabled: getCurrentPage() >= numberOfPages - 1}'> <a href='' ng-click='stepPage(1)'>{{getPaginatorLabels().stepAhead}}</a> </li> <li ng-show='showSectioning()' ng-class='{disabled: getCurrentPage() >= numberOfPages - 1}'> <a href='' ng-click='jumpAhead()'>{{getPaginatorLabels().jumpAhead}}</a> </li> <li ng-class='{disabled: getCurrentPage() >= numberOfPages - 1}'> <a href='' ng-click='stepPage(numberOfPages)'>{{getPaginatorLabels().last}}</a> </li> </ul> </div>";
 
   angular.module("angular-table").directive("atTable", [
     "$filter", function($filter) {
@@ -584,6 +598,9 @@
           $scope.getCurrentPage = function() {
             return w.getCurrentPage();
           };
+          $scope.getPaginatorLabels = function() {
+            return w.getPaginatorLabels();
+          };
           $scope.stepPage = function(step) {
             step = parseInt(step);
             w.setCurrentPage(keepInBounds(w.getCurrentPage() + step, 0, getNumberOfPages() - 1));
@@ -627,7 +644,7 @@
           if (!attribute) {
             throw "at-implicit specified without at-attribute: " + (element.html());
           }
-          return element.append("{{item." + attribute + "}}");
+          return element.append("<span ng-bind='item." + attribute + "'></span>");
         }
       };
     }
