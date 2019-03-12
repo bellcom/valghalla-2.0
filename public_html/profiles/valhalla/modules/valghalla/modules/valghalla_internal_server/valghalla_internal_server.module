@@ -145,6 +145,12 @@ function valghalla_internal_server_perform_synch($force = TRUE) {
     return;
   }
 
+  // Locking synch.
+  if (!lock_acquire('valghalla_internal_server_synch')) {
+    watchdog('valghalla_internal_server', 'Cannot start synch process, synch is already in progress. ', array(), WATCHDOG_WARNING);
+    return;
+  }
+
   // Update heartbeat.
   $ws = new ExternalWebservice();
   variable_set('valgalla_internal_server_heartbeat', $ws->heartbeat());
@@ -177,6 +183,9 @@ function valghalla_internal_server_perform_synch($force = TRUE) {
       }
     }
   }
+
+  // Unlocking synch.
+  lock_release('valghalla_internal_server_synch');
 }
 
 /**
