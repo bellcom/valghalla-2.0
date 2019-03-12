@@ -128,6 +128,18 @@ function valghalla_volunteer_validator_node_presave($node) {
       $node_wrapper->field_no_sms = $subscriptions[0]['nem_sms'] == FALSE ? '1' : '0';
     }
   }
+
+  // Check field_election info field.
+  // Truncate invalid field collection items.
+  $field_electioninfo_lang = field_language('node', $node, 'field_electioninfo');
+  if (!empty($node->field_electioninfo[$field_electioninfo_lang])) {
+    foreach ($node->field_electioninfo[$field_electioninfo_lang] as $key => $value) {
+      if (valghalla_volunteers_fc_electioninfo_validate($value['entity']->item_id)) {
+        continue;
+      }
+      unset($node->field_electioninfo[$field_electioninfo_lang][$key]);
+    }
+  }
 }
 
 /**
@@ -234,6 +246,17 @@ function valghalla_volunteer_validator_form_volunteers_node_form_alter(&$form, &
     $form['field_no_sms']['#access'] = FALSE;
   }
 
+  $node = $form_state['node'];
+  $field_electioninfo_lang = field_language('node', $node, 'field_electioninfo');
+  if (!empty($form['field_electioninfo'][$field_electioninfo_lang])) {
+    foreach ($form['field_electioninfo'][$field_electioninfo_lang] as &$value) {
+      foreach (element_children($value) as $key) {
+        if (strpos($key, 'field') === 0) {
+          $value[$key]['#disabled'] = TRUE;
+        }
+      }
+    }
+  }
 }
 
 /**
