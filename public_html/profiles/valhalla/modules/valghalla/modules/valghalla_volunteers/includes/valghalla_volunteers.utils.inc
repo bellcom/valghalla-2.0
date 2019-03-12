@@ -6,6 +6,26 @@
  */
 
 /**
+ * Helper function to validate election info field_collection.
+ */
+function valghalla_volunteers_fc_electioninfo_validate($fc_id) {
+  // Total assigned for role.
+  $volunteer_query = new EntityFieldQuery();
+  $volunteer_query->entityCondition('entity_type', 'field_collection_item')
+    ->entityCondition('bundle', 'field_electioninfo')
+    ->propertyCondition('archived', 0)
+    ->propertyCondition('item_id', $fc_id)
+    ->addTag('ei_volunteer_exist')
+    ->addTag('ei_election_exist')
+    ->addTag('ei_polling_station_exist')
+    ->addTag('ei_party_exist')
+    ->addTag('ei_role_exist');
+  $query_result = $volunteer_query->execute();
+
+  return !empty($query_result['field_collection_item'][$fc_id]);
+}
+
+/**
  * Helper function to get volunteers.
  */
 function valghalla_volunteers_get_assigned_volunteers($election_nid = NULL, $polling_station_nid = NULL, $party_tid = NULL, $role_nid = NULL) {
@@ -162,6 +182,10 @@ function valghalla_volunteers_get_fc_electioninfo(array $condition = array()) {
     ->entityCondition('bundle', 'field_electioninfo')
     ->propertyCondition('archived', 0);
 
+  if (!empty($condition['fc_item_id'])) {
+    $volunteer_query->propertyCondition('item_id', $condition['fc_item_id ']);
+  }
+
   if (!empty($condition['volunteer_exist']) && $condition['volunteer_exist']) {
     $volunteer_query->addTag('ei_volunteer_exist');
   }
@@ -202,3 +226,4 @@ function valghalla_volunteers_get_fc_electioninfo(array $condition = array()) {
 
   return empty($query_result) ? NULL : array_shift($query_result);
 }
+

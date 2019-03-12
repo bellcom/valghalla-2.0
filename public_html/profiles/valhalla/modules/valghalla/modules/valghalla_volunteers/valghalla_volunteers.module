@@ -149,7 +149,7 @@ function valghalla_volunteers_menu() {
     'access arguments' => array('administer volunteers'),
     'page callback' => 'valghalla_volunteers_assigned',
     'page arguments' => array(1, 2, 3, 4),
-    'file' => 'includes/valghalla_volunteer.utils.inc',
+    'file' => 'includes/valghalla_volunteers.utils.inc',
     'type' => MENU_NORMAL_ITEM,
   );
 
@@ -158,7 +158,7 @@ function valghalla_volunteers_menu() {
     'access arguments' => array('administer volunteers'),
     'page callback' => 'drupal_get_form',
     'page arguments' => array('valghalla_volunteers_remove_broken', 2),
-    'file' => 'includes/valghalla_volunteer.utils.inc',
+    'file' => 'includes/valghalla_volunteers.utils.inc',
     'type' => MENU_NORMAL_ITEM,
   );
 
