@@ -49,3 +49,15 @@ function valghalla_user_tools_views_pre_view(&$view, &$display_id, &$args) {
     $args[] = $user_party;
   }
 }
+
+/**
+ * Implements hook_query_alter().
+ *
+ * Adds a restriction for field_party bundle to volunteers.
+ */
+function valghalla_user_tools_query_field_party_bundle_volunteers_alter(QueryAlterableInterface $query) {
+  $tables = $query->getTables();
+  if (array_key_exists('field_data_field_party_value_0', $tables)) {
+    $query->condition('field_data_field_party_value_0.bundle', 'volunteers');
+  }
+}
