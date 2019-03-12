@@ -1788,3 +1788,56 @@ function valghalla_volunteers_notify($election_nid, $role_nid, $fc, $type) {
     watchdog('valghalla_volunteers','Notifikation blev ikke afsend. Modul valghalla_notifications er ikke aktiveret.', array(), WATCHDOG_WARNING);
   }
 }
+
+/**
+ * Implements hook_query_TAG_alter().
+ *
+ * Field_electioninfo - not empty host node.
+ */
+function valghalla_volunteers_query_ei_volunteer_exist_alter(QueryAlterableInterface $query) {
+  $query->addJoin('left', 'field_data_field_electioninfo', 'fv', 'fv.field_electioninfo_value = field_collection_item.item_id');
+  $query->addJoin('left', 'node', 'nv', 'nv.nid = fv.entity_id');
+  $query->isNotNull('nv.nid');
+}
+
+/**
+ * Implements hook_query_TAG_alter().
+ *
+ * Field_electioninfo - not empty field_election node.
+ */
+function valghalla_volunteers_query_ei_election_exist_alter(QueryAlterableInterface $query) {
+  $query->addJoin('left', 'field_data_field_election', 'fe', 'fe.entity_id = field_collection_item.item_id');
+  $query->addJoin('left', 'node', 'ne', 'ne.nid = fe.field_election_target_id');
+  $query->isNotNull('ne.nid');}
+
+/**
+ * Implements hook_query_TAG_alter().
+ *
+ * Field_electioninfo - not empty field_vlnt_station node.
+ */
+function valghalla_volunteers_query_ei_polling_station_exist_alter(QueryAlterableInterface $query) {
+  $query->addJoin('left', 'field_data_field_vlnt_station', 'fps', 'fps.entity_id = field_collection_item.item_id');
+  $query->addJoin('left', 'node', 'nps', 'nps.nid = fps.field_vlnt_station_target_id');
+  $query->isNotNull('nps.nid');}
+
+/**
+ * Implements hook_query_TAG_alter().
+ *
+ * Field_electioninfo - not empty field_post_party taxonomy term.
+ */
+function valghalla_volunteers_query_ei_party_exist_alter(QueryAlterableInterface $query) {
+  $query->addJoin('left', 'field_data_field_post_party', 'fpp', 'fpp.entity_id = field_collection_item.item_id');
+  $query->addJoin('left', 'taxonomy_term_data', 'tpp', 'tpp.tid = fpp.field_post_party_target_id');
+  $query->isNotNull('tpp.tid');
+}
+
+/**
+ * Implements hook_query_TAG_alter().
+ *
+ * Field_electioninfo - not empty field_post_role node.
+ */
+function valghalla_volunteers_query_ei_role_exist_alter(QueryAlterableInterface $query) {
+  $query->addJoin('left', 'field_data_field_post_role', 'fpr', 'fpr.entity_id = field_collection_item.item_id');
+  $query->addJoin('left', 'node', 'npr', 'npr.nid = fpr.field_post_role_target_id');
+  $query->isNotNull('npr.nid');
+}
