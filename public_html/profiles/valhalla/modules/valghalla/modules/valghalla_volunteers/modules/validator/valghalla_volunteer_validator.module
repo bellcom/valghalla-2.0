@@ -134,7 +134,7 @@ function valghalla_volunteer_validator_node_presave($node) {
   $field_electioninfo_lang = field_language('node', $node, 'field_electioninfo');
   if (!empty($node->field_electioninfo[$field_electioninfo_lang])) {
     foreach ($node->field_electioninfo[$field_electioninfo_lang] as $key => $value) {
-      if (valghalla_volunteers_fc_electioninfo_validate($value['entity']->item_id)) {
+      if (valghalla_volunteers_fc_electioninfo_validate($value['entity'])) {
         continue;
       }
       unset($node->field_electioninfo[$field_electioninfo_lang][$key]);
