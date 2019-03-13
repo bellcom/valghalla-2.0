@@ -332,10 +332,15 @@ function liste_deltager_get_volunteers($values) {
       ->entityCondition('bundle', 'field_electioninfo')
       ->propertyCondition('archived', 0);
 
+  $values['roles'] = array_filter( $values['roles'], function($elem) { return ($elem !== 0); });
   $roles = count($values['roles']) > 0 ? $values['roles'] : FALSE;
+
+  $values['party'] = array_filter( $values['party'], function($elem) { return ($elem !== 0); });
   $party_selected = $party = count($values['party']) > 0 ? $values['party'] : FALSE;
 
+  $values['rsvp'] = array_filter( $values['rsvp'], function($elem) { return ($elem !== 0); });
   $rsvp_filter = count($values['rsvp']) > 0 ? $values['rsvp'] : FALSE;
+
   $polling_station = count($values['polling_station']) > 0 ? $values['polling_station'] : FALSE;
 
   $rsvp_map = array(
@@ -407,9 +412,10 @@ function liste_deltager_get_volunteers($values) {
 
     // The value of the volunteers response.
     $rsvp = $rsvp_map[$rsvp_field[0]['value']];
-
-    if (!in_array($rsvp_field[0]['value'], $rsvp_filter, TRUE)) {
-      continue;
+    if ($rsvp_filter) {
+      if (!in_array($rsvp_field[0]['value'], $rsvp_filter, TRUE)) {
+        continue;
+      }
     }
 
     $party_field = field_get_items('node', $volunteer, 'field_party');
