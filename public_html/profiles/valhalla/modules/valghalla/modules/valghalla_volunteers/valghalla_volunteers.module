@@ -1,16 +1,13 @@
 <?php
+
 /**
  * @file
  * Code for the valghalla volunteers feature.
  */
 
 include_once 'valghalla_volunteers.features.inc';
-/**
- *
- * @comments
- *  tth: Thomas Thune Hansen <tth@bellcom.dk>
- */
 require_once 'valghalla_volunteers.inc';
+module_load_include('inc', 'valghalla_volunteers', 'includes/valghalla_volunteers.utils');
 
 /**
  * Implements hook_permission().
@@ -25,6 +22,9 @@ function valghalla_volunteers_permission() {
     ),
     'add volunteers' => array(
       'title' => t('Tilføj deltagere'),
+    ),
+    'debug volunteers' => array(
+      'title' => t('Access to debug volunteers data'),
     ),
     'see all psn numbers' => array(
       'title' => t('Se alle CPR numre'),
@@ -60,6 +60,12 @@ function valghalla_volunteers_menu() {
       'title' => t('Anmodning om svar'),
       'access arguments' => array('volunteers rsvp'),
       'page callback' => 'valghalla_volunteers_rsvp',
+      'type' => MENU_CALLBACK,
+    ),
+    'volunteers/rsvp-invalid' => array(
+      'title' => t('RSVP er ugyldig'),
+      'access arguments' => array('volunteers rsvp'),
+      'page callback' => 'valghalla_volunteers_rsvp_invalid_page',
       'type' => MENU_CALLBACK,
     ),
     'volunteers/login' => array(
@@ -138,6 +144,24 @@ function valghalla_volunteers_menu() {
     'type' => MENU_NORMAL_ITEM,
   );
 
+  $items['volunteers/%/%/%/%'] = array(
+    'title' => 'Volunteers by election, pooling station, party, role',
+    'access arguments' => array('administer volunteers'),
+    'page callback' => 'valghalla_volunteers_assigned',
+    'page arguments' => array(1, 2, 3, 4),
+    'file' => 'includes/valghalla_volunteers.utils.inc',
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+  $items['volunteers/cleanup-fc/%'] = array(
+    'title' => 'Volunteers by election, pooling station, party, role',
+    'access arguments' => array('administer volunteers'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('valghalla_volunteers_remove_broken', 2),
+    'file' => 'includes/valghalla_volunteers.utils.inc',
+    'type' => MENU_NORMAL_ITEM,
+  );
+
   return $items;
 }
 
@@ -192,8 +216,7 @@ function valghalla_volunteers_rsvp() {
 
   module_load_include('inc', 'valghalla_volunteers', 'valghalla_volunteers');
   if (!is_object($fc)) {
-    drupal_set_message(t('Din login token er ikke gyldig.'), 'error');
-    drupal_goto('volunteers/login');
+    drupal_goto('volunteers/rsvp-invalid');
   }
 
   $vlnt_node = $fc->hostEntity();
@@ -243,6 +266,21 @@ function valghalla_volunteers_rsvp() {
     'params' => $params,
     'post_script' => $post_script,
   ));
+}
+
+/**
+ * RSVP token invalid page callback.
+ *
+ * @return string
+ *   HTML text output.
+ */
+function valghalla_volunteers_rsvp_invalid_page() {
+  drupal_set_title(t('Invitationslinket er ugyldig'));
+
+  $output = '<p>' . t('Invitationslinket der benyttes er ikke længere gyldig.') . '</p>';
+  $output .= '<p>' . t('Denne side kan lukkes.') . '</p>';
+
+  return $output;
 }
 
 /**
@@ -330,14 +368,19 @@ function valghalla_volunteers_rsvp_form($form, &$form_state) {
   }
 
   if (variable_get('valghalla_volunteers_check_cpr_match', TRUE) && $GLOBALS['user']->uid == 0) {
-    $form['cpr'] = array(
-      '#type' => 'textfield',
-      '#title' => 'CPR nummer',
-      '#description' => t('CPR nummer'),
-      '#attributes' => array(
-        'placeholder' => t('CPR nummer'),
-      ),
-    );
+    if (module_exists('valghalla_external_server_nemlogin')) {
+      $cpr = valghalla_external_server_nemlogin_fetch_cpr();
+
+      if (!$cpr) {
+        $form['nemid_login_link'] = array(
+          '#markup' => '<div class="form-group">' . l(t('Login med Nemlogin'), valghalla_external_server_nemlogin_login_link(request_uri())) . '</div>',
+        );
+      }
+      else {
+        $form['#cpr'] = $cpr;
+        $form_state['cpr'] = $cpr;
+      }
+    }
   }
 
   $form['rsvp'] = array(
@@ -368,11 +411,9 @@ function valghalla_volunteers_rsvp_form($form, &$form_state) {
 
   // Disabling form submit until CPR is present.
   if (variable_get('valghalla_volunteers_check_cpr_match', TRUE) && $GLOBALS['user']->uid == 0) {
-    $form['submit']['#states'] = array(
-      'enabled' => array(
-        ':input[name="cpr"]' => array('filled' => TRUE),
-      ),
-    );
+    if (!$form['#cpr']) {
+      $form['submit']['#disabled'] = 'disabled';
+    }
   }
 
   return $form;
@@ -388,31 +429,34 @@ function valghalla_volunteers_rsvp_form_validate($form, &$form_state) {
   }
 
   if (variable_get('valghalla_volunteers_check_cpr_match', TRUE) && $GLOBALS['user']->uid == 0) {
-    $cpr = $form_state['values']['cpr'];
+    if (module_exists('valghalla_external_server_nemlogin')) {
+      $cpr = $form_state['cpr'];
 
-    // Adding dash, if missing. E.g. 123456-7890.
-    if (preg_match('/[0-9]{10}/', $cpr)) {
-      $cpr = substr($cpr, 0, 6) . '-' . substr($cpr, 6, 4);
-      $form_state['values']['cpr'] = $cpr;
-    }
+      // Adding dash, if missing. E.g. 123456-7890.
+      if (preg_match('/[0-9]{10}/', $cpr)) {
+        $cpr = substr($cpr, 0, 6) . '-' . substr($cpr, 6, 4);
+        $form_state['cpr'] = $cpr;
+      }
 
-    if (!preg_match('/[0-9]{6}-[0-9]{4}/', $cpr)) {
-      form_set_error('cpr', t('Wrong CPR format, correct format is 123456-7890'));
-    }
+      if (!preg_match('/[0-9]{6}-[0-9]{4}/', $cpr)) {
+        form_set_error('cpr', t('Wrong CPR format, correct format is 123456-7890'));
+      }
 
-    if (module_exists('valghalla_synch_node_export') && module_exists('valghalla_external_server')) {
-      $cpr = valghalla_synch_node_export_get_encrypt($cpr);
-    }
+      if (module_exists('valghalla_synch_node_export') && module_exists('valghalla_external_server')) {
+        $cpr = valghalla_synch_node_export_get_encrypt($cpr);
+      }
 
-    // Getting CPR from volunteer node, which is attached to the field collection.
-    $fc = _valghalla_volunteers_validate_key(arg(2));
-    $volunteer = $fc->hostEntity();
-    if ($field_cpr_number = field_get_items('node', $volunteer, 'field_cpr_number')) {
-      $expected_cpr = $field_cpr_number[0]['value'];
-    }
+      // Getting CPR from volunteer node, which is attached to the field collection.
+      $fc = _valghalla_volunteers_validate_key(arg(2));
+      $volunteer = $fc->hostEntity();
+      if ($field_cpr_number = field_get_items('node', $volunteer, 'field_cpr_number')) {
+        $expected_cpr = $field_cpr_number[0]['value'];
+      }
 
-    if (strcmp($cpr, $expected_cpr) !== 0) {
-      form_set_error('cpr', t('This token is not valid for the provided CPR'));
+      if (strcmp($cpr, $expected_cpr) !== 0) {
+        print_r(valghalla_synch_node_export_get_decrypt($expected_cpr));
+        form_set_error('cpr', t('This token is not valid for the provided CPR'));
+      }
     }
   }
 }
@@ -442,6 +486,8 @@ function valghalla_volunteers_rsvp_form_submit($form, &$form_state) {
   // Send e-mail to email-address set on election.
   if (isset($form_state['values']['rsvp_comment']) && $form_state['values']['rsvp_comment'] !== '') {
     $comment = $form_state['values']['rsvp_comment'];
+    $recipient = '';
+    $election_nid = '';
 
     // Get e-mail address.
     $field_election = field_get_items('field_collection_item', $fc, 'field_election');
@@ -472,7 +518,7 @@ function valghalla_volunteers_rsvp_form_submit($form, &$form_state) {
       valghalla_notifications_direct_send('mail', $recipient, $params);
     }
     else {
-      watchdog('valghalla_volunteers','Notifikation blev ikke afsend. Modul valghalla_notifications er ikke aktiveret.', array(), WATCHDOG_WARNING);
+      watchdog('valghalla_volunteers','Notifikation blev ikke afsendt. Modulet \"valghalla_notifications\" er ikke aktiveret.', array(), WATCHDOG_WARNING);
     }
   }
 }
@@ -487,6 +533,10 @@ function valghalla_volunteers_rsvp_form_submit($form, &$form_state) {
  */
 function valghalla_volunteers_to_polling_station($station_nid = NULL) {
   global $user, $language;
+
+  if (empty($_SESSION['election_nid'])) {
+    drupal_goto('<front>');
+  }
 
   if (empty($station_nid)) {
     drupal_set_title(t('Access denied'));
@@ -592,7 +642,7 @@ function valghalla_volunteers_to_polling_station($station_nid = NULL) {
                     {{item.label}}
                   </td>
                   <td class="text-right">
-                    <a class="js-select-volunteer" ng-click="reset()" data-volunteer_nid="{{item.volunteer_nid}}"><span class="btn btn-sm btn-success">' . t('Vælg') . '</span></a>
+                    <button class="js-select-volunteer btn btn-sm btn-success" ng-click="reset()" data-volunteer_nid="{{item.volunteer_nid}}">' . t('Vælg') . '</button>
                   </td>
                 <tr>
               </table>
@@ -641,12 +691,15 @@ function valghalla_volunteers_to_polling_station_markup($polling_station, $user_
       'status' => $status
     );
 
+    $debug = user_access('debug volunteers');
+
     // Return the themed values.
     return theme('station', array(
       'parties_status' => $parties_status,
       'pollingstation_nid' => $posts_array['station_nid'],
       'party_posts_to_fill' => $posts_array['party_posts_to_fill'],
       'election_nid' => $_SESSION['election_nid'],
+      'debug' => $debug,
     ));
   }
 }
@@ -660,14 +713,29 @@ function valghalla_volunteers_to_polling_station_markup($polling_station, $user_
  *   Nid of the polling station.
  * @param int $party_tid
  *   Tid of the party.
+ * @param int $election_nid
+ *   Election nid.
  *
  * @return array
  *   Array of the posts to fill with the information about existing posts.
  */
-function valghalla_volunteers_polling_station_posts_to_fill($polling_station, $party_tid) {
+function valghalla_volunteers_polling_station_posts_to_fill($polling_station, $party_tid, $election_nid = NULL) {
   // Initializing variables.
   $station_id = $polling_station->nid;
-  $election_nid = $_SESSION['election_nid'];
+
+  // If we didn't pass an election nid, TRY to use the one from the session.
+  if (!$election_nid) {
+    if (isset($_SESSION['election_nid'])) {
+      $election_nid = $_SESSION['election_nid'];
+    }
+  }
+
+  // We don't know the election nid - so to prevent any false bleeps, we make a
+  // gentle abort.
+  if (!$election_nid) {
+    return array();
+  }
+
   $election = node_load($election_nid);
   $party = taxonomy_term_load($party_tid);
   $is_election_active = odin_is_election_active($election_nid);
@@ -1073,7 +1141,31 @@ function valghalla_volunteers_get_volunteers(){
  *
  * @author Thomas Thune Hansen <tth@bellcom.dk>
  */
-function valghalla_volunteers_add_volunteer_to_post($volunteer_nid, $pollingstation_nid, $role_nid, $party_tid, $election_nid, $confirmed = 0){
+
+/**
+ * Adding volunteer to post.
+ *
+ * @param int $volunteer_nid
+ *   Nid of volunteer.
+ * @param int $pollingstation_nid
+ *   Nid of polling station.
+ * @param int $role_nid
+ *   Nid of role.
+ * @param int $party_tid
+ *   Tid of party.
+ * @param int $election_nid
+ *   Nid of election.
+ * @param int $confirmed
+ *   Whether volunteer post is confirmed right away (skipping invitation).
+ * @param bool $invitation_synch
+ *   Whether the volunteer must be synched to external server right away -
+ *   only when inviting.
+ *
+ * @return array
+ *   fcid - Field collection id.
+ *   html - html rendered name of volunteer.
+ */
+function valghalla_volunteers_add_volunteer_to_post($volunteer_nid, $pollingstation_nid, $role_nid, $party_tid, $election_nid, $confirmed = 0, $invitation_synch = TRUE){
   // Save info to field collection.
   $fc = entity_create('field_collection_item', array('field_name' => 'field_electioninfo'));
 
@@ -1089,6 +1181,12 @@ function valghalla_volunteers_add_volunteer_to_post($volunteer_nid, $pollingstat
 
   if (variable_get('valghalla_notifications_send_invitation_on_add', TRUE) && !$confirmed) {
     valghalla_volunteers_notify($election_nid, $role_nid, $fc, 'invitation');
+
+    if ($invitation_synch && module_exists('valghalla_internal_server')) {
+      // Forcing synch before sending the invitation message, so that sent is
+      // valid at all times.
+      valghalla_internal_server_perform_synch(TRUE);
+    }
   }
   else if ($confirmed) {
     valghalla_volunteers_notify($election_nid, $role_nid, $fc, 'confirmed');
@@ -1679,16 +1777,91 @@ function valghalla_volunteers_preprocess_views_view_table(&$variables) {
  * Wrapper with module existing check.
  */
 function valghalla_volunteers_notify($election_nid, $role_nid, $fc, $type) {
+  if (!odin_is_election_active($election_nid)) {
+    return FALSE;
+  }
+
   if (module_exists('valghalla_notifications')) {
     valghalla_notifications_notify_volunteer($election_nid, $role_nid, $fc, $type);
   }
   else {
     watchdog('valghalla_volunteers','Notifikation blev ikke afsend. Modul valghalla_notifications er ikke aktiveret.', array(), WATCHDOG_WARNING);
   }
+}
 
-  if ($type == 'invitation' && module_exists('valghalla_internal_server')) {
-    // Forcing synch before sending the invitation message, so that sent is
-    // valid at all times.
-    valghalla_internal_server_perform_synch(TRUE);
+/**
+ * Implements hook_query_TAG_alter().
+ *
+ * Check existing field_electioninfo.
+ * Wrapper for tags:
+ *  - ei_volunteer_exist,
+ *  - ei_election_exist,
+ *  - ei_polling_station_exist,
+ *  - ei_party_exist,
+ *  - ei_role_exist.
+ */
+function valghalla_volunteers_query_ei_valid_references_alter(QueryAlterableInterface $query) {
+  $hooks = array(
+    'ei_volunteer_exist',
+    'ei_election_exist',
+    'ei_polling_station_exist',
+    'ei_party_exist',
+    'ei_role_exist',
+  );
+  foreach ($hooks as $hook) {
+    drupal_alter('query_' . $hook, $query);
   }
+}
+
+/**
+ * Implements hook_query_TAG_alter().
+ *
+ * Field_electioninfo - not empty host node.
+ */
+function valghalla_volunteers_query_ei_volunteer_exist_alter(QueryAlterableInterface $query) {
+  $query->addJoin('left', 'field_data_field_electioninfo', 'fv', 'fv.field_electioninfo_value = field_collection_item.item_id');
+  $query->addJoin('left', 'node', 'nv', 'nv.nid = fv.entity_id');
+  $query->isNotNull('nv.nid');
+}
+
+/**
+ * Implements hook_query_TAG_alter().
+ *
+ * Field_electioninfo - not empty field_election node.
+ */
+function valghalla_volunteers_query_ei_election_exist_alter(QueryAlterableInterface $query) {
+  $query->addJoin('left', 'field_data_field_election', 'fe', 'fe.entity_id = field_collection_item.item_id');
+  $query->addJoin('left', 'node', 'ne', 'ne.nid = fe.field_election_target_id');
+  $query->isNotNull('ne.nid');}
+
+/**
+ * Implements hook_query_TAG_alter().
+ *
+ * Field_electioninfo - not empty field_vlnt_station node.
+ */
+function valghalla_volunteers_query_ei_polling_station_exist_alter(QueryAlterableInterface $query) {
+  $query->addJoin('left', 'field_data_field_vlnt_station', 'fps', 'fps.entity_id = field_collection_item.item_id');
+  $query->addJoin('left', 'node', 'nps', 'nps.nid = fps.field_vlnt_station_target_id');
+  $query->isNotNull('nps.nid');}
+
+/**
+ * Implements hook_query_TAG_alter().
+ *
+ * Field_electioninfo - not empty field_post_party taxonomy term.
+ */
+function valghalla_volunteers_query_ei_party_exist_alter(QueryAlterableInterface $query) {
+  $query->addJoin('left', 'field_data_field_post_party', 'fpp', 'fpp.entity_id = field_collection_item.item_id');
+  $query->addJoin('left', 'taxonomy_term_data', 'tpp', 'tpp.tid = fpp.field_post_party_target_id');
+  $query->isNotNull('tpp.tid');
+}
+
+/**
+ * Implements hook_query_TAG_alter().
+ *
+ * Field_electioninfo - not empty field_post_role node.
+ */
+function valghalla_volunteers_query_ei_role_exist_alter(QueryAlterableInterface $query) {
+  $query->addJoin('left', 'field_data_field_post_role', 'fpr', 'fpr.entity_id = field_collection_item.item_id');
+  $query->addJoin('left', 'node', 'npr', 'npr.nid = fpr.field_post_role_target_id');
+  $query->isNotNull('npr.nid');
 }

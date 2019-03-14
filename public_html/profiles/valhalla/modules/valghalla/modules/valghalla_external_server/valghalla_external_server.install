@@ -141,10 +141,17 @@ function valghalla_external_server_requirements($phase) {
 
 /**
  * Implements hook_update_N().
- *
- * Remove permissions from roles.
  */
 function valghalla_external_server_update_7101() {
+  module_enable(array(
+    'valghalla_external_server_nemlogin',
+  ));
+}
+
+/**
+ * Remove permissions from roles.
+ */
+function valghalla_external_server_update_7102() {
   $deny_pemissions = array(
     'add volunteers',
     'administer services',

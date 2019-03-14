@@ -14,7 +14,16 @@ function valghalla_internal_server_form_alter(&$form, &$form_state, $form_id) {
   if ($form_id === 'valhalla_admin_settings_form') {
     // Do synch, if asked.
     if (isset($form_state['triggering_element']) && $form_state['triggering_element']['#id'] == 'edit-synch-now') {
+      // Do sync even if it's failed.
+      variable_set('valghalla_synch_ok', TRUE);
       valghalla_internal_server_perform_synch(TRUE);
+    }
+    // Do synch check, if asked.
+    if (isset($form_state['triggering_element']) && $form_state['triggering_element']['#id'] == 'edit-check-synch-now') {
+      // Do sync even if it's failed.
+      if (!valghalla_internal_server_synch_check()) {
+        drupal_set_message("Synchronization check failed. See log messages for details.", 'warning');
+      }
     }
 
     $form['valghalla_internal_server_enable'] = array(
@@ -107,6 +116,56 @@ function valghalla_internal_server_form_alter(&$form, &$form_state, $form_id) {
     $form['valghalla_internal_server_fs']['valghalla_external_server_synch_now_fs'][] = array(
       '#markup' => '<div>' . t('Last pulled: @datetime', array('@datetime' => format_date(variable_get('valgalla_internal_server_last_clone_timestamp')))) . '</div>'
       . '<div>' . t('Last pushed: @datetime', array('@datetime' => format_date(variable_get('valgalla_internal_server_last_push_timestamp')))) . '</div>',
+    );
+
+    $form['valghalla_internal_server_fs']['valghalla_external_server_synch_check'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Synchronization check settings'),
+      '#collapsible' => TRUE,
+      '#collapsed' => FALSE,
+    );
+    $form['valghalla_internal_server_fs']['valghalla_external_server_synch_check']['valghalla_internal_server_run_failed_sync'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Kør fejl synch'),
+      '#default_value' => variable_get('valghalla_internal_server_run_failed_sync', VALGHALLA_INTERNAL_SERVER_RUN_FAILED_SYNC),
+    );
+
+    $form['valghalla_internal_server_fs']['valghalla_external_server_synch_check']['valghalla_internal_server_failed_sync_report_mail'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Send report about failed sync to email:'),
+      '#default_value' => variable_get('valghalla_internal_server_failed_sync_report_mail'),
+      '#description' => t('In case of failed synchronization will be detected drupal will send email message to addresses listed in this field.'),
+    );
+
+    $form['valghalla_internal_server_fs']['valghalla_external_server_synch_check']['valghalla_internal_server_failed_sync_report_frequency'] = array(
+      '#type' => 'select',
+      '#title' => t('Report sending frequency'),
+      '#options' => array(
+        0 => 'Every check',
+        900 => '15 minutes',
+        1800 => '30 minutes',
+        3600 => '1 hour',
+        10800 => '3 hours',
+        21600 => '6 hours',
+        43200 => '12 hours',
+        86400 => '1 day',
+      ),
+      '#default_value' => variable_get('valghalla_internal_server_failed_sync_report_frequency', 0),
+      '#description' => t('Attempt send failed report every check, but keep delays between sending at least specific time..'),
+      '#states' => array(
+        'invisible' => array(
+          ':input[name="valghalla_internal_server_failed_sync_report_mail"]' => array('value' => ''),
+        ),
+      ),
+    );
+
+    $form['valghalla_internal_server_fs']['valghalla_external_server_synch_check']['check_synch_now'] = array(
+      '#type' => 'button',
+      '#value' => t('Check synchronization now'),
+    );
+
+    $form['valghalla_internal_server_fs']['valghalla_external_server_synch_check'][] = array(
+      '#markup' => '<div>' . t('Last synchronization check: @datetime', array('@datetime' => format_date(variable_get('valgalla_internal_server_last_synch_check')))) . '</div>',
     );
 
     $form = system_settings_form($form);

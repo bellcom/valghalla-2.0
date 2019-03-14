@@ -1,0 +1,181 @@
+<?php
+
+/**
+ * @file
+ * Valghalla external server nemlogin file.
+ */
+
+module_load_include('inc', 'valghalla_external_server_nemlogin', 'includes/valghalla_external_server_nemlogin');
+
+define('VALGHALLA_EXTERNAL_SERVER_NEMLOGIN_URL_LOGINSERVICE', '/service/loginservice.wsdl');
+define('VALGHALLA_EXTERNAL_SERVER_NEMLOGIN_URL_LOGIN', '/nemlogin.php');
+define('VALGHALLA_EXTERNAL_SERVER_NEMLOGIN_URL_LOGOUT', '/nemlogout.php');
+
+/**
+ * Implements hook_menu().
+ */
+function valghalla_external_server_nemlogin_menu() {
+  $items['nemlogin/login-callback'] = array(
+    'title' => 'Nemlogin login callback',
+    'description' => 'Nemlogin login callback',
+    'page callback' => 'valghalla_external_server_nemlogin_login_callback',
+    'access callback' => TRUE,
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+  $items['nemlogin/logout'] = array(
+    'title' => 'Nemlogin logout',
+    'description' => 'Nemlogin logout callback',
+    'page callback' => 'valghalla_external_server_nemlogin_logout_callback',
+    'access callback' => TRUE,
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+  $items['admin/config/system/nemlogin'] = array(
+    'title' => 'Valghalla External Server Configure Nemlogin',
+    'description' => 'Configure Nemlogin settings',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('valghalla_external_server_nemlogin_menu_settings_form'),
+    'access arguments' => array('administer site configuration'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_valghalla_allowed_uris_alter().
+ */
+function valghalla_external_server_nemlogin_valghalla_allowed_uris_alter(&$allowed_uris) {
+  $allowed_uris[] = '/nemlogin/login-callback*';
+  $allowed_uris[] = '/nemlogin/logout*';
+}
+
+/**
+ * Nemlogin settings form definition.
+ */
+function valghalla_external_server_nemlogin_menu_settings_form() {
+  $form = array();
+
+  $form['valghalla_external_server_nemlogin_idp'] = array(
+    '#type' => 'textfield',
+    '#title' => t('URL of IDP system.'),
+    '#required' => TRUE,
+    '#default_value' => variable_get('valghalla_external_server_nemlogin_idp'),
+    '#description' => t('E.g. https://nemlogin.bellcom.dk/simplesaml. NB! Do not include the trailing slash.'),
+  );
+
+  return system_settings_form($form);
+}
+
+/**
+ * Validating form valghalla_external_server_nemlogin_menu_settings_form.
+ */
+function valghalla_external_server_nemlogin_menu_settings_form_validate($form, $form_state) {
+  $idp = $form_state['values']['valghalla_external_server_nemlogin_idp'];
+
+  if (strcmp(substr($idp, -1), '/') === 0) {
+    form_set_error('valghalla_external_server_nemlogin_idp', t('Please remove the trailing slash'));
+  }
+
+  $url_to_test = array(
+    $idp . VALGHALLA_EXTERNAL_SERVER_NEMLOGIN_URL_LOGINSERVICE,
+    $idp . VALGHALLA_EXTERNAL_SERVER_NEMLOGIN_URL_LOGIN,
+    $idp . VALGHALLA_EXTERNAL_SERVER_NEMLOGIN_URL_LOGOUT,
+  );
+
+  // Testing if we have access to all URLs.
+  foreach ($url_to_test as $url) {
+    $url_request = drupal_http_request($url);
+    if ($url_request->code != 200 && $url_request->redirect_code != 302) {
+      form_set_error('valghalla_external_server_nemlogin_idp', t('%url cannot be accessed. Response code: %code', array(
+        '%url' => $url,
+        '%code' => $url_request->code,
+      )));
+    }
+  }
+}
+
+/**
+ * Nemlogin login callback function.
+ *
+ * Makes the request to webservice and reads the request.
+ * In the end the user is redirected to a URL specified as destination.
+ */
+function valghalla_external_server_nemlogin_login_callback() {
+  $token = $_REQUEST['token'];
+  $mnemo = $_REQUEST['mnemo'];
+
+  $idp = variable_get('valghalla_external_server_nemlogin_idp', 'https://nemlogin.bellcom.dk/simplesaml');
+
+  $response = NULL;
+  $cpr = NULL;
+
+  try {
+    $client = new SoapClient($idp . VALGHALLA_EXTERNAL_SERVER_NEMLOGIN_URL_LOGINSERVICE);
+    $response = $client->LogIn(array('token' => $token, 'mnemo' => $mnemo));
+  }
+  catch (Exception $e) {
+    watchdog('Valghalla nemlogin', 'Cannot initialize request: @message', array('@message' => $e->getMessage()), WATCHDOG_ERROR);
+  }
+
+  if ($response && isset($response->LogInResult)) {
+    $cprraw = $response->LogInResult->cpr;
+    if ($cprraw) {
+      $cpr = utf8_decode($cprraw);
+      // Adding dash, if missing. E.g. 123456-7890.
+      if (preg_match('/[0-9]{10}/', $cpr)) {
+        $cpr = substr($cpr, 0, 6) . '-' . substr($cpr, 6, 4);
+      }
+
+      // We need to store CPR value between redirects
+      // to be able use it in a a signup form.
+      // This value will be deleted after first usage.
+      // @see valghalla_external_server_nemlogin_fetch_cpr() function.
+      $_SESSION['valghalla_external_server_nemlogin_cpr'] = $cpr;
+    }
+  }
+
+  if (!$cpr) {
+    watchdog('Valghalla nemlogin', 'Could not fetch CPR. Response is empty', array(), WATCHDOG_WARNING);
+  }
+
+  $destination = drupal_get_destination();
+  valghalla_external_server_nemlogin_destroy_simplesamle_session($destination['destination']);
+}
+
+/**
+ * NemID logout callback function.
+ *
+ * Deletes the CPR from the session, destroys session on external IDP.
+ * In the end the user is redirected to a URL specified as destination.
+ */
+function valghalla_external_server_nemlogin_logout_callback() {
+  unset($_SESSION['valghalla_external_server_nemlogin_cpr']);
+
+  $callback = '';
+  if (isset($_GET['callback'])) {
+    $callback = $_GET['callback'];
+  }
+  valghalla_external_server_nemlogin_destroy_simplesamle_session($callback);
+}
+
+/**
+ * Destroy SimpleSaml session function.
+ *
+ * @param string $callback
+ *   Callback path for simplesaml environment.
+ */
+function valghalla_external_server_nemlogin_destroy_simplesamle_session($callback = '') {
+  global $base_url;
+  $getParams = http_build_query(
+    array(
+      'RelayState' => $base_url . base_path() . $callback,
+    )
+  );
+
+  $idp = variable_get('valghalla_external_server_nemlogin_idp', 'https://nemlogin.bellcom.dk/simplesaml');
+  $url = $idp . VALGHALLA_EXTERNAL_SERVER_NEMLOGIN_URL_LOGOUT . '?' . $getParams;
+  header('Location: ' . $url, TRUE, 302);
+  drupal_exit($url);
+}

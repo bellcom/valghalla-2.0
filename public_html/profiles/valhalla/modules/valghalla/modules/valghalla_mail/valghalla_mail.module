@@ -63,7 +63,6 @@ function valghalla_mail_mail($key, &$message, $params) {
       $message['subject'] = format_string($params['subject'], $params['tokens']);
       $message_body = format_string($params['body'], $params['tokens']);
       $message['body'][] = $message_body;
-      $message['params']['attachments'] = $params['attachments'];
       if (!empty($params['bcc'])) {
         $message['headers']['Bcc'] = $params['bcc'];
       }
@@ -71,6 +70,7 @@ function valghalla_mail_mail($key, &$message, $params) {
       $notification = $params['notification_entity'];
       $notification->message = $message['subject'] . '<br>' . $message_body;
       if (!empty($params['attachments'])) {
+        $message['params']['attachments'] = $params['attachments'];
         $files = array();
         foreach ($params['attachments'] as $attachment) {
           $files[] = $attachment['filename'];

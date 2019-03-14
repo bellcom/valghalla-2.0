@@ -50,10 +50,17 @@
         <div class="flexy-row">
 
           <!-- Begin - logo -->
-          <a href="<?php print $front_page; ?>" class="flexy-header__logo">
-            <img src="<?php print $logo; ?>"
-                 alt="<?php print t('@site_name logo', array('@site_name' => $site_name)); ?>"/>
-          </a>
+          <?php if ($server_type === 'external'): ?>
+            <span class="flexy-header__logo">
+              <img src="<?php print $logo; ?>"
+                   alt="<?php print t('@site_name logo', array('@site_name' => $site_name)); ?>"/>
+            </span>
+          <?php else: ?>
+            <a href="<?php print $front_page; ?>" class="flexy-header__logo">
+              <img src="<?php print $logo; ?>"
+                   alt="<?php print t('@site_name logo', array('@site_name' => $site_name)); ?>"/>
+            </a>
+          <?php endif; ?>
           <!-- End - logo -->
 
           <div class="flexy-spacer"></div>
@@ -86,15 +93,6 @@
                   <?php print $admin_valghalla['navigation']; ?>
                 </li>
               <?php endif; ?>
-
-              <li class="flexy-navigation__item flexy-navigation__item--dropdown">
-                <a href="#"><?php print t('Valghalla Manual'); ?></a>
-                <ul class="flexy-navigation__item__dropdown-menu">
-                  <li class="flexy-navigation__item__dropdown-menu__item"><a href="http://valghalla.dk/valghalla-manual" target="_blank"><?php print t('Valghalla Manual'); ?></a></li>
-                  <li class="flexy-navigation__item__dropdown-menu__item"><a href="http://valghalla.dk/sites/default/files/valhalla-vejledning-til-valgsekretren.pdf" target="_blank"><?php print t('Vejledning til valgsekretær'); ?></a></li>
-                  <li class="flexy-navigation__item__dropdown-menu__item"><a href="http://valghalla.dk/sites/default/files/kom-godt-i-gang-med-valhalla-partier.pdf" target="_blank"><?php print t('Kom godt i gang'); ?></a></li>
-                </ul>
-              </li>
 
             </ul>
           </nav>

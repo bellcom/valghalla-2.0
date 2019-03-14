@@ -85,14 +85,17 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
     valghalla_external_server_signup_terminate_signup();
   }
 
-  $form['cpr'] = array(
-    '#type' => 'textfield',
-    '#description' => t('CPR nummer'),
-    '#attributes' => array(
-      'placeholder' => t('CPR nummer'),
-    ),
-    '#required' => TRUE,
-  );
+  $cpr = valghalla_external_server_nemlogin_fetch_cpr();
+
+  if (!$cpr) {
+    $form['nemid_login_link'] = array(
+      '#markup' => l(t('Login med Nemlogin'), valghalla_external_server_nemlogin_login_link(request_uri())),
+    );
+  }
+  else {
+    $form['#cpr'] = $cpr;
+    $form_state['cpr'] = $cpr;
+  }
 
   $form['email-container'] = array(
     '#prefix' => '<div id="js-email-container" class="form-group">',
@@ -448,14 +451,13 @@ function valghalla_external_server_signup_terminate_signup($terminate_code = 0) 
  * Also changes the format of CPR, if needed.
  */
 function valghalla_external_server_signup_signup_form_validate($form, &$form_state) {
-  $cpr = $form_state['values']['cpr'];
+  $cpr = $form_state['cpr'];
 
   // Adding dash, if missing. E.g. 123456-7890.
   if (preg_match('/[0-9]{10}/', $cpr)) {
     $cpr = substr($cpr, 0, 6) . '-' . substr($cpr, 6, 4);
-    $form_state['values']['cpr'] = $cpr;
+    $form_state['cpr'] = $cpr;
   }
-
   if (!preg_match('/[0-9]{6}-[0-9]{4}/', $cpr)) {
     form_set_error('cpr', t('Wrong CPR format, correct format is 123456-7890'));
   }
@@ -510,7 +512,7 @@ function valghalla_external_server_signup_signup_form_submit($form, &$form_state
   $polling_station_nid = isset($form_state['polling_station']) ? $form_state['polling_station']->nid : $form_state['values']['polling_station_select'];
 
   if ($polling_station_nid && $role_nid && $party_tid && $election_nid) {
-    $cpr = $form_state['values']['cpr'];
+    $cpr = $form_state['cpr'];
     $cpr = valghalla_synch_node_export_get_encrypt($cpr);
 
     $volunteer_node = odin_load_volunteer_by_cpr($cpr);
@@ -548,7 +550,14 @@ function valghalla_external_server_signup_signup_form_submit($form, &$form_state
         $post->save();
       }
 
-      $form_state['redirect'] = 'valghalla/external-signup-success';
+      $form_state['redirect'] = array(
+        'nemlogin/logout',
+        array(
+          'query' => array(
+            'callback' => 'valghalla/external-signup-success',
+          ),
+        ),
+      );
     }
     else {
       drupal_set_message(t('This volunteer already has a seat in the selected election'), 'warning');

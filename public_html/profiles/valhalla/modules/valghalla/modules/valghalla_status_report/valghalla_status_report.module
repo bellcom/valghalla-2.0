@@ -28,7 +28,6 @@ function valghalla_status_report_cron() {
   $last_run = variable_get('valghalla_status_report_last_run');
   // Only run once a day.
   if (date('Ymd') <= date('Ymd', $last_run)) {
-    watchdog('valghalla_status_report', 'Status report no blev ikke kørt da den allerede er kørt i dag: %last_run', array('%last_run' => $last_run), WATCHDOG_NOTICE);
     return;
   }
   _valghalla_status_report_cron();
@@ -344,6 +343,12 @@ function _generate_pdf_content($election_nid = NULL, $party_tid = NULL) {
     }
   }
 
+  // We don't know the election nid - so to prevent any false bleeps, we make a
+  // gentle abort.
+  if (!$election_nid) {
+    return $markup;
+  }
+
   // If we didn't pass an party tid, TRY to use the one set on the user.
   if (!$party_tid) {
 
@@ -379,16 +384,16 @@ function _generate_pdf_content($election_nid = NULL, $party_tid = NULL) {
   }
 
   // Party status.
-  $markup .= _generate_pdf_content__party_status($party_tid, $polling_station_nids);
+  $markup .= _generate_pdf_content__party_status($election_nid, $party_tid, $polling_station_nids);
 
   // Constituency status.
-  $markup .= _generate_pdf_content__party_constituency_status($party_tid, $polling_station_nids);
+  $markup .= _generate_pdf_content__party_constituency_status($election_nid, $party_tid, $polling_station_nids);
 
   // Volunteer list.
   $markup .= '<pagebreak>';
   $markup .= '<h1>' . t('Deltagerliste') . '</h1>';
 
-  $markup .= _generate_pdf_content__volunteer_list_from_polling_station($party_tid, $polling_station_nids);
+  $markup .= _generate_pdf_content__volunteer_list_from_polling_station($election_nid, $party_tid, $polling_station_nids);
 
   // We are requiring a specific party.
   if ($party_tid) {
@@ -510,12 +515,12 @@ function _generate_pdf_content__party_external_links($election_nid = NULL, $part
 /**
  * Generate content for party status.
  */
-function _generate_pdf_content__party_status($party_tid, $polling_station_nids) {
+function _generate_pdf_content__party_status($election_nid, $party_tid, $polling_station_nids) {
   $markup = '';
   global $user;
 
   $user_entity = user_load($user->uid);
-  $user_party_id = empty($user_entity->field_party[LANGUAGE_NONE][0]['tid']) ? FALSE : $user_entity->field_party[LANGUAGE_NONE][0]['tid'];
+  $user_party_id = empty($user_entity->field_party[LANGUAGE_NONE][0]['tid']) ? $party_tid : $user_entity->field_party[LANGUAGE_NONE][0]['tid'];
 
   // Get polling stations user is allowed to see.
   $restrict_polling_stations = array();
@@ -529,7 +534,7 @@ function _generate_pdf_content__party_status($party_tid, $polling_station_nids) 
   // We also need the roles.
   $roles = odin_get_roles();
 
-  $count = odin_get_volunteers_count($_SESSION['election_nid'],
+  $count = odin_get_volunteers_count($election_nid,
     array_keys($polling_station_nids),
     $roles,
     $user_party_id);
@@ -541,12 +546,12 @@ function _generate_pdf_content__party_status($party_tid, $polling_station_nids) 
 /**
  * Generate content for party constituency status.
  */
-function _generate_pdf_content__party_constituency_status($party_tid, $polling_station_nids) {
+function _generate_pdf_content__party_constituency_status($election_nid, $party_tid, $polling_station_nids) {
   global $user;
   $markup = '';
 
   $user_entity = user_load($user->uid);
-  $user_party_id = empty($user_entity->field_party[LANGUAGE_NONE][0]['tid']) ? FALSE : $user_entity->field_party[LANGUAGE_NONE][0]['tid'];
+  $user_party_id = empty($user_entity->field_party[LANGUAGE_NONE][0]['tid']) ? $party_tid : $user_entity->field_party[LANGUAGE_NONE][0]['tid'];
 
   // Get polling stations user is allowed to see.
   $restrict_polling_stations = array();
@@ -570,12 +575,12 @@ function _generate_pdf_content__party_constituency_status($party_tid, $polling_s
     }
 
     $polling_station_count[$polling_station_nid] = odin_get_volunteers_count(
-      $_SESSION['election_nid'],
+      $election_nid,
       array($polling_station_nid),
       $roles,
       $user_party_id);
   }
-  $constituency_nids = odin_get_constituencies($_SESSION['election_nid']);
+  $constituency_nids = odin_get_constituencies($election_nid);
   $markup .= _valghalla_status_report_generate_constituency_markup($constituency_nids, $polling_station_count);
 
   return $markup;
@@ -584,13 +589,13 @@ function _generate_pdf_content__party_constituency_status($party_tid, $polling_s
 /**
  * Generates a list of volunteers.
  */
-function _generate_pdf_content__volunteer_list_from_polling_station($party_tid = NULL, $polling_station_nids) {
+function _generate_pdf_content__volunteer_list_from_polling_station($election_nid, $party_tid = NULL, $polling_station_nids) {
   global $user;
 
   $restrict_polling_stations = FALSE;
   $user = user_load($user->uid);
   $selected_party_tid = $party_tid;
-  $election = node_load($_SESSION['election_nid']);
+  $election = node_load($election_nid);
 
   // Try to load a selected party tid from the user.
   if (!$party_tid) {
@@ -632,14 +637,14 @@ function _generate_pdf_content__volunteer_list_from_polling_station($party_tid =
         }
 
         // Polling stations.
-        if ($output = _generate_pdf_content__volunteer_list__markup($polling_station, $party_tid)) {
+        if ($output = _generate_pdf_content__volunteer_list__markup($election_nid, $polling_station, $party_tid)) {
           $markup .= $output;
         }
       }
     }
     else {
 
-      if ($output = _generate_pdf_content__volunteer_list__markup($polling_station, $selected_party_tid)) {
+      if ($output = _generate_pdf_content__volunteer_list__markup($election_nid, $polling_station, $selected_party_tid)) {
         $markup .= $output;
       }
     }
@@ -661,10 +666,9 @@ function _generate_pdf_content__volunteer_list_from_polling_station($party_tid =
 /**
  * Generate list markup for polling station.
  */
-function _generate_pdf_content__volunteer_list__markup($polling_station, $user_party_id) {
-  $election_nid = $_SESSION['election_nid'];
+function _generate_pdf_content__volunteer_list__markup($election_nid, $polling_station, $user_party_id) {
   $is_election_active = odin_is_election_active($election_nid);
-  $posts_array = valghalla_volunteers_polling_station_posts_to_fill($polling_station, $user_party_id);
+  $posts_array = valghalla_volunteers_polling_station_posts_to_fill($polling_station, $user_party_id, $election_nid);
 
   if (!empty($posts_array['party_posts_to_fill'])) {
     $parties_status = array();

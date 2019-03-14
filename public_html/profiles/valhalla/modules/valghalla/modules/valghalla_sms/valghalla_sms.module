@@ -91,8 +91,18 @@ function valghalla_sms_get_message($template_node) {
 
 /**
  * Send message callback.
+ *
+ * @param string $to
+ *   Message recipient.
+ * @param array $params
+ *   Array with message parameters.
+ * @param array $context
+ *   Array with context data.
+ *
+ * @return bool
+ *   Sending status.
  */
-function valghalla_sms_send_message($to, $params, $context) {
+function valghalla_sms_send_message($to, array $params, array $context = array()) {
   $from = variable_get('valghalla_sms_from', FALSE);
   $sms_gateway_id = variable_get('valghalla_sms_default_gateway', FALSE);
   $sms_gateway = valghalla_sms_plugins($sms_gateway_id);
@@ -103,7 +113,10 @@ function valghalla_sms_send_message($to, $params, $context) {
     return FALSE;
   }
 
+  // By default we think that recipient is CPR number.
+  // To be save with private data we always masking it.
   $notification_recipient = substr($to, 0, 6) . '-' . str_repeat('x', 4);
+  // Save as notification recipient not masked data for phones numbers or CVRs.
   if ($sms_gateway_id != 'NemSMS' || !empty($context['CVR'])) {
     $notification_recipient = $to;
   }

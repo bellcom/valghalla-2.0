@@ -39,7 +39,7 @@ function _valghalla_helper_wrap_name($node, $container = 'p', $fcid = null) {
   if ($rsvp_message) {
     if (!empty($rsvp_message[0]['value'])) {
       $rsvp_markup = '<button class="btn btn-default btn-xs">';
-      $rsvp_markup .=   '<span class="rsvp-message-icon fa fa-envelope-o" data-toggle="popover" data-placement="top" data-title="' . t('Deltagerens svar') . '" data-content="' . $rsvp_message[0]['value'] . '"></span>';
+      $rsvp_markup .= '<span class="rsvp-message-icon fa fa-envelope-o" data-toggle="popover" data-placement="top" data-title="' . t('Deltagerens svar') . '" data-content="' . $rsvp_message[0]['value'] . '"></span>';
       $rsvp_markup .= '</button>';
     }
   }
@@ -48,9 +48,12 @@ function _valghalla_helper_wrap_name($node, $container = 'p', $fcid = null) {
 
   $reply_link = '';
 
-  if (user_access('add volunteer to station') && ($rsvp == 0 || variable_get('valghalla_volunteers_always_show_rsvp_link', FALSE))) {
+  if (user_access('add volunteer to station')
+    && !empty($fc)
+    && ($rsvp == 0 || variable_get('valghalla_volunteers_always_show_rsvp_link', FALSE))
+    ) {
     $field_token = field_get_items('field_collection_item', $fc, 'field_token');
-    $reply_link = '<a class="btn btn-default btn-xs" data-toggle="tooltip" data-placement="top" title="Svar for denne tilforordnede" class="reply edit" href="/volunteers/rsvp/'  . $field_token[0]['value'] . '"><span class="glyphicon glyphicon-comment"></span></a>';
+    $reply_link = '<a class="btn btn-default btn-xs" data-toggle="tooltip" data-placement="top" title="Svar for denne tilforordnede" class="reply edit" href="/volunteers/rsvp/' . $field_token[0]['value'] . '"><span class="glyphicon glyphicon-comment"></span></a>';
   }
 
   $valid = '';
@@ -233,10 +236,12 @@ function _valghalla_helper_get_posts_to_fill($polling_station, $party_tid){
  * Get a count of roles on polling station for party.
  *
  */
-function _valghalla_helper_get_roles_count($polling_station_nids, $role_nid, $party_tid = NULL){
-  $election_nid = ($_SESSION['election_nid']) ? $_SESSION['election_nid'] : variable_get('valghalla_signup_election_nid', FALSE);
+function _valghalla_helper_get_roles_count($polling_station_nids, $role_nid, $party_tid = NULL, $election_nid = NULL){
+  if (empty($election_nid)) {
+    $election_nid = ($_SESSION['election_nid']) ? $_SESSION['election_nid'] : variable_get('valghalla_signup_election_nid', FALSE);
+  }
 
-  if ($election_nid) {
+  if ($election_nid && !empty($polling_station_nids)) {
     $query = db_select('field_data_field_role_n' . $role_nid, 'vr');
     $query->innerJoin('field_data_field_ppsp_party', 'vp', 'vp.entity_id=vr.entity_id');
     $query->innerJoin('field_data_field_ppsp_polling_station', 'vps', 'vps.entity_id=vr.entity_id');

@@ -15,12 +15,12 @@
  */
 function valghalla_synch_queue_add_item($resource, $deleted = FALSE) {
   $data = array();
-  if ($resource->nid) {
+  if (isset($resource->nid)) {
     $data['target_id'] = $resource->nid;
     $data['type'] = 'node';
     $data['changed'] = $resource->changed;
   }
-  elseif (($resource->tid)) {
+  elseif (isset($resource->tid)) {
     $data['target_id'] = $resource->tid;
     $data['type'] = 'taxonomy_term';
     $data['changed'] = $_SERVER['REQUEST_TIME'];
