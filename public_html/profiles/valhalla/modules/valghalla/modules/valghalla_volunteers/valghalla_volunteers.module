@@ -634,21 +634,21 @@ function valghalla_volunteers_to_polling_station($station_nid = NULL) {
           </div>
           <div class="modal-body">
             <div ng-controller="volunteerController">
-              <input type="text" class="form-control ng-valid ng-dirty" ng-model="query" ng-change="updateFilteredList()">
+              <input type="text" class="form-control ng-valid ng-dirty" ng-model="query" ng-change="updateFilteredList()" placeholder="' . t('Indtast søgeord...') . '">
               <br>
-              <table at-table at-paginated at-config="config" at-list="volunteers"  class="table">
+              <table at-table at-paginated at-config="config" at-list="filteredList" class="table">
                 <tr>
-                  <td  at-title="Name" at-sortable>
+                  <td at-title="Name" at-sortable>
                     {{item.label}}
                   </td>
                   <td class="text-right">
-                    <button class="js-select-volunteer btn btn-sm btn-success" ng-click="reset()" data-volunteer_nid="{{item.volunteer_nid}}">' . t('Vælg') . '</button>
+                    <button class="js-select-volunteer btn btn-sm btn-success" data-volunteer_nid="{{item.volunteer_nid}}">' . t('Vælg') . '</button>
                   </td>
                 <tr>
               </table>
               
               <div class="text-center">
-                <at-pagination at-list="volunteers" at-config="config"></at-pagination>
+                <at-pagination at-list="filteredList" at-config="config"></at-pagination>
               </div>
             </div>
             <p></p>
