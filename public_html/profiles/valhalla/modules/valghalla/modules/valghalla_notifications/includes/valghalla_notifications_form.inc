@@ -365,9 +365,10 @@ function valghalla_notifications_get_recipients($values) {
           $election_field = field_get_items('field_collection_item', $fc, 'field_election');
           $polling_station_field = field_get_items('field_collection_item', $fc, 'field_vlnt_station');
           $polling_station_nid = $polling_station_field ? $polling_station_field[0]['target_id'] : 0;
+          $rsvp_field = field_get_items('field_collection_item', $fc, 'field_rsvp');
         }
 
-        if (isset($polling_stations[$polling_station_nid])) {
+        if (isset($polling_stations[$polling_station_nid]) && (empty($rsvp_field[0]['value']) || $rsvp_field[0]['value'] == '0')) {
           $result[] = $volunteer_id;
         }
       }

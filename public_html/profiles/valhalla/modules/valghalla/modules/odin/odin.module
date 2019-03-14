@@ -130,7 +130,8 @@ function odin_get_volunteers_count($election_nid, $polling_station_nids, $roles,
       ->propertyCondition('archived', 0)
       ->fieldCondition('field_election', 'target_id', $election_nid)
       ->fieldCondition('field_vlnt_station', 'target_id', $polling_station_nids)
-      ->fieldCondition('field_post_role', 'target_id', $role_nid);
+      ->fieldCondition('field_post_role', 'target_id', $role_nid)
+      ->addTag('ei_volunteer_exist');
 
     if ($user_party_id) {
       $volunteer_query->fieldCondition('field_post_party', 'target_id', $user_party_id);
@@ -152,7 +153,8 @@ function odin_get_volunteers_count($election_nid, $polling_station_nids, $roles,
       ->fieldCondition('field_vlnt_station', 'target_id', $polling_station_nids)
       ->fieldCondition('field_post_role', 'target_id', $role_nid)
       // RVSP 1 corresponds to ok.
-      ->fieldCondition('field_rsvp', 'value', 1);
+      ->fieldCondition('field_rsvp', 'value', 1)
+      ->addTag('ei_volunteer_exist');
 
     if ($user_party_id) {
       $volunteer_query->fieldCondition('field_post_party', 'target_id', $user_party_id);
@@ -174,7 +176,8 @@ function odin_get_volunteers_count($election_nid, $polling_station_nids, $roles,
       ->fieldCondition('field_vlnt_station', 'target_id', $polling_station_nids)
       ->fieldCondition('field_post_role', 'target_id', $role_nid)
       // RVSP 2,3 is no.
-      ->fieldCondition('field_rsvp', 'value', array(2, 3));
+      ->fieldCondition('field_rsvp', 'value', array(2, 3))
+      ->addTag('ei_volunteer_exist');
 
     if ($user_party_id) {
       $volunteer_query->fieldCondition('field_post_party', 'target_id', $user_party_id);

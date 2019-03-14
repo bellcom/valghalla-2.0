@@ -6,6 +6,60 @@
  */
 
 /**
+ * Helper function to validate election info field_collection.
+ *
+ * @param FieldCollectionItemEntity $fc
+ *   Field collection item object.
+ *
+ * @return bool
+ *   True if field collection item valid, false otherwise.
+ */
+function valghalla_volunteers_fc_electioninfo_validate(FieldCollectionItemEntity $fc) {
+  // Check host entity.
+  if (empty($fc->hostEntity())) {
+    return FALSE;
+  }
+
+  // Check node references.
+  $node_references = array(
+    'field_election',
+    'field_post_role',
+    'field_vlnt_station',
+  );
+  foreach ($node_references as $field) {
+    $field_values = field_get_items('field_collection_item', $fc, $field);
+    if (empty($field_values[0]['target_id'])) {
+      return FALSE;
+    }
+    $query = new EntityFieldQuery();
+    $res = $query->entityCondition('entity_type', 'node')
+      ->entityCondition('nid', $field_values[0]['target_id'])->execute();
+    if (empty($res)) {
+      return FALSE;
+    }
+  }
+
+  // Check taxonomy term references.
+  $term_references = array(
+    'field_post_party',
+  );
+  foreach ($term_references as $field) {
+    $field_values = field_get_items('field_collection_item', $fc, $field);
+    if (empty($field_values[0]['target_id'])) {
+      return FALSE;
+    }
+    $query = new EntityFieldQuery();
+    $res = $query->entityCondition('entity_type', 'taxonomy_term')
+      ->entityCondition('tid', $field_values[0]['target_id'])->execute();
+    if (empty($res)) {
+      return FALSE;
+    }
+  }
+
+  return TRUE;
+}
+
+/**
  * Helper function to get volunteers.
  */
 function valghalla_volunteers_get_assigned_volunteers($election_nid = NULL, $polling_station_nid = NULL, $party_tid = NULL, $role_nid = NULL) {
@@ -162,6 +216,10 @@ function valghalla_volunteers_get_fc_electioninfo(array $condition = array()) {
     ->entityCondition('bundle', 'field_electioninfo')
     ->propertyCondition('archived', 0);
 
+  if (!empty($condition['fc_item_id'])) {
+    $volunteer_query->propertyCondition('item_id', $condition['fc_item_id ']);
+  }
+
   if (!empty($condition['volunteer_exist']) && $condition['volunteer_exist']) {
     $volunteer_query->addTag('ei_volunteer_exist');
   }
@@ -202,3 +260,4 @@ function valghalla_volunteers_get_fc_electioninfo(array $condition = array()) {
 
   return empty($query_result) ? NULL : array_shift($query_result);
 }
+
