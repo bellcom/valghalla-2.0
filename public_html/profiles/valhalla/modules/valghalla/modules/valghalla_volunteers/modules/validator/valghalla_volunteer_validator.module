@@ -134,9 +134,13 @@ function valghalla_volunteer_validator_node_presave($node) {
   $field_electioninfo_lang = field_language('node', $node, 'field_electioninfo');
   if (!empty($node->field_electioninfo[$field_electioninfo_lang])) {
     foreach ($node->field_electioninfo[$field_electioninfo_lang] as $key => $value) {
-      if (valghalla_volunteers_fc_electioninfo_validate($value['entity'])) {
+      if (empty($value['entity']) && !empty($value['value'])) {
+        $value['entity'] = entity_load_single('field_collection_item', $value['value']);
+      }
+      if (!empty($value['entity']) && valghalla_volunteers_fc_electioninfo_validate($value['entity'])) {
         continue;
       }
+      watchdog('valghalla_volunteer_validator', 'Unset field_collection_item for nid %nid as broken.', array('%nid' => $node->nid));
       unset($node->field_electioninfo[$field_electioninfo_lang][$key]);
     }
   }
