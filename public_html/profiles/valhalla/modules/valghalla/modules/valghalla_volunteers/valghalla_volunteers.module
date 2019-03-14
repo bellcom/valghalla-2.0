@@ -149,7 +149,7 @@ function valghalla_volunteers_menu() {
     'access arguments' => array('administer volunteers'),
     'page callback' => 'valghalla_volunteers_assigned',
     'page arguments' => array(1, 2, 3, 4),
-    'file' => 'includes/valghalla_volunteer.utils.inc',
+    'file' => 'includes/valghalla_volunteers.utils.inc',
     'type' => MENU_NORMAL_ITEM,
   );
 
@@ -158,7 +158,7 @@ function valghalla_volunteers_menu() {
     'access arguments' => array('administer volunteers'),
     'page callback' => 'drupal_get_form',
     'page arguments' => array('valghalla_volunteers_remove_broken', 2),
-    'file' => 'includes/valghalla_volunteer.utils.inc',
+    'file' => 'includes/valghalla_volunteers.utils.inc',
     'type' => MENU_NORMAL_ITEM,
   );
 
@@ -1786,6 +1786,30 @@ function valghalla_volunteers_notify($election_nid, $role_nid, $fc, $type) {
   }
   else {
     watchdog('valghalla_volunteers','Notifikation blev ikke afsend. Modul valghalla_notifications er ikke aktiveret.', array(), WATCHDOG_WARNING);
+  }
+}
+
+/**
+ * Implements hook_query_TAG_alter().
+ *
+ * Check existing field_electioninfo.
+ * Wrapper for tags:
+ *  - ei_volunteer_exist,
+ *  - ei_election_exist,
+ *  - ei_polling_station_exist,
+ *  - ei_party_exist,
+ *  - ei_role_exist.
+ */
+function valghalla_volunteers_query_ei_valid_references_alter(QueryAlterableInterface $query) {
+  $hooks = array(
+    'ei_volunteer_exist',
+    'ei_election_exist',
+    'ei_polling_station_exist',
+    'ei_party_exist',
+    'ei_role_exist',
+  );
+  foreach ($hooks as $hook) {
+    drupal_alter('query_' . $hook, $query);
   }
 }
 
