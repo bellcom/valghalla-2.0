@@ -21,7 +21,7 @@
   <!-- End - sidr source provider -->
 
   <!-- Begin - header static -->
-  <header class="flexy-header flexy-header--static">
+  <header class="flexy-header flexy-header--static hidden-print">
     <div class="flexy-header__row flexy-header__row--first hidden-xs">
       <div class="container-fluid">
         <div class="flexy-row">
@@ -112,7 +112,7 @@
   <!-- End - header static -->
 
   <!-- Begin - header sticky -->
-  <header class="flexy-header flexy-header--sticky">
+  <header class="flexy-header flexy-header--sticky hidden-print">
     <div class="flexy-header__row">
       <div class="container-fluid">
         <div class="flexy-row">
@@ -197,7 +197,7 @@
 
             </div>
             <div class="col-xs-12 col-md-6">
-              <div class="hidden-xs text-right text-sm-left breadcrumb__wrapper">
+              <div class="hidden-xs text-right text-sm-left breadcrumb__wrapper hidden-print">
                 <?php print $breadcrumb; ?>
               </div>
             </div>

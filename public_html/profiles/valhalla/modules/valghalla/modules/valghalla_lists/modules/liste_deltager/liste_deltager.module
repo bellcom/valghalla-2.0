@@ -69,7 +69,7 @@ function liste_deltager_form($form, &$form_state) {
     '#title' => t('Gem filtre'),
     '#collapsible' => TRUE,
     '#collapsed' => FALSE,
-    '#prefix' => '<div class="no-print">',
+    '#prefix' => '<div class="hidden-print">',
     '#suffix' => '</div>',
     '#access' => user_access('liste deltager administer saved filters'),
   );
@@ -85,7 +85,7 @@ function liste_deltager_form($form, &$form_state) {
     '#size' => 8,
     '#title' => 'Valgsted',
     '#options' => liste_deltager_polling_station_options(),
-    '#prefix' => '<div class="row no-print"><div class="col-xs-12">',
+    '#prefix' => '<div class="row hidden-print"><div class="col-xs-12">',
     '#suffix' => '<a class="js-select-all" href="#">Vælg alle</a></div>',
   );
 
@@ -93,7 +93,7 @@ function liste_deltager_form($form, &$form_state) {
   $form['filter']['columns'] = array(
     '#type' => 'checkboxes',
     '#title' => t('Kolonner'),
-    '#prefix' => '<div class="col-sm-6 col-md-3 no-print">',
+    '#prefix' => '<div class="col-sm-6 col-md-3 hidden-print">',
     '#suffix' => '<a class="js-select-all" href="#">Vælg alle</a></div>',
     '#options' => _liste_deltager_columns(),
   );
@@ -163,7 +163,7 @@ function liste_deltager_form($form, &$form_state) {
 
   $form['submit'] = array(
     '#type' => 'submit',
-    '#prefix' => '<div class="no-print">',
+    '#prefix' => '<div class="hidden-print">',
     '#value' => t('Opdater'),
     '#suffix' => '</div></div>',
   );
@@ -194,7 +194,7 @@ function liste_deltager_form($form, &$form_state) {
       '#type' => 'button',
       '#value' => t('Print'),
       '#attributes' => array('onclick' => 'javascript: window.print();'),
-      '#prefix' => '<div class="no-print print-button">',
+      '#prefix' => '<div class="hidden-print print-button">',
       '#suffix' => '</div>',
     );
 
@@ -652,7 +652,7 @@ function liste_deltager_fritaget_form($form, &$form_state) {
   );
   $form['filter']['submit'] = array(
     '#type' => 'submit',
-    '#prefix' => '<div class="no-print col-md-3">',
+    '#prefix' => '<div class="hidden-print col-md-3">',
     '#value' => t('Opdater'),
     '#suffix' => '</div>',
   );
