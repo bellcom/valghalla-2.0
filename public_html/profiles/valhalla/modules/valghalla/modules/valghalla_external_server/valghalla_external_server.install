@@ -54,7 +54,7 @@ function valghalla_external_server_install() {
   }
 
   // Remove permissions from external system.
-  valghalla_external_server_update_7101();
+  valghalla_external_server_update_7102();
 }
 
 /**
