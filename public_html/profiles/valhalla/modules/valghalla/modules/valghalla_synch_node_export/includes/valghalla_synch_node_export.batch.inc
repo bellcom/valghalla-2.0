@@ -16,7 +16,7 @@
  */
 function valghalla_synch_node_export_batch_delete_orphaned_fcs($fc_items) {
   if (count($fc_items)) {
-    drupal_set_message(t('Preparing to delete @num field collection items(s).', array('@num' => count($fc_items))));
+    drupal_set_message(t('Deleting @num field collection items(s).', array('@num' => count($fc_items))));
   }
   else {
     drupal_set_message(t('No orphaned field collection items were found.'));
@@ -58,12 +58,15 @@ function valghalla_synch_node_export_batch_delete_orphaned_fcs($fc_items) {
  */
 function valghalla_synch_node_export_batch_delete_orphaned_fc_op($fc_item, $operation_details, &$context) {
   // Report progress.
-  $context['message'] = t('Deleting field_collection item @fc_item_id', array('@fc_item_id' => $fc_item->item_id));
+  $context['message'] = t('Deleting field_collection item @fc_item_id', array('@fc_item_id' => $fc_item));
 
-  $fc_item->delete();
+  $fc_loaded = entity_load_single('field_collection_item', $fc_item);
+  if (!empty($fc_loaded)) {
+    $fc_loaded->delete();
+  }
 
   $context['results'][] = array(
-    'message' => t('Deleted field_collection item "@fc_item_id"', array('@fc_item_id' => $fc_item->item_id)),
+    'message' => t('Deleted field_collection item "@fc_item_id"', array('@fc_item_id' => $fc_item)),
     'type' => 'status',
   );
 

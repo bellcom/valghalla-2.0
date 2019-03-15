@@ -149,7 +149,7 @@ function valghalla_volunteers_menu() {
     'access arguments' => array('administer volunteers'),
     'page callback' => 'valghalla_volunteers_assigned',
     'page arguments' => array(1, 2, 3, 4),
-    'file' => 'includes/valghalla_volunteer.utils.inc',
+    'file' => 'includes/valghalla_volunteers.utils.inc',
     'type' => MENU_NORMAL_ITEM,
   );
 
@@ -158,7 +158,7 @@ function valghalla_volunteers_menu() {
     'access arguments' => array('administer volunteers'),
     'page callback' => 'drupal_get_form',
     'page arguments' => array('valghalla_volunteers_remove_broken', 2),
-    'file' => 'includes/valghalla_volunteer.utils.inc',
+    'file' => 'includes/valghalla_volunteers.utils.inc',
     'type' => MENU_NORMAL_ITEM,
   );
 
@@ -369,7 +369,23 @@ function valghalla_volunteers_rsvp_form($form, &$form_state) {
 
   if (variable_get('valghalla_volunteers_check_cpr_match', TRUE) && $GLOBALS['user']->uid == 0) {
     if (module_exists('valghalla_external_server_nemlogin')) {
+      // Attempt to fetch CPR from session.
       $cpr = valghalla_external_server_nemlogin_fetch_cpr();
+      if ($cpr) {
+        $cpr = valghalla_synch_node_export_get_encrypt($cpr);
+      }
+
+      // Attempt to fetch CPR from form state.
+      if (!$cpr && isset($form_state['input'])) {
+        if (isset($form_state['input']['cpr'])) {
+          $cpr = $form_state['input']['cpr'];
+        }
+      }
+
+      $form['cpr'] = array(
+        '#type' => 'hidden',
+        '#default_value' => $cpr,
+      );
 
       if (!$cpr) {
         $form['nemid_login_link'] = array(
@@ -378,7 +394,6 @@ function valghalla_volunteers_rsvp_form($form, &$form_state) {
       }
       else {
         $form['#cpr'] = $cpr;
-        $form_state['cpr'] = $cpr;
       }
     }
   }
@@ -430,12 +445,12 @@ function valghalla_volunteers_rsvp_form_validate($form, &$form_state) {
 
   if (variable_get('valghalla_volunteers_check_cpr_match', TRUE) && $GLOBALS['user']->uid == 0) {
     if (module_exists('valghalla_external_server_nemlogin')) {
-      $cpr = $form_state['cpr'];
+      $cpr = valghalla_synch_node_export_get_decrypt($form_state['values']['cpr']);
 
       // Adding dash, if missing. E.g. 123456-7890.
       if (preg_match('/[0-9]{10}/', $cpr)) {
         $cpr = substr($cpr, 0, 6) . '-' . substr($cpr, 6, 4);
-        $form_state['cpr'] = $cpr;
+        $form_state['input']['cpr'] = valghalla_synch_node_export_get_encrypt($cpr);
       }
 
       if (!preg_match('/[0-9]{6}-[0-9]{4}/', $cpr)) {
@@ -454,7 +469,6 @@ function valghalla_volunteers_rsvp_form_validate($form, &$form_state) {
       }
 
       if (strcmp($cpr, $expected_cpr) !== 0) {
-        print_r(valghalla_synch_node_export_get_decrypt($expected_cpr));
         form_set_error('cpr', t('This token is not valid for the provided CPR'));
       }
     }
@@ -634,21 +648,21 @@ function valghalla_volunteers_to_polling_station($station_nid = NULL) {
           </div>
           <div class="modal-body">
             <div ng-controller="volunteerController">
-              <input type="text" class="form-control ng-valid ng-dirty" ng-model="query" ng-change="updateFilteredList()">
+              <input type="text" class="form-control ng-valid ng-dirty" ng-model="query" ng-change="updateFilteredList()" placeholder="' . t('Indtast søgeord...') . '">
               <br>
-              <table at-table at-paginated at-config="config" at-list="volunteers"  class="table">
+              <table at-table at-paginated at-config="config" at-list="filteredList" class="table">
                 <tr>
-                  <td  at-title="Name" at-sortable>
+                  <td at-title="Name" at-sortable>
                     {{item.label}}
                   </td>
                   <td class="text-right">
-                    <button class="js-select-volunteer btn btn-sm btn-success" ng-click="reset()" data-volunteer_nid="{{item.volunteer_nid}}">' . t('Vælg') . '</button>
+                    <button class="js-select-volunteer btn btn-sm btn-success" data-volunteer_nid="{{item.volunteer_nid}}">' . t('Vælg') . '</button>
                   </td>
                 <tr>
               </table>
               
               <div class="text-center">
-                <at-pagination at-list="volunteers" at-config="config"></at-pagination>
+                <at-pagination at-list="filteredList" at-config="config"></at-pagination>
               </div>
             </div>
             <p></p>
@@ -1787,4 +1801,81 @@ function valghalla_volunteers_notify($election_nid, $role_nid, $fc, $type) {
   else {
     watchdog('valghalla_volunteers','Notifikation blev ikke afsend. Modul valghalla_notifications er ikke aktiveret.', array(), WATCHDOG_WARNING);
   }
+}
+
+/**
+ * Implements hook_query_TAG_alter().
+ *
+ * Check existing field_electioninfo.
+ * Wrapper for tags:
+ *  - ei_volunteer_exist,
+ *  - ei_election_exist,
+ *  - ei_polling_station_exist,
+ *  - ei_party_exist,
+ *  - ei_role_exist.
+ */
+function valghalla_volunteers_query_ei_valid_references_alter(QueryAlterableInterface $query) {
+  $hooks = array(
+    'ei_volunteer_exist',
+    'ei_election_exist',
+    'ei_polling_station_exist',
+    'ei_party_exist',
+    'ei_role_exist',
+  );
+  foreach ($hooks as $hook) {
+    drupal_alter('query_' . $hook, $query);
+  }
+}
+
+/**
+ * Implements hook_query_TAG_alter().
+ *
+ * Field_electioninfo - not empty host node.
+ */
+function valghalla_volunteers_query_ei_volunteer_exist_alter(QueryAlterableInterface $query) {
+  $query->addJoin('left', 'field_data_field_electioninfo', 'fv', 'fv.field_electioninfo_value = field_collection_item.item_id');
+  $query->addJoin('left', 'node', 'nv', 'nv.nid = fv.entity_id');
+  $query->isNotNull('nv.nid');
+}
+
+/**
+ * Implements hook_query_TAG_alter().
+ *
+ * Field_electioninfo - not empty field_election node.
+ */
+function valghalla_volunteers_query_ei_election_exist_alter(QueryAlterableInterface $query) {
+  $query->addJoin('left', 'field_data_field_election', 'fe', 'fe.entity_id = field_collection_item.item_id');
+  $query->addJoin('left', 'node', 'ne', 'ne.nid = fe.field_election_target_id');
+  $query->isNotNull('ne.nid');}
+
+/**
+ * Implements hook_query_TAG_alter().
+ *
+ * Field_electioninfo - not empty field_vlnt_station node.
+ */
+function valghalla_volunteers_query_ei_polling_station_exist_alter(QueryAlterableInterface $query) {
+  $query->addJoin('left', 'field_data_field_vlnt_station', 'fps', 'fps.entity_id = field_collection_item.item_id');
+  $query->addJoin('left', 'node', 'nps', 'nps.nid = fps.field_vlnt_station_target_id');
+  $query->isNotNull('nps.nid');}
+
+/**
+ * Implements hook_query_TAG_alter().
+ *
+ * Field_electioninfo - not empty field_post_party taxonomy term.
+ */
+function valghalla_volunteers_query_ei_party_exist_alter(QueryAlterableInterface $query) {
+  $query->addJoin('left', 'field_data_field_post_party', 'fpp', 'fpp.entity_id = field_collection_item.item_id');
+  $query->addJoin('left', 'taxonomy_term_data', 'tpp', 'tpp.tid = fpp.field_post_party_target_id');
+  $query->isNotNull('tpp.tid');
+}
+
+/**
+ * Implements hook_query_TAG_alter().
+ *
+ * Field_electioninfo - not empty field_post_role node.
+ */
+function valghalla_volunteers_query_ei_role_exist_alter(QueryAlterableInterface $query) {
+  $query->addJoin('left', 'field_data_field_post_role', 'fpr', 'fpr.entity_id = field_collection_item.item_id');
+  $query->addJoin('left', 'node', 'npr', 'npr.nid = fpr.field_post_role_target_id');
+  $query->isNotNull('npr.nid');
 }

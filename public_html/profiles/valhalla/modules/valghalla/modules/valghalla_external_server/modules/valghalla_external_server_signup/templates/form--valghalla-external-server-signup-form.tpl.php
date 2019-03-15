@@ -53,32 +53,37 @@ unset($form['terms_agreement']);
   </div>
   <!-- End - nemid login -->
 
-  <!-- Begin - form -->
-  <div class="partial">
-    <div class="partial__body">
-      <?php print drupal_render_children($form); ?>
+  <?php
+  // Not showing the form unless CPR is present.
+  ?>
+  <?php if (isset($form['#cpr']) && !empty($form['#cpr'])) : ?>
+    <!-- Begin - form -->
+    <div class="partial">
+      <div class="partial__body">
+        <?php print drupal_render_children($form); ?>
+      </div>
     </div>
-  </div>
-  <!-- End - form -->
+    <!-- End - form -->
 
-  <!-- Begin - bottom text -->
-  <div class="partial">
-    <div class="partial__body">
-      <?php print $form['#bottom_text']; ?>
+    <!-- Begin - bottom text -->
+    <div class="partial">
+      <div class="partial__body">
+        <?php print $form['#bottom_text']; ?>
+      </div>
     </div>
-  </div>
-  <!-- End - bottom text -->
+    <!-- End - bottom text -->
 
-  <!-- Begin - comment -->
-  <?php print drupal_render($comment_field); ?>
-  <!-- End - comment -->
+    <!-- Begin - comment -->
+    <?php print drupal_render($comment_field); ?>
+    <!-- End - comment -->
 
-  <!-- Begin - agreement -->
-  <?php print drupal_render($term_agreement); ?>
-  <!-- End - agreement -->
+    <!-- Begin - agreement -->
+    <?php print drupal_render($term_agreement); ?>
+    <!-- End - agreement -->
 
-  <!-- Begin - submit -->
-  <?php print drupal_render($submit); ?>
-  <!-- End - submit -->
+    <!-- Begin - submit -->
+    <?php print drupal_render($submit); ?>
+    <!-- End - submit -->
+  <?php endif; ?>
 
 </div>

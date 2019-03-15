@@ -441,6 +441,14 @@ function valghalla_notifications_notification_allowed($gateway_id, $volunteer) {
  * Notify volunteer of post change.
  */
 function valghalla_notifications_notify_volunteer($election_nid, $role_nid, $fc, $type) {
+  if (empty($fc) || !valghalla_volunteers_fc_electioninfo_validate($fc)) {
+    watchdog('valghalla_notifications', 'Notification %type has not send. Broken field collection %fc_id or empty.', array(
+      '%type' => $type,
+      '%fc_id' => empty($fc) ? NULL : $fc->item_id,
+    ));
+    return FALSE;
+  }
+
   $volunteer = $fc->hostEntity();
 
   $election_node = node_load($election_nid);
