@@ -128,7 +128,12 @@ function valghalla_volunteer_validator_node_presave($node) {
       $node_wrapper->field_no_sms = $subscriptions[0]['nem_sms'] == FALSE ? '1' : '0';
     }
   }
+}
 
+/**
+ * Implements hook_node_submit().
+ */
+function valghalla_volunteer_validator_node_submit($node, $form, &$form_state) {
   // Check field_election info field.
   // Truncate invalid field collection items.
   $field_electioninfo_lang = field_language('node', $node, 'field_electioninfo');
@@ -138,6 +143,7 @@ function valghalla_volunteer_validator_node_presave($node) {
         $value['entity'] = entity_load_single('field_collection_item', $value['value']);
       }
       if (!empty($value['entity']) && !valghalla_volunteers_fc_electioninfo_validate($value['entity'])) {
+        watchdog('valghalla_volunteers_validator', 'Remove fc item from %nid', array('%nid' => $node->nid));
         unset($node->field_electioninfo[$field_electioninfo_lang][$key]);
       }
     }
