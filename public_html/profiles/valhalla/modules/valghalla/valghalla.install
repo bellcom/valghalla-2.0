@@ -250,3 +250,11 @@ function valghalla_update_7116() {
 function valghalla_update_7117() {
   variable_set('angularjs_version', '1.2.5');
 }
+
+/**
+ * Use CDN version of AngularJS.
+ */
+function valghalla_update_7118() {
+  variable_set('angularjs_cdn', '1');
+  variable_set('angularjs_compression_type', 'min');
+}

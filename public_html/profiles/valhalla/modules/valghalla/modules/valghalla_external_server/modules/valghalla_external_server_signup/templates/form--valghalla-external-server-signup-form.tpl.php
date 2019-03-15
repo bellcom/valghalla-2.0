@@ -64,15 +64,20 @@ unset($form['terms_agreement']);
       </div>
     </div>
     <!-- End - form -->
+  <?php endif; ?>
 
-    <!-- Begin - bottom text -->
-    <div class="partial">
-      <div class="partial__body">
-        <?php print $form['#bottom_text']; ?>
-      </div>
+  <!-- Begin - bottom text -->
+  <div class="partial">
+    <div class="partial__body">
+      <?php print $form['#bottom_text']; ?>
     </div>
-    <!-- End - bottom text -->
+  </div>
+  <!-- End - bottom text -->
 
+  <?php
+  // Not showing the form unless CPR is present.
+  ?>
+  <?php if (isset($form['#cpr']) && !empty($form['#cpr'])) : ?>
     <!-- Begin - comment -->
     <?php print drupal_render($comment_field); ?>
     <!-- End - comment -->

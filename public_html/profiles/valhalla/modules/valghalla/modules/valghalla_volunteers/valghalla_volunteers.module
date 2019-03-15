@@ -487,7 +487,12 @@ function valghalla_volunteers_rsvp_form_submit($form, &$form_state) {
 
   $fc = _valghalla_volunteers_validate_key(arg(2));
   $fc->field_rsvp[LANGUAGE_NONE][0]['value'] = $form_state['values']['rsvp'];
-  $fc->field_rsvp_comment[LANGUAGE_NONE][0]['value'] = $form_state['values']['rsvp_comment'];
+  if (isset($form_state['values']['rsvp_comment'])) {
+    $fc->field_rsvp_comment[LANGUAGE_NONE][0]['value'] = $form_state['values']['rsvp_comment'];
+  }
+  else {
+    $fc->field_rsvp_comment[LANGUAGE_NONE][0]['value'] = '';
+  }
   $fc->save();
 
   // If external server is activated,
