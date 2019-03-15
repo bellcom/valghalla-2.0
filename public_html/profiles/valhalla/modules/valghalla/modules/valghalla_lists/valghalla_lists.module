@@ -1,12 +1,18 @@
 <?php
+
 /**
- * Implements hook_menu()
+ * @file
+ * Contains main functional code for Valghalla lists module.
  */
-function valghalla_lists_menu(){
+
+/**
+ * Implements hook_menu().
+ */
+function valghalla_lists_menu() {
   $items = array();
 
   $items['valghalla_lists'] = array(
-    'title' => t('Lister'),
+    'title' => 'Lister',
     'file path' => drupal_get_path('module', 'system'),
     'file' => 'system.admin.inc',
     'page callback' => 'system_admin_menu_block_page',
@@ -15,9 +21,9 @@ function valghalla_lists_menu(){
 
   // Views data export doesnt allow you to create menu items,
   // so we make a couple here, that just redirects the user
-  // to the export paths
+  // to the export paths.
   $items['valghalla_lists/exportxls'] = array(
-    'title' => t('Eksporter valgdeltagere som XLS'),
+    'title' => 'Eksporter valgdeltagere som XLS',
     'type' => MENU_NORMAL_ITEM,
     'page callback' => 'valghalla_lists_redirect',
     'page arguments' => array('valghalla_lists/export_xls'),
@@ -25,11 +31,18 @@ function valghalla_lists_menu(){
   );
 
   $items['valghalla_lists/exportcsv'] = array(
-    'title' => t('Eksporter valgdeltagere som CSV'),
+    'title' => 'Eksporter valgdeltagere som CSV',
     'type' => MENU_NORMAL_ITEM,
     'page callback' => 'valghalla_lists_redirect',
     'page arguments' => array('valghalla_lists/export_csv'),
     'access arguments' => array('valghalla export volunteers list'),
+  );
+
+  $items['valghalla_lists/broken-fc'] = array(
+    'title' => 'Forkert field collections',
+    'access arguments' => array('administer volunteers'),
+    'page callback' => 'valghalla_lists_broken_fc',
+    'type' => MENU_NORMAL_ITEM,
   );
 
   return $items;
@@ -56,36 +69,145 @@ function valghalla_lists_redirect($path) {
 }
 
 /**
- * Implements hook_permission()
+ * Implements hook_permission().
  */
-function valghalla_lists_permission(){
+function valghalla_lists_permission() {
   return array(
     'valghalla view messages list' => array(
-      'title'=> t('Se "Beskeder" liste'),
+      'title' => t('Se "Beskeder" liste'),
     ),
     'valghalla view no-reply list' => array(
-      'title'=> t('Se "Deltagere der endnu ikke har svaret" liste'),
+      'title' => t('Se "Deltagere der endnu ikke har svaret" liste'),
     ),
     'valghalla view party-overview list' => array(
-      'title'=> t('Se "Parti oversigt" liste'),
+      'title' => t('Se "Parti oversigt" liste'),
     ),
     'valghalla view no-email list' => array(
-      'title'=> t('Se "Deltagere uden e-mail adresse" liste'),
+      'title' => t('Se "Deltagere uden e-mail adresse" liste'),
     ),
     'valghalla view parties-volunteers list' => array(
-      'title'=> t('Se "Alle partiets deltagere" liste'),
+      'title' => t('Se "Alle partiets deltagere" liste'),
     ),
     'valghalla export volunteers list' => array(
-      'title'=> t('Exporter deltagere'),
+      'title' => t('Exporter deltagere'),
     ),
     'valghalla view kvittering list' => array(
-      'title'=> t('Se "Kvittering for diaeter" liste'),
+      'title' => t('Se "Kvittering for diaeter" liste'),
     ),
     'valghalla view pollingstation list' => array(
-      'title'=> t('Se "Valgstyrere og tilforordnede" liste'),
+      'title' => t('Se "Valgstyrere og tilforordnede" liste'),
     ),
     'valghalla-list view all parties' => array(
-      'title'=> t('Se Alle pariter'),
+      'title' => t('Se Alle pariter'),
     ),
+  );
+}
+
+/**
+ * Broken field collection callback.
+ */
+function valghalla_lists_broken_fc($type = NULL) {
+  if (!module_exists('valghalla_synch_node_export')) {
+    return "Module valghalla_synch_node_export is not active. Please activate it to see this page.";
+  }
+
+  $headers = array(
+    'field_electioninfo' => array(
+      'FC id',
+      'Volunteer',
+      'Valget',
+      'Valgsted',
+      'Parti',
+      'Role',
+    ),
+    'field_volunteers_pr_pol_st_party' => array(
+      'FC id',
+      'Valget',
+      'Valgsted',
+      'Parti',
+    ),
+  );
+  $rows = array();
+  $counts = array();
+  foreach (valgahalla_synch_node_export_find_orphaned_fc_items() as $fc_id) {
+    $fc = entity_load_single('field_collection_item', $fc_id);
+    if (empty($fc)) {
+      continue;
+    }
+
+    $counts[$fc->field_name]++;
+
+    if ($fc->field_name != $type) {
+      continue;
+    }
+    $func = 'valghalla_lists_get_' . $type . '_row';
+    if (function_exists($func)) {
+      $rows[] = call_user_func($func, $fc);
+    }
+  }
+
+  $items = array();
+  foreach ($counts as $bundle => $count) {
+    $items[] = l($bundle . ' has ' . $count . ' broken elements', 'valghalla_lists/broken-fc/' . $bundle);
+  }
+
+  $content['links'] = array(
+    '#theme' => 'item_list',
+    '#items' => $items,
+  );
+
+  if (!empty($rows)) {
+    $content['table'] = array(
+      '#theme' => 'table',
+      '#rows' => $rows,
+      '#header' => $headers[$type],
+    );
+  }
+  return $content;
+}
+
+/**
+ * Generate election info row.
+ */
+function valghalla_lists_get_field_electioninfo_row($fc) {
+  $volunteer = empty($fc->hostEntity()) ? NULL : $fc->hostEntity();
+  $field_election = field_get_items('field_collection_item', $fc, 'field_election');
+  $election = empty($field_election[0]['target_id']) ? NULL : node_load($field_election[0]['target_id']);
+
+  $field_pooling_station = field_get_items('field_collection_item', $fc, 'field_vlnt_station');
+  $polling_station = empty($field_pooling_station[0]['target_id']) ? NULL : node_load($field_pooling_station[0]['target_id']);
+
+  $field_party = field_get_items('field_collection_item', $fc, 'field_post_party');
+  $party = empty($field_party[0]['target_id']) ? NULL : taxonomy_term_load($field_party[0]['target_id']);
+
+  $field_role = field_get_items('field_collection_item', $fc, 'field_post_role');
+  $role = empty($field_role[0]['target_id']) ? NULL : node_load($field_role[0]['target_id']);
+  return array(
+    $fc->item_id,
+    empty($volunteer) ? '--' : l($volunteer->title, 'node/' . $volunteer->nid . '/edit', array('query' => array('destination' => current_path()))),
+    empty($election) ? '--' : $election->title,
+    empty($polling_station) ? '--' : $polling_station->title,
+    empty($party) ? '--' : $party->name,
+    empty($role) ? '--' : $role->title,
+  );
+}
+
+/**
+ * Generate volunteers pr pol_st party row.
+ */
+function valghalla_lists_get_field_volunteers_pr_pol_st_party_row($fc) {
+  $election = empty($fc->hostEntity()) ? NULL : $fc->hostEntity();
+
+  $field_pooling_station = field_get_items('field_collection_item', $fc, 'field_ppsp_polling_station');
+  $polling_station = empty($field_pooling_station[0]['target_id']) ? NULL : node_load($field_pooling_station[0]['target_id']);
+
+  $field_ppsp_party = field_get_items('field_collection_item', $fc, 'field_ppsp_party');
+  $party = empty($field_ppsp_party[0]['target_id']) ? NULL : taxonomy_term_load($field_ppsp_party[0]['target_id']);
+
+  return array(
+    $fc->item_id,
+    empty($election) ? '--' : l($election->title, 'node/' . $election->nid . '/edit', array('query' => array('destination' => current_path()))),
+    empty($polling_station) ? '--' : $polling_station->title,
+    empty($party) ? '--' : $party->name,
   );
 }
