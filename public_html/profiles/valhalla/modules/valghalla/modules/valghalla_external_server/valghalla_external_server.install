@@ -52,6 +52,9 @@ function valghalla_external_server_install() {
       valghalla_synch_queue_remove_item($volunteer->uuid);
     }
   }
+
+  // Remove permissions from external system.
+  valghalla_external_server_update_7102();
 }
 
 /**
@@ -145,4 +148,43 @@ function valghalla_external_server_update_7101() {
   module_enable(array(
     'valghalla_external_server_nemlogin',
   ));
+}
+
+/**
+ * Remove permissions from roles.
+ */
+function valghalla_external_server_update_7102() {
+  $deny_pemissions = array(
+    'add volunteers',
+    'administer services',
+    'administer menu',
+    'administer users',
+    'administer views',
+  );
+  $node_permissons = array_keys(node_permission());
+  $allowed_permissons = array(
+    'access content overview',
+    'access content',
+    'view own unpublished content',
+    'view revisions',
+  );
+
+  $deny_pemissions = array_merge(
+    $deny_pemissions,
+    // Nodes permissons.
+    array_diff($node_permissons, $allowed_permissons),
+    // Taxonomy permissons.
+    array_keys(taxonomy_permission())
+  );
+
+  foreach (array('administrator', 'Partisekretær', 'Valgsekretær') as $role_name) {
+    $role = user_role_load_by_name($role_name);
+    if (empty($role)) {
+      watchdog('valghalla_external_server', 'Role %role not found to remove permissions.', array(
+        '%role' => $role_name,
+      ));
+      continue;
+    }
+    user_role_revoke_permissions($role->rid, $deny_pemissions);
+  }
 }

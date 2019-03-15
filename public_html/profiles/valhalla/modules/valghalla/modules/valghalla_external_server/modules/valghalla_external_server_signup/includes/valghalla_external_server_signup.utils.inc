@@ -220,7 +220,7 @@ EOD;
 function _valghalla_external_server_signup_get_role_detail_html($role) {
   $meeting_time = $role->field_meetingtime['und'][0]['value'];
   $html = <<<"EOD"
-  Rolle mødetidspunkt <b>$meeting_time</b>
+  Mødetidspunkt <b>$meeting_time</b>
 EOD;
 
   return $html;

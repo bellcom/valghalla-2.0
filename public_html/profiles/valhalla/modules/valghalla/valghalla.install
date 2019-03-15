@@ -243,3 +243,10 @@ function valghalla_update_7116() {
   $instance = field_info_instance('node', 'field_diaet', 'volunteers');
   field_delete_instance($instance);
 }
+
+/**
+ * Update version of loaded AngularJS from 1.0.8 to 1.2.5.
+ */
+function valghalla_update_7117() {
+  variable_set('angularjs_version', '1.2.5');
+}

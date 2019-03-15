@@ -69,7 +69,7 @@ function liste_deltager_form($form, &$form_state) {
     '#title' => t('Gem filtre'),
     '#collapsible' => TRUE,
     '#collapsed' => FALSE,
-    '#prefix' => '<div class="no-print">',
+    '#prefix' => '<div class="hidden-print">',
     '#suffix' => '</div>',
     '#access' => user_access('liste deltager administer saved filters'),
   );
@@ -85,7 +85,7 @@ function liste_deltager_form($form, &$form_state) {
     '#size' => 8,
     '#title' => 'Valgsted',
     '#options' => liste_deltager_polling_station_options(),
-    '#prefix' => '<div class="row no-print"><div class="col-xs-12">',
+    '#prefix' => '<div class="row hidden-print"><div class="col-xs-12">',
     '#suffix' => '<a class="js-select-all" href="#">Vælg alle</a></div>',
   );
 
@@ -93,7 +93,7 @@ function liste_deltager_form($form, &$form_state) {
   $form['filter']['columns'] = array(
     '#type' => 'checkboxes',
     '#title' => t('Kolonner'),
-    '#prefix' => '<div class="col-sm-6 col-md-3 no-print">',
+    '#prefix' => '<div class="col-sm-6 col-md-3 hidden-print">',
     '#suffix' => '<a class="js-select-all" href="#">Vælg alle</a></div>',
     '#options' => _liste_deltager_columns(),
   );
@@ -163,7 +163,7 @@ function liste_deltager_form($form, &$form_state) {
 
   $form['submit'] = array(
     '#type' => 'submit',
-    '#prefix' => '<div class="no-print">',
+    '#prefix' => '<div class="hidden-print">',
     '#value' => t('Opdater'),
     '#suffix' => '</div></div>',
   );
@@ -194,7 +194,7 @@ function liste_deltager_form($form, &$form_state) {
       '#type' => 'button',
       '#value' => t('Print'),
       '#attributes' => array('onclick' => 'javascript: window.print();'),
-      '#prefix' => '<div class="no-print print-button">',
+      '#prefix' => '<div class="hidden-print print-button">',
       '#suffix' => '</div>',
     );
 
@@ -332,10 +332,15 @@ function liste_deltager_get_volunteers($values) {
       ->entityCondition('bundle', 'field_electioninfo')
       ->propertyCondition('archived', 0);
 
+  $values['roles'] = array_filter( $values['roles'], function($elem) { return ($elem !== 0); });
   $roles = count($values['roles']) > 0 ? $values['roles'] : FALSE;
+
+  $values['party'] = array_filter( $values['party'], function($elem) { return ($elem !== 0); });
   $party_selected = $party = count($values['party']) > 0 ? $values['party'] : FALSE;
 
+  $values['rsvp'] = array_filter( $values['rsvp'], function($elem) { return ($elem !== 0); });
   $rsvp_filter = count($values['rsvp']) > 0 ? $values['rsvp'] : FALSE;
+
   $polling_station = count($values['polling_station']) > 0 ? $values['polling_station'] : FALSE;
 
   $rsvp_map = array(
@@ -407,9 +412,10 @@ function liste_deltager_get_volunteers($values) {
 
     // The value of the volunteers response.
     $rsvp = $rsvp_map[$rsvp_field[0]['value']];
-
-    if (!in_array($rsvp_field[0]['value'], $rsvp_filter, TRUE)) {
-      continue;
+    if ($rsvp_filter) {
+      if (!in_array($rsvp_field[0]['value'], $rsvp_filter, TRUE)) {
+        continue;
+      }
     }
 
     $party_field = field_get_items('node', $volunteer, 'field_party');
@@ -646,7 +652,7 @@ function liste_deltager_fritaget_form($form, &$form_state) {
   );
   $form['filter']['submit'] = array(
     '#type' => 'submit',
-    '#prefix' => '<div class="no-print col-md-3">',
+    '#prefix' => '<div class="hidden-print col-md-3">',
     '#value' => t('Opdater'),
     '#suffix' => '</div>',
   );
@@ -692,10 +698,11 @@ function liste_deltager_fritaget_form($form, &$form_state) {
   $rows = array();
 
   foreach (node_load_multiple($nids) as $volunteer) {
+    $wrapper = entity_metadata_wrapper('node', $volunteer);
     $rows[$volunteer->nid] = array(
-      $volunteer->title,
-      !empty(field_get_items('node', $volunteer, 'field_no_mail')) ? 'Fritaget' : '',
-      !empty(field_get_items('node', $volunteer, 'field_no_sms')) ? 'Fritaget' : '',
+      $wrapper->title->value(),
+      $wrapper->field_no_mail->value() == '1' ? 'Fritaget' : '',
+      $wrapper->field_no_sms->value() == '1' ? 'Fritaget' : '',
       l(t('Edit'), 'node/' . $volunteer->nid . '/edit', array('query' => array('destination' => current_path()))),
     );
   }
