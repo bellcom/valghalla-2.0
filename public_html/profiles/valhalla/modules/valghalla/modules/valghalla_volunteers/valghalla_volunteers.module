@@ -5,9 +5,12 @@
  * Code for the valghalla volunteers feature.
  */
 
+use ValghallaVolunteers\ValghallaVolunteersLogger;
+
 include_once 'valghalla_volunteers.features.inc';
 require_once 'valghalla_volunteers.inc';
 module_load_include('inc', 'valghalla_volunteers', 'includes/valghalla_volunteers.utils');
+module_load_include('php', 'valghalla_volunteers', 'includes/ValghallaVolunteersLogger.class');
 
 /**
  * Implements hook_permission().
@@ -1189,6 +1192,9 @@ function valghalla_volunteers_add_volunteer_to_post($volunteer_nid, $pollingstat
   $fc = entity_create('field_collection_item', array('field_name' => 'field_electioninfo'));
 
   $volunteer_node = node_load($volunteer_nid);
+
+  ValghallaVolunteersLogger::info(sprintf('Adding volunteer %s (nid: %d, uuid: %s) to post (el: %d, pol.st.: %d, party: %d, role: %d)', $volunteer_node->title, $volunteer_nid, $volunteer_node->uuid, $election_nid, $pollingstation_nid, $party_tid, $role_nid));
+
   $fc->setHostEntity('node', $volunteer_node);
   $fc->field_election[LANGUAGE_NONE][0]['target_id'] = $election_nid;
   $fc->field_vlnt_station[LANGUAGE_NONE][0]['target_id'] = $pollingstation_nid;
@@ -1223,12 +1229,20 @@ function valghalla_volunteers_remove_volunteer_from_post($fcid){
   if($fc = entity_load_single('field_collection_item', $fcid)){
     $election_field = field_get_items('field_collection_item', $fc, 'field_election');
     $post_role_field = field_get_items('field_collection_item', $fc, 'field_post_role');
+    $polling_station_field = field_get_items('field_collection_item', $fc, 'field_vlnt_station');
+    $party_field = field_get_items('field_collection_item', $fc, 'field_post_party');
+
     $election_nid = $election_field[0]['target_id'];
     $role_nid = $post_role_field[0]['target_id'];
+    $pollingstation_nid = $polling_station_field[0]['target_id'];
+    $party_tid = $party_field[0]['target_id'];
 
     // We send the notification. Only if a template is specified, will the
     // volunteer recieve a mail.
     valghalla_volunteers_notify($election_nid, $role_nid, $fc, 'remove');
+
+    $volunteer_node = $fc->hostEntity();
+    ValghallaVolunteersLogger::info(sprintf('Removing volunteer %s (nid: %d, uuid: %s) from post (el: %d, pol.st.: %d, party: %d, role: %d)', $volunteer_node->title, $volunteer_node->nid, $volunteer_node->uuid, $election_nid, $pollingstation_nid, $party_tid, $role_nid));
 
     $fc->delete();
 
@@ -1569,6 +1583,8 @@ function valghalla_volunteers_node_form_submit($form, &$form_state) {
  * Implements hook_node_submit().
  */
 function valghalla_volunteers_node_submit($node, $form, &$form_state) {
+  ValghallaVolunteersLogger::info(sprintf('Volunteer form submit %s (nid: %d, uuid: %s)', $node->title, $node->nid, $node->uuid));
+
   // We move the values from the form, to a temporary storage on the node,
   // the adding of a volunteer to at post is happening in hook_node_insert.
   if (isset($form_state['values']['party_tid']) &&
@@ -1883,4 +1899,19 @@ function valghalla_volunteers_query_ei_role_exist_alter(QueryAlterableInterface 
   $query->addJoin('left', 'field_data_field_post_role', 'fpr', 'fpr.entity_id = field_collection_item.item_id');
   $query->addJoin('left', 'node', 'npr', 'npr.nid = fpr.field_post_role_target_id');
   $query->isNotNull('npr.nid');
+}
+
+/**
+ * Implements hook_monolog_channel_info().
+ */
+function valghalla_volunteers_monolog_channel_info() {
+  $channels = array();
+
+  $channels['valghalla_volunteers_channel'] = array(
+    'label' => t('Valghalla volunteers'),
+    'description' => t('The default channel to log Valghalla volunteer messages.'),
+    'default profile' => 'valghalla_volunteers_profile',
+  );
+
+  return $channels;
 }
