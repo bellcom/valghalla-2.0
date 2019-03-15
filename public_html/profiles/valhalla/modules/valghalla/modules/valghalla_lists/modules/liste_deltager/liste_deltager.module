@@ -698,10 +698,11 @@ function liste_deltager_fritaget_form($form, &$form_state) {
   $rows = array();
 
   foreach (node_load_multiple($nids) as $volunteer) {
+    $wrapper = entity_metadata_wrapper('node', $volunteer);
     $rows[$volunteer->nid] = array(
-      $volunteer->title,
-      !empty(field_get_items('node', $volunteer, 'field_no_mail')) ? 'Fritaget' : '',
-      !empty(field_get_items('node', $volunteer, 'field_no_sms')) ? 'Fritaget' : '',
+      $wrapper->title->value(),
+      $wrapper->field_no_mail->value() == '1' ? 'Fritaget' : '',
+      $wrapper->field_no_sms->value() == '1' ? 'Fritaget' : '',
       l(t('Edit'), 'node/' . $volunteer->nid . '/edit', array('query' => array('destination' => current_path()))),
     );
   }

@@ -61,7 +61,9 @@ function valghalla_synch_node_export_batch_delete_orphaned_fc_op($fc_item, $oper
   $context['message'] = t('Deleting field_collection item @fc_item_id', array('@fc_item_id' => $fc_item));
 
   $fc_loaded = entity_load_single('field_collection_item', $fc_item);
-  $fc_loaded->delete();
+  if (!empty($fc_loaded)) {
+    $fc_loaded->delete();
+  }
 
   $context['results'][] = array(
     'message' => t('Deleted field_collection item "@fc_item_id"', array('@fc_item_id' => $fc_item)),
