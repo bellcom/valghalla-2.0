@@ -28,6 +28,15 @@ function valghalla_external_server_node_update($node) {
 }
 
 /**
+ * Implements hook_node_delete().
+ */
+function valghalla_external_server_node_delete($node) {
+  if (in_array($node->type, array('volunteers'))) {
+    ValghallaVolunteersLogger::info(sprintf('Deleting volunteer %s (nid: %d, uuid: %s)', $node->title, $node->nid, $node->uuid));
+  }
+}
+
+/**
  * Implements hook_valghalla_allowed_uris_alter().
  */
 function valghalla_external_server_valghalla_allowed_uris_alter(&$allowed_uris) {
