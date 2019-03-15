@@ -55,11 +55,17 @@ class ValghallaVolunteersLogger {
     if ($handler) {
       // The default output format is
       // "[%datetime%] %channel%.%level_name%: %message% %context% %extra%\n".
-      $output = "[%datetime%] %level_name%: %message%\n";
+      $output = "[%datetime%] %level_name%: %message% %extra%\n";
 
       $formatter = new LineFormatter($output);
       $handler->setFormatter($formatter);
       $logger->pushHandler($handler);
+      $logger->pushProcessor(function ($entry) {
+        global $user;
+        $entry['extra']['uid'] = $user->uid;
+        $entry['extra']['URI'] = $_SERVER['REQUEST_URI'];
+        return $entry;
+      });
     }
 
     $logger->log($level, $message, array());
