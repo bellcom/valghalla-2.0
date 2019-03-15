@@ -67,7 +67,6 @@
     </td>
     <td class="col-sm-9 col-md-9">
       <?php print nl2br($params['!polling_station_address']); ?><br />
-      <?php print $polling_station['address2']; ?>
     </td>
   </tr>
 </table>
