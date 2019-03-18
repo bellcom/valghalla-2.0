@@ -63,7 +63,8 @@ class ValghallaVolunteersLogger {
       $logger->pushProcessor(function ($entry) {
         global $user;
         $entry['extra']['uid'] = $user->uid;
-        $entry['extra']['URI'] = $_SERVER['REQUEST_URI'];
+        $entry['extra']['uri'] = $_SERVER['REQUEST_URI'];
+        $entry['extra']['ip'] = ip_address();
         return $entry;
       });
     }
