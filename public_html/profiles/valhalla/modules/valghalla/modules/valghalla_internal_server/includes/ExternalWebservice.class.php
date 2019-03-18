@@ -275,8 +275,15 @@ class ExternalWebservice {
     $options['headers']['Content-Type'] = 'application/json';
 
     $result = drupal_http_request($requestUrl, $options);
+
     if ($result->code == 200) {
-      return json_decode($result->data);
+      // Check if the string is in JSON format.
+      if (is_string($result->data) && is_array(json_decode($result->data, TRUE))) {
+        return json_decode($result->data);
+      }
+      else {
+        return $result->data;
+      }
     }
   }
 
