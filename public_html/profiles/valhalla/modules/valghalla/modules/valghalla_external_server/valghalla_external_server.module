@@ -5,7 +5,7 @@
  * Valghalla_external_server.module.
  */
 
-use ValghallaVolunteers\ValghallaVolunteersLogger;
+use Drupal\ValghallaVolunteers\ValghallaVolunteersLogger;
 
 /**
  * Implements hook_node_insert().
