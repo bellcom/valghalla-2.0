@@ -5,11 +5,12 @@
  * Code for the valghalla volunteers feature.
  */
 
-use Drupal\ValghallaVolunteers\ValghallaVolunteersLogger;
+use ValghallaVolunteers\ValghallaVolunteersLogger;
 
 include_once 'valghalla_volunteers.features.inc';
 require_once 'valghalla_volunteers.inc';
 module_load_include('inc', 'valghalla_volunteers', 'includes/valghalla_volunteers.utils');
+module_load_include('php', 'valghalla_volunteers', 'includes/ValghallaVolunteersLogger.class');
 
 /**
  * Implements hook_permission().

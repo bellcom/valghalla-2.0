@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\ValghallaVolunteers;
+namespace ValghallaVolunteers;
 
 use Monolog\Formatter\LineFormatter;
 use Monolog\Logger;
