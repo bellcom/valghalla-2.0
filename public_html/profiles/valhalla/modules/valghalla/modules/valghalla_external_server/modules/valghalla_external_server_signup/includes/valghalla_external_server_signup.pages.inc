@@ -105,7 +105,7 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
 
   if (!$cpr) {
     $form['nemid_login_link'] = array(
-      '#markup' => l(t('Login med Nemlogin'), valghalla_external_server_nemlogin_login_link(request_uri())),
+      '#markup' => l(t('Login med Nemlogin'), valghalla_external_server_nemlogin_login_link(request_uri()), array('attributes' => array('class' => array('btn', 'btn-secondary')))),
     );
   }
   else {
