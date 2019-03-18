@@ -5,11 +5,14 @@
  * Valghalla_external_server.module.
  */
 
+use ValghallaVolunteers\ValghallaVolunteersLogger;
+
 /**
  * Implements hook_node_insert().
  */
 function valghalla_external_server_node_insert($node) {
   if (in_array($node->type, array('volunteers'))) {
+    ValghallaVolunteersLogger::info(sprintf('Creating new volunteer %s (nid: %d, uuid: %s)', $node->title, $node->nid, $node->uuid));
     valghalla_synch_queue_add_item($node);
   }
 }
@@ -19,7 +22,17 @@ function valghalla_external_server_node_insert($node) {
  */
 function valghalla_external_server_node_update($node) {
   if (in_array($node->type, array('volunteers'))) {
+    ValghallaVolunteersLogger::info(sprintf('Updating volunteer %s (nid: %d, uuid: %s)', $node->title, $node->nid, $node->uuid));
     valghalla_synch_queue_add_item($node);
+  }
+}
+
+/**
+ * Implements hook_node_delete().
+ */
+function valghalla_external_server_node_delete($node) {
+  if (in_array($node->type, array('volunteers'))) {
+    ValghallaVolunteersLogger::info(sprintf('Deleting volunteer %s (nid: %d, uuid: %s)', $node->title, $node->nid, $node->uuid));
   }
 }
 
