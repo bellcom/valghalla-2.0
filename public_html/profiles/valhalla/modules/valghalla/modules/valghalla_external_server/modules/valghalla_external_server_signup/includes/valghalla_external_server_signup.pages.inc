@@ -302,6 +302,18 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
     $form['submit']['#access'] = FALSE;
   }
 
+  // Hiding fields if CPR is not present.
+  if (!$cpr) {
+    $form['cpr']['#access'] = FALSE;
+    $form['email-container']['#access'] = FALSE;
+    $form['phone-container']['#access'] = FALSE;
+    $form['comment']['#access'] = FALSE;
+    $form['role_select']['#access'] = FALSE;
+    $form['polling_station_select']['#access'] = FALSE;
+    $form['terms_agreement']['#access'] = FALSE;
+    $form['submit']['#access'] = FALSE;
+  }
+
   // Making the replacements.
   if ($form_mode) {
     $replacements = valghalla_external_server_signup_get_form_replacements($form_mode, $form_state);
