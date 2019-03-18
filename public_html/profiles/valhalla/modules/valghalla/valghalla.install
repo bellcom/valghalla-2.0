@@ -258,3 +258,12 @@ function valghalla_update_7118() {
   variable_set('angularjs_cdn', '1');
   variable_set('angularjs_compression_type', 'min');
 }
+
+/**
+ * Enable hide_submit module to prevent double clicks.
+ */
+function valghalla_update_7119() {
+  module_enable(array(
+    'hide_submit',
+  ));
+}
