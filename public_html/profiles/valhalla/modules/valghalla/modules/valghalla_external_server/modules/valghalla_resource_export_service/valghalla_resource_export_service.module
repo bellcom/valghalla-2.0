@@ -36,7 +36,7 @@ function valghalla_resource_export_service_node_get_serialized($entity) {
   }
   if ($entity) {
     // Exporting with serialize formatter.
-    $export = node_export(intval($entity->nid), 'serialize');
+    $export = node_export(intval($entity->nid), 'serialize', 't', TRUE);
 
     if (!empty($export['output'])) {
       $resource = $export['output'];

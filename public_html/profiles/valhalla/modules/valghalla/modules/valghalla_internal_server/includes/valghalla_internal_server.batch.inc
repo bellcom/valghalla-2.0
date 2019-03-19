@@ -145,17 +145,21 @@ function valghalla_internal_server_batch_clone_op($uuid, $operation_details, &$c
           valghalla_internal_server_free_last_selected_seat($node);
 
           // Exporting with serialize formatter, and pushing the node.
-          $export = node_export(intval($node->nid), 'serialize');
+          $export = node_export(intval($node->nid), 'serialize', 't', TRUE);
           $data = $export['output'];
           $result = $ws->pushNodeSerialized($data);
 
           // Push was unsuccessful.
           if (!$result->nid) {
-            ValghallaLogger::error(sprintf('Could not free seat for node "%s", error: %s', $node->title, implode(' ', $result)));
+            if (is_array($result)) {
+              $result = implode(' ', $result);
+            }
+
+            ValghallaLogger::error(sprintf('Could not free seat for node "%s", error: %s', $node->title, $result));
             $context['results'][] = array(
               'message' => t('Could not free seat for "@title" push failed, message: @message', array(
                 '@title' => $node->title,
-                '@message' => implode(' ', $result),
+                '@message' => $result,
               )),
               'type' => 'warning',
             );
@@ -415,11 +419,15 @@ function valghalla_internal_server_batch_push_op($item, $operation_details, &$co
           valghalla_synch_queue_remove_item($existingItem->uuid);
         }
         else {
-          ValghallaLogger::error(sprintf('Term %s push failed, error: %s', $existingItem->name, implode(' ', $result)));
+          if (is_array($result)) {
+            $result = implode(' ', $result);
+          }
+
+          ValghallaLogger::error(sprintf('Term %s push failed, error: %s', $existingItem->name, $result));
           $context['results'][] = array(
             'message' => t('Term "@title" push failed, message: @message', array(
               '@title' => $existingItem->name,
-              '@message' => implode(' ', $result),
+              '@message' => $result,
             )),
             'type' => 'warning',
           );
@@ -431,7 +439,7 @@ function valghalla_internal_server_batch_push_op($item, $operation_details, &$co
         $context['message'] = t('Pushing node @title', array('@title' => $existingItem->title));
 
         // Exporting with serialize formatter.
-        $export = node_export(intval($existingItem->nid), 'serialize');
+        $export = node_export(intval($existingItem->nid), 'serialize', 't', TRUE);
         $data = $export['output'];
 
         // Actual webservice call.
@@ -451,11 +459,15 @@ function valghalla_internal_server_batch_push_op($item, $operation_details, &$co
           valghalla_synch_queue_remove_item($existingItem->uuid);
         }
         else {
-          ValghallaLogger::error(sprintf('Node %s push failed, error: %s', $existingItem->title, implode(' ', $result)));
+          if (is_array($result)) {
+            $result = implode(' ', $result);
+          }
+
+          ValghallaLogger::error(sprintf('Node %s push failed, error: %s', $existingItem->title, $result));
           $context['results'][] = array(
             'message' => t('Node "@title" push failed, message: @message', array(
               '@title' => $existingItem->title,
-              '@message' => implode(' ', $result),
+              '@message' => $result,
             )),
             'type' => 'warning',
           );

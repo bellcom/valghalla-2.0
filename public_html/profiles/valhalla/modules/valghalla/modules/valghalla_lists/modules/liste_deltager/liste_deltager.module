@@ -527,8 +527,8 @@ function liste_deltager_none_polling_station($election_id, $roles, $party) {
           $role_selected = FALSE;
         }
 
-        if ($party_field && array_key_exists($party_field[0]['target_id'], $party)
-            && !$party[$party_field[0]['target_id']]) {
+        if (($party_field === FALSE) || (!array_key_exists($party_field[0]['tid'], $party)
+            && !$party[$party_field[0]['tid']])) {
           $party_selected = FALSE;
         }
       }
@@ -538,10 +538,12 @@ function liste_deltager_none_polling_station($election_id, $roles, $party) {
     }
     // Does not contain fc.
     else {
-      $node_party = field_get_items('node', $node, 'field_party');
-      if ($node_party && array_key_exists($node_party[0]['tid'], $party)
-          && !$party[$node_party[0]['tid']]) {
-        $party_selected = FALSE;
+      if ($party) {
+        $node_party = field_get_items('node', $node, 'field_party');
+        if (($node_party === FALSE) || (!array_key_exists($node_party[0]['tid'], $party)
+          && !$party[$node_party[0]['tid']])) {
+          $party_selected = FALSE;
+        }
       }
 
       if ($none_polling_station && $role_selected && $party_selected) {

@@ -317,7 +317,7 @@ function valghalla_internal_server_clone_updated_content($forceStart = FALSE) {
     $currentPageContent = $ws->fetchContent($i);
 
     // If this page returned no results, no need to proceed further.
-    if (empty($currentPageContent)) {
+    if (empty($currentPageContent) || !is_array($currentPageContent)) {
       break;
     }
 
