@@ -145,7 +145,7 @@ function valghalla_internal_server_batch_clone_op($uuid, $operation_details, &$c
           valghalla_internal_server_free_last_selected_seat($node);
 
           // Exporting with serialize formatter, and pushing the node.
-          $export = node_export(intval($node->nid), 'serialize');
+          $export = node_export(intval($node->nid), 'serialize', 't', TRUE);
           $data = $export['output'];
           $result = $ws->pushNodeSerialized($data);
 
@@ -439,7 +439,7 @@ function valghalla_internal_server_batch_push_op($item, $operation_details, &$co
         $context['message'] = t('Pushing node @title', array('@title' => $existingItem->title));
 
         // Exporting with serialize formatter.
-        $export = node_export(intval($existingItem->nid), 'serialize');
+        $export = node_export(intval($existingItem->nid), 'serialize', 't', TRUE);
         $data = $export['output'];
 
         // Actual webservice call.
