@@ -733,6 +733,22 @@ function valghalla_external_server_signup_settings_form($form, $form_state) {
   );
   /* Party, role & polling station END */
 
+  /* Success page START */
+  $form['valghalla_external_server_signup_success_page_fs'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Success page text'),
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+  );
+  $form['valghalla_external_server_signup_success_page_fs']['valghalla_external_server_signup_success_page_body'] = array(
+    '#title' => t('Success page text'),
+    '#type' => 'textarea',
+    '#default_value' => variable_get('valghalla_external_server_signup_success_page_body', '<p>Tak for din tilmelding.</p>
+<p>Dine oplysninger bliver nu kontrolleret, og du vil modtage en bekræftelse på din tilmelding via
+digital post.</p>'),
+  );
+  /* Success page END */
+
   return system_settings_form($form);
 }
 
@@ -789,7 +805,10 @@ function valghalla_external_server_signup_field_visibility($form_state, $propery
  */
 function _external_signup_success_page() {
   drupal_set_title(t('Tilmeldt'));
-  $output = '<p>' . t('Du kan nu lukke siden.') . '</p>';
+
+  $output = variable_get('valghalla_external_server_signup_success_page_body', '<p>Tak for din tilmelding.</p>
+<p>Dine oplysninger bliver nu kontrolleret, og du vil modtage en bekræftelse på din tilmelding via
+digital post.</p>');
 
   return $output;
 }
