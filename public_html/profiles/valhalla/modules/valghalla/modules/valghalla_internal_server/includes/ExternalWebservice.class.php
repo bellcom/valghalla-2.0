@@ -27,9 +27,12 @@ class ExternalWebservice {
   public function heartbeat() {
     $checksum = NULL;
     $fetchedContent = $this->fetchContent();
-    foreach ($fetchedContent as $content) {
-      if (isset($content->checksum)) {
-        $checksum = $content->checksum;
+
+    if (is_array($fetchedContent)) {
+      foreach ($fetchedContent as $content) {
+        if (isset($content->checksum)) {
+          $checksum = $content->checksum;
+        }
       }
     }
     $decryptedText = valghalla_synch_node_export_get_decrypt($checksum, variable_get('valghalla_external_server_hash_salt'));
@@ -275,8 +278,15 @@ class ExternalWebservice {
     $options['headers']['Content-Type'] = 'application/json';
 
     $result = drupal_http_request($requestUrl, $options);
+
     if ($result->code == 200) {
-      return json_decode($result->data);
+      // Check if the string is in JSON format.
+      if (is_string($result->data) && is_array(json_decode($result->data, TRUE))) {
+        return json_decode($result->data);
+      }
+      else {
+        return $result->data;
+      }
     }
   }
 

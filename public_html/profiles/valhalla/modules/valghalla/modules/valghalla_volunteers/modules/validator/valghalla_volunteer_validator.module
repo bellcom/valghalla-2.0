@@ -128,7 +128,12 @@ function valghalla_volunteer_validator_node_presave($node) {
       $node_wrapper->field_no_sms = $subscriptions[0]['nem_sms'] == FALSE ? '1' : '0';
     }
   }
+}
 
+/**
+ * Implements hook_node_submit().
+ */
+function valghalla_volunteer_validator_node_submit($node, $form, &$form_state) {
   // Check field_election info field.
   // Truncate invalid field collection items.
   $field_electioninfo_lang = field_language('node', $node, 'field_electioninfo');
@@ -138,6 +143,7 @@ function valghalla_volunteer_validator_node_presave($node) {
         $value['entity'] = entity_load_single('field_collection_item', $value['value']);
       }
       if (!empty($value['entity']) && !valghalla_volunteers_fc_electioninfo_validate($value['entity'])) {
+        watchdog('valghalla_volunteers_validator', 'Remove fc item from %nid', array('%nid' => $node->nid));
         unset($node->field_electioninfo[$field_electioninfo_lang][$key]);
       }
     }
@@ -200,9 +206,11 @@ function valghalla_volunteer_validator_node_validate($node, $form, &$form_state)
     }
   }
 
-  foreach ($messages as $message) {
-    if ($message['status'] === FALSE) {
-      form_set_error('field_cpr_number', t('Det angivne CPR-nummer kan ikke valideres: @text', array('@text' => $message['text'])));
+  if (isset($messages) && is_array($messages)) {
+    foreach ($messages as $message) {
+      if ($message['status'] === FALSE) {
+        form_set_error('field_cpr_number', t('Det angivne CPR-nummer kan ikke valideres: @text', array('@text' => $message['text'])));
+      }
     }
   }
 }
@@ -252,9 +260,11 @@ function valghalla_volunteer_validator_form_volunteers_node_form_alter(&$form, &
   $field_electioninfo_lang = field_language('node', $node, 'field_electioninfo');
   if (!empty($form['field_electioninfo'][$field_electioninfo_lang])) {
     foreach ($form['field_electioninfo'][$field_electioninfo_lang] as &$value) {
-      foreach (element_children($value) as $key) {
-        if (strpos($key, 'field') === 0) {
-          $value[$key]['#disabled'] = TRUE;
+      if (is_array($value)) {
+        foreach (element_children($value) as $key) {
+          if (strpos($key, 'field') === 0) {
+            $value[$key]['#disabled'] = TRUE;
+          }
         }
       }
     }
@@ -343,10 +353,7 @@ function valghalla_volunteer_validator_validate(&$volunteer) {
     }
   }
 
-  if (count($log)) {
-    return $log;
-  }
-  return FALSE;
+  return $log;
 }
 
 /**

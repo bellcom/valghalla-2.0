@@ -927,6 +927,7 @@ function valghalla_volunteers_field_default_field_instances() {
           'delete' => 'Slet',
           'description' => TRUE,
           'edit' => 'Redigér',
+          'translate' => 'Oversæt',
           'view_mode' => 'full',
         ),
         'type' => 'field_collection_view',

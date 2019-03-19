@@ -105,7 +105,7 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
 
   if (!$cpr) {
     $form['nemid_login_link'] = array(
-      '#markup' => l(t('Login med Nemlogin'), valghalla_external_server_nemlogin_login_link(request_uri())),
+      '#markup' => l(t('Login med Nemlogin'), valghalla_external_server_nemlogin_login_link(request_uri()), array('attributes' => array('class' => array('btn', 'btn-secondary')))),
     );
   }
   else {
@@ -298,6 +298,18 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
     $form['role_details']['#access'] = FALSE;
     $form['polling_station_select']['#access'] = FALSE;
     $form['polling_station_details']['#access'] = FALSE;
+    $form['terms_agreement']['#access'] = FALSE;
+    $form['submit']['#access'] = FALSE;
+  }
+
+  // Hiding fields if CPR is not present.
+  if (!$cpr) {
+    $form['cpr']['#access'] = FALSE;
+    $form['email-container']['#access'] = FALSE;
+    $form['phone-container']['#access'] = FALSE;
+    $form['comment']['#access'] = FALSE;
+    $form['role_select']['#access'] = FALSE;
+    $form['polling_station_select']['#access'] = FALSE;
     $form['terms_agreement']['#access'] = FALSE;
     $form['submit']['#access'] = FALSE;
   }

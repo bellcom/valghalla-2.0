@@ -243,3 +243,27 @@ function valghalla_update_7116() {
   $instance = field_info_instance('node', 'field_diaet', 'volunteers');
   field_delete_instance($instance);
 }
+
+/**
+ * Update version of loaded AngularJS from 1.0.8 to 1.2.5.
+ */
+function valghalla_update_7117() {
+  variable_set('angularjs_version', '1.2.5');
+}
+
+/**
+ * Use CDN version of AngularJS.
+ */
+function valghalla_update_7118() {
+  variable_set('angularjs_cdn', '1');
+  variable_set('angularjs_compression_type', 'min');
+}
+
+/**
+ * Enable hide_submit module to prevent double clicks.
+ */
+function valghalla_update_7119() {
+  module_enable(array(
+    'hide_submit',
+  ));
+}

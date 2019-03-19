@@ -151,11 +151,15 @@ function valghalla_internal_server_batch_clone_op($uuid, $operation_details, &$c
 
           // Push was unsuccessful.
           if (!$result->nid) {
-            ValghallaLogger::error(sprintf('Could not free seat for node "%s", error: %s', $node->title, implode(' ', $result)));
+            if (is_array($result)) {
+              $result = implode(' ', $result);
+            }
+
+            ValghallaLogger::error(sprintf('Could not free seat for node "%s", error: %s', $node->title, $result));
             $context['results'][] = array(
               'message' => t('Could not free seat for "@title" push failed, message: @message', array(
                 '@title' => $node->title,
-                '@message' => implode(' ', $result),
+                '@message' => $result,
               )),
               'type' => 'warning',
             );
@@ -415,11 +419,15 @@ function valghalla_internal_server_batch_push_op($item, $operation_details, &$co
           valghalla_synch_queue_remove_item($existingItem->uuid);
         }
         else {
-          ValghallaLogger::error(sprintf('Term %s push failed, error: %s', $existingItem->name, implode(' ', $result)));
+          if (is_array($result)) {
+            $result = implode(' ', $result);
+          }
+
+          ValghallaLogger::error(sprintf('Term %s push failed, error: %s', $existingItem->name, $result));
           $context['results'][] = array(
             'message' => t('Term "@title" push failed, message: @message', array(
               '@title' => $existingItem->name,
-              '@message' => implode(' ', $result),
+              '@message' => $result,
             )),
             'type' => 'warning',
           );
@@ -451,11 +459,15 @@ function valghalla_internal_server_batch_push_op($item, $operation_details, &$co
           valghalla_synch_queue_remove_item($existingItem->uuid);
         }
         else {
-          ValghallaLogger::error(sprintf('Node %s push failed, error: %s', $existingItem->title, implode(' ', $result)));
+          if (is_array($result)) {
+            $result = implode(' ', $result);
+          }
+
+          ValghallaLogger::error(sprintf('Node %s push failed, error: %s', $existingItem->title, $result));
           $context['results'][] = array(
             'message' => t('Node "@title" push failed, message: @message', array(
               '@title' => $existingItem->title,
-              '@message' => implode(' ', $result),
+              '@message' => $result,
             )),
             'type' => 'warning',
           );
