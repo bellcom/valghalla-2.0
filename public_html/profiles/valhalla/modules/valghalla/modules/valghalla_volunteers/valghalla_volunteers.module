@@ -633,7 +633,7 @@ function valghalla_volunteers_to_polling_station($station_nid = NULL) {
       $markup .= '</div>';
     }
   }
-  else {
+  elseif (!empty($user_party_id)) {
 
     // Polling stations.
     if ($output = valghalla_volunteers_to_polling_station_markup($polling_station, $user_party_id)) {
@@ -649,6 +649,9 @@ function valghalla_volunteers_to_polling_station($station_nid = NULL) {
       $markup .=    $output;
       $markup .= '</div>';
     }
+  }
+  else {
+    $markup .= 'Ingen patries at vise.';
   }
 
   $markup .= '</div>';
