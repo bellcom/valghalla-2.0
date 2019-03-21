@@ -440,25 +440,35 @@ function valghalla_internal_server_batch_push_op($item, $operation_details, &$co
 
         // Exporting with serialize formatter.
         $export = node_export(intval($existingItem->nid), 'serialize', 't', TRUE);
-        $data = $export['output'];
 
-        // Actual webservice call.
-        $result = $ws->pushNodeSerialized($data);
+        $op_success = FALSE;
 
-        // Operation was successful.
-        if (isset($result->nid)) {
-          ValghallaLogger::info(sprintf('Node %s is successfully pushed, and its remote nid is %d', $existingItem->title, $result->nid));
-          $context['results'][] = array(
-            'message' => t('Node "@title" is successfully pushed, and its remote nid is @rnid', array(
-              '@title' => $existingItem->title,
-              '@rnid' => $result->nid,
-            )),
-            'type' => 'status',
-          );
+        if ($export['success']) {
+          // Actual webservice call.
+          $result = $ws->pushNodeSerialized($export['output']);
 
-          valghalla_synch_queue_remove_item($existingItem->uuid);
+          // Operation was successful.
+          if (isset($result->nid)) {
+            ValghallaLogger::info(sprintf('Node %s is successfully pushed, and its remote nid is %d', $existingItem->title, $result->nid));
+            $context['results'][] = array(
+              'message' => t('Node "@title" is successfully pushed, and its remote nid is @rnid', array(
+                '@title' => $existingItem->title,
+                '@rnid' => $result->nid,
+              )),
+              'type' => 'status',
+            );
+
+            valghalla_synch_queue_remove_item($existingItem->uuid);
+            $op_success = TRUE;
+          }
         }
-        else {
+
+        // Unsuccessful outcome.
+        if (!$op_success) {
+          if (!isset($result)) {
+            $result = $export['output'];
+          }
+
           if (is_array($result)) {
             $result = implode(' ', $result);
           }
