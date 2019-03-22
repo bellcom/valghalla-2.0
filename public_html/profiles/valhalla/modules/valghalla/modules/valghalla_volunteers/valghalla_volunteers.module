@@ -262,12 +262,20 @@ function valghalla_volunteers_rsvp() {
     $volunteer_name = $vlnt_node->title;
   }
 
+  // Detects whether it is IE11 or below.
+  // See: https://gist.github.com/douglascabral/6ee44fc02218936d32741f7c7f7f157e
+  $is_ie11_or_below = FALSE;
+  if (preg_match('~MSIE|Internet Explorer~i', $_SERVER['HTTP_USER_AGENT']) || (strpos($_SERVER['HTTP_USER_AGENT'], 'Trident/7.0; rv:11.0') !== false)) {
+    $is_ie11_or_below = TRUE;
+  }
+
   return theme('rsvp', array(
     'rsvp' => $rsvp,
     'rsvp_status' => $rsvp_map[$rsvp],
     'name' => $volunteer_name,
     'params' => $params,
     'post_script' => $post_script,
+    'is_internet_explorer' => $is_ie11_or_below,
   ));
 }
 
@@ -1151,7 +1159,7 @@ function valghalla_volunteers_get_volunteers(){
     // Skip the volunteer if his party is not the same as for the user
     // @TODO:
     //   Find out if this should be done in the sql
-    if($user_party && $user_party != $term->tid){
+    if ($user_party && (!is_object($term) || $user_party != $term->tid)) {
       continue;
     }
 

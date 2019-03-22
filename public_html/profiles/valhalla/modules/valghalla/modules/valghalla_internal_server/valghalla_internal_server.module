@@ -316,8 +316,9 @@ function valghalla_internal_server_clone_updated_content($forceStart = FALSE) {
   for ($i = 0; $i < VALGHALLA_INTERNAL_SERVER_MAX_SUBSEQ_WS_REQUESTS; $i++) {
     $currentPageContent = $ws->fetchContent($i);
 
-    // If this page returned no results, no need to proceed further.
-    if (empty($currentPageContent) || !is_array($currentPageContent)) {
+    // If this page returned no results, or the only result is the checksum.
+    // No need to proceed further.
+    if (empty($currentPageContent) || !is_array($currentPageContent) || isset($currentPageContent[0]->checksum)) {
       break;
     }
 
