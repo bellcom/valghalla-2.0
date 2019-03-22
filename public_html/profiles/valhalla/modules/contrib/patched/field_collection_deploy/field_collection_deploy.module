@@ -27,6 +27,11 @@ function field_collection_deploy_entity(&$node, $field_collections) {
     $entity_ids = array();
     $field_collection_values = field_view_field('node', $node, $field_collection);
 
+    // Skip empty collections
+    if (empty($field_collection_values['#items'])) {
+      continue;
+    }
+
     // Get entity IDs
     foreach ($field_collection_values['#items'] as $delta => $entity_id) {
       $entity_ids[] = $entity_id['value'];
