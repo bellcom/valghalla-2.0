@@ -126,8 +126,18 @@ var valghalla_volunteers = valghalla_volunteers || [];
     autocompleteSelect: function (item) {
       volunteer_info.volunteer_nid = item.volunteer_nid;
 
+      item.volunteer_item
+        .addClass('waiting')
+        .find('input').addClass('waiting')
+        .attr('disabled', 'disabled');
+
       // Add volunteer.
       $.post('/ajax/volunteers/station/add', volunteer_info, function (data) {
+
+        item.volunteer_item
+          .removeClass('waiting')
+          .find('input').removeClass('waiting')
+          .removeAttr('disabled');
 
         // Show a modal.
         swal({

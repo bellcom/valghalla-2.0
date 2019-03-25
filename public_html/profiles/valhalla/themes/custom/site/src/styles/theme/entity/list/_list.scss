@@ -85,6 +85,14 @@
   .entity-list__form {
     flex-grow: 1;
   }
+
+  &.waiting {
+    cursor: wait;
+  }
+
+  input.waiting {
+    cursor: wait;
+  }
 }
 
 .entity-list--volunteer {
