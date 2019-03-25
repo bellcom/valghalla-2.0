@@ -1,0 +1,16 @@
+diff --git a/field_collection_deploy.module b/field_collection_deploy.module
+index 80752ac..e2849be 100644
+--- a/field_collection_deploy.module
++++ b/field_collection_deploy.module
+@@ -27,6 +27,11 @@ function field_collection_deploy_entity(&$node, $field_collections) {
+     $entity_ids = array();
+     $field_collection_values = field_view_field('node', $node, $field_collection);
+ 
++    // Skip empty collections
++    if (empty($field_collection_values['#items'])) {
++      continue;
++    }
++
+     // Get entity IDs
+     foreach ($field_collection_values['#items'] as $delta => $entity_id) {
+       $entity_ids[] = $entity_id['value'];
