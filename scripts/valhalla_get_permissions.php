@@ -55,7 +55,7 @@ foreach ($roles as $role) {
       continue;
     }
 
-    $permissions = array_merge($permissions, $res);
+    $permissions += $res;
     $site_permissions[$site][$role] = $res;
   }
 }
@@ -63,7 +63,11 @@ ksort($permissions);
 
 // Generating csv reports.
 foreach ($roles as $role) {
-  $file = fopen($report_dir . DIRECTORY_SEPARATOR . 'permissions-' . $role . '.csv', 'w');
+  $file_path = $report_dir . DIRECTORY_SEPARATOR . 'permissions-' . $role . '.csv';
+  if (file_exists($file_path)) {
+    unlink($file_path);
+  }
+  $file = fopen($file_path, 'w');
   fputcsv($file, array_merge(array("Permission\Host"), $sites));
   foreach ($permissions as $permission) {
     $row = array();
