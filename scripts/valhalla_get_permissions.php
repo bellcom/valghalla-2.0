@@ -18,8 +18,8 @@ $report_dir = realpath($script_dir . '../role-permissions');
 // List of Roles that should be checked.
 $roles = array(
   'administrator',
-  'anonymous user',
-  'authenticated user',
+  'anonym bruger',
+  'godkendt bruger',
   'Partisekretær',
   'Valgsekretær',
 );
