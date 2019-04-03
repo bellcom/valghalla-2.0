@@ -208,8 +208,8 @@ function valghalla_internal_server_synch_check() {
   $valghalla_synch_ok = FALSE;
 
   $queue = valghalla_synch_queue_get_items_ordered();
-  if (!empty($queue)) {
-    watchdog('valghalla_internal_server', 'Internal server synchronization queue is not empty. Can not start synch check process.', array(), WATCHDOG_WARNING);
+  if (!empty($queue) || !lock_acquire('valghalla_internal_server_synch')) {
+    watchdog('valghalla_internal_server', 'Internal server synchronization queue is not empty or synch is in progress. Can not start synch check process.', array(), WATCHDOG_WARNING);
     return FALSE;
   }
 
@@ -251,8 +251,8 @@ function valghalla_internal_server_synch_check() {
       }
     }
     if (!$valghalla_synch_ok) {
-      $message = 'Sychronization with internal server failed.' . "<br>\n";
-      $message .= 'Not mached data !fails';
+      $message = 'Synchronization with internal server failed.' . "<br>\n";
+      $message .= 'Not matched data !fails';
       $args = array(
         '!fails' => '<pre>' . print_r($fails, 1) . '</pre>',
       );
@@ -296,6 +296,9 @@ function valghalla_internal_server_synch_check() {
 
   // Set synch check timestamp.
   variable_set('valgalla_internal_server_last_synch_check', time());
+
+  lock_release('valghalla_internal_server_synch');
+
   return $valghalla_synch_ok;
 }
 
