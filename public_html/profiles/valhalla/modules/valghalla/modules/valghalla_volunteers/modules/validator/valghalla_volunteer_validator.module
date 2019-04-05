@@ -5,6 +5,10 @@
  * Volunteer validate module.
  */
 
+module_load_include('inc', 'valghalla_volunteer_validator', 'valghalla_volunteer_validator.entity');
+module_load_include('php', 'valghalla_volunteer_validator', 'src/Entity/ValghallaVolunteerValidationRecordController');
+module_load_include('php', 'valghalla_volunteer_validator', 'src/Entity/ValghallaVolunteerValidationRecord');
+
 /**
  * Implements hook_menu().
  */
@@ -35,7 +39,23 @@ function valghalla_volunteer_validator_menu() {
     'file' => 'valghalla_volunteer_validator.admin.inc',
   );
 
+  valghalla_volunteer_validation_record_menu($items);
   return $items;
+}
+
+/**
+ * Implements hook_permission().
+ */
+function valghalla_volunteer_validator_permission() {
+  $permissions = array(
+    'administer valghalla volunteer validation record entities' => array(
+      'title' => t('Administer Volunteer Validation Record entities'),
+    ),
+    'view any valghalla volunteer validation record entity' => array(
+      'title' => t('View any Volunteer Validation Record entity'),
+    ),
+  );
+  return $permissions;
 }
 
 /**
@@ -458,4 +478,18 @@ function valghalla_volunteer_validator_get_election_config($election, $party = N
   }
 
   return $election_config;
+}
+
+/**
+ * Add validation record.
+ */
+function _valghalla_volunteer_validator_add_history_record($volunteer_node, $type, $election_id, $message) {
+  $record = array(
+    'type|' . $type,
+    'election_nid|' . $election_id,
+    'message|' . serialize($message),
+  );
+  $field_language = field_language('node', $volunteer_node, 'field_validation_history');
+  $volunteer_node->field_validation_history[$field_language][]['value'] = implode("\n", $record);
+  node_save($volunteer_node);
 }

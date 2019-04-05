@@ -6,6 +6,64 @@
  */
 
 /**
+ * Implements hook_schema().
+ */
+function valghalla_volunteer_validator_schema() {
+  $schema = array();
+
+  $schema['valghalla_volunteer_validation_record'] = array(
+    'description' => 'The base table for valghalla_volunteer_validation_record entity.',
+    'fields' => array(
+      'id' => array(
+        'description' => 'Primary key of the valghalla_volunteer_validation_record entity.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'bundle_type' => array(
+        'description' => 'The bundle type',
+        'type' => 'text',
+        'size' => 'medium',
+        'not null' => TRUE,
+      ),
+      'type' => array(
+        'description' => 'Validation type',
+        'type' => 'varchar',
+        'length' => 255,
+        'default' => '',
+      ),
+      'message' => array(
+        'description' => 'Message',
+        'type' => 'text',
+        'not null' => FALSE,
+        'size' => 'big',
+      ),
+      'vol_id' => array(
+        'description' => 'The volunteer reference',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'election_id' => array(
+        'description' => 'The election reference',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'created' => array(
+        'description' => 'The Unix timestamp of the entity creation time.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+    ),
+    'primary key' => array('id'),
+  );
+
+  return $schema;
+}
+
+/**
  * Implements hook_update_N().
  *
  * Renaming the variable names, handling the migration.
@@ -15,4 +73,11 @@ function valghalla_volunteer_validator_update_7101() {
   variable_set('validate_create_municipality', variable_get('validate_single_munitipallity'));
   variable_set('validate_create_citizenship', variable_get('validate_single_sitizenship'));
   variable_set('validate_create_civil_status', variable_get('validate_single_civil_status'));
+}
+
+/**
+ * Adding the valghalla_volunteer_validation_record table.
+ */
+function valghalla_volunteer_validator_update_7102(&$sandbox) {
+  db_create_table('valghalla_volunteer_validation_record', drupal_get_schema_unprocessed('valghalla_volunteer_validator', 'valghalla_volunteer_validation_record'));
 }
