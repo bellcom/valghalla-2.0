@@ -215,8 +215,8 @@ function valghalla_notifications_admin_settings() {
   // Reminder toGo settings.
   $form['valghalla_notifications']['valghalla_notifications_reminder_togo_days'] = array(
     '#type' => 'textfield',
-    '#title' => t('Påmindelses toGo før et valg'),
-    '#description' => t('Antal dage før et valg for at komme toGo-meddelelse'),
+    '#title' => t('Påmindelse før valgstart'),
+    '#description' => t('Antal dage før valget der skal sendes en toGo notifikation'),
     '#default_value' => variable_get('valghalla_notifications_reminder_togo_days', FALSE),
   );
 
