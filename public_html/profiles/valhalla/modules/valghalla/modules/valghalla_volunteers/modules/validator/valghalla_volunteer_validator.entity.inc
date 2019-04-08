@@ -131,21 +131,9 @@ function valghalla_volunteer_validation_record_info_page() {
 }
 
 /**
- * Checks access to notification tab.
- */
-function valghalla_volunteer_validation_record_check_notification_tab_access() {
-  $node = node_load(arg(1));
-  if (($node->type == 'volunteers')
-    && user_access('view any valghalla notification entity')) {
-    return TRUE;
-  }
-  return FALSE;
-}
-
-/**
  * Returns a render array with all entities.
  */
-function valghalla_volunteer_validation_record_list_entities($election_nid = FALSE, $vol_nid = FALSE) {
+function valghalla_volunteer_validation_record_list_entities($vol_nid = FALSE) {
   $content = array();
   // Load all of our entities.
   $query = new EntityFieldQuery();
@@ -157,12 +145,14 @@ function valghalla_volunteer_validation_record_list_entities($election_nid = FAL
   if ($vol_nid) {
     $query->propertyCondition('vol_id', $vol_nid);
   }
-  if ($election_nid) {
-    $query->propertyCondition('election_id', $vol_nid);
-  }
   else {
     $headers[] = t('Deltager');
   }
+
+  if (!empty($_SESSION['election_nid'])) {
+    $query->propertyCondition('election_id', $_SESSION['election_nid']);
+  }
+
   $headers[] = t('Besked');
   $headers[] = t('Tidspunkt');
   $headers[] = t('Operations');
@@ -177,9 +167,6 @@ function valghalla_volunteer_validation_record_list_entities($election_nid = FAL
       $row_data['type'] = check_plain($entity->type);
       if (!$vol_nid) {
         $row_data['volunteer'] = valghalla_volunteer_validation_record_node_reference_view($entity->vol_id);
-      }
-      if (!$election_nid) {
-        $row_data['election'] = valghalla_volunteer_validation_record_node_reference_view($entity->election_id);
       }
       $row_data['message'] = substr($message, 0, 50);
       $row_data['created'] = format_date($entity->created, 'short');
