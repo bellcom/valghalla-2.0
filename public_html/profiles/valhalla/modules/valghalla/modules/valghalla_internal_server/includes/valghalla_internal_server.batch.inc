@@ -130,6 +130,15 @@ function valghalla_internal_server_batch_clone_op($uuid, $operation_details, &$c
         }
         else {
           ValghallaLogger::warning(sprintf('Node "%s" failed validation, messages %s', $node->title, implode('; ', $validationStatus['errors'])));
+          /** @var EntityInterface $notification */
+          $valghalla_volunteer_validation_record = entity_get_controller('valghalla_volunteer_validation_record')->create(array(
+            'type' => 'external_server_sync',
+            'vol_id' => $node->nid,
+            'election_id' => $validationStatus['election_nid'],
+            'message' => implode("\n", $validationStatus['errors']),
+          ));
+          $valghalla_volunteer_validation_record->save();
+
           valghalla_internal_server_mark_invalid($node, $validationStatus['errors']);
 
           $context['results'][] = array(

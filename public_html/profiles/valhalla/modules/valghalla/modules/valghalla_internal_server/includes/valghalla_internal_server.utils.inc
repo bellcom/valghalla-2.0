@@ -68,6 +68,7 @@ function valghalla_internal_server_validate_volunteer($volunteer_node) {
   }
 
   if ($election && $party) {
+    $validationStatus['election_nid'] = $election->nid;
     $election_config = valghalla_volunteer_validator_get_election_config($election, $party);
     $messages = array_merge($messages, valghalla_volunteer_validator_query_service('validate_cpr_per_election', $cpr, $election_config));
   }
