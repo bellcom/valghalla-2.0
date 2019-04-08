@@ -397,7 +397,7 @@ function _generate_pdf_content($election_nid = NULL, $party_tid = NULL) {
 
   // We are requiring a specific party.
   if ($party_tid) {
-    if (odin_is_election_active($election_nid)) {
+    if (odin_is_election_active($election_nid) && module_exists('valghalla_internal_server')) {
 
       // External links.
       $markup .= '<pagebreak>';
