@@ -89,7 +89,14 @@ function valghalla_volunteer_validation_record_menu(&$items) {
     'page callback' => 'valghalla_volunteer_validation_record_list_entities',
     'access arguments' => array('view any valghalla volunteer validation record entity'),
     'type' => MENU_NORMAL_ITEM,
+  );
 
+  $items['valghalla_lists/volunteers_validation'] = array(
+    'title' => 'Deltagere validering',
+    'page callback' => 'drupal_goto',
+    'page arguments' => array('valghalla/administration/volunteer-validation-records'),
+    'access arguments' => array('view any valghalla volunteer validation record entity'),
+    'type' => MENU_NORMAL_ITEM,
   );
 
   $items['valghalla/administration/volunteer-validation-records/%valghalla_volunteer_validation_record'] = array(
