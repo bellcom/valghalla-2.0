@@ -146,7 +146,6 @@ function valghalla_volunteer_validation_record_list_entities($election_id = NULL
     ->propertyOrderBy('created', 'DESC')
     ->pager(20);
   $headers[] = t('ID');
-  $headers[] = t('Type');
   if ($vol_nid) {
     $query->propertyCondition('vol_id', $vol_nid);
   }
@@ -167,13 +166,11 @@ function valghalla_volunteer_validation_record_list_entities($election_id = NULL
   $result = $query->execute();
   $ids = reset($result);
   if (!empty($ids)) {
-    $types = valghalla_volunteer_validation_record_get_types();
     $entities = valghalla_volunteer_validation_record_load_multiple(array_keys($ids));
     foreach ($entities as $entity) {
       $message = strip_tags(str_replace('<br/>', '  ', $entity->message));
       $row = $row_data = array();
       $row_data['id'] = l($entity->id, 'valghalla/administration/volunteer-validation-records/' . $entity->id);
-      $row_data['type'] = isset($types[$entity->type]) ? $types[$entity->type] : check_plain($entity->type);
       if (!$vol_nid) {
         $row_data['volunteer'] = valghalla_volunteer_validation_record_node_reference_view($entity->vol_id);
       }
@@ -273,11 +270,6 @@ function valghalla_volunteer_validation_record_view($entity, $view_mode = 'defau
     '#type' => 'item',
     '#title' => t('Afsendelses dato'),
     '#markup' => format_date($entity->created),
-  );
-  $entity->content['type'] = array(
-    '#type' => 'item',
-    '#title' => t('Validering type'),
-    '#markup' => $entity->type,
   );
   $entity->content['message'] = array(
     '#type' => 'item',
