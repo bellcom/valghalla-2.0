@@ -348,10 +348,9 @@ function entity_valghalla_notification_confirm_delete($form, &$form_state, $noti
   $form['notification_id'] = array('#type' => 'value', '#value' => $notification->id);
   $form_state['storage']['notification'] = $notification;
   return confirm_form($form,
-    t('Delete notification',
-      array('%id' => $notification->id)),
+    t('Delete notification'),
     'admin/structure/entity_valghalla_notification/manage',
-    t('Are you sure you want to delete the notification %id?'));
+    t('Are you sure you want to delete the notification %id?', array('%id' => $notification->id)));
 }
 
 /**

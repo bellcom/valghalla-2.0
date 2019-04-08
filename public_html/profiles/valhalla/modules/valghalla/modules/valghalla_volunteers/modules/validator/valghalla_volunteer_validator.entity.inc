@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Handles the Valghalla notifications entity.
+ * Handles the Valghalla validation record entity.
  */
 
 /**
@@ -24,7 +24,7 @@ function valghalla_volunteer_validator_entity_info() {
     ),
     'bundles' => array(
       'default_bundle' => array(
-        'label' => 'Default notification bundle',
+        'label' => 'Default validation record bundle',
       ),
     ),
     'static cache' => TRUE,
@@ -116,24 +116,22 @@ function valghalla_volunteer_validation_record_menu(&$items) {
     'type' => MENU_LOCAL_TASK,
   );
 
+  $items['node/%/validation-records'] = array(
+    'title callback' => 'valghalla_volunteer_validation_record_tab_title',
+    'page callback' => 'valghalla_volunteer_validation_record_list_entities',
+    'page arguments' => array(1),
+    'access callback' => 'valghalla_volunteer_validation_record_check_tab_access',
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 10,
+  );
+
   return $items;
-}
-
-/**
- * Basic information for the page.
- */
-function valghalla_volunteer_validation_record_info_page() {
-  if (user_access('administer valghalla_volunteer_validation_record entities')) {
-    $content['table'] = valghalla_volunteer_validation_record_list_entities();
-  }
-
-  return $content;
 }
 
 /**
  * Returns a render array with all entities.
  */
-function valghalla_volunteer_validation_record_list_entities($vol_nid = FALSE) {
+function valghalla_volunteer_validation_record_list_entities($election_id = NULL, $vol_nid = FALSE) {
   $content = array();
   // Load all of our entities.
   $query = new EntityFieldQuery();
@@ -149,8 +147,11 @@ function valghalla_volunteer_validation_record_list_entities($vol_nid = FALSE) {
     $headers[] = t('Deltager');
   }
 
-  if (!empty($_SESSION['election_nid'])) {
-    $query->propertyCondition('election_id', $_SESSION['election_nid']);
+  if (empty($election_id) && !empty($_SESSION['election_nid'])) {
+    $election_id = $_SESSION['election_nid'];
+  }
+  if (!empty($election_id)) {
+    $query->propertyCondition('election_id', $election_id);
   }
 
   $headers[] = t('Besked');
@@ -203,6 +204,31 @@ function valghalla_volunteer_validation_record_list_entities($vol_nid = FALSE) {
  */
 function valghalla_volunteer_validation_record_title($entity) {
   return t('Validering optage (id=@id)', array('@id' => $entity->id));
+}
+
+/**
+ * Checks access to validation records tab.
+ */
+function valghalla_volunteer_validation_record_check_tab_access() {
+  $node = node_load(arg(1));
+  if (($node->type == 'election')
+    && user_access('view any valghalla_volunteer_validation_record entity')) {
+    return TRUE;
+  }
+  return FALSE;
+}
+
+/**
+ * Generates validation record tab title with counter.
+ */
+function valghalla_volunteer_validation_record_tab_title() {
+  $query = new EntityFieldQuery();
+  $ids = $query->entityCondition('entity_type', 'valghalla_volunteer_validation_record')
+    ->propertyOrderBy('created', 'DESC')
+    ->propertyCondition('election_id', arg(1))
+    ->execute();
+  $count = empty($ids) ? 0 : count(reset($ids));
+  return t('Deltagere validering log (@count)', array('@count' => $count));
 }
 
 /**
@@ -315,17 +341,16 @@ function valghalla_volunteer_validation_record_confirm_delete($form, &$form_stat
   $form['record_id'] = array('#type' => 'value', '#value' => $record->id);
   $form_state['storage']['record'] = $record;
   return confirm_form($form,
-    t('Delete notification',
-      array('%id' => $record->id)),
+    t('Delete validation record'),
     'admin/structure/valghalla_volunteer_validation_record/manage',
-    t('Are you sure you want to delete the validation record %id?'));
+    t('Are you sure you want to delete the validation record %id ?', array('%id' => $record->id)));
 }
 
 /**
  * Submit handler to delete a valghalla_volunteer_validator after confirmation.
  */
 function valghalla_volunteer_validation_record_confirm_delete_submit($form, &$form_state) {
-  $form_state['storage']['notification']->delete();
+  $form_state['storage']['record']->delete();
   drupal_set_message(t('Deleted validation record %id.', array('%id' => $form_state['values']['record_id'])));
   $form_state['redirect'] = 'valghalla/administration/volunteer-validation-records';
 }
