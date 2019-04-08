@@ -81,3 +81,26 @@ function valghalla_volunteer_validator_update_7101() {
 function valghalla_volunteer_validator_update_7102(&$sandbox) {
   db_create_table('valghalla_volunteer_validation_record', drupal_get_schema_unprocessed('valghalla_volunteer_validator', 'valghalla_volunteer_validation_record'));
 }
+
+/**
+ * Implements hook_update_N().
+ *
+ * Adding validation record permission to roles:
+ * 'administrator', 'Valgsekretær'.
+ */
+function valghalla_volunteer_validator_update_7103() {
+  $permissions = array(
+    'view any valghalla_volunteer_validation_record entity',
+    'administer valghalla_volunteer_validation_record entities',
+  );
+  foreach (array('administrator', 'Valgsekretær') as $role_name) {
+    $role = user_role_load_by_name($role_name);
+    if (empty($role)) {
+      watchdog('valghalla_volunteer_validator_update', 'Role %role not found to set permissions.', array(
+        '%role' => $role_name,
+      ));
+      continue;
+    }
+    user_role_grant_permissions($role->rid, $permissions);
+  }
+}

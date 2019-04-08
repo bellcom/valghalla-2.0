@@ -48,10 +48,10 @@ function valghalla_volunteer_validator_menu() {
  */
 function valghalla_volunteer_validator_permission() {
   $permissions = array(
-    'administer valghalla volunteer validation record entities' => array(
+    'administer valghalla_volunteer_validation_record entities' => array(
       'title' => t('Administer Volunteer Validation Record entities'),
     ),
-    'view any valghalla volunteer validation record entity' => array(
+    'view any valghalla_volunteer_validation_record entity' => array(
       'title' => t('View any Volunteer Validation Record entity'),
     ),
   );

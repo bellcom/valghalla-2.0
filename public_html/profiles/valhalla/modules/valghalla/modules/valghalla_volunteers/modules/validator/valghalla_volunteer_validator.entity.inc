@@ -87,7 +87,7 @@ function valghalla_volunteer_validation_record_menu(&$items) {
   $items['valghalla/administration/volunteer-validation-records'] = array(
     'title' => 'Deltagere validering list',
     'page callback' => 'valghalla_volunteer_validation_record_list_entities',
-    'access arguments' => array('view any valghalla volunteer validation record entity'),
+    'access arguments' => array('view any valghalla_volunteer_validation_record entity'),
     'type' => MENU_NORMAL_ITEM,
   );
 
@@ -95,7 +95,7 @@ function valghalla_volunteer_validation_record_menu(&$items) {
     'title' => 'Deltagere validering',
     'page callback' => 'drupal_goto',
     'page arguments' => array('valghalla/administration/volunteer-validation-records'),
-    'access arguments' => array('view any valghalla volunteer validation record entity'),
+    'access arguments' => array('view any valghalla_volunteer_validation_record entity'),
     'type' => MENU_NORMAL_ITEM,
   );
 
@@ -167,16 +167,17 @@ function valghalla_volunteer_validation_record_list_entities($election_id = NULL
   $result = $query->execute();
   $ids = reset($result);
   if (!empty($ids)) {
+    $types = valghalla_volunteer_validation_record_get_types();
     $entities = valghalla_volunteer_validation_record_load_multiple(array_keys($ids));
     foreach ($entities as $entity) {
       $message = strip_tags(str_replace('<br/>', '  ', $entity->message));
       $row = $row_data = array();
       $row_data['id'] = l($entity->id, 'valghalla/administration/volunteer-validation-records/' . $entity->id);
-      $row_data['type'] = check_plain($entity->type);
+      $row_data['type'] = isset($types[$entity->type]) ? $types[$entity->type] : check_plain($entity->type);
       if (!$vol_nid) {
         $row_data['volunteer'] = valghalla_volunteer_validation_record_node_reference_view($entity->vol_id);
       }
-      $row_data['message'] = substr($message, 0, 50);
+      $row_data['message'] = check_markup($message, 'plain_text');
       $row_data['created'] = format_date($entity->created, 'short');
       $row_data['operations'] = theme('links__ctools_dropbutton', array(
         'links' => array(
@@ -281,7 +282,7 @@ function valghalla_volunteer_validation_record_view($entity, $view_mode = 'defau
   $entity->content['message'] = array(
     '#type' => 'item',
     '#title' => t('Besked'),
-    '#markup' => $entity->message,
+    '#markup' => check_markup($entity->message, 'plain_text'),
   );
   $entity->content['volunteer'] = array(
     '#type' => 'item',
@@ -371,4 +372,13 @@ function valghalla_volunteer_validation_record_node_reference_view($nid) {
     'attributes' => array('target' => '_blank'),
   ));
   return $output;
+}
+
+/**
+ * View function for node reference id value.
+ */
+function valghalla_volunteer_validation_record_get_types() {
+  return array(
+    'external_server_sync' => 'Ekstern tilmelding',
+  );
 }
