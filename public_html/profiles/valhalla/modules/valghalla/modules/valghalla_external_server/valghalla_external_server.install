@@ -89,8 +89,6 @@ function valghalla_external_server_requirements($phase) {
         'field_ui',
         'imce',
         'locationmap',
-        'mailsystem',
-        'mimemail',
         'panels_ipe',
         'panels_mini',
         'search',
