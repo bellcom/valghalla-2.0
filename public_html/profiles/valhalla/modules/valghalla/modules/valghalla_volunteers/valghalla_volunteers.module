@@ -553,7 +553,7 @@ function valghalla_volunteers_rsvp_form_submit($form, &$form_state) {
       drupal_mail('valghalla_mail', 'mail', $recipient, $language, $params);
     }
     else {
-      watchdog('valghalla_volunteers','Notifikation blev ikke afsendt. Modulet \"valghalla_notifications\" eller \"valghalla_mail\" er ikke aktiveret.', array(), WATCHDOG_WARNING);
+      watchdog('valghalla_volunteers','Notifikation blev ikke afsendt. Modulet "valghalla_notifications" eller "valghalla_mail" er ikke aktiveret.', array(), WATCHDOG_WARNING);
     }
   }
 }
