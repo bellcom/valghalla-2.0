@@ -17,11 +17,11 @@ $report_dir = realpath($script_dir . '../role-permissions');
 
 // List of Roles that should be checked.
 $roles = array(
-  'administrator',
-  'anonymous user',
-  'authenticated user',
-  'Partisekretær',
-  'Valgsekretær',
+  'administrator' => 'administrator',
+  'anonym bruger' => 'anonymous user',
+  'godkendt bruger' => 'authenticated user',
+  'Partisekretær' => 'Partisekretær',
+  'Valgsekretær' => 'Valgsekretær',
 );
 
 $sites_dir = $drupal_root . DIRECTORY_SEPARATOR . 'sites';
@@ -48,22 +48,26 @@ $permissions_sql = "SELECT rp.permission FROM role LEFT JOIN role_permission AS 
 // Fetching permissions.
 $permissions = array();
 $site_permissions = array();
-foreach ($roles as $role) {
+foreach ($roles as $role_key => $role) {
   foreach ($sites as $site) {
     $res = drush_command('sql-query "' . str_replace('!role', $role, $permissions_sql) . '"', $site);
     if (empty($res)) {
       continue;
     }
 
-    $permissions = array_merge($permissions, $res);
+    $permissions += $res;
     $site_permissions[$site][$role] = $res;
   }
 }
 ksort($permissions);
 
 // Generating csv reports.
-foreach ($roles as $role) {
-  $file = fopen($report_dir . DIRECTORY_SEPARATOR . 'permissions-' . $role . '.csv', 'w');
+foreach ($roles as $role_key => $role) {
+  $file_path = $report_dir . DIRECTORY_SEPARATOR . $role_key . '.csv';
+  if (file_exists($file_path)) {
+    unlink($file_path);
+  }
+  $file = fopen($file_path, 'w');
   fputcsv($file, array_merge(array("Permission\Host"), $sites));
   foreach ($permissions as $permission) {
     $row = array();

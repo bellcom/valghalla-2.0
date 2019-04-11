@@ -66,18 +66,21 @@ function valghalla_mail_mail($key, &$message, $params) {
       if (!empty($params['bcc'])) {
         $message['headers']['Bcc'] = $params['bcc'];
       }
-      /** @var EntityInterface $notification */
-      $notification = $params['notification_entity'];
-      $notification->message = $message['subject'] . '<br>' . $message_body;
-      if (!empty($params['attachments'])) {
-        $message['params']['attachments'] = $params['attachments'];
-        $files = array();
-        foreach ($params['attachments'] as $attachment) {
-          $files[] = $attachment['filename'];
+
+      if (!empty($params['notification_entity'])) {
+        /** @var EntityInterface $notification */
+        $notification = $params['notification_entity'];
+        $notification->message = $message['subject'] . '<br>' . $message_body;
+        if (!empty($params['attachments'])) {
+          $message['params']['attachments'] = $params['attachments'];
+          $files = array();
+          foreach ($params['attachments'] as $attachment) {
+            $files[] = $attachment['filename'];
+          }
+          $notification->message .= t('Attachments:') . theme('item_list', array('items' => $files));
         }
-        $notification->message .= t('Attachments:') . theme('item_list', array('items' => $files));
+        $notification->save();
       }
-      $notification->save();
       break;
   }
 }
