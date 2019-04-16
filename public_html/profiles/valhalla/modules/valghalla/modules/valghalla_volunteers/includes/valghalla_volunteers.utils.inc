@@ -261,3 +261,55 @@ function valghalla_volunteers_get_fc_electioninfo(array $condition = array()) {
   return empty($query_result) ? NULL : array_shift($query_result);
 }
 
+/**
+ * Sends volunteer comment to election contact.
+ *
+ * @param object $fc
+ *   Field collection item with electioninfo.
+ * @param string $comment
+ *   Volunteer comment.
+ */
+function _valghalla_volunteers_send_volunteer_comment($fc, $comment) {
+  $recipient = '';
+  $election_nid = '';
+
+  // Get e-mail address.
+  $field_election = field_get_items('field_collection_item', $fc, 'field_election');
+  if (!empty($field_election)) {
+    $election_nid = $field_election[0]['target_id'];
+  }
+  $election_node = node_load($election_nid);
+
+  if ($field_email = field_get_items('node', $election_node, 'field_email_address')) {
+    $recipient = $field_email[0]['email'];
+  }
+  if (!$recipient) {
+    return;
+  }
+
+  $params = array(
+    'subject' => t('Ny tilmelding til !valgtitle', array('!valgtitle' => $election_node->title)),
+    'body' => t('Der er oprettet en ny tilmelding til !valgtitle med kommentaren: !komment', array(
+      '!valgtitle' => $election_node->title,
+      '!komment' => $comment,
+    )),
+    'format' => 'html',
+    // We are no going to use token replacement here.
+    'tokens' => array(),
+    'volunteer_nid' => 0,
+    'notification_type' => 'direct',
+  );
+
+  if (module_exists('valghalla_notifications')) {
+    // Send email via notification system.
+    valghalla_notifications_direct_send('mail', $recipient, $params);
+  }
+  elseif (module_exists('valghalla_mail')) {
+    // Or though regular mail.
+    $language = language_default();
+    drupal_mail('valghalla_mail', 'mail', $recipient, $language, $params);
+  }
+  else {
+    watchdog('valghalla_volunteers', 'Notifikation blev ikke afsendt. Modulet "valghalla_notifications" eller "valghalla_mail" er ikke aktiveret.', array(), WATCHDOG_WARNING);
+  }
+}
