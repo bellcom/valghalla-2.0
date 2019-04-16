@@ -117,19 +117,6 @@ function valhalla_install() {
   // dependencies doesn't work.
   module_enable(array('ckeditor'));
 
-  // Create party terms.
-  $terms = array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'X', 'Z', 'Æ', 'Ø', 'Å');
-
-  $taxonomy = taxonomy_vocabulary_machine_name_load('partier');
-  $vid = $taxonomy->vid;
-  foreach ($terms as $term) {
-    $edit = new stdClass();
-    $edit->name = $term;
-    $edit->vid = $vid;
-
-    taxonomy_term_save($edit);
-  };
-
   // Create election types.
   $terms = array(
     'EU parlamentsvalg',

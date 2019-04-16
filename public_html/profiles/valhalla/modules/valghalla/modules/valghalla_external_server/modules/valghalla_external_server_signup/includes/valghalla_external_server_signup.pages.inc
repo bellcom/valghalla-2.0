@@ -486,32 +486,32 @@ function valghalla_external_server_signup_signup_form_validate($form, &$form_sta
     $form_state['input']['cpr'] = valghalla_synch_node_export_get_encrypt($cpr);
   }
   if (!preg_match('/[0-9]{6}-[0-9]{4}/', $cpr)) {
-    form_set_error('cpr', t('Wrong CPR format, correct format is 123456-7890'));
+    form_set_error('cpr', t('Forkert CPR-format, korrekt format er 123456-7890'));
   }
 
   if ($form['email-container']['email']['#access']) {
     $email = $form_state['values']['email'];
     if (!valid_email_address($email)) {
-      form_set_error('email', t('Wrong email format, test@gmail.com'));
+      form_set_error('email', t('Forkert email format'));
     }
   }
 
   if ($form['phone-container']['phone']['#access']) {
     $phone = $form_state['values']['phone'];
     if (empty($phone)) {
-      form_set_error('phone', t('Phone is empty'));
+      form_set_error('phone', t('Telefonnummeret er tom'));
     }
     elseif (strlen($phone) > 12) {
-      form_set_error('phone', t('Phone number is too long'));
+      form_set_error('phone', t('Telefonnummeret er for langt'));
     }
   }
 
   if (isset($form_state['values']['polling_station_select']) && $form_state['values']['polling_station_select'] === 0) {
-    form_set_error('polling_station_select', t('The field %field is required.', array('%field' => 'Valgsted')));
+    form_set_error('polling_station_select', t('Felter %field er påkrævet', array('%field' => 'Valgsted')));
   }
 
   if (isset($form_state['values']['role_select']) && $form_state['values']['role_select'] === 0) {
-    form_set_error('role_select', t('The field %field is required.', array('%field' => 'Role')));
+    form_set_error('role_select', t('Felter %field  er påkrævet', array('%field' => 'Role')));
   }
 
   if (strcmp($form_state['triggering_element']['#type'], 'submit') === 0) {
@@ -591,7 +591,7 @@ function valghalla_external_server_signup_signup_form_submit($form, &$form_state
       );
     }
     else {
-      drupal_set_message(t('This volunteer already has a seat in the selected election'), 'warning');
+      drupal_set_message(t('Personen er allerede tildelt en anden plads ved samme valg'), 'warning');
     }
   }
 }
