@@ -577,7 +577,7 @@ function valghalla_external_server_signup_signup_form_submit($form, &$form_state
       }
 
       // Send e-mail to email-address set on election.
-      if (empty($form_state['values']['comment'])) {
+      if (!empty($form_state['values']['comment'])) {
         _valghalla_volunteers_send_volunteer_comment($post, $form_state['values']['comment']);
       }
 
