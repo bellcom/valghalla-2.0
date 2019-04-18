@@ -87,9 +87,6 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
 
   // Attempt to fetch CPR from session.
   $cpr = valghalla_external_server_nemlogin_fetch_cpr();
-
-  $cpr = '1407893723';
-
   if ($cpr) {
     $cpr = valghalla_synch_node_export_get_encrypt($cpr);
   }
@@ -882,7 +879,7 @@ function valghalla_external_server_signup_get_form_replacements($form_mode, $for
       $field_partinavn[0]['value'],
     );
   }
-  elseif ($form_mode = 'party_role') {
+  elseif ($form_mode == 'party_role') {
     $field_partinavn = field_get_items('taxonomy_term', $form_state['party'], 'field_partinavn');
     $field_description = field_get_items('node', $form_state['role'], 'field_description');
     $field_meetingtime = field_get_items('node', $form_state['role'], 'field_meetingtime');
