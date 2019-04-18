@@ -273,3 +273,13 @@ function valghalla_election_update_7107() {
   // Reverting feature.
   features_revert_module('valghalla_election');
 }
+
+/**
+ * Adding new fields field.
+ *
+ * New fieldss: field_party_skip_valid_citizenship.
+ */
+function valghalla_election_update_7108() {
+  // Reverting feature.
+  features_revert_module('valghalla_election');
+}

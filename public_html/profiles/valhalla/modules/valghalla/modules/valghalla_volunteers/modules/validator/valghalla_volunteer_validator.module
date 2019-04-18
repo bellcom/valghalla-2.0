@@ -477,6 +477,13 @@ function valghalla_volunteer_validator_get_election_config($election, $party = N
     }
   }
 
+  $field_party_skip_valid_citizen = field_get_items('taxonomy_term', $party, 'field_party_skip_valid_citizen');
+  if (!empty($field_party_skip_valid_citizen)) {
+    if ($field_party_skip_valid_citizen[0]['value'] == 1) {
+      $election_config['validate_citizenship'] = FALSE;
+    }
+  }
+
   return $election_config;
 }
 
