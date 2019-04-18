@@ -87,6 +87,9 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
 
   // Attempt to fetch CPR from session.
   $cpr = valghalla_external_server_nemlogin_fetch_cpr();
+
+  $cpr = '1407893723';
+
   if ($cpr) {
     $cpr = valghalla_synch_node_export_get_encrypt($cpr);
   }
@@ -139,6 +142,8 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
     '#access' => valghalla_external_server_signup_field_visibility($form_state, 'sms', ($role) ? $role->uuid : NULL),
   );
 
+  $field_party_subsc_accept_comment = field_get_items('taxonomy_term', $party, 'field_party_subsc_accept_comment');
+
   $form['comment'] = array(
     '#title' => t('Kommentar'),
     '#type' => 'textarea',
@@ -146,7 +151,7 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
     '#attributes' => array(
       'placeholder' => t('Skriv evt. en kommentar her'),
     ),
-    '#access' => !empty($party->field_party_subsc_accept_comment) ? $party->field_party_subsc_accept_comment['und'][0]['value'] : FALSE,
+    '#access' => !empty($field_party_subsc_accept_comment) ? $field_party_subsc_accept_comment[0]['value'] : FALSE,
   );
 
   // Building a form.
@@ -185,7 +190,9 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
       $role = node_load($role_selected);
       $form_state['role'] = $role;
 
-      $form['role_details']['#markup'] = _valghalla_external_server_signup_get_role_detail_html($role);
+      if ($role) {
+        $form['role_details']['#markup'] = _valghalla_external_server_signup_get_role_detail_html($role);
+      }
     }
   }
 
@@ -258,7 +265,8 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
     }
   }
   if (!empty($party->field_party_subsc_terms_text)) {
-    $terms_agreement_text = $party->field_party_subsc_terms_text['und'][0]['value'];
+    $field_party_subsc_terms_text = field_get_items('taxonomy_term', $party, 'field_party_subsc_terms_text');
+    $terms_agreement_text = $field_party_subsc_terms_text[0]['value'];
   }
 
   // We have some text, so consent checkbox needs to be displayed.
@@ -325,7 +333,8 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
     $form['#bottom_text'] = str_replace($tokens, $replacements, $form['#bottom_text']);
   }
   if (!empty($party->field_party_subsc_message)) {
-    $form['#party_message'] = $party->field_party_subsc_message['und'][0]['value'];
+    $field_party_subsc_message = field_get_items('taxonomy_term', $party, 'field_party_subsc_message');
+    $form['#party_message'] = $field_party_subsc_message[0]['value'];
   }
 
   $form['#theme'] = array('valghalla_external_server_signup_form');
@@ -861,43 +870,55 @@ function valghalla_external_server_signup_get_form_mode($form_state) {
 function valghalla_external_server_signup_get_form_replacements($form_mode, $form_state) {
   $replacements = array();
 
-  $election_date_str = format_date(strtotime($form_state['election']->field_date['da'][0]['value']), 'custom', 'd. F Y');
+  $field_date = field_get_items('node', $form_state['election'], 'field_date');
+  $election_date_str = format_date(strtotime($field_date[0]['value']), 'custom', 'd. F Y');
 
   if ($form_mode == 'party') {
+    $field_partinavn = field_get_items('taxonomy_term', $form_state['party'], 'field_partinavn');
     $replacements = array(
       odin_get_municipality(variable_get('valhalla_settings_municipality')),
       $form_state['election']->title,
       $election_date_str,
-      $form_state['party']->field_partinavn['und'][0]['value'],
+      $field_partinavn[0]['value'],
     );
   }
   elseif ($form_mode = 'party_role') {
+    $field_partinavn = field_get_items('taxonomy_term', $form_state['party'], 'field_partinavn');
+    $field_description = field_get_items('node', $form_state['role'], 'field_description');
+    $field_meetingtime = field_get_items('node', $form_state['role'], 'field_meetingtime');
+
     $replacements = array(
       odin_get_municipality(variable_get('valhalla_settings_municipality')),
       $form_state['election']->title,
       $election_date_str,
-      $form_state['party']->field_partinavn['und'][0]['value'],
-      $form_state['role']->field_description['und'][0]['value'],
-      $form_state['role']->field_meetingtime['und'][0]['value'],
+      $field_partinavn[0]['value'],
+      $field_description[0]['value'],
+      $field_meetingtime[0]['value'],
     );
   }
   elseif ($form_mode == 'party_polling_station') {
+    $field_partinavn = field_get_items('taxonomy_term', $form_state['party'], 'field_partinavn');
+
     $replacements = array(
       odin_get_municipality(variable_get('valhalla_settings_municipality')),
       $form_state['election']->title,
       $election_date_str,
-      $form_state['party']->field_partinavn['und'][0]['value'],
+      $field_partinavn[0]['value'],
       $form_state['polling_station']->title,
     );
   }
   elseif ($form_mode == 'party_role_polling_station') {
+    $field_partinavn = field_get_items('taxonomy_term', $form_state['party'], 'field_partinavn');
+    $field_description = field_get_items('node', $form_state['role'], 'field_description');
+    $field_meetingtime = field_get_items('node', $form_state['role'], 'field_meetingtime');
+
     $replacements = array(
       odin_get_municipality(variable_get('valhalla_settings_municipality')),
       $form_state['election']->title,
       $election_date_str,
-      $form_state['party']->field_partinavn['und'][0]['value'],
-      $form_state['role']->field_description['und'][0]['value'],
-      $form_state['role']->field_meetingtime['und'][0]['value'],
+      $field_partinavn[0]['value'],
+      $field_description[0]['value'],
+      $field_meetingtime[0]['value'],
       $form_state['polling_station']->title,
     );
   }

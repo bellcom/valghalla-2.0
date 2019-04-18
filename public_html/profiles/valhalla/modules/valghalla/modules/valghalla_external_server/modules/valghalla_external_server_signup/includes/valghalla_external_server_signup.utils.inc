@@ -194,10 +194,18 @@ function _valghalla_external_server_signup_check_place_is_available($election_ni
  */
 function _valghalla_external_server_signup_get_polling_station_detail_html($polling_station) {
   $name = $polling_station->title;
-  $road = $polling_station->field_address_road['da'][0]['value'];
-  $road_no = $polling_station->field_address_road_no['da'][0]['value'];
-  $zip = $polling_station->field_address_zipcode['da'][0]['value'];
-  $city = $polling_station->field_address_city['da'][0]['value'];
+
+  $field_address_road = field_get_items('node', $polling_station, 'field_address_road');
+  $road = $field_address_road[0]['value'];
+
+  $field_address_road_no = field_get_items('node', $polling_station, 'field_address_road_no');
+  $road_no = $field_address_road_no[0]['value'];
+
+  $field_address_zipcode = field_get_items('node', $polling_station, 'field_address_zipcode');
+  $zip = $field_address_zipcode[0]['value'];
+
+  $field_address_city = field_get_items('node', $polling_station, 'field_address_city');
+  $city = $field_address_city[0]['value'];
 
   $html = <<<"EOD"
 <p>$name</p>
@@ -218,7 +226,9 @@ EOD;
  *   HTML snippet.
  */
 function _valghalla_external_server_signup_get_role_detail_html($role) {
-  $meeting_time = $role->field_meetingtime['und'][0]['value'];
+  $field_meetingtime = field_get_items('node', $role, 'field_meetingtime');
+  $meeting_time = $field_meetingtime[0]['value'];
+
   $html = <<<"EOD"
   Mødetidspunkt <b>$meeting_time</b>
 EOD;
