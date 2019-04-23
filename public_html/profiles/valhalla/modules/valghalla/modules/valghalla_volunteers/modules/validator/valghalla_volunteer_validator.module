@@ -88,7 +88,7 @@ function valghalla_volunteer_validator_cron() {
  * Adds the entry to valghalla_volunteer_validation_criteria_status table.
  */
 function valghalla_volunteer_validator_node_insert($node) {
-  valghalla_volunteer_validator_fetch_validation_criteria_status($node);
+  valghalla_volunteer_validator_update_validation_criteria_status($node);
 }
 
 /**
