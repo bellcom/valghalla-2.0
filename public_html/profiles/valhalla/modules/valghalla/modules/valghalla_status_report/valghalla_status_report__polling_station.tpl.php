@@ -38,7 +38,7 @@
                   <td class="danger"> </td>
                 <?php elseif ($post['existing_post']['rsvp'] == '3'): ?>
                   <td class="danger"> </td>
-                <?php elseif (!isset($post['existing_post'])): ?>
+                <?php elseif (!isset($post['existing_post']) && $post['post_subscribe_url'] != ''): ?>
                   <td><a href="<?php print $post['post_subscribe_url']; ?>">Link</a> </td>
                 <?php else: ?>
                   <td> </td>
