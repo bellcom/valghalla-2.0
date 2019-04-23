@@ -8,6 +8,7 @@
 module_load_include('inc', 'valghalla_volunteer_validator', 'valghalla_volunteer_validator.entity');
 module_load_include('php', 'valghalla_volunteer_validator', 'src/Entity/ValghallaVolunteerValidationRecordController');
 module_load_include('php', 'valghalla_volunteer_validator', 'src/Entity/ValghallaVolunteerValidationRecord');
+module_load_include('inc', 'valghalla_volunteer_validator', 'includes/valghalla_volunteer_validator.utils');
 
 /**
  * Implements hook_menu().
@@ -70,6 +71,37 @@ function valghalla_volunteer_validator_ctools_plugin_type() {
       'use hooks' => TRUE,
     ),
   );
+}
+
+/**
+ * Implements hook_cron().
+ *
+ * @see valghalla_volunteer_validator_update_all_validation_criteria_statuses
+ */
+function valghalla_volunteer_validator_cron() {
+  valghalla_volunteer_validator_update_all_validation_criteria_statuses();
+}
+
+/**
+ * Implements hook_node_insert().
+ *
+ * Adds the entry to valghalla_volunteer_validation_criteria_status table.
+ */
+function valghalla_volunteer_validator_node_insert($node) {
+  if ($node->type == 'volunteers') {
+    valghalla_volunteer_validator_update_validation_criteria_status($node);
+  }
+}
+
+/**
+ * Implements hook_node_delete().
+ *
+ * Deletes the entry from valghalla_volunteer_validation_criteria_status table.
+ */
+function valghalla_volunteer_validator_node_delete($node) {
+  if ($node->type == 'volunteers') {
+    valghalla_volunteer_validator_remove_validation_criteria_status($node->nid);
+  }
 }
 
 /**
@@ -315,7 +347,7 @@ function valghalla_volunteer_validator_check_duplicates($cpr) {
 /**
  * Query cpr service.
  */
-function valghalla_volunteer_validator_query_service($action, $cpr, $process = 'unkown') {
+function valghalla_volunteer_validator_query_service($action, $cpr, $process = 'unknown') {
   $messages = array();
   ctools_include('plugins');
 
@@ -427,6 +459,8 @@ function valghalla_volunteer_validator_get_cpr($volunteer) {
 /**
  * Composes an array of validation configurations saved on election.
  *
+ * Uses global validation param as a starting point.
+ *
  * The party validation configurations can override the election validation
  * configurations.
  *
@@ -440,10 +474,10 @@ function valghalla_volunteer_validator_get_cpr($volunteer) {
  */
 function valghalla_volunteer_validator_get_election_config($election, $party = NULL) {
   $election_config = array(
-    'validate_municipality' => FALSE,
-    'validate_citizenship' => FALSE,
-    'validate_civil_status' => FALSE,
-    'validate_age' => FALSE,
+    'validate_municipality' => variable_get('validate_create_municipality', FALSE),
+    'validate_citizenship' => variable_get('validate_create_citizenship', FALSE),
+    'validate_civil_status' => variable_get('validate_create_civil_status', FALSE),
+    'validate_age' => variable_get('validate_create_age', FALSE),
   );
 
   $field_election_valid_municipal = field_get_items('node', $election, 'field_election_valid_municipal');
@@ -474,6 +508,13 @@ function valghalla_volunteer_validator_get_election_config($election, $party = N
   if (!empty($field_party_skip_valid_municipal)) {
     if ($field_party_skip_valid_municipal[0]['value'] == 1) {
       $election_config['validate_municipality'] = FALSE;
+    }
+  }
+
+  $field_party_skip_valid_citizen = field_get_items('taxonomy_term', $party, 'field_party_skip_valid_citizen');
+  if (!empty($field_party_skip_valid_citizen)) {
+    if ($field_party_skip_valid_citizen[0]['value'] == 1) {
+      $election_config['validate_citizenship'] = FALSE;
     }
   }
 

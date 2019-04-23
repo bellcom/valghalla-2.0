@@ -486,7 +486,6 @@ function valghalla_volunteers_rsvp_form_validate($form, &$form_state) {
   }
 }
 
-
 /**
  * Handle rsvp form submits
  *
@@ -515,46 +514,7 @@ function valghalla_volunteers_rsvp_form_submit($form, &$form_state) {
 
   // Send e-mail to email-address set on election.
   if (isset($form_state['values']['rsvp_comment']) && $form_state['values']['rsvp_comment'] !== '') {
-    $comment = $form_state['values']['rsvp_comment'];
-    $recipient = '';
-    $election_nid = '';
-
-    // Get e-mail address.
-    $field_election = field_get_items('field_collection_item', $fc, 'field_election');
-    if (!empty($field_election)) {
-      $election_nid = $field_election[0]['target_id'];
-    }
-    $election_node = node_load($election_nid);
-
-    if ($field_email = field_get_items('node', $election_node, 'field_email_address')) {
-      $recipient = $field_email[0]['email'];
-    }
-    if (! $recipient) {
-      return;
-    }
-
-    $params = array(
-      'subject' => t('Ny tilmelding til !valgtitle', array('!valgtitle' => $election_node->title)),
-      'body' => t('Der er oprettet en ny tilmelding til !valgtitle med kommentaren: ' . $comment, array('!valgtitle' => $election_node->title)),
-      'format' => 'html',
-      // We are no going to use token replacement here.
-      'tokens' => array(),
-      'volunteer_nid' => 0,
-      'notification_type' => 'direct',
-    );
-
-    if (module_exists('valghalla_notifications')) {
-      // Send email via notification system.
-      valghalla_notifications_direct_send('mail', $recipient, $params);
-    }
-    elseif (module_exists('valghalla_mail')) {
-      // Or though regular mail.
-      $language = language_default();
-      drupal_mail('valghalla_mail', 'mail', $recipient, $language, $params);
-    }
-    else {
-      watchdog('valghalla_volunteers','Notifikation blev ikke afsendt. Modulet "valghalla_notifications" eller "valghalla_mail" er ikke aktiveret.', array(), WATCHDOG_WARNING);
-    }
+    _valghalla_volunteers_send_volunteer_comment($fc, $form_state['values']['rsvp_comment']);
   }
 }
 
@@ -831,6 +791,9 @@ function valghalla_volunteers_polling_station_posts_to_fill($polling_station, $p
     'party_letter' => $party_letter,
     'posts' => array(),
   );
+
+  // Adding validation config.
+  $party_posts_to_fill[$party_tid] += valghalla_volunteer_validator_get_election_config($election, $party);
 
   if (node_access('update', $election) === TRUE) {
     // Party edit URL.
@@ -1129,6 +1092,7 @@ function valghalla_volunteers_get_volunteers(){
     SELECT * FROM `node` n
     LEFT JOIN `field_data_field_party` p ON p.entity_id = n.nid
     LEFT JOIN `field_data_field_electioninfo` e ON e.entity_id = n.nid
+    LEFT JOIN `valghalla_volunteer_validation_criteria_status` v ON v.nid = n.nid
     WHERE n.nid NOT IN (
       SELECT entity_id
       FROM  `field_data_field_electioninfo`
@@ -1153,8 +1117,6 @@ function valghalla_volunteers_get_volunteers(){
   }
 
   foreach($volunteers as $key => $value){
-    $volunteer_nid = $value->nid;
-
     $term = taxonomy_term_load($value->field_party_tid);
     $volunteer_party = '-';
     if(is_object($term)){
@@ -1169,6 +1131,13 @@ function valghalla_volunteers_get_volunteers(){
     }
 
     $volunteer_result[$value->nid] = array('volunteer_nid' => $value->nid, 'volunteer_name' => $value->title, 'volunteer_party' => $volunteer_party);
+
+    if (isset($value->validation_criteria_status)) {
+      $validation_criteria_status = unserialize($value->validation_criteria_status);
+      if (is_array($validation_criteria_status)) {
+        $volunteer_result[$value->nid] += $validation_criteria_status;
+      }
+    }
   }
 
   return $volunteer_result;

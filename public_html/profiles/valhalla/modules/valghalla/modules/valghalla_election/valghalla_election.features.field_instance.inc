@@ -1012,6 +1012,44 @@ function valghalla_election_field_default_field_instances() {
   );
 
   // Exported field_instance:
+  // 'taxonomy_term-partier-field_party_skip_valid_citizen'.
+  $field_instances['taxonomy_term-partier-field_party_skip_valid_citizen'] = array(
+    'bundle' => 'partier',
+    'default_value' => array(
+      0 => array(
+        'value' => 0,
+      ),
+    ),
+    'deleted' => 0,
+    'description' => 'Bruges typisk for administrativt personale.',
+    'display' => array(
+      'default' => array(
+        'label' => 'above',
+        'module' => 'list',
+        'settings' => array(),
+        'type' => 'list_default',
+        'weight' => 11,
+      ),
+    ),
+    'entity_type' => 'taxonomy_term',
+    'field_name' => 'field_party_skip_valid_citizen',
+    'label' => 'Valider ikke borgerskab for deltagere tilknyttet pladser for dette parti',
+    'required' => 0,
+    'settings' => array(
+      'user_register_form' => FALSE,
+    ),
+    'widget' => array(
+      'active' => 1,
+      'module' => 'options',
+      'settings' => array(
+        'display_label' => 1,
+      ),
+      'type' => 'options_onoff',
+      'weight' => 12,
+    ),
+  );
+
+  // Exported field_instance:
   // 'taxonomy_term-partier-field_party_skip_valid_municipal'.
   $field_instances['taxonomy_term-partier-field_party_skip_valid_municipal'] = array(
     'bundle' => 'partier',
@@ -1234,6 +1272,7 @@ function valghalla_election_field_default_field_instances() {
   t('Valider bopæl i kommunen');
   t('Valider dansk statsborger');
   t('Valider ikke bopæl i kommunen for deltagere tilknyttet pladser for dette parti');
+  t('Valider ikke borgerskab for deltagere tilknyttet pladser for dette parti');
   t('Valider om person med personnummerer er levende');
 
   return $field_instances;

@@ -20,6 +20,15 @@ function valghalla_menu() {
     'type' => MENU_NORMAL_ITEM,
   );
 
+  if (variable_get('valghalla_manual_url_show', TRUE)) {
+    $items['admin/valghalla/manual'] = array(
+      'title' => 'Valghalla manual',
+      'page callback' => 'valghalla_manual',
+      'access callback' => array('user_is_logged_in'),
+      'type' => MENU_NORMAL_ITEM,
+    );
+  }
+
   $items['valghalla/administration'] = array(
     'title' => 'Administration',
     'page callback' => 'system_admin_menu_block_page',
@@ -267,4 +276,11 @@ function valghalla_form_node_form_alter(&$form, &$form_state, $form_id) {
   if (isset($form['actions']['delete'])) {
     $form['actions']['delete']['#limit_validation_errors'] = array();
   }
+}
+
+/**
+ * Valghalla manual callback.
+ */
+function valghalla_manual() {
+  drupal_goto(variable_get('valghalla_manual_url','http://valghalla.dk/valghalla-manual'), array('external' => TRUE));
 }
