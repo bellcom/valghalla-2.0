@@ -53,9 +53,12 @@ function valghalla_volunteer_validator_update_validation_criteria_status($node) 
     // Getting criteria status.
     $criteria_status = valghalla_volunteer_validator_query_service('get_validation_criteria_status', $cpr);
 
+    // Removing empty values.
+    $criteria_status = array_filter($criteria_status);
+
     if (!empty($criteria_status)) {
       // Making array flat.
-      $criteria_status = call_user_func_array('array_merge', $criteria_status);
+      $criteria_status = array_reduce($criteria_status, 'array_merge', array());
 
       $data = array(
         'nid' => $node->nid,
