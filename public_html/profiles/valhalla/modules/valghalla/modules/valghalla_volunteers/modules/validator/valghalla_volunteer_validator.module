@@ -88,7 +88,9 @@ function valghalla_volunteer_validator_cron() {
  * Adds the entry to valghalla_volunteer_validation_criteria_status table.
  */
 function valghalla_volunteer_validator_node_insert($node) {
-  valghalla_volunteer_validator_update_validation_criteria_status($node);
+  if ($node->type == 'volunteers') {
+    valghalla_volunteer_validator_update_validation_criteria_status($node);
+  }
 }
 
 /**
@@ -97,7 +99,9 @@ function valghalla_volunteer_validator_node_insert($node) {
  * Deletes the entry from valghalla_volunteer_validation_criteria_status table.
  */
 function valghalla_volunteer_validator_node_delete($node) {
-  valghalla_volunteer_validator_remove_validation_criteria_status($node->nid);
+  if ($node->type == 'volunteers') {
+    valghalla_volunteer_validator_remove_validation_criteria_status($node->nid);
+  }
 }
 
 /**

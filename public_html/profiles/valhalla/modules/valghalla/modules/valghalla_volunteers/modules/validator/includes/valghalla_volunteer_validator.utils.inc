@@ -19,19 +19,21 @@ function valghalla_volunteer_validator_update_all_validation_criteria_statuses()
     ->execute();
 
   // Fetch validation criteria status for each volunteer.
-  $volunteers = node_load_multiple(array_keys($result['node']));
-  if (!empty($volunteers) && is_array($volunteers)) {
-    foreach ($volunteers as $volunteer) {
-      if ($old_criteria_status = valghalla_volunteer_validator_get_validation_criteria_status($volunteer->nid)) {
-        // Only update volunteers the weren't updated during today.
-        // That means, that under normal conditions, every volunteer will be
-        // updated on a first cron run after midnight.
-        if ($old_criteria_status['timestamp'] > strtotime('today midnight', time())) {
-          continue;
+  if (isset($result['node'])) {
+    $volunteers = node_load_multiple(array_keys($result['node']));
+    if (!empty($volunteers) && is_array($volunteers)) {
+      foreach ($volunteers as $volunteer) {
+        if ($old_criteria_status = valghalla_volunteer_validator_get_validation_criteria_status($volunteer->nid)) {
+          // Only update volunteers the weren't updated during today.
+          // That means, that under normal conditions, every volunteer will be
+          // updated on a first cron run after midnight.
+          if ($old_criteria_status['timestamp'] > strtotime('today midnight', time())) {
+            continue;
+          }
         }
-      }
 
-      valghalla_volunteer_validator_update_validation_criteria_status($volunteer);
+        valghalla_volunteer_validator_update_validation_criteria_status($volunteer);
+      }
     }
   }
 }
@@ -43,33 +45,35 @@ function valghalla_volunteer_validator_update_all_validation_criteria_statuses()
  *   Volunteer node.
  */
 function valghalla_volunteer_validator_update_validation_criteria_status($node) {
-  // Getting CPR.
-  $node_wrapper = entity_metadata_wrapper('node', $node);
-  $cpr = $node_wrapper->field_cpr_number->value();
+  if ($node->type == 'volunteers') {
+    // Getting CPR.
+    $node_wrapper = entity_metadata_wrapper('node', $node);
+    $cpr = $node_wrapper->field_cpr_number->value();
 
-  // Getting criteria status.
-  $criteria_status = valghalla_volunteer_validator_query_service('get_validation_criteria_status', $cpr);
+    // Getting criteria status.
+    $criteria_status = valghalla_volunteer_validator_query_service('get_validation_criteria_status', $cpr);
 
-  if (!empty($criteria_status)) {
-    // Making array flat.
-    $criteria_status = call_user_func_array('array_merge', $criteria_status);
+    if (!empty($criteria_status)) {
+      // Making array flat.
+      $criteria_status = call_user_func_array('array_merge', $criteria_status);
 
-    $data = array(
-      'nid' => $node->nid,
-      'validation_criteria_status' => serialize($criteria_status),
-      'timestamp' => time(),
-    );
+      $data = array(
+        'nid' => $node->nid,
+        'validation_criteria_status' => serialize($criteria_status),
+        'timestamp' => time(),
+      );
 
-    if (valghalla_volunteer_validator_get_validation_criteria_status($node->nid)) {
-      db_update('valghalla_volunteer_validation_criteria_status')
-        ->fields($data)
-        ->condition('nid', $data['nid'])
-        ->execute();
-    }
-    else {
-      db_insert('valghalla_volunteer_validation_criteria_status')
-        ->fields($data)
-        ->execute();
+      if (valghalla_volunteer_validator_get_validation_criteria_status($node->nid)) {
+        db_update('valghalla_volunteer_validation_criteria_status')
+          ->fields($data)
+          ->condition('nid', $data['nid'])
+          ->execute();
+      }
+      else {
+        db_insert('valghalla_volunteer_validation_criteria_status')
+          ->fields($data)
+          ->execute();
+      }
     }
   }
 }
@@ -117,4 +121,3 @@ function valghalla_volunteer_validator_remove_validation_criteria_status($nid) {
     ->condition('nid', $nid)
     ->execute();
 }
-
