@@ -17,3 +17,14 @@ De overordnede mål er:
 ## Build status
 
 Develop branch state ![alt text](https://travis-ci.org/bellcom/valghalla.svg?branch=develop)
+
+## Deployment new changes
+
+To deploy new changes and apply all deploy actions please use following steps. 
+
+* Fetch new tags `git fetch origin 'refs/tags/*:refs/tags/*'`
+* Checkout to tag you deploying `git checkout [tag name]`
+* Switch to drupal root directory `cd public_html` 
+* Run deployment script `sh ../scripts/deploy-multisite.sh`
+
+Deployment output log will be saved to `logs/deployment/deployment-[date]-[time].log` file. 
