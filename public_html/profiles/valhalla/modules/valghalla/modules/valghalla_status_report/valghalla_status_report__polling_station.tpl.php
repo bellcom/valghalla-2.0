@@ -39,7 +39,7 @@
                 <?php elseif ($post['existing_post']['rsvp'] == '3'): ?>
                   <td class="danger"> </td>
                 <?php elseif (!isset($post['existing_post'])): ?>
-                  <td><a href="<?php print $post['post_subscribe_url']; ?>">Link</a></td>
+                  <td><a href="<?php print $post['post_subscribe_url']; ?>">Link</a> </td>
                 <?php else: ?>
                   <td> </td>
                 <?php endif; ?>
@@ -59,7 +59,11 @@
                 <?php if (!isset($post['existing_post'])): ?>
                   <i><span class="text-muted"><?php print t('Denne plads er tom.'); ?></span></i>
                 <?php else: ?>
-                  <?php print $post['existing_post']['name']; ?>
+                  <?php if ($post['existing_post']['rsvp'] == '2' || $post['existing_post']['rsvp'] == '3'): ?>
+                    <strike><?php print $post['existing_post']['name']; ?></strike>
+                  <?php else: ?>
+                    <?php print $post['existing_post']['name']; ?>
+                  <?php endif; ?>
                 <?php endif; ?>
               </td>
               <!-- End - name -->
