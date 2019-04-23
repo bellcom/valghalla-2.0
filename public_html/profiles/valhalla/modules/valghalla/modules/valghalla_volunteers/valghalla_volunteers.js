@@ -68,6 +68,8 @@ var valghalla_volunteers = valghalla_volunteers || [];
         volunteer_info.validate_municipality = $el.attr('data-validate-municipality');
         volunteer_info.validate_civil_status = $el.attr('data-validate-civil-status');
 
+        $(document).trigger('volunteersLoaded');
+
         $('.js-add-volunteer-modal').modal();
       });
 

@@ -3,7 +3,8 @@ angular.module('volunteersTable', ['angular-table']).controller('volunteerContro
   $scope.filteredList = $scope.originalList;
 
   jQuery(document).on('volunteersLoaded', function () {
-    $scope.filteredList = $scope.originalList = $window.valghalla_volunteers;
+    $scope.originalList = $window.valghalla_volunteers;
+    $scope.filteredList = $scope.originalList.filter($scope.validateVolunteer);
 
     $scope.$apply();
     // $scope.$evalAsync();
