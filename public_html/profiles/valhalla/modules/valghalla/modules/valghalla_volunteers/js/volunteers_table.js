@@ -10,7 +10,9 @@ angular.module('volunteersTable', ['angular-table']).controller('volunteerContro
   });
 
   $scope.updateFilteredList = function () {
-    $scope.filteredList = $filter('filter')($scope.originalList, $scope.query);
+    $scope.filteredList = $scope.originalList.filter($scope.validateVolunteer);
+
+    $scope.filteredList = $filter('filter')($scope.filteredList, $scope.query);
   };
 
   $scope.config = {
@@ -18,4 +20,21 @@ angular.module('volunteersTable', ['angular-table']).controller('volunteerContro
     maxPages: 5,
     fillLastPage: "yes"
   };
+
+  $scope.validateVolunteer = function(value) {
+    if (volunteer_info.validate_citizenship && !value.citizenship) {
+      return false;
+    }
+    if (volunteer_info.validate_municipality && !value.municipality) {
+      return false;
+    }
+
+    if (volunteer_info.validate_civil_status && !value.civil_status) {
+      return false;
+    }
+
+    return true;
+  }
+
+
 }]);

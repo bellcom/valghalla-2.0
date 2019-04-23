@@ -60,6 +60,29 @@ function valghalla_volunteer_validator_schema() {
     'primary key' => array('id'),
   );
 
+  $schema['valghalla_volunteer_validation_criteria_status'] = array(
+    'description' => 'Keeping the local version of validation criteria status per volunteers.',
+    'fields' => array(
+      'nid' => array(
+        'description' => 'The primary identifier for a volunteer node',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'validation_criteria_status' => array(
+        'description' => 'The volunteer validation criteria status',
+        'type' => 'text',
+      ),
+      'timestamp' => array(
+        'description' => 'The Unix timestamp when the record was saved/updated.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+    ),
+    'primary key' => array('nid'),
+  );
+
   return $schema;
 }
 
@@ -103,4 +126,15 @@ function valghalla_volunteer_validator_update_7103() {
     }
     user_role_grant_permissions($role->rid, $permissions);
   }
+}
+
+/**
+ * Adding the valghalla_volunteer_validation_criteria_status table.
+ *
+ * Fetching an updating all validation criteria statuses.
+ */
+function valghalla_volunteer_validator_update_7104(&$sandbox) {
+  db_create_table('valghalla_volunteer_validation_criteria_status', drupal_get_schema_unprocessed('valghalla_volunteer_validator', 'valghalla_volunteer_validation_criteria_status'));
+
+  valghalla_volunteer_validator_update_all_validation_criteria_statuses();
 }

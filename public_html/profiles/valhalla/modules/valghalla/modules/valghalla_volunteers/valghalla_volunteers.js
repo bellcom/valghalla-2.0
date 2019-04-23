@@ -14,11 +14,30 @@ var valghalla_volunteers = valghalla_volunteers || [];
         volunteer_info.pollingstation_nid = $el.attr('data-pollingstation_nid');
         volunteer_info.role_nid = $el.attr('data-role_nid');
         volunteer_info.party_tid = $el.attr('data-party_tid');
+        volunteer_info.validate_citizenship = $el.attr('data-validate-citizenship');
+        volunteer_info.validate_municipality = $el.attr('data-validate-municipality');
+        volunteer_info.validate_civil_status = $el.attr('data-validate-civil-status');
         volunteer_tmp_element = $parent;
 
         $(this).autocomplete({
           minLength: 0,
-          source: valghalla_volunteers,
+          source: function( request, response ) {
+            var matcher = new RegExp( $.ui.autocomplete.escapeRegex( request.term ), "i" );
+            response( $.grep( valghalla_volunteers, function( value ) {
+                if (volunteer_info.validate_citizenship && !value.citizenship) {
+                    return false;
+                }
+                if (volunteer_info.validate_municipality && !value.municipality) {
+                    return false;
+                }
+
+                if (volunteer_info.validate_civil_status && !value.civil_status) {
+                    return false;
+                }
+
+                value = value.label || value.value || value;
+                return matcher.test( value );
+          }))},
           focus: function (event, ui) {
             return false;
           },
@@ -45,6 +64,10 @@ var valghalla_volunteers = valghalla_volunteers || [];
         volunteer_info.pollingstation_nid = $el.attr('data-pollingstation_nid');
         volunteer_info.role_nid = $el.attr('data-role_nid');
         volunteer_info.party_tid = $el.attr('data-party_tid');
+        volunteer_info.validate_citizenship = $el.attr('data-validate-citizenship');
+        volunteer_info.validate_municipality = $el.attr('data-validate-municipality');
+        volunteer_info.validate_civil_status = $el.attr('data-validate-civil-status');
+
         $('.js-add-volunteer-modal').modal();
       });
 
@@ -164,7 +187,10 @@ var valghalla_volunteers = valghalla_volunteers || [];
             label: "(" + data[key].volunteer_party + ") " + data[key].volunteer_name,
             value: "(" + data[key].volunteer_party + ")" + data[key].volunteer_name,
             volunteer_nid: data[key].volunteer_nid,
-            desc: ""
+            desc: "",
+            citizenship: data[key].citizenship,
+            civil_status: data[key].civil_status,
+            municipality: data[key].municipality
           });
         }
 
