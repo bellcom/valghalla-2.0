@@ -186,3 +186,25 @@ function valghalla_external_server_update_7102() {
     user_role_revoke_permissions($role->rid, $deny_pemissions);
   }
 }
+
+/**
+ * Implements hook_update_N().
+ *
+ * Replacing valghalla_external_server_nemlogin module to nemlogin.
+ */
+function valghalla_external_server_update_7103() {
+  module_disable(array(
+    'valghalla_external_server_nemlogin',
+  ));
+  drupal_uninstall_modules(array(
+    'valghalla_external_server_nemlogin',
+  ));
+  
+  module_enable(array(
+    'nemlogin',
+  ));
+  
+  variable_set('nemlogin_plugin_id', 'Idp');
+  variable_set('nemlogin_idp_url', 'https://nemlogin.bellcom.dk/simplesaml');
+  variable_set('nemlogin_idp_fetch_only', TRUE);
+}

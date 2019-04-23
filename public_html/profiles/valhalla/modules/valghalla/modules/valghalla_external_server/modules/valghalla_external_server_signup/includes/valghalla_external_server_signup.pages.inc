@@ -86,7 +86,11 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
   }
 
   // Attempt to fetch CPR from session.
-  $cpr = valghalla_external_server_nemlogin_fetch_cpr();
+  if (module_exists('nemlogin')) {
+    $nemlogin_object = nemlogin_get_plugin_object();
+    $cpr = !empty($nemlogin_object) ? $nemlogin_object->fetchValue('cpr') : NULL;
+  }
+
   if ($cpr) {
     $cpr = valghalla_synch_node_export_get_encrypt($cpr);
   }
@@ -105,7 +109,7 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
 
   if (!$cpr) {
     $form['nemid_login_link'] = array(
-      '#markup' => l(t('Login med Nemlogin'), valghalla_external_server_nemlogin_login_link(request_uri()), array('attributes' => array('class' => array('btn', 'btn-secondary')))),
+      '#markup' => nemlogin_link('Login med Nemlogin', NULL, array('attributes' => array('class' => array('btn', 'btn-secondary')))),
     );
   }
   else {
