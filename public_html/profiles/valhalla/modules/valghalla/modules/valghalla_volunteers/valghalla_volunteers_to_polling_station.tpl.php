@@ -176,9 +176,15 @@
                   <a data-role_nid="<?php print $post['role_nid']; ?>"
                      data-party_tid="<?php print $post['party_tid']; ?>"
                      data-pollingstation_nid="<?php print $pollingstation_nid; ?>"
-                     data-validate-citizenship="<?php print $party_posts['validate_citizenship']; ?>"
-                     data-validate-municipality="<?php print $party_posts['validate_municipality']; ?>"
-                     data-validate-civil-status="<?php print $party_posts['validate_civil_status']; ?>"
+                     <?php if (isset($party_posts['validate_citizenship'])): ?>
+                       data-validate-citizenship="<?php print $party_posts['validate_citizenship']; ?>"
+                     <?php endif; ?>
+                     <?php if (isset($party_posts['validate_municipality'])): ?>
+                       data-validate-municipality="<?php print $party_posts['validate_municipality']; ?>"
+                     <?php endif; ?>
+                     <?php if (isset($party_posts['validate_civil_status'])): ?>
+                       data-validate-civil-status="<?php print $party_posts['validate_civil_status']; ?>"
+                     <?php endif; ?>
                      data-toggle="tooltip"
                      data-placement="top"
                      title="<?= t('Tilføj eksisterende deltager'); ?>"

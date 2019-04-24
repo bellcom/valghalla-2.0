@@ -792,8 +792,10 @@ function valghalla_volunteers_polling_station_posts_to_fill($polling_station, $p
     'posts' => array(),
   );
 
-  // Adding validation config.
-  $party_posts_to_fill[$party_tid] += valghalla_volunteer_validator_get_election_config($election, $party);
+  if (module_exists('valghalla_volunteer_validator')) {
+    // Adding validation config.
+    $party_posts_to_fill[$party_tid] += valghalla_volunteer_validator_get_election_config($election, $party);
+  }
 
   if (node_access('update', $election) === TRUE) {
     // Party edit URL.
@@ -1087,13 +1089,17 @@ function valghalla_volunteers_to_polling_station_ajax($action) {
  */
 function valghalla_volunteers_get_volunteers(){
   $volunteer_result = array();
-  
-  $volunteers = db_query('
+
+  $query = '
     SELECT * FROM `node` n
     LEFT JOIN `field_data_field_party` p ON p.entity_id = n.nid
-    LEFT JOIN `field_data_field_electioninfo` e ON e.entity_id = n.nid
-    LEFT JOIN `valghalla_volunteer_validation_criteria_status` v ON v.nid = n.nid
-    WHERE n.nid NOT IN (
+    LEFT JOIN `field_data_field_electioninfo` e ON e.entity_id = n.nid';
+
+  if (module_exists('valghalla_volunteer_validator')) {
+    $query .= ' LEFT JOIN `valghalla_volunteer_validation_criteria_status` v ON v.nid = n.nid';
+  }
+
+  $query .= ' WHERE n.nid NOT IN (
       SELECT entity_id
       FROM  `field_data_field_electioninfo`
       WHERE field_electioninfo_value
@@ -1105,7 +1111,10 @@ function valghalla_volunteers_get_volunteers(){
     )
     AND n.type = \'volunteers\'
     AND n.status = 1
-    ', array(':election_nid' => $_SESSION['election_nid']))->fetchAll();
+    ';
+
+  $volunteers = db_query($query, array(':election_nid' => $_SESSION['election_nid']))->fetchAll();
+
 
   // Load user and fetch party id
   global $user;
