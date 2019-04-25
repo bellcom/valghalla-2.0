@@ -284,8 +284,8 @@ function nemlogin_get_plugin_object($nemlogin_plugin_id = NULL) {
  *   Generated URL.
  */
 function nemlogin_link($login_text = NULL, $logout_text = NULL, array $options = array()) {
-  $login_text = isset($login_text) ? $login_text : 'Login with Nemlogin';
-  $logout_text = isset($logout_text) ? $logout_text : 'Logout with Nemlogin';
+  $login_text = isset($login_text) ? $login_text : t('Login with Nemlogin');
+  $logout_text = isset($logout_text) ? $logout_text : t('Logout with Nemlogin');
   $options += array('absolute' => TRUE);
 
   if (empty($options['query']['destination'])) {
