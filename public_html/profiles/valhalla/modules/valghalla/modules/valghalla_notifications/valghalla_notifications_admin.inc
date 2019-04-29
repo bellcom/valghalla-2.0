@@ -168,7 +168,7 @@ function valghalla_notifications_admin_settings() {
   );
 
   foreach ($roles as $role) {
-    if ($role->name == 'Valgsekretær') {
+    if ($role->name == 'Valgsekretær' || variable_get('valghalla_notifications_cancellation_from_participants_' . $role->rid)) {
       $form['valghalla_notifications']['valghalla_notifications_cancel']['valghalla_notifications_cancellation_from_participants_' . $role->rid] = array(
         '#type' => 'checkbox',
         '#title' => $role->name,
