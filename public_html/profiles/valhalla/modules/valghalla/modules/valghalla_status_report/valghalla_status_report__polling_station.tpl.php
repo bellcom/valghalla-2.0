@@ -3,7 +3,11 @@
     <?php if (count($party_posts['posts']) > 0): ?>
 
       <!-- Begin - heading -->
-      <h3><?php print t('Parti') . ' ' . $party_posts['party_name']; ?> <?php if($election_is_active): ?>(<a href="<?php print $party_posts['party_subscribe_url']; ?>">link</a>)<?php endif; ?></h3>
+      <h3><?php print t('Parti') . ' ' . $party_posts['party_name']; ?>
+        <?php if ($election_is_active && isset($party_posts['party_subscribe_url'])): ?>
+          (<a href="<?php print $party_posts['party_subscribe_url']; ?>">link</a>)
+        <?php endif; ?>
+      </h3>
       <!-- End - heading -->
 
       <!-- Begin - body -->
@@ -38,8 +42,8 @@
                   <td class="danger"> </td>
                 <?php elseif ($post['existing_post']['rsvp'] == '3'): ?>
                   <td class="danger"> </td>
-                <?php elseif (!isset($post['existing_post'])): ?>
-                  <td><a href="<?php print $post['post_subscribe_url']; ?>">Link</a></td>
+                <?php elseif (!isset($post['existing_post']) && isset($post['post_subscribe_url'])): ?>
+                  <td><a href="<?php print $post['post_subscribe_url']; ?>">Link</a> </td>
                 <?php else: ?>
                   <td> </td>
                 <?php endif; ?>
@@ -59,7 +63,11 @@
                 <?php if (!isset($post['existing_post'])): ?>
                   <i><span class="text-muted"><?php print t('Denne plads er tom.'); ?></span></i>
                 <?php else: ?>
-                  <?php print $post['existing_post']['name']; ?>
+                  <?php if ($post['existing_post']['rsvp'] == '2' || $post['existing_post']['rsvp'] == '3'): ?>
+                    <strike><?php print $post['existing_post']['name']; ?></strike>
+                  <?php else: ?>
+                    <?php print $post['existing_post']['name']; ?>
+                  <?php endif; ?>
                 <?php endif; ?>
               </td>
               <!-- End - name -->

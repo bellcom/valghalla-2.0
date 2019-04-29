@@ -20,9 +20,21 @@ th {
   background-color: lightgrey;
 }
 
-td.warning {background-color: #fbfadd;}
-td.alert {background-color: #ffe9e9;}
-td.success {background-color: #ebf6e0;}
+td.danger {
+  background-color: #EBC8C6;
+}
+
+td.warning {
+  background-color: #fbfadd;
+}
+
+td.alert {
+  background-color: #EBC8C6;
+}
+
+td.success {
+  background-color: #ebf6e0;
+}
 
 .text-muted {
   color: #888;

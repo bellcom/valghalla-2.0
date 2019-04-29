@@ -40,6 +40,8 @@ function vcv_serviceplatformen_valghalla_volunteer_validator_cpr_service() {
       // Same as above, but just for fetching the address for the
       // volunteer.
       'get_address' => 'vcv_serviceplatformen_get_address',
+      // Gets validation criteria status.
+      'get_validation_criteria_status' => 'vcv_serviceplatformen_get_validation_criteria_status',
       // Url for plugin configuration.
       'config' => 'admin/valghalla/validator/vcv_serviceplatformen',
       // Get cpr form volunteer info.
@@ -213,10 +215,10 @@ function vcv_serviceplatformen_settings_submit(&$form, &$form_state) {
  *   [text] => Descriptive text shown when CPR doesn't validate
  */
 function vcv_serviceplatformen_validate_cpr($cpr) {
-  $status = vcv_serviceplatformen_get_address($cpr);
+  $validation_status = vcv_serviceplatformen_get_validation_criteria_status($cpr);
 
   // Checking if CPR is valid.
-  if (!$status['status']) {
+  if (!$validation_status) {
     return array(
       'status' => FALSE,
       'text' => t('Personen med det angivne CPR-nummer kan ikke findes'),
@@ -225,7 +227,7 @@ function vcv_serviceplatformen_validate_cpr($cpr) {
 
   // Checking for municipality.
   if (variable_get('validate_create_municipality', FALSE)) {
-    if (strcmp($status['municipality'], variable_get('valhalla_settings_municipality')) != 0) {
+    if (!$validation_status['municipality']) {
       return array(
         'status' => FALSE,
         'text' => t('Personen med det angivne CPR-nummer er ikke fra den udvalgte kommune'),
@@ -247,10 +249,10 @@ function vcv_serviceplatformen_validate_cpr($cpr) {
  *   [text] => Descriptive text shown when CPR doesn't validate
  */
 function vcv_serviceplatformen_validate_cpr_per_election($cpr, $election_config) {
-  $status = vcv_serviceplatformen_get_address($cpr);
+  $validation_status = vcv_serviceplatformen_get_validation_criteria_status($cpr);
 
   // Checking if CPR is valid.
-  if (!$status['status']) {
+  if (!$validation_status) {
     return array(
       'status' => FALSE,
       'text' => t('Personen med det angivne CPR-nummer kan ikke findes'),
@@ -259,8 +261,7 @@ function vcv_serviceplatformen_validate_cpr_per_election($cpr, $election_config)
 
   // Checking for municipality.
   if ($election_config['validate_municipality']) {
-    if (strcmp($status['municipality'], variable_get('valhalla_settings_municipality')) != 0) {
-
+    if (!$validation_status['municipality']) {
       return array(
         'status' => FALSE,
         'text' => t('Personen med det angivne CPR-nummer er ikke fra den udvalgte kommune'),
@@ -363,6 +364,28 @@ function vcv_serviceplatformen_get_address($cpr) {
   }
   else {
     return $message;
+  }
+}
+
+/**
+ * Returns validation criteria and their status in a simple mode.
+ *
+ * @param string $cpr
+ *   CPR number.
+ *
+ * @return array
+ *   The output array is formed as the following:
+ *   array (
+ *     'municipality' => TRUE/FALSE,
+ *   ).
+ */
+function vcv_serviceplatformen_get_validation_criteria_status($cpr) {
+  $status = vcv_serviceplatformen_get_address($cpr);
+
+  if ($status['status']) {
+    return array(
+      'municipality' => strcmp($status['municipality'], variable_get('valhalla_settings_municipality')) == 0,
+    );
   }
 }
 

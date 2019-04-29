@@ -86,15 +86,6 @@ function valghalla_mail_mail($key, &$message, $params) {
 }
 
 /**
- * Valghalla mail types.
- *
- * @deprecated Moved to valghalla_notifications module.
- */
-function valghalla_mail_get_mail_types() {
-  return valghalla_notifications_get_types();
-}
-
-/**
  * Available mails.
  */
 function valghalla_mail_get_mails() {

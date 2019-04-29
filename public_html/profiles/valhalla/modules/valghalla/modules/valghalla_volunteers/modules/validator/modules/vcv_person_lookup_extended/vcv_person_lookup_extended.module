@@ -44,6 +44,8 @@ function vcv_person_lookup_extended_valghalla_volunteer_validator_cpr_service(){
       // Same as above, but just for fetching the address for the
       // volunteer.
       'get_status' => 'vcv_person_lookup_extended_get_status',
+      // Gets validation criteria status.
+      'get_validation_criteria_status' => 'vcv_person_lookup_extended_get_validation_criteria_status',
       // Url for plugin configuration.
       'config' => 'admin/valghalla/validator/vcv_person_lookup_extended',
     )
@@ -186,11 +188,11 @@ function vcv_person_lookup_extended_settings_submit(&$form, &$form_state) {
  *   [text] => Descriptive text shown when CPR doesn't validate
  */
 function vcv_person_lookup_extended_validate_cpr($cpr) {
-  $status = vcv_person_lookup_extended_get_status($cpr);
+  $validation_status = vcv_person_lookup_extended_get_validation_criteria_status($cpr);
 
   // Checking status.
   if (variable_get('validate_create_civil_status', FALSE)) {
-    if (intval($status['civil_status']) == 90) {
+    if (!$validation_status['civil_status']) {
       return array(
         'status' => FALSE,
         'text' => t('Personen med angivne CPR-nummer er død'),
@@ -200,7 +202,7 @@ function vcv_person_lookup_extended_validate_cpr($cpr) {
 
   // Checking citizenship.
   if (variable_get('validate_create_citizenship', FALSE)) {
-    if (strcmp($status['citizenship'], '5100') != 0) {
+    if (!$validation_status['citizenship']) {
       return array(
         'status' => FALSE,
         'text' => t('Den angivne CPR-nummer er ikke Dansk borger'),
@@ -222,11 +224,11 @@ function vcv_person_lookup_extended_validate_cpr($cpr) {
  *   [text] => Descriptive text shown when CPR doesn't validate
  */
 function vcv_person_lookup_extended_validate_cpr_per_election($cpr, $election_config) {
-  $status = vcv_person_lookup_extended_get_status($cpr);
+  $validation_status = vcv_person_lookup_extended_get_validation_criteria_status($cpr);
 
   // Checking civil status.
   if ($election_config['validate_civil_status']) {
-    if (intval($status['civil_status']) == 90) {
+    if (!$validation_status['civil_status']) {
       return array(
         'status' => FALSE,
         'text' => t('Personen med angivne CPR-nummer er død'),
@@ -236,7 +238,7 @@ function vcv_person_lookup_extended_validate_cpr_per_election($cpr, $election_co
 
   // Checking citizenship.
   if ($election_config['validate_citizenship']) {
-    if (strcmp($status['citizenship'], '5100') != 0) {
+    if (!$validation_status['citizenship']) {
       return array(
         'status' => FALSE,
         'text' => t('Den angivne CPR-nummer er ikke Dansk borger'),
@@ -335,6 +337,30 @@ function vcv_person_lookup_extended_get_status($cpr){
   }
   else {
     return $message;
+  }
+}
+
+/**
+ * Returns validation criteria and their status in a simple mode.
+ *
+ * @param string $cpr
+ *   CPR number.
+ *
+ * @return array
+ *   The output array is formed as the following:
+ *   array (
+ *     'citizenship' => TRUE/FALSE,
+ *     'civil_status' => TRUE/FALSE,
+ *   ).
+ */
+function vcv_person_lookup_extended_get_validation_criteria_status($cpr) {
+  $status = vcv_person_lookup_extended_get_status($cpr);
+
+  if ($status['status']) {
+    return array(
+      'citizenship' => strcmp($status['citizenship'], '5100') == 0,
+      'civil_status' => intval($status['civil_status']) != 90,
+    );
   }
 }
 
