@@ -1250,10 +1250,8 @@ function valghalla_volunteers_remove_volunteer_from_post($fcid){
  *
  * @param mixed $electionInfo
  *   Election info field collection.
- * @param string $forceType
- *   If we are forcing some notification type.
  */
-function valghalla_volunteers_notify_volunteer($electionInfo, $forceType = NULL) {
+function valghalla_volunteers_notify_volunteer($electionInfo) {
   $field_election = field_get_items('field_collection_item', $electionInfo, 'field_election');
   if (!empty($field_election)) {
     $election_nid = $field_election[0]['target_id'];
@@ -1266,30 +1264,23 @@ function valghalla_volunteers_notify_volunteer($electionInfo, $forceType = NULL)
   if ($election_nid && $role_nid) {
     $type = NULL;
 
-    // Force type is used.
-    if ($forceType) {
-      $type = $forceType;
+    $field_rsvp = field_get_items('field_collection_item', $electionInfo, 'field_rsvp');
+    if (!empty($field_rsvp)) {
+      $rsvp = $field_rsvp[0]['value'];
     }
-    // No forced type, extract the type from the RSVP reply.
-    else {
-      $field_rsvp = field_get_items('field_collection_item', $electionInfo, 'field_rsvp');
-      if (!empty($field_rsvp)) {
-        $rsvp = $field_rsvp[0]['value'];
-      }
 
-      switch ($rsvp) {
-        case 1:
-          $type = 'confirmed';
-          break;
+    switch ($rsvp) {
+      case 1:
+        $type = 'confirmed';
+        break;
 
-        case 2:
-          $type = 'rsvp_no';
-          break;
+      case 2:
+        $type = 'rsvp_no';
+        break;
 
-        case 3:
-          $type = 'rsvp_never';
-          break;
-      }
+      case 3:
+        $type = 'rsvp_never';
+        break;
     }
 
     valghalla_volunteers_notify($election_nid, $role_nid, $electionInfo, $type);
