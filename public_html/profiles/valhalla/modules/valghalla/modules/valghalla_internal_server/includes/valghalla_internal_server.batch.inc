@@ -109,50 +109,58 @@ function valghalla_internal_server_batch_clone_op($uuid, $operation_details, &$c
         ValghallaLogger::warning($logMessage);
       }
       else {
-        // Handle validation.
-        $validationStatus = valghalla_internal_server_validate_volunteer($node);
+        // Get all new and updated seats.
+        $seats = valghalla_internal_server_get_updated_seats($node, $existingNode);
 
-        if ($validationStatus['valid']) {
-          ValghallaLogger::info(sprintf('Node "%s" imported into %s', $node->title, url('node/' . $nid)));
-          $context['results'][] = array(
-            'message' => t('Node "@title" imported into <a href="@link">@title</a>.', array(
-              '@title' => $node->title,
-              '@link' => url('node/' . $nid),
-            )),
-            'type' => 'status',
-          );
+        // Count seats validation.
+        $seatValidationSuccessful = 0;
+        $seatValidationFailed = 0;
 
-          // Notify volunteer.
-          valghalla_internal_server_notify_volunteer_last_seat($node, $existingNode);
+        foreach ($seats as $seat) {
+          $seatValidationStatus = valghalla_internal_server_validate_volunteer_seat($node, $seat);
 
-          // Delete the item from queue.
-          valghalla_synch_queue_remove_item($node->uuid);
+          if ($seatValidationStatus['valid']) {
+            // Notify volunteer.
+            valghalla_volunteers_notify_volunteer($seat);
+
+            $seatValidationSuccessful++;
+          }
+          else {
+            ValghallaLogger::warning(sprintf('Node "%s" failed validation, messages %s', $node->title, implode('; ', $seatValidationStatus['errors'])));
+
+            /** @var EntityInterface $notification */
+            $valghalla_volunteer_validation_record = entity_get_controller('valghalla_volunteer_validation_record')->create(array(
+              'type' => 'external_server_sync',
+              'vol_id' => $node->nid,
+              'election_id' => $seatValidationStatus['election_nid'],
+              'message' => implode("\n", $seatValidationStatus['errors']),
+            ));
+            $valghalla_volunteer_validation_record->save();
+
+            valghalla_internal_server_mark_invalid($node, $seatValidationStatus['errors']);
+
+            // Freeing the seat.
+            valghalla_internal_server_volunteer_free_seat($seat);
+
+            $seatValidationFailed++;
+          }
         }
-        else {
-          ValghallaLogger::warning(sprintf('Node "%s" failed validation, messages %s', $node->title, implode('; ', $validationStatus['errors'])));
-          /** @var EntityInterface $notification */
-          $valghalla_volunteer_validation_record = entity_get_controller('valghalla_volunteer_validation_record')->create(array(
-            'type' => 'external_server_sync',
-            'vol_id' => $node->nid,
-            'election_id' => $validationStatus['election_nid'],
-            'message' => implode("\n", $validationStatus['errors']),
-          ));
-          $valghalla_volunteer_validation_record->save();
 
-          valghalla_internal_server_mark_invalid($node, $validationStatus['errors']);
+        ValghallaLogger::info(sprintf('Node "%s" imported into %s. %d/%d seats were successfully validated. %d seats failed validation', $node->title, url('node/' . $nid), $seatValidationSuccessful, count($seats), $seatValidationFailed));
+        $context['results'][] = array(
+          'message' => t('Node "@title" imported into <a href="@link">@title</a>. @valid/@total seats were successfully validated. @failed seats failed validation', array(
+            '@title' => $node->title,
+            '@link' => url('node/' . $nid),
+            '@valid' => $seatValidationSuccessful,
+            '@total' => count($seats),
+            '@failed' => $seatValidationFailed,
+          )),
+          'type' => 'status',
+        );
 
-          $context['results'][] = array(
-            'message' => t('Node "@title" imported into <a href="@link">@title</a>. But failed validation, seat will be freed. Messages: @messages', array(
-              '@title' => $node->title,
-              '@link' => url('node/' . $nid),
-              '@messages' => implode('; ', $validationStatus['errors']),
-            )),
-            'type' => 'status',
-          );
-
-          // Freeing the seat and pushing node.
-          valghalla_internal_server_free_last_selected_seat($node);
-
+        // If we have any failed seats, push the node to free the seats on
+        // external server.
+        if ($seatValidationFailed) {
           // Exporting with serialize formatter, and pushing the node.
           $export = node_export(intval($node->nid), 'serialize', 't', TRUE);
           $data = $export['output'];
@@ -164,20 +172,18 @@ function valghalla_internal_server_batch_clone_op($uuid, $operation_details, &$c
               $result = implode(' ', $result);
             }
 
-            ValghallaLogger::error(sprintf('Could not free seat for node "%s", error: %s', $node->title, $result));
-            $context['results'][] = array(
-              'message' => t('Could not free seat for "@title" push failed, message: @message', array(
-                '@title' => $node->title,
-                '@message' => $result,
-              )),
-              'type' => 'warning',
-            );
+            ValghallaLogger::error(sprintf('Could not free seat(s) for node "%s", error: %s', $node->title, $result));
           }
           else {
-            ValghallaLogger::info(sprintf('Seat for node "%s" has been freed %s', $node->title, implode('; ', $validationStatus['errors'])));
+            ValghallaLogger::info(sprintf('Seat(s) for node "%s" has been freed', $node->title));
+
             // Delete the item from queue.
             valghalla_synch_queue_remove_item($node->uuid);
           }
+        }
+        else {
+          // Else just delete the item from queue.
+          valghalla_synch_queue_remove_item($node->uuid);
         }
       }
     }
