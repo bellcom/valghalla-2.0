@@ -158,7 +158,8 @@ function valghalla_internal_server_batch_clone_op($uuid, $operation_details, &$c
           'type' => 'status',
         );
 
-        // If we have any failed seats, push the node to free the seats on external server.
+        // If we have any failed seats, push the node to free the seats on
+        // external server.
         if ($seatValidationFailed) {
           // Exporting with serialize formatter, and pushing the node.
           $export = node_export(intval($node->nid), 'serialize', 't', TRUE);
