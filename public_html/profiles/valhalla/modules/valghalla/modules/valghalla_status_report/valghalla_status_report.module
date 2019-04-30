@@ -375,7 +375,7 @@ function _generate_pdf_content($election_nid = NULL, $party_tid = NULL) {
     return t('Der er ikke valgt et valg.');
   }
 
-  $markup .= '<h1>' . t('Status rapport') . '</h1>';
+  $markup .= '<h1>' . t('Status rapport for') . ' ' . $election_node->title . '</h1>';
 
   if ($party_tid) {
     $party = taxonomy_term_load($party_tid);
