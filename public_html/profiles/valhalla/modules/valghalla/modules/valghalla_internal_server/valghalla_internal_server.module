@@ -22,19 +22,6 @@ module_load_include('inc', 'valghalla_internal_server', 'includes/valghalla_inte
 module_load_include('inc', 'valghalla_internal_server', 'includes/valghalla_internal_server.queue');
 
 /**
- * Implements hook_menu().
- */
-function valghalla_internal_server_menu() {
-  $items['admin/valghalla/validator/internal_server_logs'] = array(
-    'title' => 'Valghalla internal server synch logs',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('valghalla_internal_server_logs_table_form'),
-    'access arguments' => array('administer valghalla'),
-  );
-  return $items;
-}
-
-/**
  * Implements hook_node_insert().
  */
 function valghalla_internal_server_node_insert($node) {

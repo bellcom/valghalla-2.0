@@ -157,35 +157,6 @@ function valghalla_internal_server_validate_volunteer_seat($volunteer_node, $sea
 }
 
 /**
- * Marks volunteer as invalid.
- *
- * Does it by saving validation error messages into
- * valghalla_internal_server_logs table.
- *
- * @param mixed $volunteer_node
- *   Volunteer node.
- * @param array $messages
- *   Array of messages.
- */
-function valghalla_internal_server_mark_invalid($volunteer_node, array $messages = array()) {
-  if ($volunteer_node->nid) {
-    $cpr_field = field_get_items('node', $volunteer_node, 'field_cpr_number');
-    $cpr = $cpr_field[0]['value'];
-
-    $data = array();
-    $data['target_id'] = $volunteer_node->nid;
-    $data['target_uuid'] = $volunteer_node->uuid;
-    $data['cpr'] = $cpr;
-    $data['timestamp'] = $_SERVER['REQUEST_TIME'];
-    $data['message'] = serialize($messages);
-
-    db_insert('valghalla_internal_server_logs')
-      ->fields($data)
-      ->execute();
-  }
-}
-
-/**
  * Encodes term object as json string.
  *
  * @param mixed $term

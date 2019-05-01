@@ -128,7 +128,7 @@ function valghalla_internal_server_batch_clone_op($uuid, $operation_details, &$c
           else {
             ValghallaLogger::warning(sprintf('Node "%s" failed validation, messages %s', $node->title, implode('; ', $seatValidationStatus['errors'])));
 
-            /** @var EntityInterface $notification */
+            /** @var EntityInterface $valghalla_volunteer_validation_record */
             $valghalla_volunteer_validation_record = entity_get_controller('valghalla_volunteer_validation_record')->create(array(
               'type' => 'external_server_sync',
               'vol_id' => $node->nid,
@@ -136,8 +136,6 @@ function valghalla_internal_server_batch_clone_op($uuid, $operation_details, &$c
               'message' => implode("\n", $seatValidationStatus['errors']),
             ));
             $valghalla_volunteer_validation_record->save();
-
-            valghalla_internal_server_mark_invalid($node, $seatValidationStatus['errors']);
 
             // Freeing the seat.
             valghalla_internal_server_volunteer_free_seat($seat);
