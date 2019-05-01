@@ -84,9 +84,16 @@ function valghalla_volunteer_validation_record_uri($valghalla_volunteer_validato
  * Defines Valghalla Volunteer Validation Record Entity menu items.
  */
 function valghalla_volunteer_validation_record_menu(&$items) {
-  $items['valghalla/administration/volunteer-validation-records'] = array(
+  $items['valghalla/administration/volunteer-validation-records-list'] = array(
     'title' => 'Deltagere validering list',
     'page callback' => 'valghalla_volunteer_validation_record_list_entities',
+    'access arguments' => array('view any valghalla_volunteer_validation_record entity'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+  $items['valghalla/administration/volunteer-validation-records-list/%'] = array(
+    'title' => 'Deltagere validering list',
+    'page callback' => 'valghalla_volunteer_validation_record_list_entities',
+    'page arguments' => array(3),
     'access arguments' => array('view any valghalla_volunteer_validation_record entity'),
     'type' => MENU_NORMAL_ITEM,
   );
@@ -94,7 +101,7 @@ function valghalla_volunteer_validation_record_menu(&$items) {
   $items['valghalla_lists/volunteers_validation'] = array(
     'title' => 'Deltagere validering',
     'page callback' => 'drupal_goto',
-    'page arguments' => array('valghalla/administration/volunteer-validation-records'),
+    'page arguments' => array('valghalla/administration/volunteer-validation-records-list'),
     'access arguments' => array('view any valghalla_volunteer_validation_record entity'),
     'type' => MENU_NORMAL_ITEM,
   );
@@ -125,7 +132,7 @@ function valghalla_volunteer_validation_record_menu(&$items) {
 
   $items['node/%/validation-records'] = array(
     'title callback' => 'valghalla_volunteer_validation_record_tab_title',
-    'page callback' => 'valghalla_volunteer_validation_record_list_entities',
+    'page callback' => 'valghalla_volunteer_validation_record_election_node_redirect',
     'page arguments' => array(1),
     'access callback' => 'valghalla_volunteer_validation_record_check_tab_access',
     'type' => MENU_LOCAL_TASK,
@@ -140,6 +147,7 @@ function valghalla_volunteer_validation_record_menu(&$items) {
  */
 function valghalla_volunteer_validation_record_list_entities($election_id = NULL, $vol_nid = FALSE) {
   $content = array();
+
   // Load all of our entities.
   $query = new EntityFieldQuery();
   $query->entityCondition('entity_type', 'valghalla_volunteer_validation_record')
@@ -153,12 +161,14 @@ function valghalla_volunteer_validation_record_list_entities($election_id = NULL
     $headers[] = t('Deltager');
   }
 
-  if (empty($election_id) && !empty($_SESSION['election_nid'])) {
+  if (!isset($election_id) && !empty($_SESSION['election_nid'])) {
     $election_id = $_SESSION['election_nid'];
   }
-  if (!empty($election_id)) {
+  if (!empty($election_id) && $election_id != 'all') {
     $query->propertyCondition('election_id', $election_id);
   }
+
+  $content['links'] = valghalla_volunteer_validation_record_counter_links($election_id);
 
   $headers[] = t('Besked');
   $headers[] = t('Tidspunkt');
@@ -205,10 +215,57 @@ function valghalla_volunteer_validation_record_list_entities($election_id = NULL
 }
 
 /**
+ * Get validation record counters.
+ */
+function valghalla_volunteer_validation_record_counter_links($active_election_id = NULL) {
+  $items = array();
+
+  $query = db_select('valghalla_volunteer_validation_record', 'v')
+    ->fields('v', array('election_id'));
+  $query->groupBy('v.election_id');
+  $query->addExpression('count(*)', 'count');
+
+  $result = $query->execute()->fetchAll();
+  if (empty($result)) {
+    return $items;
+  }
+
+  $all = 0;
+  foreach ($result as $row) {
+    $election = node_load($row->election_id);
+    $all += $row->count;
+    if (empty($election) || $election->type != 'election') {
+      continue;
+    }
+
+    $items[] = array(
+      'data' => l($election->title . ' (' . $row->count . ')', 'valghalla/administration/volunteer-validation-records-list/' . $election->nid, array('query' => drupal_get_destination())),
+      'class' => $election->nid == $active_election_id ? array('active') : NULL,
+    );
+  }
+  array_unshift($items, array(
+    'data' => l(t('All') . ' (' . $all . ')', 'valghalla/administration/volunteer-validation-records-list/all', array('query' => drupal_get_destination())),
+    'class' => ('all' == $active_election_id || empty($active_election_id)) ? array('active') : NULL,
+  ));
+  return array(
+    '#theme' => 'item_list',
+    '#items' => $items,
+    '#attributes' => array('class' => 'tabs--primary nav nav-tabs'),
+  );
+}
+
+/**
  * Callback for a page title when this entity is displayed.
  */
 function valghalla_volunteer_validation_record_title($entity) {
   return t('Validering optage (id=@id)', array('@id' => $entity->id));
+}
+
+/**
+ * Callback for election node local task menu item.
+ */
+function valghalla_volunteer_validation_record_election_node_redirect($election_id) {
+  drupal_goto('valghalla/administration/volunteer-validation-records-list/' . $election_id);
 }
 
 /**
