@@ -1,14 +1,9 @@
-; $Id$
-; 
-; @author Juulia Devadze <juulia@bellcom.ee>
-; @copyright Bellcom Open Source aps.
-
-; Module name (human readable)
-name = valhalla_settings
-; Module description
-description =  Holds functionality to "lock" the "valgsted" content type. 
-
+name = Valghalla Settings
 package = Valghalla
-project = Valghalla
+project = valhalla_settings
 core = 7.x
+description =  Holds functionality to "lock" the "valgsted" content type. Also used as various settings export.
+dependencies[] = ckeditor
+features[ckeditor_profile][] = Advanced
+features[features_api][] = api:2
 configure = admin/valghalla/settings
