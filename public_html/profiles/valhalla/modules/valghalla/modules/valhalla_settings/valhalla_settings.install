@@ -20,6 +20,10 @@ function valhalla_settings_update_7000() {
  * Applying new ckeditor settings.
  */
 function valhalla_settings_update_7101() {
+  module_enable(array(
+    'imce',
+  ));
+
   // Reverting feature.
   features_revert_module('valhalla_settings');
 }
