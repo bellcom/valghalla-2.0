@@ -6,15 +6,87 @@
  */
 
 /**
- * Performs a validation on a single volunteer node.
+ * Compares two volunteer nodes.
+ *
+ * Calculates new and updated election info between first and the second node.
+ *
+ * @param mixed $volunteer
+ *   First volunteer node.
+ * @param mixed $volunteer_revision
+ *   Second volunteer node.
+ *
+ * @return array
+ *   Array of election info field collections, mapped by uuid.
+ */
+function valghalla_internal_server_get_updated_seats($volunteer, $volunteer_revision) {
+  $volunteer_seats = array();
+  $volunteer_revision_seats = array();
+
+  $field_electioninfo = field_get_items('node', $volunteer, 'field_electioninfo');
+  if (!empty($field_electioninfo)) {
+    foreach ($field_electioninfo as $election_info) {
+      $item = entity_load_single('field_collection_item', $election_info['value']);
+      $volunteer_seats[$item->uuid] = $item;
+    }
+  }
+
+  if ($volunteer_revision) {
+    $revision_field_electioninfo = field_get_items('node', $volunteer_revision, 'field_electioninfo');
+    if (!empty($revision_field_electioninfo)) {
+      foreach ($revision_field_electioninfo as $revision_election_info) {
+        $revision_item = entity_load_single('field_collection_item', $revision_election_info['value']);
+
+        // If field collection with the same uuid is already present in the
+        // volunteer_revision, we check if RSVP field has been changed.
+        // If yes - field collection has been updated, if not - we consider it
+        // has not been changed.
+        if (array_key_exists($revision_item->uuid, $volunteer_seats)) {
+
+          $revision_field_rsvp = field_get_items('field_collection_item', $revision_item, 'field_rsvp');
+          if (!empty($revision_field_rsvp)) {
+            $revision_rsvp = $revision_field_rsvp[0]['value'];
+          }
+
+          $field_rsvp = field_get_items('field_collection_item', $volunteer_seats[$revision_item->uuid], 'field_rsvp');
+          if (!empty($field_rsvp)) {
+            $rsvp = $field_rsvp[0]['value'];
+          }
+
+          // RSVP field has been changed, don't add this seat to the list of
+          // existing seats.
+          if (strcmp($rsvp, $revision_rsvp) !== 0) {
+            continue;
+          }
+        }
+        $volunteer_revision_seats[$revision_item->uuid] = $revision_item;
+      }
+    }
+  }
+
+  if (!empty($volunteer_revision_seats)) {
+    // Return all entries from $volunteer_seats that are not present in
+    // $volunteer_revision_seats.
+    return array_diff_key($volunteer_seats, $volunteer_revision_seats);
+  }
+  else {
+    return $volunteer_seats;
+  }
+}
+
+/**
+ * Performs a validation of a single volunteer node.
+ *
+ * Also performs the seat validation.
  *
  * @param mixed $volunteer_node
  *   Volunteer node.
+ * @param mixed $seat
+ *   Seat to validate against.
  *
  * @return array
  *   Array with keys 'valid' - boolean, 'errors' - list of errors.
  */
-function valghalla_internal_server_validate_volunteer($volunteer_node) {
+function valghalla_internal_server_validate_volunteer_seat($volunteer_node, $seat) {
   $validationStatus = array(
     'valid' => TRUE,
     'errors' => array(),
@@ -40,31 +112,27 @@ function valghalla_internal_server_validate_volunteer($volunteer_node) {
   // Run volunteer create validator.
   $messages = valghalla_volunteer_validator_query_service('validate_cpr', $cpr);
 
-  // Run volunteer validator per last election.
-  $field_electioninfo = field_get_items('node', $volunteer_node, 'field_electioninfo');
-  if (!empty($field_electioninfo)) {
-    $lastElement = end($field_electioninfo);
-    $electionInfo = entity_load_single('field_collection_item', $lastElement['value']);
+  // Run volunteer seat validation.
+  $electionInfo = $seat;
 
-    // Getting election.
-    $field_election = field_get_items('field_collection_item', $electionInfo, 'field_election');
-    if (!empty($field_election)) {
-      $election_nid = $field_election[0]['target_id'];
-      $election = node_load($election_nid);
-    }
+  // Getting election.
+  $field_election = field_get_items('field_collection_item', $electionInfo, 'field_election');
+  if (!empty($field_election)) {
+    $election_nid = $field_election[0]['target_id'];
+    $election = node_load($election_nid);
+  }
 
-    // Getting party.
-    $field_post_party = field_get_items('field_collection_item', $electionInfo, 'field_post_party');
-    if (!empty($field_post_party)) {
-      $party_tid = $field_post_party[0]['target_id'];
-      $party = taxonomy_term_load($party_tid);
-    }
+  // Getting party.
+  $field_post_party = field_get_items('field_collection_item', $electionInfo, 'field_post_party');
+  if (!empty($field_post_party)) {
+    $party_tid = $field_post_party[0]['target_id'];
+    $party = taxonomy_term_load($party_tid);
+  }
 
-    // Getting election date.
-    $field_election_date = field_get_items('node', $election, 'field_date');
-    if (!empty($field_election_date)) {
-      $election_date = $field_election_date[0]['value'];
-    }
+  // Getting election date.
+  $field_election_date = field_get_items('node', $election, 'field_date');
+  if (!empty($field_election_date)) {
+    $election_date = $field_election_date[0]['value'];
   }
 
   if ($election && $party) {
@@ -89,35 +157,6 @@ function valghalla_internal_server_validate_volunteer($volunteer_node) {
 }
 
 /**
- * Marks volunteer as invalid.
- *
- * Does it by saving validation error messages into
- * valghalla_internal_server_logs table.
- *
- * @param mixed $volunteer_node
- *   Volunteer node.
- * @param array $messages
- *   Array of messages.
- */
-function valghalla_internal_server_mark_invalid($volunteer_node, array $messages = array()) {
-  if ($volunteer_node->nid) {
-    $cpr_field = field_get_items('node', $volunteer_node, 'field_cpr_number');
-    $cpr = $cpr_field[0]['value'];
-
-    $data = array();
-    $data['target_id'] = $volunteer_node->nid;
-    $data['target_uuid'] = $volunteer_node->uuid;
-    $data['cpr'] = $cpr;
-    $data['timestamp'] = $_SERVER['REQUEST_TIME'];
-    $data['message'] = serialize($messages);
-
-    db_insert('valghalla_internal_server_logs')
-      ->fields($data)
-      ->execute();
-  }
-}
-
-/**
  * Encodes term object as json string.
  *
  * @param mixed $term
@@ -135,21 +174,13 @@ function valghalla_internal_server_term_to_json($term) {
 }
 
 /**
- * Unsets the last selected seat from the volunteer.
+ * Unsets the seat selected seat from the volunteer.
  *
- * @param mixed $volunteer
- *   Volunteer node.
+ * @param mixed $seat
+ *   Seat to unset.
  */
-function valghalla_internal_server_free_last_selected_seat($volunteer) {
-  $field_electioninfo = field_get_items('node', $volunteer, 'field_electioninfo');
-
-  if (!empty($field_electioninfo)) {
-    $fc_field = end($field_electioninfo);
-    if ($fc_field['value']) {
-      $fc = entity_load_single('field_collection_item', $fc_field['value']);
-      $fc->delete();
-    }
-  }
+function valghalla_internal_server_volunteer_free_seat($seat) {
+  $seat->delete();
 }
 
 /**
@@ -209,45 +240,6 @@ function valghalla_internal_server_get_external_server_url() {
   }
 
   return $external_server_url;
-}
-
-/**
- * Notifies volunteer about the last created seat, with status 'confirmed'.
- *
- * @param mixed $node
- *   Volunteer node.
- * @param mixed $previousNode
- *   Volunteer node previous version.
- */
-function valghalla_internal_server_notify_volunteer_last_seat($node, $previousNode) {
-  $electionInfo = NULL;
-
-  $field_electioninfo = field_get_items('node', $node, 'field_electioninfo');
-  if (!empty($field_electioninfo)) {
-    $lastElement = end($field_electioninfo);
-    $electionInfo = entity_load_single('field_collection_item', $lastElement['value']);
-  }
-
-  if ($electionInfo) {
-    $forceType = NULL;
-
-    // No previous node, meaning that volunteer is using subscription form.
-    // In that case, the notification type is confirmed.
-    if (!$previousNode) {
-      $forceType = 'confirmed';
-    }
-    else {
-      // If the size of current electionInfo is bigger, it means a new election
-      // info has been added with positive reply.
-      // In this case, the notification type is confirmed.
-      $previousElectionInfo = field_get_items('node', $previousNode, 'field_electioninfo');
-      if (empty($previousElectionInfo) || count($field_electioninfo) != count($previousElectionInfo)) {
-        $forceType = 'confirmed';
-      }
-    }
-
-    valghalla_volunteers_notify_volunteer($electionInfo, $forceType);
-  }
 }
 
 /**

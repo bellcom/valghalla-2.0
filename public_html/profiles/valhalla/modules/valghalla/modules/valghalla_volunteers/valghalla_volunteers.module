@@ -1250,10 +1250,8 @@ function valghalla_volunteers_remove_volunteer_from_post($fcid){
  *
  * @param mixed $electionInfo
  *   Election info field collection.
- * @param string $forceType
- *   If we are forcing some notification type.
  */
-function valghalla_volunteers_notify_volunteer($electionInfo, $forceType = NULL) {
+function valghalla_volunteers_notify_volunteer($electionInfo) {
   $field_election = field_get_items('field_collection_item', $electionInfo, 'field_election');
   if (!empty($field_election)) {
     $election_nid = $field_election[0]['target_id'];
@@ -1266,30 +1264,23 @@ function valghalla_volunteers_notify_volunteer($electionInfo, $forceType = NULL)
   if ($election_nid && $role_nid) {
     $type = NULL;
 
-    // Force type is used.
-    if ($forceType) {
-      $type = $forceType;
+    $field_rsvp = field_get_items('field_collection_item', $electionInfo, 'field_rsvp');
+    if (!empty($field_rsvp)) {
+      $rsvp = $field_rsvp[0]['value'];
     }
-    // No forced type, extract the type from the RSVP reply.
-    else {
-      $field_rsvp = field_get_items('field_collection_item', $electionInfo, 'field_rsvp');
-      if (!empty($field_rsvp)) {
-        $rsvp = $field_rsvp[0]['value'];
-      }
 
-      switch ($rsvp) {
-        case 1:
-          $type = 'confirmed';
-          break;
+    switch ($rsvp) {
+      case 1:
+        $type = 'confirmed';
+        break;
 
-        case 2:
-          $type = 'rsvp_no';
-          break;
+      case 2:
+        $type = 'rsvp_no';
+        break;
 
-        case 3:
-          $type = 'rsvp_never';
-          break;
-      }
+      case 3:
+        $type = 'rsvp_never';
+        break;
     }
 
     valghalla_volunteers_notify($election_nid, $role_nid, $electionInfo, $type);
@@ -1580,7 +1571,7 @@ function valghalla_volunteers_node_submit($node, $form, &$form_state) {
   ValghallaVolunteersLogger::info(sprintf('Volunteer form submit %s (nid: %d, uuid: %s)', $node->title, $node->nid, $node->uuid));
 
   // We move the values from the form, to a temporary storage on the node,
-  // the adding of a volunteer to at post is happening in hook_node_insert.
+  // the adding of a volunteer to at post is happening in hook_node_postinsert.
   if (isset($form_state['values']['party_tid']) &&
     isset($form_state['values']['role_nid']) &&
     isset($form_state['values']['pollingstation_nid'])) {
@@ -1594,12 +1585,12 @@ function valghalla_volunteers_node_submit($node, $form, &$form_state) {
 }
 
 /**
- * Implements hook_node_insert().
+ * Implements hook_node_postinsert().
  */
-function valghalla_volunteers_node_insert($node) {
+function valghalla_volunteers_node_postinsert($node) {
   // If the post values are set on the node in 'add_to_post',
   // the volunteer should be added to the post with these options.
-  if (isset($node->add_to_post)) {
+  if ($node->type == "volunteers" && isset($node->add_to_post)) {
     $volunteer_nid = $node->nid;
     $pollingstation_nid = $node->add_to_post['pollingstation_nid'];
     $role_nid = $node->add_to_post['role_nid'];

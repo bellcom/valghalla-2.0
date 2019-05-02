@@ -20,62 +20,6 @@ function valghalla_internal_server_install() {
 }
 
 /**
- * Implements hook_schema().
- */
-function valghalla_internal_server_schema() {
-  $schema['valghalla_internal_server_logs'] = array(
-    'description' => 'Table to store the log messages of synching',
-    'fields' => array(
-      'id' => array(
-        'description' => 'The primary identifier for a log message',
-        'type' => 'serial',
-        'unsigned' => TRUE,
-        'not null' => TRUE,
-      ),
-      'target_uuid' => uuid_schema_field_definition(),
-      'target_id' => array(
-        'description' => 'The primary identifier for a node',
-        'type' => 'int',
-        'unsigned' => TRUE,
-        'not null' => TRUE,
-      ),
-      'cpr' => array(
-        'description' => 'The CPR of the volunteer',
-        'type' => 'varchar',
-        'length' => 255,
-      ),
-      'message' => array(
-        'description' => 'The actual log message',
-        'type' => 'text',
-      ),
-      'timestamp' => array(
-        'description' => 'The Unix timestamp when the log was saved.',
-        'type' => 'int',
-        'not null' => TRUE,
-        'default' => 0,
-      ),
-    ),
-    'primary key' => array('id'),
-  );
-
-  return $schema;
-}
-
-/**
- * Implements hook_update_N().
- *
- * Add CPR field to valghalla_internal_server_logs table.
- */
-function valghalla_internal_server_update_7101() {
-  $field = array(
-    'description' => 'The CPR of the volunteer',
-    'type' => 'varchar',
-    'length' => 255,
-  );
-  db_add_field('valghalla_internal_server_logs', 'cpr', $field);
-}
-
-/**
  * Implements hook_update_N().
  *
  * Enabling background_batch module.
@@ -84,4 +28,13 @@ function valghalla_internal_server_update_7102() {
   module_enable(array(
     'background_batch',
   ));
+}
+
+/**
+ * Implements hook_update_N().
+ *
+ * Migrate Remove valghalla_internal_server_logs table.
+ */
+function valghalla_internal_server_update_7103() {
+  db_drop_table('valghalla_internal_server_logs');
 }

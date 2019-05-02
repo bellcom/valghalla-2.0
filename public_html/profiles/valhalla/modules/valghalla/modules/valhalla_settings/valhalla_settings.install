@@ -13,3 +13,17 @@ function valhalla_settings_update_7000() {
     drupal_set_message(t('You MUST manually specify the "Partisekretær" role in settings admin/valghalla/settings'), 'warning');
   }
 }
+
+/**
+ * Revering feature valhalla_settings.
+ *
+ * Applying new ckeditor settings.
+ */
+function valhalla_settings_update_7101() {
+  module_enable(array(
+    'imce',
+  ));
+
+  // Reverting feature.
+  features_revert_module('valhalla_settings');
+}
