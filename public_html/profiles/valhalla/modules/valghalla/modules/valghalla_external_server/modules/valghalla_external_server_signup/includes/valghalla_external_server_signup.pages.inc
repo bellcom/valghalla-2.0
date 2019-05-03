@@ -595,14 +595,17 @@ function valghalla_external_server_signup_signup_form_submit($form, &$form_state
         _valghalla_volunteers_send_volunteer_comment($post, $form_state['values']['comment']);
       }
 
-      $form_state['redirect'] = array(
-        'nemlogin/logout',
-        array(
-          'query' => array(
-            'callback' => 'valghalla/external-signup-success',
+      $form_state['redirect'] = array('valghalla/external-signup-success');
+      if (module_exists('nemlogin')) {
+        $form_state['redirect'] = array(
+          'nemlogin/logout',
+          array(
+            'query' => array(
+              'destination' => 'valghalla/external-signup-success',
+            ),
           ),
-        ),
-      );
+        );
+      }
     }
     else {
       drupal_set_message(t('Personen er allerede tildelt en anden plads ved samme valg'), 'warning');
