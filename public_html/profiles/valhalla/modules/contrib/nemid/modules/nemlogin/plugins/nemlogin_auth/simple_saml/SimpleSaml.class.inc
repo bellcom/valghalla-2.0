@@ -30,12 +30,15 @@ class NemloginAuthSimpleSaml extends NemloginAuth {
         watchdog("Nemlogin SimpleSaml", 'Cannot initialize simplesaml request: @message', array('@message' => $e->getMessage()), WATCHDOG_ERROR);
       }
     }
+    else {
+      watchdog("Nemlogin SimpleSaml", 'Simplesaml installtion not found.', array(), WATCHDOG_WARNING);
+    }
   }
 
   /**
    * {@inheritdoc}
    */
-  public function isOk() {
+  public function isInitialized() {
     return $this->as instanceof SimpleSAML_Auth_Simple;
   }
 
@@ -43,7 +46,7 @@ class NemloginAuthSimpleSaml extends NemloginAuth {
    * {@inheritdoc}
    */
   public function isAuthenticated() {
-    if (empty($this->as)) {
+    if (!$this->isInitialized()) {
       return NULL;
     }
 
@@ -55,7 +58,7 @@ class NemloginAuthSimpleSaml extends NemloginAuth {
    */
   public function login() {
     $return_to_url = $this->getReturnUrl();
-    if ($this->isOk()) {
+    if ($this->isInitialized()) {
       $this->as->requireAuth(
         array(
           'ReturnTo' => $return_to_url,
@@ -72,7 +75,7 @@ class NemloginAuthSimpleSaml extends NemloginAuth {
    */
   public function logout() {
     $return_to_url = $this->getReturnURL();
-    if ($this->isOk()) {
+    if ($this->isInitialized()) {
       $url = $this->as->getLogoutURL($return_to_url);
       header('Location: ' . $url, TRUE, 302);
       drupal_exit($url);

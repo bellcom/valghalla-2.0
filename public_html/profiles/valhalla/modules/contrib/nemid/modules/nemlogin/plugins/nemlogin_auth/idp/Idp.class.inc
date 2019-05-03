@@ -3,7 +3,7 @@
 define('NEMLOGIN_IDP_LOGINSERVICE_PATH', '/service/loginservice.wsdl');
 define('NEMLOGIN_IDP_LOGIN_PATH', '/nemlogin.php');
 define('NEMLOGIN_IDP_LOGOUT_PATH', '/nemlogout.php');
-define('NEMLOGIN_IDP_FETCH_ONLY', TRUE);
+define('NEMLOGIN_IDP_FETCH_ONCE', TRUE);
 
 /**
  * Ctools plugin class NemloginAuthIDP.
@@ -22,7 +22,7 @@ class NemloginAuthIDP extends NemloginAuth {
    *
    * @var bool
    */
-  private $fetchOnly;
+  private $fetchOnce;
 
   /**
    * Authorization object.
@@ -38,7 +38,12 @@ class NemloginAuthIDP extends NemloginAuth {
    */
   public function __construct() {
     $this->idpUrl = variable_get('nemlogin_idp_url');
-    $this->fetchOnly = variable_get('nemlogin_idp_fetch_only', NEMLOGIN_IDP_FETCH_ONLY);
+    $this->fetchOnce = variable_get('nemlogin_idp_fetch_once', NEMLOGIN_IDP_FETCH_ONCE);
+
+    if (!valid_url($this->idpUrl, TRUE)) {
+      watchdog("Nemlogin Idp", 'Idp URL not not valid or empty.', array(), WATCHDOG_WARNING);
+      return;
+    }
 
     // Authentification values stored in session.
     if (!isset($_SESSION['nemlogin_idp'])) {
@@ -51,14 +56,14 @@ class NemloginAuthIDP extends NemloginAuth {
       $this->soapClient = new SoapClient($this->idpUrl . NEMLOGIN_IDP_LOGINSERVICE_PATH);
     }
     catch (Exception $e) {
-      watchdog('Valghalla nemlogin', 'Cannot initialize auth SOAP object: @message', array('@message' => $e->getMessage()), WATCHDOG_ERROR);
+      watchdog('Nemlogin Idp', 'Cannot initialize auth SOAP object: @message', array('@message' => $e->getMessage()), WATCHDOG_ERROR);
     }
   }
 
   /**
    * {@inheritdoc}
    */
-  public function isOk() {
+  public function isInitialized() {
     return $this->soapClient instanceof SoapClient;
   }
 
@@ -71,7 +76,7 @@ class NemloginAuthIDP extends NemloginAuth {
       $forward_url = $base_url . request_uri();
       $url = url($this->idpUrl . NEMLOGIN_IDP_LOGIN_PATH, array(
         'query' => array(
-          'mnemo' => 'bellcom.dk',
+          'mnemo' => variable_get('nemlogin_idp_mnemo'),
           'forward' => $forward_url,
         ),
       ));
@@ -89,18 +94,13 @@ class NemloginAuthIDP extends NemloginAuth {
       $response = $this->soapClient->LogIn(array('token' => $token, 'mnemo' => $mnemo));
     }
     catch (Exception $e) {
-      watchdog('Valghalla nemlogin', 'Cannot initialize request: @message', array('@message' => $e->getMessage()), WATCHDOG_ERROR);
+      watchdog('Nemlogin', 'Cannot initialize request: @message', array('@message' => $e->getMessage()), WATCHDOG_ERROR);
     }
 
     if ($response && isset($response->LogInResult)) {
       $cprraw = $response->LogInResult->cpr;
       if ($cprraw) {
         $cpr = utf8_decode($cprraw);
-        // Adding dash, if missing. E.g. 123456-7890.
-        if (preg_match('/[0-9]{10}/', $cpr)) {
-          $cpr = substr($cpr, 0, 6) . '-' . substr($cpr, 6, 4);
-        }
-
         // We need to store CPR value between redirects
         // to be able use it in a a signup form.
         // This value will be deleted after first usage.
@@ -113,7 +113,7 @@ class NemloginAuthIDP extends NemloginAuth {
       watchdog('nemlogin Idp', 'Could not fetch CPR. Response is empty', array(), WATCHDOG_WARNING);
     }
 
-    if ($this->fetchOnly) {
+    if ($this->fetchOnce) {
       $return_to_url = $this->getReturnUrl();
       $this->destroySession($return_to_url);
     }
@@ -156,7 +156,7 @@ class NemloginAuthIDP extends NemloginAuth {
       $value = $this->values[$key];
     }
 
-    if ($this->fetchOnly) {
+    if ($this->fetchOnce) {
       unset($this->values[$key]);
     }
     return $value;
@@ -182,10 +182,17 @@ class NemloginAuthIDP extends NemloginAuth {
       '#default_value' => variable_get('nemlogin_idp_url'),
       '#description' => t('E.g. https://nemlogin.bellcom.dk/simplesaml. NB! Do not include the trailing slash.'),
     );
-    $form['nemlogin_idp_fetch_only'] = array(
+    $form['nemlogin_idp_mnemo'] = array(
+      '#type' => 'textfield',
+      '#title' => t('IDP mnemo key.'),
+      '#required' => TRUE,
+      '#default_value' => variable_get('nemlogin_idp_mnemo'),
+      '#description' => t('Value for IDP mnemo key. Example: bellcom.dk'),
+    );
+    $form['nemlogin_idp_fetch_once'] = array(
       '#type' => 'checkbox',
       '#title' => t('Use fetch only mode.'),
-      '#default_value' => variable_get('nemlogin_idp_fetch_only', NEMLOGIN_IDP_FETCH_ONLY),
+      '#default_value' => variable_get('nemlogin_idp_fetch_once', NEMLOGIN_IDP_FETCH_ONCE),
       '#description' => t('User will be logged out immediately after login. User data will be removed from session after first retrieving'),
     );
 
@@ -201,6 +208,10 @@ class NemloginAuthIDP extends NemloginAuth {
     $idp = $form_state['values']['nemlogin_idp_url'];
     if (strcmp(substr($idp, -1), '/') === 0) {
       form_set_error('nemlogin_idp_url', t('Please remove the trailing slash'));
+    }
+
+    if (!valid_url($idp, TRUE)) {
+      form_set_error('nemlogin_idp_url', t('URL does not valid'));
     }
 
     $url_to_test = array(

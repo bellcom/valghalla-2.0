@@ -163,7 +163,7 @@ function nemlogin_settings_form() {
       $options[$plugin_id][] = 'Plugin hanldler class is empty';
       continue;
     }
-    $options[$plugin_id][] = $class->isOk() ? 'Ok' : t('Authorization has not been configured or broken.');
+    $options[$plugin_id][] = $class->isInitialized() ? 'Ok' : t('Auth object initialization failed.');
     $options[$plugin_id][] = empty($class->settingsForm()) ? '' : l(t('Settings'), 'admin/config/nemid/nemlogin/' . $plugin_id, array(
       'query' => drupal_get_destination(),
     ));
@@ -293,8 +293,13 @@ function nemlogin_link($login_text = NULL, $logout_text = NULL, array $options =
   }
 
   $nemlogin_object = nemlogin_get_plugin_object();
-  if (empty($nemlogin_object) || !$nemlogin_object->isOk()) {
-    drupal_set_message(t("Nemlogin authorization doesn't work properly."), 'warning');
+  if (empty($nemlogin_object)) {
+    drupal_set_message(t("Nemlogin authorization object is empty."), 'warning');
+    return NULL;
+  }
+
+  if (!$nemlogin_object->isInitialized()) {
+    drupal_set_message(t("Nemlogin authorization object doesn't work properly."), 'warning');
     return NULL;
   }
 

@@ -295,6 +295,10 @@ function nemid_form_alter(&$form, &$form_state, $form_id) {
       $nid = $form['#node']->nid;
       if (variable_get('nemlogin_link_enable_' . $nid, 0)) {
         $nemlogin = nemlogin_get_plugin_object();
+        if (empty($nemlogin)) {
+          watchdog("Nemlogin", 'Nemlogin authorization object is empty. Check nemlogin configuration.', array(), WATCHDOG_WARNING);
+          return;
+        }
         try {
           // Check if user is already authentificated.
           if ($nemlogin->isAuthenticated()) {

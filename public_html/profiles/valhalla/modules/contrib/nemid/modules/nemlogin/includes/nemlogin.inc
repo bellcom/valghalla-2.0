@@ -2,56 +2,21 @@
 
 /**
  * @file
- * Include SimpleSAML_Auth_Simple help functions.
+ * Include Nemlogin help functions.
  */
 
 /**
- * Attempts to fetch field from the SimpleAuth attributes.
- *
- * Function that attempts to fetch field from the SimpleAuth attributes with
- * specific name, suffix with NumberIdentifier.
- * E.g. if field name is "CPR", method will attempt
- * to fetch dk:gov:saml:attribute:CprNumberIdentifier.
- *
- * If field value is fetch it is returned, otherwise NULL is returned.
- *
- * @param mixed $as
- *   SimpleAuth valid object.
- * @param string $field_name
- *   Name of the field.
- *
- * @return string
- *   Field value.
- */
-function attempt_fetch_number_identifier($as, $field_name = 'cpr') {
-  // Make first char uppercase and suffixing with NumberIdentifier.
-  $field_name = ucfirst(strtolower($field_name));
-  $field_name .= 'NumberIdentifier';
-
-  $attrs = $as->getAttributes();
-  $field_value = NULL;
-
-  if (is_array($attrs) && isset($attrs["dk:gov:saml:attribute:$field_name"])) {
-    if (is_array($attrs["dk:gov:saml:attribute:$field_name"]) && isset($attrs["dk:gov:saml:attribute:$field_name"][0])) {
-      $field_value = $attrs["dk:gov:saml:attribute:$field_name"][0];
-    }
-  }
-
-  return $field_value;
-}
-
-/**
- * NemidAuth interface.
+ * Nemlogin auth interface.
  */
 interface NemloginAuthInterface {
 
   /**
-   * Check plugin status.
+   * Check plugin initialization status.
    *
    * @return bool
-   *   Boolean value about plugin status.
+   *   Boolean value about plugin initialization status.
    */
-  public function isOk();
+  public function isInitialized();
 
   /**
    * Check authorization status.
@@ -113,7 +78,7 @@ interface NemloginAuthInterface {
 }
 
 /**
- * NemidAuth interface.
+ * NemidAuth base class.
  */
 abstract class NemloginAuth implements NemloginAuthInterface {
 
