@@ -383,6 +383,11 @@ function valghalla_volunteers_rsvp_form($form, &$form_state) {
       // Attempt to fetch CPR from session.
       $nemlogin_object = nemlogin_get_plugin_object();
       $cpr = !empty($nemlogin_object) ? $nemlogin_object->fetchValue('cpr') : NULL;
+      // Adding dash, if missing. E.g. 123456-7890.
+      if (preg_match('/[0-9]{10}/', $cpr)) {
+        $cpr = substr($cpr, 0, 6) . '-' . substr($cpr, 6, 4);
+      }
+
       if ($cpr) {
         $cpr = valghalla_synch_node_export_get_encrypt($cpr);
       }
@@ -399,7 +404,7 @@ function valghalla_volunteers_rsvp_form($form, &$form_state) {
         '#default_value' => $cpr,
       );
 
-      if (!$cpr) {
+      if (!$cpr && module_exists('nemlogin')) {
         $form['nemid_login_link'] = array(
           '#prefix' => '<div class="form-group">',
           '#markup' => nemlogin_link('Login med Nemlogin', NULL, array('attributes' => array('class' => array('btn', 'btn-secondary')))),

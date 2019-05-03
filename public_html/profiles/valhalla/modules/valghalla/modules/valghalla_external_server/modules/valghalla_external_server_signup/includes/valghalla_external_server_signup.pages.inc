@@ -89,6 +89,10 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
   if (module_exists('nemlogin')) {
     $nemlogin_object = nemlogin_get_plugin_object();
     $cpr = !empty($nemlogin_object) ? $nemlogin_object->fetchValue('cpr') : NULL;
+    // Adding dash, if missing. E.g. 123456-7890.
+    if (preg_match('/[0-9]{10}/', $cpr)) {
+      $cpr = substr($cpr, 0, 6) . '-' . substr($cpr, 6, 4);
+    }
   }
 
   if ($cpr) {
@@ -107,7 +111,7 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
     '#default_value' => $cpr,
   );
 
-  if (!$cpr) {
+  if (!$cpr && module_exists('nemlogin')) {
     $form['nemid_login_link'] = array(
       '#markup' => nemlogin_link('Login med Nemlogin', NULL, array('attributes' => array('class' => array('btn', 'btn-secondary')))),
     );
