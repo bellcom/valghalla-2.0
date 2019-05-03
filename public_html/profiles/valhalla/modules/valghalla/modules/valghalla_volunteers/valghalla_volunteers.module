@@ -463,7 +463,7 @@ function valghalla_volunteers_rsvp_form_validate($form, &$form_state) {
   }
 
   if (variable_get('valghalla_volunteers_check_cpr_match', TRUE) && $GLOBALS['user']->uid == 0) {
-    if (module_exists('valghalla_external_server_nemlogin')) {
+    if (module_exists('nemlogin')) {
       $cpr = valghalla_synch_node_export_get_decrypt($form_state['values']['cpr']);
 
       // Adding dash, if missing. E.g. 123456-7890.
