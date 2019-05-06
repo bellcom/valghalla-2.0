@@ -1,4 +1,4 @@
-name = Valghalla External Server Nemlogin
-description = Provides a login link for Nemlogin, requires simplesaml integration
+name = Valghalla External Server Nemlogin (TO BE DELETED)
+description = This module has been replaced with Nemlogin module and will be removed in next versions.
 package = Valghalla - Synch
 core = 7.x
