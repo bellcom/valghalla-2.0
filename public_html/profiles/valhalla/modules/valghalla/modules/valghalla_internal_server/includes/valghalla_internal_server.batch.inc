@@ -456,6 +456,7 @@ function valghalla_internal_server_batch_push_op($item, $operation_details, &$co
 
         $op_success = FALSE;
 
+        // Checking if export was successful.
         if ($export['success']) {
           // Actual webservice call.
           $result = $ws->pushNodeSerialized($export['output']);
@@ -475,13 +476,12 @@ function valghalla_internal_server_batch_push_op($item, $operation_details, &$co
             $op_success = TRUE;
           }
         }
+        else {
+          $result = $export['output'];
+        }
 
-        // Unsuccessful outcome.
+        // Unsuccessful outcome, either export or push.
         if (!$op_success) {
-          if (!isset($result)) {
-            $result = $export['output'];
-          }
-
           if (is_array($result)) {
             $result = implode(' ', $result);
           }
