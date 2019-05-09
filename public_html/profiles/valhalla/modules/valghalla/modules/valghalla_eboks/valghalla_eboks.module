@@ -250,7 +250,7 @@ function valghalla_eboks_form_valghalla_notifications_admin_settings_alter(&$for
     '#default_value' => variable_get('valghalla_eboks_failed_tries'),
     '#description' => t('Amount of tries that Drupal will send message to Print service when previous try was failed with status from list above. Max value @max', array(
       '@max' => VALGHALLA_EBOKS_MAX_FAILED_TRIES,
-    ))
+    )),
   );
   $form['#submit'][] = 'valghalla_eboks_test_submit';
 }
