@@ -22,6 +22,8 @@ Develop branch state ![alt text](https://travis-ci.org/bellcom/valghalla.svg?bra
 
 To deploy new changes and apply all deploy actions please use following steps. 
 
+* Check if local code changes are present (uncommitted changes) `git diff`
+  * If yes, review them and eventually reset `git checkout [path to changed file]`
 * Fetch new tags `git fetch origin 'refs/tags/*:refs/tags/*'`
 * Checkout to tag you deploying `git checkout [tag name]`
 * Switch to drupal root directory `cd public_html` 
