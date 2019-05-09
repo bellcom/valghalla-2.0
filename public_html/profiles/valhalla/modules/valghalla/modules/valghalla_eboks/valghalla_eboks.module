@@ -246,7 +246,7 @@ function valghalla_eboks_form_valghalla_notifications_admin_settings_alter(&$for
         'profiles/valhalla/modules/valghalla/modules/valghalla_eboks/PriveService/doc/Bilag-A5-REST-HTTP-returkoder-og-fejlkoder-v63-udendringsmarkering.pdf',
         array('attributes' => array('_target' => '_blank'))
       ),
-    ))
+    )),
   );
 
   $form['print_service']['retry']['valghalla_eboks_retry_max_attempts'] = array(
