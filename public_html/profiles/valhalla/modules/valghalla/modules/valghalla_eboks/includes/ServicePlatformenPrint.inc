@@ -134,9 +134,9 @@ class ServicePlatformenPrint {
       if (!$response['status']
         // Resending happen only for specific fail codes.
         && !empty($e->detail->Fejl->FejlKode)
-        // Not more then specified amount of times.
+        // Not more than specified amount of times.
         && $tries_counter < $retry_amount
-        // And not more then fixed amount.
+        // And not more than fixed amount.
         && $tries_counter < VALGHALLA_EBOKS_MAX_FAILED_TRIES
         // Only when we have specified fail codes.
         && !empty($retry_allowed_coded)
