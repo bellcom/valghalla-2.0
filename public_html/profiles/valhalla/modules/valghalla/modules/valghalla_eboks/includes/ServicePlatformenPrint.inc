@@ -129,13 +129,18 @@ class ServicePlatformenPrint {
         watchdog('ServicePlatformenPrint', 'XML-request filesaved to %path', array('%path' => $path));
       }
 
-      $retry_amount = (int) variable_get('valghalla_eboks_failed_tries');
+      $retry_amount = (int) variable_get('valghalla_eboks_retry_max_attempts');
       $retry_allowed_coded = explode("\n", variable_get('valghalla_eboks_retry_allowed_failed_codes'));
       if (!$response['status']
+        // Resending happen only for specific fail codes.
         && !empty($e->detail->Fejl->FejlKode)
+        // Not more then specified amount of times.
         && $tries_counter < $retry_amount
+        // And not more then fixed amount.
         && $tries_counter < VALGHALLA_EBOKS_MAX_FAILED_TRIES
+        // Only when we have specified fail codes.
         && !empty($retry_allowed_coded)
+        // And gotten fail code we got present in allowed list.
         && in_array($e->detail->Fejl->FejlKode, $retry_allowed_coded)) {
         $retry = TRUE;
       }
