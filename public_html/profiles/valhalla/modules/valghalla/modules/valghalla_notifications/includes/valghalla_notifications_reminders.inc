@@ -51,7 +51,7 @@ function valghalla_notifications_rsvp_reminder($last_run_ts) {
         '%election_date' => $election_date,
       ), WATCHDOG_NOTICE
       );
-      return;
+      continue;
     }
 
     $volunteer_query = new EntityFieldQuery();
@@ -123,7 +123,7 @@ function valghalla_notifications_togo_reminder($last_run_ts) {
         '%election_date' => $election_date,
       ), WATCHDOG_NOTICE
       );
-      return;
+      continue;
     }
 
     $volunteer_query = new EntityFieldQuery();
