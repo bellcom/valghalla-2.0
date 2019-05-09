@@ -1109,6 +1109,7 @@ function valghalla_volunteers_get_volunteers(){
         WHERE e.field_election_target_id = :election_nid
       )
     )
+    AND p.bundle = \'volunteers\'
     AND n.type = \'volunteers\'
     AND n.status = 1
     ';
