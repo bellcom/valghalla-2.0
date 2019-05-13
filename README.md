@@ -28,3 +28,11 @@ To deploy new changes and apply all deploy actions please use following steps.
 * Run deployment script `sh ../scripts/deploy-multisite.sh`
 
 Deployment output log will be saved to `logs/deployment/deployment-[date]-[time].log` file. 
+
+## Git branches name convention in versions perspective.
+| Syntax      | Status               | Description 
+| ----        | :----                | :----        
+| **develop** | [ACTIVE DEVELOPMENT] | Reflects latest changes that have been merged into master or should be merged soon.
+| **7.x-2.x** | [EOL]                | Version 2.x. EOL 2018. Support fixes. Drupal core update.
+| **7.x-3.x** | [CURRENT]            | Version 3.x. Started since November 2018.
+| **7.x-4.x** | [UPCOMING]           | Version 4.x. All new feature should be merge here.

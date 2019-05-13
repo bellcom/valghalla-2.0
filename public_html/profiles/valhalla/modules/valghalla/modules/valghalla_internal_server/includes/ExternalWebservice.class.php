@@ -265,6 +265,14 @@ class ExternalWebservice {
    *
    * Wraps the request, adds authorization string and performs
    * an HTTP request call.
+   *
+   * @param string $requestUrl
+   *   The request URL.
+   * @param mixed $options
+   *   Array of the options, @see drupal_http_request.
+   *
+   * @return string
+   *   The result of on success, error message on failure.
    */
   private function requestWrapper($requestUrl, $options = array()) {
     if (!$this->authToken) {
@@ -287,6 +295,9 @@ class ExternalWebservice {
       else {
         return $result->data;
       }
+    }
+    else {
+      return $result->error;
     }
   }
 
