@@ -297,7 +297,8 @@ function valghalla_volunteer_validator_validate_batch($form, &$form_state, $el_n
   $volunteer_query->entityCondition('entity_type', 'field_collection_item')
     ->entityCondition('bundle', 'field_electioninfo')
     ->propertyCondition('archived', 0)
-    ->fieldCondition('field_election', 'target_id', $election->nid);
+    ->fieldCondition('field_election', 'target_id', $election->nid)
+    ->addTag('ei_volunteer_exist');
 
   $query_result = $volunteer_query->execute();
   $fcids = array_shift($query_result);
@@ -407,14 +408,18 @@ function valghalla_volunteer_validator_validate_batch_process($election, $fcids,
 function valghalla_volunteer_validator_finished_validate_batch($success, $results, $operations) {
   if ($success) {
     $format_errors = '';
-    foreach ($results['format_errors'] as $error) {
-      $format_errors .= '<a target="_blank" href="/node/' . $error['nid'] . '/edit">' . $error['nid'] . '</a>, ';
+    if (isset($results['format_errors'])) {
+      foreach ($results['format_errors'] as $error) {
+        $format_errors .= '<a target="_blank" href="/node/' . $error['nid'] . '/edit">' . $error['nid'] . '</a>, ';
+      }
     }
 
     $validate_errors = '';
-    foreach ($results['validate_errors'] as $nid => $errors) {
-      foreach ($errors as $error) {
-        $validate_errors .= '<a target="_blank" href="/node/' . $nid . '/edit">' . $nid . '</a>: ' . $error['text'] . '<br>';
+    if (isset($results['validate_errors'])) {
+      foreach ($results['validate_errors'] as $nid => $errors) {
+        foreach ($errors as $error) {
+          $validate_errors .= '<a target="_blank" href="/node/' . $nid . '/edit">' . $nid . '</a>: ' . $error['text'] . '<br>';
+        }
       }
     }
 

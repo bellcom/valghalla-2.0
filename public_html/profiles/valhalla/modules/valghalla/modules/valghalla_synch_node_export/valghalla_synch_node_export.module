@@ -183,6 +183,7 @@ function valghalla_synch_node_export_anonymize_node($node, $cipherKey = NULL) {
       $cpr_field_language = field_language('node', $node, 'field_cpr_number');
       $cpr_encrypted = valghalla_synch_node_export_get_encrypt($cpr, $cipherKey);
       $node->field_cpr_number[$cpr_field_language][0]['value'] = $cpr_encrypted;
+      $node->field_cpr_number[$cpr_field_language][0]['safe_value'] = $cpr_encrypted;
     }
 
     // Encrypting email field.
@@ -203,6 +204,7 @@ function valghalla_synch_node_export_anonymize_node($node, $cipherKey = NULL) {
       $phone_field_language = field_language('node', $node, 'field_phone');
       $phone_encrypted = valghalla_synch_node_export_get_encrypt($phone, $cipherKey);
       $node->field_phone[$phone_field_language][0]['value'] = $phone_encrypted;
+      $node->field_phone[$phone_field_language][0]['safe_value'] = $phone_encrypted;
     }
 
     $node->title = 'Anonymized volunteer node, CPR: ' . $cpr_encrypted;

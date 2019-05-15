@@ -1109,6 +1109,7 @@ function valghalla_volunteers_get_volunteers(){
         WHERE e.field_election_target_id = :election_nid
       )
     )
+    AND p.bundle = \'volunteers\'
     AND n.type = \'volunteers\'
     AND n.status = 1
     ';
@@ -1884,6 +1885,18 @@ function valghalla_volunteers_query_ei_role_exist_alter(QueryAlterableInterface 
   $query->addJoin('left', 'field_data_field_post_role', 'fpr', 'fpr.entity_id = field_collection_item.item_id');
   $query->addJoin('left', 'node', 'npr', 'npr.nid = fpr.field_post_role_target_id');
   $query->isNotNull('npr.nid');
+}
+
+/**
+ * Implements hook_query_TAG_alter().
+ *
+ * Field_electioninfo - field_rsvp is 0 or NULL.
+ */
+function valghalla_volunteers_query_ei_rsvp_unanswered_or_null_alter(QueryAlterableInterface $query) {
+  $query->addJoin('left', 'field_data_field_rsvp', 'fr', 'fr.entity_id = field_collection_item.item_id');
+  $or = db_or()->condition('fr.field_rsvp_value', 0)
+    ->isNull('fr.field_rsvp_value');
+  $query->condition($or);
 }
 
 /**
