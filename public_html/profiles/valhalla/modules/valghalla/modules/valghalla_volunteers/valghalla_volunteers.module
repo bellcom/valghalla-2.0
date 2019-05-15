@@ -1888,6 +1888,18 @@ function valghalla_volunteers_query_ei_role_exist_alter(QueryAlterableInterface 
 }
 
 /**
+ * Implements hook_query_TAG_alter().
+ *
+ * Field_electioninfo - field_rsvp is 0 or NULL.
+ */
+function valghalla_volunteers_query_ei_rsvp_unanswered_or_null_alter(QueryAlterableInterface $query) {
+  $query->addJoin('left', 'field_data_field_rsvp', 'fr', 'fr.entity_id = field_collection_item.item_id');
+  $or = db_or()->condition('fr.field_rsvp_value', 0)
+    ->isNull('fr.field_rsvp_value');
+  $query->condition($or);
+}
+
+/**
  * Implements hook_monolog_channel_info().
  */
 function valghalla_volunteers_monolog_channel_info() {
