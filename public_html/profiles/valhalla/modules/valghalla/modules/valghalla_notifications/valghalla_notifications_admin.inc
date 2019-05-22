@@ -222,7 +222,7 @@ function valghalla_notifications_admin_settings() {
 
   $form['valghalla_notifications']['valghalla_notifications_send_invitation_on_add'] = array(
     '#title' => t('Send besked (invitation) til deltager når denne tilføjes på et valgsted.'),
-    '#default_value' => variable_get('valghalla_notification_send_invitation_on_add', TRUE),
+    '#default_value' => variable_get('valghalla_notifications_send_invitation_on_add', TRUE),
     '#type' => 'checkbox',
   );
 
