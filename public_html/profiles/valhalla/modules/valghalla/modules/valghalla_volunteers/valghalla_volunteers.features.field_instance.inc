@@ -161,7 +161,11 @@ function valghalla_volunteers_field_default_field_instances() {
   // 'field_collection_item-field_electioninfo-field_rsvp'.
   $field_instances['field_collection_item-field_electioninfo-field_rsvp'] = array(
     'bundle' => 'field_electioninfo',
-    'default_value' => NULL,
+    'default_value' => array(
+      0 => array(
+        'value' => 0,
+      ),
+    ),
     'deleted' => 0,
     'description' => '',
     'display' => array(
@@ -176,7 +180,7 @@ function valghalla_volunteers_field_default_field_instances() {
     'entity_type' => 'field_collection_item',
     'field_name' => 'field_rsvp',
     'label' => 'Status',
-    'required' => 0,
+    'required' => 1,
     'settings' => array(
       'user_register_form' => FALSE,
     ),
