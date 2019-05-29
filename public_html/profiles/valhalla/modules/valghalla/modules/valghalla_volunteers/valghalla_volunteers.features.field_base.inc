@@ -710,6 +710,7 @@ function valghalla_volunteers_field_default_field_bases() {
     'module' => 'list',
     'settings' => array(
       'allowed_values' => array(
+        0 => 'ubesvaret',
         1 => 'ja',
         2 => 'nej',
         3 => 'aldrig',

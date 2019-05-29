@@ -69,7 +69,8 @@ function entity_valghalla_menu(&$items) {
     'title arguments' => array(3),
     'page callback' => 'entity_valghalla_notification_view',
     'page arguments' => array(3),
-    'access arguments' => array('view any valghalla notification entity'),
+    'access callback' => 'entity_valghalla_notification_check_notification_view_access',
+    'access arguments' => array(3),
   );
 
   // 'View' tab for an individual entity page.
@@ -84,7 +85,8 @@ function entity_valghalla_menu(&$items) {
     'title' => 'Remove',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('entity_valghalla_notification_confirm_delete', 3),
-    'access arguments' => array('administer entity_valghalla_notification entities'),
+    'access callback' => 'entity_valghalla_notification_check_notification_delete_access',
+    'access arguments' => array(3),
     'type' => MENU_LOCAL_TASK,
   );
 
@@ -92,7 +94,8 @@ function entity_valghalla_menu(&$items) {
     'title callback' => 'entity_valghalla_notification_notification_tab_title',
     'page callback' => 'entity_valghalla_notification_list_entities',
     'page arguments' => array(1),
-    'access callback' => 'entity_valghalla_notification_check_notification_tab_access',
+    'access callback' => 'entity_valghalla_notification_check_volunteer_notifications_access',
+    'access arguments' => array(1),
     'type' => MENU_LOCAL_TASK,
     'weight' => 1,
   );
@@ -104,7 +107,7 @@ function entity_valghalla_menu(&$items) {
  * Basic information for the page.
  */
 function entity_valghalla_notification_info_page() {
-  if (user_access('administer entity_valghalla_notification entities')) {
+  if (user_access('administer valghalla notification entities')) {
     $content['table'] = entity_valghalla_notification_list_entities();
   }
 
@@ -112,16 +115,62 @@ function entity_valghalla_notification_info_page() {
 }
 
 /**
- * Checks access to notification tab.
+ * Checks access to volunteer notifications.
  */
-function entity_valghalla_notification_check_notification_tab_access() {
-  $node = node_load(arg(1));
+function entity_valghalla_notification_check_volunteer_notifications_access($nid) {
+  $node = node_load($nid);
+
+  // Taking care of notification with no volunteer.
+  if (!$node) {
+    if (user_access('view any valghalla notification entity') && user_access('valghalla see all parties')) {
+      return TRUE;
+    }
+  }
+
   if (($node->type == 'volunteers')
     && user_access('view any valghalla notification entity')) {
-    return TRUE;
+    // User can see notification for all volunteers.
+    if (user_access('valghalla see all parties')) {
+      return TRUE;
+    }
+    else {
+      // Check if the volunteer party is the same as the current user party.
+      global $user;
+      $current_user = user_load($user->uid);
+      $current_user_party_id = empty($current_user->field_party[LANGUAGE_NONE][0]['tid']) ? FALSE : $current_user->field_party[LANGUAGE_NONE][0]['tid'];
+
+      $field_party = field_get_items('node', $node, 'field_party');
+      if (!empty($field_party)) {
+        $volunteer_party_id = $field_party[0]['tid'];
+
+        if (intval($volunteer_party_id) == intval($current_user_party_id)) {
+          return TRUE;
+        }
+      }
+    }
   }
   return FALSE;
 }
+
+/**
+ * Checks access to view notification.
+ */
+function entity_valghalla_notification_check_notification_view_access($notification) {
+  return entity_valghalla_notification_check_volunteer_notifications_access($notification->vol_id);
+}
+
+/**
+ * Checks access to delete notification.
+ */
+function entity_valghalla_notification_check_notification_delete_access($notification) {
+  if (entity_valghalla_notification_check_volunteer_notifications_access($notification->vol_id)) {
+    if (user_access('administer valghalla notification entities')) {
+      return TRUE;
+    }
+  }
+  return FALSE;
+}
+
 
 /**
  * Generates notification tab title with notification counter.
@@ -141,11 +190,29 @@ function entity_valghalla_notification_notification_tab_title() {
  */
 function entity_valghalla_notification_list_entities($vol_nid = FALSE) {
   $content = array();
+
   // Load all of our entities.
   $query = new EntityFieldQuery();
   $query->entityCondition('entity_type', 'entity_valghalla_notification')
     ->propertyOrderBy('created', 'DESC')
     ->pager(20);
+
+  // Limiting volunteers to current user party, if only user does not have a
+  // certain permission = 'valghalla see all parties'.
+  if (!user_access('valghalla see all parties')) {
+    global $user;
+    $current_user = user_load($user->uid);
+    $current_user_party_id = empty($current_user->field_party[LANGUAGE_NONE][0]['tid']) ? FALSE : $current_user->field_party[LANGUAGE_NONE][0]['tid'];
+    if ($current_user_party_id) {
+      $party_volunteers_subquery = db_select('field_data_field_party', 'fp');
+      $party_volunteers_subquery->fields('fp', array('entity_id'));
+      $party_volunteers_subquery->condition('bundle', 'volunteers');
+      $party_volunteers_subquery->condition('field_party_tid', $current_user_party_id);
+
+      $query->propertyCondition('vol_id', $party_volunteers_subquery, 'IN');
+    }
+  }
+
   $headers[] = t('ID');
   $headers[] = t('Gateway');
   $headers[] = t('Type');
@@ -164,6 +231,9 @@ function entity_valghalla_notification_list_entities($vol_nid = FALSE) {
   $ids = reset($result);
   if (!empty($ids)) {
     $entities = entity_valghalla_notification_load_multiple(array_keys($ids));
+
+    // Does user have delete permissions?
+    $can_delete_notifications = user_access('administer valghalla notification entities');
     foreach ($entities as $entity) {
       $message = strip_tags(str_replace('<br/>', '  ', $entity->message));
       $row = $row_data = array();
@@ -177,11 +247,21 @@ function entity_valghalla_notification_list_entities($vol_nid = FALSE) {
       $row_data['message'] = substr($message, 0, 50);
       $row_data['created'] = format_date($entity->created, 'short');
       $row_data['status'] = check_plain($entity->status);
+
+      $operation_links = array(
+        array('title' => t('View'), 'href' => 'valghalla/administration/notifications-list/' . $entity->id),
+      );
+
+      // Adding remove link.
+      if ($can_delete_notifications) {
+        $operation_links[] = array(
+          'title' => t('Remove'),
+          'href' => 'valghalla/administration/notifications-list/' . $entity->id . '/remove',
+        );
+      }
+
       $row_data['operations'] = theme('links__ctools_dropbutton', array(
-        'links' => array(
-          array('title' => t('View'), 'href' => 'valghalla/administration/notifications-list/' . $entity->id),
-          array('title' => t('Remove'), 'href' => 'valghalla/administration/notifications-list/' . $entity->id . '/remove'),
-        ),
+        'links' => $operation_links,
       ));
 
       $row['data'] = $row_data;

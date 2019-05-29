@@ -394,7 +394,14 @@ function valghalla_notifications_get_recipients($values) {
       $volunteer_query->fieldCondition('field_election', 'target_id', $election);
     }
     if ($rsvp_status !== FALSE) {
-      $volunteer_query->fieldCondition('field_rsvp', 'value', $rsvp_status);
+      // If we check for RSVP = 0 (unanswered), use tag to also include those
+      // volunteers with NULL reply.
+      if (strcmp($rsvp_status, "0") === 0) {
+        $volunteer_query->addTag('ei_rsvp_unanswered_or_null');
+      }
+      else {
+        $volunteer_query->fieldCondition('field_rsvp', 'value', $rsvp_status);
+      }
     }
     if ($roles !== FALSE) {
       $volunteer_query->fieldCondition('field_post_role', 'target_id', $roles);
