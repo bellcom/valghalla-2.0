@@ -171,7 +171,6 @@ function entity_valghalla_notification_check_notification_delete_access($notific
   return FALSE;
 }
 
-
 /**
  * Generates notification tab title with notification counter.
  */
