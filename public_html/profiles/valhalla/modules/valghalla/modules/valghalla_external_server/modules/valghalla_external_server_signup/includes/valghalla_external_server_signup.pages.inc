@@ -86,7 +86,15 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
   }
 
   // Attempt to fetch CPR from session.
-  $cpr = valghalla_external_server_nemlogin_fetch_cpr();
+  if (module_exists('nemlogin')) {
+    $nemlogin_object = nemlogin_get_plugin_object();
+    $cpr = !empty($nemlogin_object) ? $nemlogin_object->fetchValue('cpr') : NULL;
+    // Adding dash, if missing. E.g. 123456-7890.
+    if (preg_match('/[0-9]{10}/', $cpr)) {
+      $cpr = substr($cpr, 0, 6) . '-' . substr($cpr, 6, 4);
+    }
+  }
+
   if ($cpr) {
     $cpr = valghalla_synch_node_export_get_encrypt($cpr);
   }
@@ -103,9 +111,9 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
     '#default_value' => $cpr,
   );
 
-  if (!$cpr) {
+  if (!$cpr && module_exists('nemlogin')) {
     $form['nemid_login_link'] = array(
-      '#markup' => l(t('Login med Nemlogin'), valghalla_external_server_nemlogin_login_link(request_uri()), array('attributes' => array('class' => array('btn', 'btn-secondary')))),
+      '#markup' => nemlogin_link('Login med Nemlogin', NULL, array('attributes' => array('class' => array('btn', 'btn-secondary')))),
     );
   }
   else {
@@ -587,14 +595,17 @@ function valghalla_external_server_signup_signup_form_submit($form, &$form_state
         _valghalla_volunteers_send_volunteer_comment($post, $form_state['values']['comment']);
       }
 
-      $form_state['redirect'] = array(
-        'nemlogin/logout',
-        array(
-          'query' => array(
-            'callback' => 'valghalla/external-signup-success',
+      $form_state['redirect'] = array('valghalla/external-signup-success');
+      if (module_exists('nemlogin')) {
+        $form_state['redirect'] = array(
+          'nemlogin/logout',
+          array(
+            'query' => array(
+              'destination' => 'valghalla/external-signup-success',
+            ),
           ),
-        ),
-      );
+        );
+      }
     }
     else {
       drupal_set_message(t('Personen er allerede tildelt en anden plads ved samme valg'), 'warning');
