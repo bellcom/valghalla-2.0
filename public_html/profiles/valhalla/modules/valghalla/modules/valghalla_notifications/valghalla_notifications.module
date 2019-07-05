@@ -377,7 +377,7 @@ function valghalla_notifications_get_template($gateway_id, $election_nid, $role_
   }
 
   // If it doesn't exist or default settings used, get the standard template.
-  if (empty($template_nid) || variable_get('valghalla_notifications_' . $election_nid. '_' . $role_nid . '_' . $type . '_gateway_id') == '') {
+  if (empty($template_nid) || variable_get('valghalla_notifications_' . $election_nid . '_' . $role_nid . '_' . $type . '_gateway_id') == '') {
     $template_nid = variable_get('valghalla_notifications_' . $election_nid . '_' . $type . '_' . $gateway_id, FALSE);
   }
 
