@@ -112,6 +112,9 @@ function valhalla_install() {
   variable_set('date_default_timezone', "Europe/Berlin");
   variable_set('date_first_day', "1");
   variable_set('configurable_timezones', "0");
+  variable_set('angularjs_version', '1.2.5');
+  variable_set('angularjs_cdn', '1');
+  variable_set('angularjs_compression_type', 'min');
 
   // Programmatically enable ckeditor module, since enabling through
   // dependencies doesn't work.
