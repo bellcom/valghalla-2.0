@@ -4,4 +4,4 @@ core = 7.x
 package = Valghalla - Synch
 dependencies[] = odin
 dependencies[] = valghalla_volunteers
-dependencies[] = valghalla_external_server_nemlogin
+dependencies[] = nemlogin

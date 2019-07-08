@@ -94,33 +94,57 @@ class ServicePlatformenPrint {
 
     ini_set('soap.wsdl_cache_enabled', 0);
     ini_set('soap.wsdl_cache_ttl', 0);
-    try {
-      $result = $this->client->afsendBrev($this->request);
-      $response = array(
-        'status' => FALSE,
-        'response' => $this->client->__getLastResponse(),
-      );
-      if (!empty($result->resultat) && $result->resultat) {
-        $response['status'] = TRUE;
+    $response = array(
+      'status' => FALSE,
+    );
+
+    $tries_counter = 0;
+    do {
+      // By default there is only one try to send message.
+      $retry = FALSE;
+
+      try {
+        $tries_counter++;
+        $result = $this->client->afsendBrev($this->request);
+        $response['response'] = $this->client->__getLastResponse();
+        if (!empty($result->resultat) && $result->resultat) {
+          $response['status'] = TRUE;
+        }
       }
-    }
-    catch (Exception $e) {
-      $response = array(
-        'status' => FALSE,
-        'text' => $e->faultstring,
-        'code' => $e->faultcode,
-        'response' => $this->client->__getLastResponse(),
-      );
-    }
-    if (variable_get('valghalla_eboks_debug', FALSE)) {
-      $path = file_directory_temp() . '/service-print-soap';
-      if (!file_exists($path)) {
-        mkdir($path, 0777, TRUE);
+      catch (Exception $e) {
+        $response = array(
+          'status' => FALSE,
+          'text' => $e->faultstring,
+          'code' => $e->faultcode,
+          'response' => $this->client->__getLastResponse(),
+        );
       }
-      $path .= '/request-' . time() . '-' . uniqid() . '.xml';
-      file_unmanaged_save_data($this->client->__getLastRequest(), $path, FILE_EXISTS_REPLACE);
-      watchdog('ServicePlatformenPrint', 'XML-request filesaved to %path', array('%path' => $path));
-    }
+      if (variable_get('valghalla_eboks_debug', FALSE)) {
+        $path = file_directory_temp() . '/service-print-soap';
+        if (!file_exists($path)) {
+          mkdir($path, 0777, TRUE);
+        }
+        $path .= '/request-' . time() . '-' . uniqid() . '.xml';
+        file_unmanaged_save_data($this->client->__getLastRequest(), $path, FILE_EXISTS_REPLACE);
+        watchdog('ServicePlatformenPrint', 'XML-request filesaved to %path', array('%path' => $path));
+      }
+
+      $retry_amount = (int) variable_get('valghalla_eboks_retry_max_attempts');
+      $retry_allowed_coded = explode("\n", variable_get('valghalla_eboks_retry_allowed_failed_codes'));
+      if (!$response['status']
+        // Resending happen only for specific fail codes.
+        && !empty($e->detail->Fejl->FejlKode)
+        // Not more than specified amount of times.
+        && $tries_counter < $retry_amount
+        // And not more than fixed amount.
+        && $tries_counter < VALGHALLA_EBOKS_MAX_FAILED_TRIES
+        // Only when we have specified fail codes.
+        && !empty($retry_allowed_coded)
+        // And gotten fail code we got present in allowed list.
+        && in_array($e->detail->Fejl->FejlKode, $retry_allowed_coded)) {
+        $retry = TRUE;
+      }
+    } while ($retry);
 
     return $response;
 

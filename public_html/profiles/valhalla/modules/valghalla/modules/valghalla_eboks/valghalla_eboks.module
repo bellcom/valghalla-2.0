@@ -5,6 +5,8 @@
  * Valghalla eboks module.
  */
 
+define('VALGHALLA_EBOKS_MAX_FAILED_TRIES', 5);
+
 use Drupal\Valghalla\Pdf;
 use Mpdf\Output\Destination;
 
@@ -227,7 +229,45 @@ function valghalla_eboks_form_valghalla_notifications_admin_settings_alter(&$for
     '#type' => 'textfield',
     '#title' => t('Send test eboks message to CVR number'),
   );
+
+  $form['print_service']['retry'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Try to send again when sending failed.'),
+    '#collapsible' => TRUE,
+    '#collapsed' => FALSE,
+  );
+
+  $form['print_service']['retry']['valghalla_eboks_retry_allowed_failed_codes'] = array(
+    '#type' => 'textarea',
+    '#title' => t('List failed codes that will be allowed to try send message again.'),
+    '#default_value' => variable_get('valghalla_eboks_retry_allowed_failed_codes'),
+    '#description' => t('One code per line. All failed codes should be defined accordinggly with Print service documentation. See !link', array(
+      '!link' => l(t('Bilag A5 REST HTTP returkoder og fejlkoder v63 uden ndringsmarkering.pdf'),
+        'profiles/valhalla/modules/valghalla/modules/valghalla_eboks/PriveService/doc/Bilag-A5-REST-HTTP-returkoder-og-fejlkoder-v63-udendringsmarkering.pdf',
+        array('attributes' => array('_target' => '_blank'))
+      ),
+    )),
+  );
+
+  $form['print_service']['retry']['valghalla_eboks_retry_max_attempts'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Amount of retry attempts'),
+    '#default_value' => variable_get('valghalla_eboks_retry_max_attempts'),
+    '#description' => t('Amount of tries that Drupal will send message to Print service when previous try was failed with status from list above. Max value @max', array(
+      '@max' => VALGHALLA_EBOKS_MAX_FAILED_TRIES,
+    )),
+  );
   $form['#submit'][] = 'valghalla_eboks_test_submit';
+  $form['#validate'][] = 'valghalla_eboks_retry_attempts_validate';
+}
+
+/**
+ * Custom validation handler for eboks settings.
+ */
+function valghalla_eboks_retry_attempts_validate(&$form, &$form_state) {
+  if ($form_state['values']['valghalla_eboks_retry_max_attempts'] > VALGHALLA_EBOKS_MAX_FAILED_TRIES) {
+    form_set_error('valghalla_eboks_retry_max_attempts', t('Value should be more then @max', array('@max' => VALGHALLA_EBOKS_MAX_FAILED_TRIES)));
+  }
 }
 
 /**
