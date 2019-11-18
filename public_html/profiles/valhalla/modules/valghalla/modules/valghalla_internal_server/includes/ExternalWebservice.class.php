@@ -6,7 +6,19 @@ namespace ValghallaInternalServer;
  * Handles the connection to external server webservice.
  */
 class ExternalWebservice {
+
+  /**
+   * Web service endpoint.
+   *
+   * @var string
+   */
   private $endpoint;
+
+  /**
+   * Authorization token.
+   *
+   * @var string
+   */
   private $authToken;
 
   /**
