@@ -22,7 +22,7 @@ function os2logging_default_monolog_profiles() {
         'level' => '200',
         'bubble' => 1,
         'filepath' => 'private://log/node_access.log',
-        'max_files' => '60',
+        'max_files' => '180',
         'handler' => 'rotating_file',
       ),
     ),
