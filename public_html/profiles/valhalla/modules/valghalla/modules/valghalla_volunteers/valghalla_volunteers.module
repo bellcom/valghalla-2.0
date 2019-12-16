@@ -1100,11 +1100,11 @@ function valghalla_volunteers_get_volunteers(){
 
   $query = '
     SELECT * FROM `node` n
-    LEFT JOIN `field_data_field_party` p ON p.entity_id = n.nid
-    LEFT JOIN `field_data_field_electioninfo` e ON e.entity_id = n.nid';
+     JOIN `field_data_field_party` p ON p.entity_id = n.nid
+     JOIN `field_data_field_electioninfo` e ON e.entity_id = n.nid';
 
   if (module_exists('valghalla_volunteer_validator')) {
-    $query .= ' LEFT JOIN `valghalla_volunteer_validation_criteria_status` v ON v.nid = n.nid';
+    $query .= ' JOIN `valghalla_volunteer_validation_criteria_status` v ON v.nid = n.nid';
   }
 
   $query .= ' WHERE n.nid NOT IN (
