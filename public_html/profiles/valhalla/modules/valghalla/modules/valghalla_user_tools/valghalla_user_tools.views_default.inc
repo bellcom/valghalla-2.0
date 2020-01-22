@@ -433,7 +433,7 @@ function valghalla_user_tools_views_default_views() {
     t('Type'),
     t('Emne'),
     t('Brødtekst'),
-    t('Redigér-link'),
+    t('Redigér'),
     t('Page'),
   );
   $export['mail_templates'] = $view;
@@ -503,7 +503,11 @@ function valghalla_user_tools_views_default_views() {
   $handler->display->display_options['fields']['edit_term']['table'] = 'taxonomy_term_data';
   $handler->display->display_options['fields']['edit_term']['field'] = 'edit_term';
   $handler->display->display_options['fields']['edit_term']['label'] = 'Rediger';
-  /* Filterkriterie: Ordforråd: Maskinnavn */
+  /* Sorteringskriterie: Ord i ordforråd: Vægt */
+  $handler->display->display_options['sorts']['weight']['id'] = 'weight';
+  $handler->display->display_options['sorts']['weight']['table'] = 'taxonomy_term_data';
+  $handler->display->display_options['sorts']['weight']['field'] = 'weight';
+  /* Filterkriterie: Ordforråd: Internt navn */
   $handler->display->display_options['filters']['machine_name']['id'] = 'machine_name';
   $handler->display->display_options['filters']['machine_name']['table'] = 'taxonomy_vocabulary';
   $handler->display->display_options['filters']['machine_name']['field'] = 'machine_name';
@@ -667,7 +671,7 @@ function valghalla_user_tools_views_default_views() {
     t('Mødetidspunkt'),
     t('Timer'),
     t('Rækkefølge'),
-    t('Redigér-link'),
+    t('Redigér'),
     t('Page'),
   );
   $export['roles'] = $view;
@@ -1040,7 +1044,7 @@ function valghalla_user_tools_views_default_views() {
   $handler->display->display_options['fields']['title']['field'] = 'title';
   $handler->display->display_options['fields']['title']['label'] = '';
   $handler->display->display_options['fields']['title']['element_label_colon'] = FALSE;
-  /* Felt: Indhold: Body */
+  /* Felt: Indhold: Indhold */
   $handler->display->display_options['fields']['entity_id']['id'] = 'entity_id';
   $handler->display->display_options['fields']['entity_id']['table'] = 'field_data_body';
   $handler->display->display_options['fields']['entity_id']['field'] = 'body';
@@ -1198,7 +1202,7 @@ function valghalla_user_tools_views_default_views() {
   $handler->display->display_options['fields']['title']['alter']['alter_text'] = TRUE;
   $handler->display->display_options['fields']['title']['alter']['text'] = '[title] [field_digital_election_list]';
   $handler->display->display_options['fields']['title']['element_label_colon'] = FALSE;
-  /* Felt: Indhold: Body */
+  /* Felt: Indhold: Indhold */
   $handler->display->display_options['fields']['entity_id']['id'] = 'entity_id';
   $handler->display->display_options['fields']['entity_id']['table'] = 'field_data_body';
   $handler->display->display_options['fields']['entity_id']['field'] = 'body';
@@ -1289,7 +1293,7 @@ function valghalla_user_tools_views_default_views() {
 <!--<a href="/node/[nid]/valgstederU">[title] [field_digital_election_list]</a>-->';
   $handler->display->display_options['fields']['title']['element_label_colon'] = FALSE;
   $handler->display->display_options['fields']['title']['link_to_node'] = FALSE;
-  /* Felt: Indhold: Body */
+  /* Felt: Indhold: Indhold */
   $handler->display->display_options['fields']['entity_id']['id'] = 'entity_id';
   $handler->display->display_options['fields']['entity_id']['table'] = 'field_data_body';
   $handler->display->display_options['fields']['entity_id']['field'] = 'body';
