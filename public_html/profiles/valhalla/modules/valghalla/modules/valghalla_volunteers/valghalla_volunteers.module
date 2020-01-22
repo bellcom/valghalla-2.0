@@ -1097,17 +1097,22 @@ function valghalla_volunteers_to_polling_station_ajax($action) {
  */
 function valghalla_volunteers_get_volunteers(){
   $volunteer_result = array();
-
-  $query = '
-    SELECT * FROM `node` n
-    LEFT JOIN `field_data_field_party` p ON p.entity_id = n.nid
-    LEFT JOIN `field_data_field_electioninfo` e ON e.entity_id = n.nid';
-
+  $fields = array(
+    'n.*',
+    'p.field_party_tid',
+  );
+  $join = array(
+    'LEFT JOIN `field_data_field_party` p ON p.entity_id = n.nid',
+    'LEFT JOIN `field_data_field_electioninfo` e ON e.entity_id = n.nid',
+  );
   if (module_exists('valghalla_volunteer_validator')) {
-    $query .= ' LEFT JOIN `valghalla_volunteer_validation_criteria_status` v ON v.nid = n.nid';
+    $join[] = 'LEFT JOIN `valghalla_volunteer_validation_criteria_status` v ON v.nid = n.nid';
+    $fields[] = 'v.validation_criteria_status';
   }
 
-  $query .= ' WHERE n.nid NOT IN (
+  $query = 'SELECT DISTINCT ' . implode(', ', $fields) . ' FROM `node` n '
+    . implode(' ', $join)
+    . ' WHERE n.nid NOT IN (
       SELECT entity_id
       FROM  `field_data_field_electioninfo`
       WHERE field_electioninfo_value
@@ -1795,7 +1800,7 @@ function valghalla_volunteers_preprocess_views_view_table(&$variables) {
       $variables['row_classes'][$key][] = 'no-nem-sms';
       $details[] = t('Fritaget for NemSMS.');
     }
-    
+
     if (!empty($details)) {
       $variables['rows'][$key]['title'] .= ' (' . implode(' ', $details) . ')';
     }

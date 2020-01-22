@@ -36,5 +36,6 @@ Deployment output log will be saved to `logs/deployment/deployment-[date]-[time]
 | ----        | :----                | :----        
 | **develop** | [ACTIVE DEVELOPMENT] | Reflects latest changes that have been merged into master or should be merged soon.
 | **7.x-2.x** | [EOL]                | Version 2.x. EOL 2018. Support fixes. Drupal core update.
-| **7.x-3.x** | [CURRENT]            | Version 3.x. Started since November 2018.
-| **7.x-4.x** | [UPCOMING]           | Version 4.x. All new feature should be merge here.
+| **7.x-3.x** | [EOL]                | Version 3.x. EOL June 2019. Support fixes. Drupal core update.
+| **7.x-4.x** | [CURRENT]            | Version 4.x. All new feature should be merge here.
+| **7.x-5.x** | [UPCOMING]           | Version 5.x. No branch created.
