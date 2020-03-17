@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "additional-bootstrap-colors": "^1.0.5",
-    "bootstrap-sass": "^3.4.0",
+    "bootstrap-sass": "^3.4.1",
     "bootstrap-sweetalert": "^1.0.1",
     "boxy-concept": "^1.0.1",
     "column-restrictor": "^1.0.1",
