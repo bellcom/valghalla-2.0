@@ -430,7 +430,10 @@ function valghalla_notification_field_extra_fields() {
  * Form builder for the valghalla_notification delete confirmation form.
  */
 function entity_valghalla_notification_confirm_delete($form, &$form_state, $notification) {
-  $form['notification_id'] = array('#type' => 'value', '#value' => $notification->id);
+  $form['notification_id'] = array(
+    '#type' => 'value',
+    '#value' => $notification->id,
+  );
   $form_state['storage']['notification'] = $notification;
   return confirm_form($form,
     t('Delete notification'),

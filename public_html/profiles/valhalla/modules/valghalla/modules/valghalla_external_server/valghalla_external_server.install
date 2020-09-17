@@ -131,8 +131,8 @@ function valghalla_external_server_requirements($phase) {
           'value' => t('Enabled: !list',
             array(
               '!list' => theme('item_list', array(
-                  'items' => $exists_modules,
-                )
+                'items' => $exists_modules,
+              )
               ),
             )
           ),

@@ -192,7 +192,7 @@ function odin_get_volunteers_count($election_nid, $polling_station_nids, $roles,
 
   return $count = array(
     'total_count' => $total_count,
-    'role_count' => $role_count
+    'role_count' => $role_count,
   );
 }
 
