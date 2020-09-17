@@ -190,7 +190,8 @@ function valghalla_notifications_update_7103() {
     'administer valghalla notification entities',
     'view any valghalla notification entity',
   );
-  foreach (array('administrator', 'Partisekretær', 'Valgsekretær') as $role_name) {
+  $roles = array('administrator', 'Partisekretær', 'Valgsekretær');
+  foreach ($roles as $role_name) {
     $role = user_role_load_by_name($role_name);
     if (empty($role)) {
       continue;

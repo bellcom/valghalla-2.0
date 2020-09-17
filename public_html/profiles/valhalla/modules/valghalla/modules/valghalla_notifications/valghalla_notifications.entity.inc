@@ -84,7 +84,10 @@ function entity_valghalla_menu(&$items) {
   $items['valghalla/administration/notifications-list/%entity_valghalla_notification/remove'] = array(
     'title' => 'Remove',
     'page callback' => 'drupal_get_form',
-    'page arguments' => array('entity_valghalla_notification_confirm_delete', 3),
+    'page arguments' => array(
+      'entity_valghalla_notification_confirm_delete',
+      3,
+    ),
     'access callback' => 'entity_valghalla_notification_check_notification_delete_access',
     'access arguments' => array(3),
     'type' => MENU_LOCAL_TASK,
@@ -248,7 +251,10 @@ function entity_valghalla_notification_list_entities($vol_nid = FALSE) {
       $row_data['status'] = check_plain($entity->status);
 
       $operation_links = array(
-        array('title' => t('View'), 'href' => 'valghalla/administration/notifications-list/' . $entity->id),
+        array(
+          'title' => t('View'),
+          'href' => 'valghalla/administration/notifications-list/' . $entity->id,
+        ),
       );
 
       // Adding remove link.
@@ -429,7 +435,8 @@ function entity_valghalla_notification_confirm_delete($form, &$form_state, $noti
   return confirm_form($form,
     t('Delete notification'),
     'admin/structure/entity_valghalla_notification/manage',
-    t('Are you sure you want to delete the notification %id?', array('%id' => $notification->id)));
+    t('Are you sure you want to delete the notification %id?',
+    array('%id' => $notification->id)));
 }
 
 /**
