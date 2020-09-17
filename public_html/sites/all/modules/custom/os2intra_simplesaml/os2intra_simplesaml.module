@@ -121,6 +121,7 @@ function os2intra_simplesaml_init() {
           'user/logout',
           'user/login',
           'logout',
+          'valghalla/signup'
         );
         if (!in_array($_GET['q'], $non_redirect_paths)) {
           drupal_goto('saml_login', array('query' => drupal_get_destination()));
