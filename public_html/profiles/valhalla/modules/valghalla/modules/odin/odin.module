@@ -190,7 +190,10 @@ function odin_get_volunteers_count($election_nid, $polling_station_nids, $roles,
     $total_count['rsvp_no'] += $role_count[$role_nid]['rsvp_no'];
   }
 
-  return $count = array('total_count' => $total_count, 'role_count' => $role_count);
+  return $count = array(
+    'total_count' => $total_count,
+    'role_count' => $role_count,
+  );
 }
 
 /**

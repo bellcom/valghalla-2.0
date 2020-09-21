@@ -52,7 +52,10 @@ function valghalla_notifications_menu() {
   $items['valghalla/administration/sendinvitation'] = array(
     'title' => 'Send invitationer',
     'page callback' => 'drupal_get_form',
-    'page arguments' => array('valghalla_notifications_send_invitation_form', 3),
+    'page arguments' => array(
+      'valghalla_notifications_send_invitation_form',
+      3,
+    ),
     'access arguments' => array('administer valghalla'),
     'file' => 'includes/valghalla_notifications_form.inc',
     'type' => MENU_LOCAL_TASK,

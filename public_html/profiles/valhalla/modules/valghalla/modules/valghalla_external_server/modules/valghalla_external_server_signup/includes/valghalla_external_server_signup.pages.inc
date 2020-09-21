@@ -113,7 +113,14 @@ function valghalla_external_server_signup_signup_form($form, &$form_state) {
 
   if (!$cpr && module_exists('nemlogin')) {
     $form['nemid_login_link'] = array(
-      '#markup' => nemlogin_link('Login med Nemlogin', NULL, array('attributes' => array('class' => array('btn', 'btn-secondary')))),
+      '#markup' => nemlogin_link('Login med Nemlogin', NULL, array(
+        'attributes' => array(
+          'class' => array(
+            'btn',
+            'btn-secondary',
+          ),
+        ),
+      )),
     );
   }
   else {
