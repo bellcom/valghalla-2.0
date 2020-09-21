@@ -48,6 +48,35 @@ function valghalla_election_schema() {
 }
 
 /**
+ * Updating, create a new table. {field_election_roles_diaet}.
+ *
+ * @see valghalla_election_schema()
+ */
+function valghalla_election_update_7100() {
+  if (!db_table_exists('field_election_roles_diaet')) {
+    $schema['field_election_roles_diaet'] = array(
+      'description' => 'Table for storing the individual role diaet of each election.',
+      'fields' => array(
+        'nid'  => array(
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+          'description' => 'Primary Key: the node identifier for an election item.',
+        ),
+        'role_diaet_value' => array(
+          'type' => 'text',
+          'not null' => TRUE,
+          'size' => 'medium',
+          'description' => 'Diaet value for each role',
+        ),
+      ),
+      'primary key' => array('nid'),
+    );
+    db_create_table('field_election_roles_diaet', $schema['field_election_roles_diaet']);
+  }
+}
+
+/**
  * Migrate binding on the seats from polling_station to the election.
  */
 function valghalla_election_update_7101() {
