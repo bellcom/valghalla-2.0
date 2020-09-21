@@ -181,13 +181,16 @@ function valghalla_signup_signup_form($form, &$form_state) {
   $election_nid = variable_get('valghalla_signup_election_nid', FALSE);
   $election_node = node_load($election_nid);
   $signup_roles = variable_get('valghalla_signup_roles', array());
-  $roles = odin_get_roles();
   $role_options = array('Vælg rolle');
 
   foreach ($signup_roles as $nid) {
     if ($role_node = node_load($nid)) {
+      // If description is available, use description, otherwise use title.
       if ($description_field = field_get_items('node', $role_node, 'field_description')) {
         $role_options[$nid] = $description_field[0]['value'];
+      }
+      else {
+        $role_options[$nid] = $role_node->title;
       }
     }
   }
