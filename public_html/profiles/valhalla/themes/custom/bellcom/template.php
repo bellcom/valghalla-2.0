@@ -96,7 +96,7 @@ function bellcom_preprocess_node(&$variables) {
     $variables['updated_at_short'] = format_date($updated_at, 'short');
     $variables['updated_at_medium'] = format_date($updated_at, 'medium');
     $variables['updated_at_long'] = format_date($updated_at, 'long');
-    $variables['updated_at_ago'] = t('@time ago', array('@time' => format_interval((REQUEST_TIME - $updated_at))));;
+    $variables['updated_at_ago'] = t('@time ago', array('@time' => format_interval((REQUEST_TIME - $updated_at))));
     $variables['updated_at_seperated'] = _bellcom_seperated_dates($updated_at);
   }
 

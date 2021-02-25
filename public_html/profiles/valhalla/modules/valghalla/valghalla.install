@@ -106,7 +106,8 @@ function valghalla_update_7106() {
  */
 function valghalla_update_7107() {
   $permissions = array('view polling station');
-  foreach (array('administrator', 'Partisekretær', 'Valgsekretær') as $role_name) {
+  $roles = array('administrator', 'Partisekretær', 'Valgsekretær');
+  foreach ($roles as $role_name) {
     $role = user_role_load_by_name($role_name);
     if (empty($role)) {
       watchdog('valghalla_update', 'Role %role not found to set permissions.', array(

@@ -133,7 +133,7 @@ function valghalla_volunteer_validator_settings() {
 /**
  * Page callback for activating batch operation
  */
-function valghalla_volunteer_validator_batch($form, &$form_state, $arg) {
+function valghalla_volunteer_validator_batch($form, &$form_state, $arg = array()) {
   $types = array(
       'address' => 'Hente alle deltageres adresser'
   );

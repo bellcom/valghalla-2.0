@@ -109,6 +109,14 @@ function valghalla_election_form_alter(&$form, &$form_state, $form_id) {
     $form['field_election_notif_conf_export']['#access'] = FALSE;
   }
   elseif ($form_id === 'field_collection_item_form' && $form['#bundle'] === 'field_volunteers_pr_pol_st_party') {
+    // Setting custom title.
+    $pollingStationNid = $form['#entity']->field_ppsp_polling_station['und'][0]['nid'];
+    if ($pollingStationNid) {
+      if ($pollingStation = node_load($pollingStationNid)) {
+        drupal_set_title($pollingStation->title);
+      }
+    }
+
     // Disabling some of the fields.
     $form['field_ppsp_polling_station']['#disabled'] = TRUE;
     $form['field_ppsp_party']['#disabled'] = TRUE;
@@ -159,6 +167,32 @@ function valghalla_election_form_submit($form, &$form_state) {
   }
 
   valghalla_election_handle_polling_stations_fc(node_load($nid));
+}
+
+/**
+ * Implements hook_taxonomy_term_insert().
+ */
+function valghalla_election_taxonomy_term_insert($term) {
+  $vid = taxonomy_vocabulary_machine_name_load('partier')->vid;
+  if ($term->vid == $vid) {
+    $elections = odin_get_elections();
+    foreach ($elections as $nid => $election_title) {
+      valghalla_election_handle_polling_stations_fc(node_load($nid));
+    }
+  }
+}
+
+/**
+ * Implements hook_taxonomy_term_delete().
+ */
+function valghalla_election_taxonomy_term_delete($term) {
+  $vid = taxonomy_vocabulary_machine_name_load('partier')->vid;
+  if ($term->vid == $vid) {
+    $elections = odin_get_elections();
+    foreach ($elections as $nid => $election_title) {
+      valghalla_election_handle_polling_stations_fc(node_load($nid));
+    }
+  }
 }
 
 /**
@@ -336,35 +370,6 @@ function valghalla_election_field_volunteers_pr_pol_st_party_form_validate($form
         }
       }
     }
-  }
-}
-
-/**
- * Updating, create a new table. {field_election_roles_diaet}.
- *
- * @see valghalla_election_schema()
- */
-function valghalla_election_update_7100() {
-  if (!db_table_exists('field_election_roles_diaet')) {
-    $schema['field_election_roles_diaet'] = array(
-      'description' => 'Table for storing the individual role diaet of each election.',
-      'fields' => array(
-        'nid'  => array(
-          'type' => 'int',
-          'unsigned' => TRUE,
-          'not null' => TRUE,
-          'description' => 'Primary Key: the node identifier for an election item.',
-        ),
-        'role_diaet_value' => array(
-          'type' => 'text',
-          'not null' => TRUE,
-          'size' => 'medium',
-          'description' => 'Diaet value for each role',
-        ),
-      ),
-      'primary key' => array('nid'),
-    );
-    db_create_table('field_election_roles_diaet', $schema['field_election_roles_diaet']);
   }
 }
 

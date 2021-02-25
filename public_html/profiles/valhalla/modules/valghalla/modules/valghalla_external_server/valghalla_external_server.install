@@ -128,7 +128,14 @@ function valghalla_external_server_requirements($phase) {
         $requirements['valghalla_external_server'] = array(
           'title' => t('Modules that should be disabled'),
           'severity' => REQUIREMENT_ERROR,
-          'value' => t('Enabled: !list', array('!list' => theme('item_list', array('items' => $exists_modules)))),
+          'value' => t('Enabled: !list',
+            array(
+              '!list' => theme('item_list', array(
+                'items' => $exists_modules,
+              )
+              ),
+            )
+          ),
         );
       }
       break;
@@ -164,7 +171,8 @@ function valghalla_external_server_update_7102() {
     array_keys(taxonomy_permission())
   );
 
-  foreach (array('administrator', 'Partisekretær', 'Valgsekretær') as $role_name) {
+  $roles = array('administrator', 'Partisekretær', 'Valgsekretær');
+  foreach ($roles as $role_name) {
     $role = user_role_load_by_name($role_name);
     if (empty($role)) {
       watchdog('valghalla_external_server', 'Role %role not found to remove permissions.', array(

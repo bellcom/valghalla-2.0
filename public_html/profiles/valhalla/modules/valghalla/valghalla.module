@@ -80,6 +80,7 @@ function valghalla_init() {
     '/volunteers/rsvp*',
     '/nemlogin/handlepost',
     '/system/tfa*',
+    '/saml_login*'
   );
 
   drupal_alter('valghalla_allowed_uris', $allowed_uris);
