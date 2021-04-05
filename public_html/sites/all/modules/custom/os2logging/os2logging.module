@@ -77,7 +77,6 @@ function os2logging_node_load($nodes, $types) {
 
   $logger = monolog('os2logging');
   $logger->pushProcessor(new \Monolog\Processor\WebProcessor);
-  $logger->setFormatter(new \Monolog\Formatter\JsonFormatter);
   if (!empty($chosen_node_types)) {
     foreach ($nodes as $nid => $node) {
       if (in_array($node->type, $chosen_node_types)) {
