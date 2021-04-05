@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * os2logging.monolog.inc
@@ -24,6 +25,13 @@ function os2logging_default_monolog_profiles() {
         'filepath' => 'private://log/node_access.log',
         'max_files' => '180',
         'handler' => 'rotating_file',
+      ),
+      'os2logging_accesslog_entity_hand' => array(
+        'weight' => 1,
+        'label' => 'OS2Logging AccessLog entity handler',
+        'level' => '200',
+        'bubble' => 1,
+        'handler' => 'os2logging_accesslog',
       ),
     ),
     'label' => 'OS2Logging',
