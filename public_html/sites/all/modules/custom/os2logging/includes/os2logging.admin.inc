@@ -1,5 +1,10 @@
 <?php
 
+use Drupal\Component\Serialization\Json;
+use Drupal\os2web_logging\Entity\AccessLog;
+
+module_load_include('inc', 'os2logging', 'includes/os2logging.access_log');
+
 /**
  * Settings form.
  */
@@ -57,7 +62,7 @@ function os2logging_settings_form($form, $form_state) {
   );
 
   // File logging handler settings.
-  $rotating_file_handler = monolog_handler_load('rotating_file_handler', 'os2logging');
+  $rotating_file_handler = monolog_handler_load('os2logging_json_file_handler', 'os2logging');
 
   $form['os2logging_file_logs_fs'] = array(
     '#type' => 'fieldset',
@@ -83,6 +88,38 @@ function os2logging_settings_form($form, $form_state) {
     '#default_value' =>  $rotating_file_handler['filepath'],
   );
 
+  $form['logs_import_file_detail'] = [
+    '#type' => 'fieldset',
+    '#title' => t('Logs import'),
+  ];
+
+  $fileImportOptions = array();
+  if ($rotating_file_handler['filepath']) {
+    $pathinfo = pathinfo($rotating_file_handler['filepath']);
+
+    $logsDirectory = $pathinfo['dirname'];
+    $logFilename = $pathinfo['filename'];
+    $storedLogFiles = file_scan_directory($logsDirectory, "/$logFilename-\d{4}-\d{2}-\d{2}\.(log|gz)/");
+
+    foreach ($storedLogFiles as $file) {
+      $fileImportOptions[$file->uri] = $file->filename;
+    }
+    arsort($fileImportOptions);
+  }
+
+  $form['logs_import_file_detail']['logs_import_files_select'] = [
+    '#type' => 'checkboxes',
+    '#options' => $fileImportOptions,
+    '#title' => t('Import from existing files'),
+    '#description' => t('Archived log files will be automatically extracted'),
+  ];
+
+  $form['logs_import_file_detail']['logs_import_file'] = [
+    '#type' => 'file',
+    '#title' => t('Import logs from uploaded file'),
+    '#description' => t('Logs will be imported form the uploaded file (.log or .json)'),
+  ];
+
   $form['#submit'][] = 'os2logging_settings_form_submit';
 
   return system_settings_form($form);
@@ -101,6 +138,39 @@ function os2logging_settings_form_validate($form, &$form_state) {
  * Settings form submit handler.
  */
 function os2logging_settings_form_submit($form, &$form_state) {
+  // Storing files to import.
+  $importFileUris = array();
+
+  // Checking file if we have an uploaded file to import from.
+  $uploadedFile = os2logging_settings_upload_import_file();
+
+  if ($uploadedFile) {
+    drupal_set_message(t('File uploaded successfully: @file', ['@file' => $uploadedFile->uri]));
+    $importFileUris[] = $uploadedFile->uri;
+  }
+
+  // Checking if we have any files selected to import from.
+  if ($selectedFiles = $form_state['values']['logs_import_files_select']) {
+    foreach ($selectedFiles as $uri) {
+      if ($uri) {
+        $importFileUris[] = $uri;
+      }
+    }
+    unset($form_state['values']['logs_import_files_select']);
+  }
+
+  // Import logs from the files.
+  if (!empty($importFileUris)) {
+    $importedLogs = os2logging_import_logs_from_uris($importFileUris);
+    if ($importedLogs) {
+      // To prevent old logs from being deleted on next cron (might happen at
+      // any time), update the last os2logging_last_cleanup_run.
+      //
+      // This will make logs stored in the database for the next 24h.
+      variable_set('os2logging_last_cleanup_run', time());
+    }
+  }
+
   $node_types = node_type_get_types();
   $chosen_node_types = array();
 
@@ -114,8 +184,8 @@ function os2logging_settings_form_submit($form, &$form_state) {
 
   // Updating monolog profile.
   $monolog_profile = monolog_profile_load('os2logging');
-  $monolog_profile->options['handlers']['rotating_file_handler']['max_files'] = $form_state['values']['os2logging_file_logs_store_period'];
-  $monolog_profile->options['handlers']['rotating_file_handler']['filepath'] = $form_state['values']['os2logging_file_logs_filepath'];
+  $monolog_profile->options['handlers']['os2logging_json_file_handler']['max_files'] = $form_state['values']['os2logging_file_logs_store_period'];
+  $monolog_profile->options['handlers']['os2logging_json_file_handler']['filepath'] = $form_state['values']['os2logging_file_logs_filepath'];
 
   monolog_profile_save($monolog_profile);
 }
@@ -131,6 +201,18 @@ function _os2logging_node_type_chosen($node_type) {
 }
 
 /**
+ * Uploads file from field logs_import_file.
+ */
+function os2logging_settings_upload_import_file() {
+  // Add validator for your file type etc.
+  $validators = array('file_validate_extensions' => array('log, json'));
+
+  $file = file_save_upload('logs_import_file', $validators, FALSE, 0);
+
+  return $file;
+}
+
+/**
  * OS2Logging access logs table form.
  */
 function os2logging_access_logs_table_form($form, &$form_state) {
@@ -139,6 +221,7 @@ function os2logging_access_logs_table_form($form, &$form_state) {
       'data' => t('Created'),
       'type' => 'property',
       'field' => 'a.created',
+      'sort' => 'desc'
     ),
     'node_title' => array(
       'data' => t('Node title'),
@@ -309,4 +392,58 @@ function os2logging_access_logs_table_form_submit($form, &$form_state) {
   drupal_goto('admin/reports/os2logging', array(
     'query' => $query
   ));
+}
+
+/**
+ * Imports logs from file.
+ *
+ * Reads the files from provided URIs and creates log entries.
+ *
+ * @param array $uris
+ *   Array of files uris.
+ *
+ * @return int
+ *   Number of imported logs entities.
+ */
+function os2logging_import_logs_from_uris(array $uris) {
+  $total_imported = 0;
+
+  foreach ($uris as $uri) {
+    $lines_counter = 0;
+    $imported_items_counter = 0;
+
+    $handle = gzopen($uri, "r");
+    if ($handle) {
+      while (($line = gzgets($handle)) !== FALSE) {
+        $lines_counter++;
+        $record = json_decode($line, TRUE);
+
+        // Discarding messages that do not follow format.
+        if (empty($record) ||
+          !array_key_exists('context', $record) ||
+          !array_key_exists('extra', $record) ||
+          !array_key_exists('message', $record) ||
+          !array_key_exists('datetime', $record)) {
+          continue;
+        }
+
+        // Create new log entry.
+        if (os2logging_access_log_create($record)) {
+          $imported_items_counter++;
+          $total_imported++;
+        }
+      }
+      fclose($handle);
+
+      drupal_set_message(t('Log messages @imported out of @total were imported', array(
+        '@imported' => $imported_items_counter,
+        '@total' => $lines_counter,
+      )));
+    }
+    else {
+      drupal_set_message(t('Could not import from file @file', array('@file' => $uri)), 'warning');
+    }
+  }
+
+  return $total_imported;
 }

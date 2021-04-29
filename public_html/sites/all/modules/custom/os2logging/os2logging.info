@@ -13,4 +13,5 @@ features[features_api][] = api:2
 features[monolog_profile][] = os2logging
 features[monolog_profile][] = watchdog
 files[] = handlers/AccessLogHandler.php
+files[] = handlers/JsonRotatingFileHandler.php
 project path = sites/all/modules/custom

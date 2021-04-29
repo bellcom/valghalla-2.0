@@ -80,7 +80,7 @@ function os2logging_node_load($nodes, $types) {
   if (!empty($chosen_node_types)) {
     foreach ($nodes as $nid => $node) {
       if (in_array($node->type, $chosen_node_types)) {
-        $message = sprintf("node type: %s id: %d was loaded by user (uid: %s name: %s  e-mail: %s) \n\r", $node->type, $node->nid, $user->uid, $user->name, $user->mail);
+        $message = sprintf("node type: %s id: %d was loaded by user (uid: %s name: %s  e-mail: %s)", $node->type, $node->nid, $user->uid, $user->name, $user->mail);
         $logger->log(Logger::INFO, $message, array('sid' => $node->nid, 'uid' => $user->uid, 'created' => REQUEST_TIME));
       }
     }
@@ -181,6 +181,15 @@ function os2logging_monolog_handler_info() {
     'group' => t('Wrappers / special handlers'),
     'settings callback' => 'os2logging_accesslog_handler_settings',
     'loader callback' => 'os2logging_accesslog_handler_loader',
+  );
+
+  $handlers['os2logging_json_rotation_file'] = array(
+    'label' => t('OS2Logging JSON Rotation file handler'),
+    'description' => t('Saves logs as JSON'),
+    'handler file' => drupal_get_path('module', 'os2logging') . '/handlers/json_rotating_file.inc',
+    'group' => t('Wrappers / special handlers'),
+    'settings callback' => 'os2logging_rotating_file_handler_settings',
+    'loader callback' => 'os2logging_rotating_file_handler_loader',
   );
 
   return $handlers;

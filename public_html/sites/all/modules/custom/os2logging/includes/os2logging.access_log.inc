@@ -8,17 +8,40 @@
  * @throws \Exception
  */
 function os2logging_access_log_create($log_record) {
-  // Create the access log entry.
-  db_insert('os2logging_access_log')
-    ->fields([
-      'sid' => $log_record['context']['sid'],
-      'uid' => $log_record['context']['uid'],
-      'message' => $log_record['message'],
-      'ip' => $log_record['extra']['ip'],
-      'request_uri' => $log_record['extra']['referrer'],
-      'created' => $log_record['context']['created'],
-    ])
-    ->execute();
+  $sid = $log_record['context']['sid'];
+  $uid = $log_record['context']['uid'];
+  $message = $log_record['message'];
+  $ip = $log_record['extra']['ip'];
+  $request_uri = $log_record['extra']['referrer'];
+  $created = $log_record['context']['created'];
+
+  // Do we have already this row in the databasse?
+  $count = db_select('os2logging_access_log', 'o')
+    ->fields('o')
+    ->condition('sid', $sid)
+    ->condition('uid', $uid)
+    ->condition('ip', $ip)
+    ->condition('created', $created)
+    ->execute()
+    ->rowCount();
+
+  // If row is missing, Create the access log entry.
+  if (!$count) {
+    $id = db_insert('os2logging_access_log')
+      ->fields([
+        'sid' => $sid,
+        'uid' => $uid,
+        'message' => $message,
+        'ip' => $ip,
+        'request_uri' => $request_uri,
+        'created' => $created,
+      ])
+      ->execute();
+
+    return $id;
+  }
+
+  return 0;
 }
 
 /**
