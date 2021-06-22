@@ -174,7 +174,10 @@ function valghalla_volunteer_validator_node_presave($node) {
       $names_arr[] = trim($node_wrapper->{$field}->value());
     }
   }
-  $node_wrapper->title = implode(' ', $names_arr);
+
+  if (!empty($names_arr)) {
+    $node_wrapper->title = implode(' ', $names_arr);
+  }
 
   // Fetching subscription.
   if (variable_get('valghalla_volunteer_validator_get_subscription_status')) {
